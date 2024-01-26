@@ -4,8 +4,6 @@ const app = express();
 
 app.use(express.json())
 
-const db = require('./db/models')
-
 app.use((req, res, next) => {
     // Qualquer endereço pode fazer requisição
     res.header("Access-Control-Allow-Origin", "*");

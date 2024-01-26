@@ -19,4 +19,19 @@ router.post("/", async (req, res) => {
     }); 
 })
 
+router.get("/", async (req, res) => {
+    await db.Empresa.findAll().then((empresas) => {
+        return res.json({
+            error: false,
+            data: empresas
+        });
+    }).catch(() => {
+        return res.status(500).json({
+            error: true,
+            message: "Erro: Não foi possível buscar as empresas!"
+        });
+    });
+});
+
+
 module.exports = router;

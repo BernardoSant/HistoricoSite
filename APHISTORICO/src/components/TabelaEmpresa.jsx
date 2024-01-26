@@ -1,14 +1,18 @@
 import styled from 'styled-components';
+import { useState } from 'react';
+import axios from 'axios';
+import { ToastContainer, toast } from 'react-toastify';
 
-const Header = styled.header`
+const Form = styled.form`
 height: 100%;
 width: 100%;
 padding-left: 1em;
 padding-right: 1em;
 display: flex;
 flex-wrap: wrap;
+justify-content: start;
+align-items: center;
 flex-direction: column;
-gap:0.5em;
 overflow: auto;
 `;
 
@@ -16,14 +20,19 @@ const H1 = styled.h1`
 font-weight: 600;
 margin-top: 5px;
 `;
+const Div = styled.div`
+display: grid;
+grid-column: span 4;
+gap: 12px;
+`;
 
 
 
 export const TabelaAdicionarEmpresa = () => {
 
-
     const [data, setData] = useState({
         nameEmpresa: '',
+        siglaEmpresa: '',
         emailEmpresa: '',
         cepEmpresa: '',
         ruaEmpresa: '',
@@ -37,11 +46,22 @@ export const TabelaAdicionarEmpresa = () => {
         situacaoEmpresa: ''
     });
 
-    // Declarar a variável para receber a mensagem
-    const [message, setMessage] = useState("");
-
     // Receber os dados dos campos do formulário
-    const valorInput = e => setData({ ...data, [e.target.name]: e.target.value });
+    const valorInput = e => {
+        let valor = e.target.value;
+        if (e.target.name === "cepEmpresa") {
+            valor = valor.replace(/\D/g, "");
+            valor = valor.replace(/^(\d{5})(\d)/, "$1-$2");
+        } else if (e.target.name === "cnpjEmpresa") {
+            valor = valor.replace(/\D/g, "");
+            valor = valor.replace(/^(\d{2})(\d)/, "$1.$2");
+            valor = valor.replace(/^(\d{2})\.(\d{3})(\d)/, "$1.$2.$3");
+            valor = valor.replace(/\.(\d{3})(\d)/, ".$1/$2");
+            valor = valor.replace(/(\d{4})(\d)/, "$1-$2");
+        }
+        setData({ ...data, [e.target.name]: valor });
+    };
+
 
     const sendEmpresa = async (e) => {
 
@@ -53,12 +73,17 @@ export const TabelaAdicionarEmpresa = () => {
             }
         };
 
-        await axios.post('http://localhost:3030/empresa', data, headers)
-            .then((response) => {
-                setMessage(response.data.message);
+        if (data.cepEmpresa === '' || data.cnpjEmpresa === '' || data.cadastroEmpresa === '' || data.nameEmpresa === '') {
+            toast.error('Por favor, preencha todos os campos obrigatórios.');
+            return;
+        }
 
+        axios.post('http://localhost:3030/empresa', data, headers)
+            .then((response) => {
+                toast.success(response.data.message);
                 setData({
                     nameEmpresa: '',
+                    siglaEmpresa: '',
                     emailEmpresa: '',
                     cepEmpresa: '',
                     ruaEmpresa: '',
@@ -72,63 +97,104 @@ export const TabelaAdicionarEmpresa = () => {
                     situacaoEmpresa: ''
                 });
             }).catch((err) => {
-                setMessage(err.response.data.message);
+                toast.info(err.response.data.message);
             });
     }
 
     return (
         <>
-            <Header onSubmit={sendEmpresa}>
-                <h1 className='w-full flex justify-center items-center text-3xl'>Adcionar Empresa</h1>
-                <nav className=' flex flex-col overflow-auto '>
+            <Form onSubmit={sendEmpresa} >
+                <h1 className='font-semibold w-full flex justify-center items-center text-3xl'>Adcionar Empresa</h1>
+                <nav className='flex flex-col overflow-auto  max-w-[40em]  justify-center mt-[5em]' >
+                    <div className=' grid grid-cols-4 gap-x-2'>
+                        <H1 className='col-span-3'>Nome*</H1>
 
-                    <H1>Nome*</H1>
+                        <H1 className='col-span-1'>Sigla*</H1>
+
+                        <input
+                            type="text"
+                            name="nameEmpresa"
+                            onChange={valorInput}
+                            value={data.nameEmpresa}
+                            className="col-span-3 border-2 max-w-[40em] w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 px-2 " />
+
+                        <input
+                            type="text"
+                            name="siglaEmpresa"
+                            onChange={valorInput}
+                            value={data.siglaEmpresa}
+                            className="col-span-1 border-2 max-w-[40em] w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 px-2 " />
+
+                    </div>
+
+                    <H1>CNPJ*</H1>
                     <input
                         type="text"
-                        name="name"
+                        maxlength="18"
+                        name="cnpjEmpresa"
                         onChange={valorInput}
-                        value={data.nameEmpresa}
-                        className="border-2 max-w-[40em] w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 px-2 " />
+                        value={data.cnpjEmpresa}
+                        className=" border-2 max-w-[40em] w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 px-2 " />
 
-                    <H1>Email</H1>
-                    <input
-                        type="text"
-                        name="emailEmpresa"
-                        onChange={valorInput}
-                        value={data.emailEmpresa}
-                        className="border-2 max-w-[40em] w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 px-2 " />
+                    <div className=' grid grid-cols-4 gap-x-2'>
+                        <H1 className='col-span-2'>Responsável</H1>
+                        <H1 className='col-span-2'>Email</H1>
 
-                    <H1>CEP*</H1>
-                    <input
-                        type="text"
-                        name="cepEmpresa"
-                        onChange={valorInput}
-                        value={data.cepEmpresa}
-                        className="border-2 max-w-[40em] w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 px-2 " />
+                        <input
+                            type="text"
+                            name="responsavelEmpresa"
+                            onChange={valorInput}
+                            value={data.responsavelEmpresa}
+                            className="col-span-2 border-2 max-w-[40em] w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 px-2 " />
 
-                    <H1>Lougradouro*</H1>
-                    <input
-                        type="text"
-                        name="ruaEmpresa"
-                        onChange={valorInput}
-                        value={data.ruaEmpresa}
-                        className="border-2 max-w-[40em] w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 px-2 " />
+                        <input
+                            type="text"
+                            name="emailEmpresa"
+                            onChange={valorInput}
+                            value={data.emailEmpresa}
+                            className="col-span-2 border-2 max-w-[40em] w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 px-2 " />
 
-                    <H1>Bairro*</H1>
-                    <input
-                        type="text"
-                        name="bairroEmpresa"
-                        onChange={valorInput}
-                        value={data.bairroEmpresa}
-                        className="border-2 max-w-[40em] w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 px-2 " />
+                    </div>
 
-                    <H1>Número*</H1>
-                    <input
-                        type="number"
-                        name="numeroEmpresa"
-                        onChange={valorInput}
-                        value={data.numeroEmpresa}
-                        className="border-2 max-w-[40em] w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 px-2 " />
+                    <div className='grid grid-cols-4 gap-x-2'>
+                        <H1 className='col-span-1'>CEP*</H1>
+                        <H1 className='col-span-3'>Lougradouro*</H1>
+
+                        <input
+                            maxlength="9"
+                            type="text"
+                            name="cepEmpresa"
+                            onChange={valorInput}
+                            value={data.cepEmpresa}
+                            className="col-span-1 border-2 max-w-[40em] w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 px-2 " />
+
+                        <input
+                            type="text"
+                            name="ruaEmpresa"
+                            onChange={valorInput}
+                            value={data.ruaEmpresa}
+                            className="col-span-3 border-2 max-w-[40em] w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 px-2 " />
+                    </div>
+
+                    <div className='grid grid-cols-5 gap-x-2'>
+                        <H1 className='col-span-1'>Número*</H1>
+                        <H1 className='col-span-4'>Bairro*</H1>
+
+                        <input
+                            type="number"
+                            name="numeroEmpresa"
+                            onChange={valorInput}
+                            value={data.numeroEmpresa}
+                            className="col-span-1 border-2 max-w-[40em] w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 px-2 " />
+
+                        <input
+                            type="text"
+                            name="bairroEmpresa"
+                            onChange={valorInput}
+                            value={data.bairroEmpresa}
+                            className="col-span-4 border-2 max-w-[40em] w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 px-2 " />
+
+                    </div>
 
                     <H1>Complemento</H1>
                     <input
@@ -146,24 +212,7 @@ export const TabelaAdicionarEmpresa = () => {
                         value={data.cidadeEmpresa}
                         className="border-2 max-w-[40em] w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 px-2 " />
 
-                    <H1>CNPJ*</H1>
-                    <input
-                        type="text"
-                        name="cnpjEmpresa"
-                        onChange={valorInput}
-                        value={data.cnpjEmpresa}
-                        className="border-2 max-w-[40em] w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 px-2 " />
-
-                    <H1>Responsável</H1>
-                    <input
-                        type="text"
-                        name="responsavelEmpresa"
-                        onChange={valorInput}
-                        value={data.responsavelEmpresa}
-                        className="border-2 max-w-[40em] w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 px-2 " />
-
-
-                    <table className='flex justify-between items-start md:items-end w-full mt-3 flex-col  md:flex-row gap-6 max-w-[40em] ' >
+                    <div className='flex justify-between items-start md:items-end w-full mt-3 flex-col  md:flex-row gap-6 max-w-[40em] ' >
                         <dir className="flex flex-col ">
                             <H1 className='text-xl'>Campos Adcionais</H1>
                             <div className='flex gap-6 flex-wrap'>
@@ -190,10 +239,10 @@ export const TabelaAdicionarEmpresa = () => {
                                 </nav>
                             </div>
                         </dir>
-                        <button type='submit' className='w-full md:w-auto bg-orange-400 py-2 px-7 rounded-lg border-2 border-orange-500 font-semibold hover:text-white hover:scale-95 duration-500'>Salvar</button>
-                    </table>
+                        <button type='submit' className='w-full mt-4 md:w-auto bg-orange-400 py-2 px-7 rounded-lg border-2 border-orange-500 font-semibold hover:text-white hover:scale-95 duration-500'>Salvar</button>
+                    </div>
                 </nav>
-            </Header>
+            </Form>
         </>
     )
 }

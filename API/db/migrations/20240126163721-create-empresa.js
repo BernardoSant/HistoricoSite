@@ -12,6 +12,9 @@ module.exports = {
       nameEmpresa: {
         type: Sequelize.STRING
       },
+      siglaEmpresa: {
+        type: Sequelize.STRING
+      },
       emailEmpresa: {
         type: Sequelize.STRING
       },

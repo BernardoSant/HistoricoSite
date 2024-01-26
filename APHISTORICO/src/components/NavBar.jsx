@@ -8,8 +8,6 @@ const Button = ({ Icon }) => {
     <div className="text-[2em] z-10 bg-slate-200 rounded-full p-3 shadow-slate-400 shadow-md flex justify-center items-center w-auto"><Icon /></div>
   )
 }
-
-export const NavBar = ({ Tipo }) => {
   const moveDown = keyframes`
   0% { transform: translateY(0);}
   100% { transform: translateY(80px);}
@@ -33,8 +31,8 @@ export const NavBar = ({ Tipo }) => {
   const moveD = keyframes`
   0% { transform: translateX(0px) scale(0); }
   100% { transform: translateX(60px) scale(1); }
-`;
-  const Dir = styled.button`
+`; 
+const Dir = styled.button`
     display:flex;
     justify-items: center;
     align-items: center;
@@ -56,6 +54,9 @@ export const NavBar = ({ Tipo }) => {
 margin-left: 1em;
   animation: ${props => props.animate ? moveD : move} 0.2s forwards;
 `;
+export const NavBar = ({ Tipo }) => {
+
+ 
 
   const [isClicked, setIsClicked] = useState(false);
 

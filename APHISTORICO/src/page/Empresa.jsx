@@ -125,7 +125,7 @@ export const Empresa = () => {
                         </nav>
 
                     </Div>
-                    <Div className="shadow-md shadow-slate-600"><TabelaAdicionarEmpresa></TabelaAdicionarEmpresa></Div>
+                    <Div className="shadow-md shadow-slate-600 flex justify-center items-center"><TabelaAdicionarEmpresa></TabelaAdicionarEmpresa></Div>
                 </Nav>
             </Header>
         </>
