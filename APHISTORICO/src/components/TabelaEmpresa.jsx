@@ -1,7 +1,7 @@
 import styled from 'styled-components';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import axios from 'axios';
-import { ToastContainer, toast } from 'react-toastify';
+import { toast } from 'react-toastify';
 
 const Form = styled.form`
 height: 100%;
@@ -73,7 +73,7 @@ export const TabelaAdicionarEmpresa = () => {
             }
         };
 
-        if (data.cepEmpresa === '' || data.cnpjEmpresa === '' || data.cadastroEmpresa === '' || data.nameEmpresa === '') {
+        if (data.cepEmpresa === '' && data.cnpjEmpresa === '' && data.cadastroEmpresa === '' && data.nameEmpresa === '') {
             toast.error('Por favor, preencha todos os campos obrigatórios.');
             return;
         }
@@ -243,6 +243,19 @@ export const TabelaAdicionarEmpresa = () => {
                     </div>
                 </nav>
             </Form>
+        </>
+    )
+}
+
+export const TabelaAddNota = () =>{
+    return(
+        <>
+        <div className='flex flex-col'>
+        <h1 className='font-semibold w-full h-auto flex justify-center items-center text-3xl'>Adcionar Nota Fiscal</h1>
+        <Form>
+            
+        </Form>
+        </div>
         </>
     )
 }

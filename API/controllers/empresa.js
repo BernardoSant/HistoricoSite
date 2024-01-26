@@ -20,10 +20,10 @@ router.post("/", async (req, res) => {
 })
 
 router.get("/", async (req, res) => {
-    await db.Empresa.findAll().then((empresas) => {
+    await db.Empresa.findAll().then((dataEmpresa) => {
         return res.json({
             error: false,
-            data: empresas
+            data: dataEmpresa
         });
     }).catch(() => {
         return res.status(500).json({
