@@ -247,15 +247,136 @@ export const TabelaAdicionarEmpresa = () => {
     )
 }
 
-export const TabelaAddNota = () =>{
-    return(
+export const TabelaAddNota = () => {
+    return (
         <>
-        <div className='flex flex-col'>
-        <h1 className='font-semibold w-full h-auto flex justify-center items-center text-3xl'>Adcionar Nota Fiscal</h1>
-        <Form>
-            
-        </Form>
-        </div>
+            <div className='flex flex-col'>
+                <h1 className='font-semibold w-full h-auto flex justify-center items-center text-3xl'>Adcionar Nota Fiscal</h1>
+                <Form>
+
+                </Form>
+            </div>
         </>
     )
 }
+
+export const TabelaAddImposto = () => {
+
+    const [data, setData] = useState({
+        siglaImposto: '',
+        porcentagemImposto: '',
+        tipoImposto: ''
+    });
+
+    const valorInput = e => {
+        let valor = e.target.value;
+        setData({ ...data, [e.target.name]: valor });
+    };
+
+
+    const sendImposto = async (e) => {
+
+        e.preventDefault();
+
+        const headers = {
+            'headers': {
+                'Content-Type': 'application/json'
+            }
+        };
+
+        if (data.siglaImposto === '' && data.porcentagemImposto === '') {
+            toast.error('Por favor, preencha todos os campos obrigatórios.');
+            return;
+        }
+
+        const dataParaEnviar = { ...data, porcentagemImposto: data.porcentagemImposto / 100 };
+
+        axios.post('http://localhost:3030/impostos', dataParaEnviar, headers)
+            .then((response) => {
+                toast.success(response.data.message);
+                setData({
+                    siglaImposto: '',
+                    porcentagemImposto: '',
+                    tipoImposto: ''
+                });
+            }).catch((err) => {
+                toast.info(err.response.data.message);
+            });
+    }
+
+    return (
+        <>
+            <div className='flex flex-col h-full w-full'>
+                <h1 className='font-semibold w-full h-auto flex justify-center items-center text-3xl'>Adcionar Impostos</h1>
+                <Form onSubmit={sendImposto}>
+                    <div className='grid grid-cols-4 grid-rows-1 items-start gap-x-4 mt-5 '>
+                        <H1 className='col-span-1'>Sigla</H1>
+                        <H1 className='col-span-1'>Porcentagem</H1>
+                        <H1 className='col-span-1'>Atividade</H1>
+                        <button type='submit' className='row-span-2 w-full mt-4 md:w-auto bg-orange-400 py-2 px-7 rounded-lg border-2 border-orange-500 font-semibold hover:text-white hover:scale-95 duration-500'>Salvar</button>
+
+                        <input
+                            type="text"
+                            name="siglaImposto"
+                            onChange={valorInput}
+                            value={data.siglaImposto}
+                            className="col-span-1 border-2 max-w-[40em] w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 px-2 "
+                        />
+
+                        <input
+                            type="number"
+                            name="porcentagemImposto"
+                            onChange={valorInput}
+                            value={data.porcentagemImposto}
+                            className="col-span-1 border-2 max-w-[40em] w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 px-2 "
+                        />
+
+                        <select
+                            id="tipoImposto"
+                            name="tipoImposto"
+                            onChange={valorInput}
+                            value={data.tipoImposto}
+                            className="border-[1px] border-[#848484] rounded-md px-3 py-[0.3em]">
+                            <option value=""></option>
+                            <option value="NF">Notas Fiscais</option>
+                            <option value="Salario">Salário</option>
+                            <option value="Todos">Todos</option>
+                        </select>
+
+                    </div>
+                </Form>
+            </div>
+        </>
+    )
+}
+
+export const MostrarImposto = () => {
+    const [imposto, setImposto] = useState([]);
+    useEffect(() => {
+        axios.get('http://localhost:3030/impostos')
+            .then((response) => {
+                setImposto(response.data.data);
+            }).catch((err) => {
+                toast.error(err);
+            });
+    }, []);
+
+    // Filtrar impostos do tipo 'NF'
+    const impostoNotaFiscal = imposto.filter(imposto => imposto.tipoImposto === 'NF');
+
+    return (
+        <>
+            <div className='flex flex-col justify-start h-full w-full'>
+                <h1 className='font-semibold w-full h-auto flex justify-center items-center text-3xl'>Impostos</h1>
+                {impostoNotaFiscal.map(imposto => (
+                    <>
+                        <div className='h-full w-full mt-3'>
+                           <H1>{imposto.siglaImposto}</H1> 
+                        </div>
+                    </>
+                ))}
+            </div>
+        </>
+    )
+}
+

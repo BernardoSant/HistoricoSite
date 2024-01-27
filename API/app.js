@@ -18,8 +18,10 @@ app.use((req, res, next) => {
 });
 
 const empresa = require("./controllers/empresa");
-
 app.use("/empresa", empresa)
+
+const imposto = require("./controllers/impostos");
+app.use("/impostos", imposto)
 
 app.listen(3030, () =>{
     console.log(" Servidor iniciado na porta 3030: http://localhost:3030")

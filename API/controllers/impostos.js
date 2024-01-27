@@ -5,30 +5,30 @@ const router = express.Router();
 router.post("/", async (req, res) => {
     var data =req.body;
 
-    await db.Empresa.create(data).then((dataEmpresa) => {
+    await db.Impostos.create(data).then((dataImposto) => {
         return res.json({
             error: false,
-            message: "Empresa cadastrada com sucesso!",   
-            data: dataEmpresa    
+            message: "Imposto cadastrada com sucesso!",   
+            data: dataImposto    
         });
     }).catch(() => {
         return res.json({
             error: false,
-            message: "Erro: Empresa não cadastrada com sucesso!"
+            message: "Erro: Imposto não cadastrado com sucesso!"
         });
     }); 
 })
 
 router.get("/", async (req, res) => {
-    await db.Empresa.findAll().then((dataEmpresa) => {
+    await db.Impostos.findAll().then((dataImposto) => {
         return res.json({
             error: false,
-            data: dataEmpresa
+            data: dataImposto
         });
     }).catch(() => {
         return res.status(500).json({
             error: true,
-            message: "Erro: Não foi possível buscar as empresas!"
+            message: "Erro: Não foi possível buscar as Impstos!"
         });
     });
 });
