@@ -219,7 +219,7 @@ export const TabelaAdicionarEmpresa = () => {
                         name="complEmpresa"
                         onChange={valorInput}
                         value={data.complEmpresa}
-                        />
+                    />
 
                     <H1>Cidade</H1>
                     <Input
@@ -227,7 +227,7 @@ export const TabelaAdicionarEmpresa = () => {
                         name="cidadeEmpresa"
                         onChange={valorInput}
                         value={data.cidadeEmpresa}
-                         />
+                    />
 
                     <div className='flex justify-between items-start md:items-end w-full mt-3 flex-col  md:flex-row gap-6 max-w-[40em] ' >
                         <dir className="flex flex-col">
@@ -240,7 +240,7 @@ export const TabelaAdicionarEmpresa = () => {
                                         name="cadastroEmpresa"
                                         onChange={valorInput}
                                         value={data.cadastroEmpresa}
-                                        />
+                                    />
                                 </nav>
                                 <nav className='flex flex-col justify-end'>
                                     <H1>Situação*</H1>
@@ -266,14 +266,221 @@ export const TabelaAdicionarEmpresa = () => {
 }
 
 export const TabelaAddNota = () => {
+    const [empresas, setEmpresas] = useState([]);
+
+    const [data, setData] = useState({
+        nameFucionario: '',
+        generoFucionario: '',
+        cpfFucionario: '',
+        rgFucionario: '',
+        estadoCivilFucionario: '',
+        conjugueFucionario: '',
+        cpfConjugueFucionario: '',
+        paiFucionario: '',
+        maeFucionario: '',
+        ruaFucionario: '',
+        numFucionario: '',
+        municipioFucionario: '',
+        estadoFucionario: '',
+        bairroFucionario: '',
+        complFucionario: '',
+        ctpsFucionario: '',
+        titEleitorFucionario: '',
+        dataAdmicaoFucionario: '',
+        pisFucionario: '',
+        salarioFucionario: '',
+        funcaoFuncionario: '',
+        horasTFucionario: '',
+        CadastroEmprFuncionario: ''
+    });
+
+    // Receber os dados dos campos do formulário
+    const valorInput = e => {
+        let valor = e.target.value;
+        if (e.target.name === "cpfFucionario") {
+            valor = valor.replace(/\D/g, "");
+            valor = valor.replace(/(\d{3})(\d)/, "$1.$2");
+            valor = valor.replace(/(\d{3})(\d)/, "$1.$2");
+            valor = valor.replace(/(\d{3})(\d{1,2})$/, "$1-$2");
+        } else if (e.target.name === "cpfConjugueFucionario") {
+            valor = valor.replace(/\D/g, "");
+            valor = valor.replace(/(\d{3})(\d)/, "$1.$2");
+            valor = valor.replace(/(\d{3})(\d)/, "$1.$2");
+            valor = valor.replace(/(\d{3})(\d{1,2})$/, "$1-$2");
+        } else if (e.target.name === "rgFucionario") {
+            valor = valor.replace(/\D/g, "");
+            valor = valor.replace(/(\d{2})(\d)/, "$1.$2");
+            valor = valor.replace(/(\d{3})(\d)/, "$1.$2");
+            valor = valor.replace(/(\d{3})(\d{1,2})$/, "$1-$2");
+        } else if (e.target.name === "ctpsFucionario") {
+            valor = valor.replace(/\D/g, "");
+            valor = valor.replace(/(\d{3})(\d)/, "$1.$2");
+            valor = valor.replace(/(\d{3})(\d)/, "$1.$2");
+            valor = valor.replace(/(\d{3})(\d{1,2})$/, "$1-$2");
+        } else if (e.target.name === "pisFucionario") {
+            valor = valor.replace(/\D/g, "");
+            valor = valor.replace(/(\d{3})(\d)/, "$1.$2");
+            valor = valor.replace(/(\d{5})(\d)/, "$1.$2");
+            valor = valor.replace(/(\d{2})(\d{1,2})$/, "$1-$2");
+        } else if (e.target.name === "titEleitorFucionario") {
+            valor = valor.replace(/\D/g, "");
+            valor = valor.replace(/(\d{3})(\d)/, "$1.$2");
+            valor = valor.replace(/(\d{3})(\d)/, "$1.$2");
+            valor = valor.replace(/(\d{3})(\d{1,2})$/, "$1-$2");
+        } else if (e.target.name === "salarioFucionario") {
+            valor = valor.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+        }
+        setData({ ...data, [e.target.name]: valor });
+    };
+
+
+
+    const sendFuncionario = async (e) => {
+
+        e.preventDefault();
+
+        const headers = {
+            'headers': {
+                'Content-Type': 'application/json'
+            }
+        };
+
+        if (data.nameFucionario === '' && data.cpfFucionario === '' && data.rgFucionario === '') {
+            toast.error('Por favor, preencha todos os campos obrigatórios.');
+            return;
+        }
+
+        axios.post('http://localhost:3030/Funcionario', data, headers)
+            .then((response) => {
+                toast.success(response.data.message);
+                setData({
+                    nameFucionario: '',
+                    generoFucionario: '',
+                    cpfFucionario: '',
+                    rgFucionario: '',
+                    estadoCivilFucionario: '',
+                    conjugueFucionario: '',
+                    cpfConjugueFucionario: '',
+                    paiFucionario: '',
+                    maeFucionario: '',
+                    ruaFucionario: '',
+                    numFucionario: '',
+                    municipioFucionario: '',
+                    estadoFucionario: '',
+                    bairroFucionario: '',
+                    complFucionario: '',
+                    ctpsFucionario: '',
+                    titEleitorFucionario: '',
+                    dataAdmicaoFucionario: '',
+                    pisFucionario: '',
+                    salarioFucionario: '',
+                    funcaoFuncionario: '',
+                    horasTFucionario: '',
+                    CadastroEmprFuncionario: ''
+                });
+            }).catch((err) => {
+                toast.info(err.response.data.message);
+            });
+    }
+
+    useEffect(() => {
+        axios.get('http://localhost:3030/empresa')
+            .then((response) => {
+                setEmpresas(response.data.data);
+            }).catch((err) => {
+                console.error(err);
+            });
+    }, []);
+
+
     return (
         <>
-            <div className='flex flex-col'>
-                <h1 className='font-semibold w-full h-auto flex justify-center items-center text-3xl'>Adcionar Nota Fiscal</h1>
-                <Form>
+            <Form onSubmit={sendFuncionario} >
+                <h1 className='font-semibold w-full flex justify-center items-center text-3xl'>Adcionar Funcionario</h1>
 
-                </Form>
-            </div>
+                <nav className='flex flex-col max-w-[40em] justify-center mt-[2em]' >
+                    <div className=' grid grid-cols-4 gap-x-2'>
+                        <H1 className='col-span-3'>Numero Pedido*</H1>
+                        <H1 className='col-span-1'>cnpj empresa map*</H1>
+                        <H1 className='col-span-1'>Nome da Empresa*</H1>
+                        <H1 className='col-span-1'>Valor sem imposto*</H1>
+                        <H1 className='col-span-1'>Descrição do Serviço*</H1>
+                        <H1 className='col-span-1'>Local Retido*</H1>
+                        <H1 className='col-span-1'>Prazo de pagamento*</H1>
+                        <H1 className='col-span-1'>Situação*
+                            preciso criar atividade com o numero da  key - descrição de atividade e porcentagem de issqn 2% ou 4 %</H1>
+
+                        <Input
+                            type="text"
+                            name="nameFucionario"
+                            onChange={valorInput}
+                            value={data.nameFucionario}
+                            className="col-span-3 "
+                        />
+
+                        <select
+                            id="generoFucionario"
+                            name="generoFucionario"
+                            onChange={valorInput}
+                            value={data.generoFucionario}
+                            className="col-span-1 border-2 border-gray-300 rounded-md px-2 ">
+                            <option></option>
+                            <option value="M">Masculino</option>
+                            <option value="F">Feminino</option>
+                        </select>
+
+
+                        <Input
+                            type="text"
+                            maxlength="14"
+                            name="cpfFucionario"
+                            onChange={valorInput}
+                            value={data.cpfFucionario}
+                            className="col-span-1"
+                        />
+
+                        <Input
+                            type="text"
+                            maxlength="12"
+                            name="rgFucionario"
+                            onChange={valorInput}
+                            value={data.rgFucionario}
+                            className="col-span-1"
+                        />
+
+                        <Input
+                            type="text"
+                            maxlength="14"
+                            name="cpfFucionario"
+                            onChange={valorInput}
+                            value={data.cpfFucionario}
+                            className="col-span-1"
+                        />
+
+                        <Input
+                            type="text"
+                            maxlength="12"
+                            name="rgFucionario"
+                            onChange={valorInput}
+                            value={data.rgFucionario}
+                            className="col-span-1"
+                        />
+
+                        <select
+                            id="estadoCivilFucionario"
+                            name="estadoCivilFucionario"
+                            onChange={valorInput}
+                            value={data.estadoCivilFucionario}
+                            className="border-2 border-gray-300 rounded-md px-2 ">
+                            <option></option>
+                            <option value="Casado">Casado</option>
+                            <option value="Solteiro">Solteiro</option>
+                        </select>
+                    </div>
+
+                    <button type='submit' className='w-full mt-4 bg-orange-400 py-2 px-7 rounded-lg border-2 border-orange-500 font-semibold hover:text-white hover:scale-95 duration-500 mb-3'>Salvar</button>
+                </nav>
+            </Form>
         </>
     )
 }
@@ -361,6 +568,94 @@ export const TabelaAddImposto = () => {
                             <option value="Todos">Todos</option>
                         </select>
 
+                    </div>
+                </Form>
+            </div>
+        </>
+    )
+}
+
+export const TabelaAddKinay = () => {
+
+    const [data, setData] = useState({
+        numeroKinay: '',
+        descricaoKinay: '',
+        porcentagemKinay: ''
+    });
+
+    const valorInput = e => {
+        let valor = e.target.value;
+        setData({ ...data, [e.target.name]: valor });
+    };
+
+
+    const sendKinay = async (e) => {
+
+        e.preventDefault();
+
+        const headers = {
+            'headers': {
+                'Content-Type': 'application/json'
+            }
+        };
+
+        if (data.numeroKinay === '' && data.porcentagemKinay === '') {
+            toast.error('Por favor, preencha todos os campos obrigatórios.');
+            return;
+        }
+
+        const dataParaEnviar = { ...data, porcentagemKinay: data.porcentagemKinay / 100 };
+
+        axios.post('http://localhost:3030/kinay', dataParaEnviar, headers)
+            .then((response) => {
+                toast.success(response.data.message);
+                setData({
+                    numeroKinay: '',
+                    descricaoKinay: '',
+                    porcentagemKinay: ''
+                });
+            }).catch((err) => {
+                toast.info(err.response.data.message);
+            });
+    }
+
+    return (
+        <>
+            <div className='flex flex-col h-full w-full'>
+                <h1 className='font-semibold w-full h-auto flex justify-center items-center text-3xl'>Adcionar Kinay</h1>
+                <Form onSubmit={sendKinay}>
+                    <div className='grid grid-cols-6 grid-rows-1 items-start gap-x-4 mt-5 '>
+                        <H1 className='col-span-1'>Número</H1>
+                        <H1 className='col-span-4'>Descrição</H1>
+                        <H1 className='col-span-1'>Porcentagem</H1>
+
+
+                        <Input
+                            type="number"
+                            name="numeroKinay"
+                            onChange={valorInput}
+                            value={data.numeroKinay}
+                            className="col-span-1 "
+                        />
+
+                        <Input
+                            type="text"
+                            name="descricaoKinay"
+                            onChange={valorInput}
+                            value={data.descricaoKinay}
+                            className="col-span-4"
+                        />
+
+                        <Input
+                            type="number"
+                            name="porcentagemKinay"
+                            onChange={valorInput}
+                            value={data.porcentagemKinay}
+                            className="col-span-1"
+                        />
+                        <div className='col-span-4 flex justify-end'>
+                            <button type='submit' className='row-span-2 w-full mt-4 md:w-auto bg-orange-400 py-2 px-7 rounded-lg border-2 border-orange-500 font-semibold hover:text-white hover:scale-95 duration-500'>Salvar</button>
+                        </div>
                     </div>
                 </Form>
             </div>

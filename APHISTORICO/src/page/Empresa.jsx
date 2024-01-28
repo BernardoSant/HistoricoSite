@@ -3,7 +3,7 @@ import { NavBar } from "../components/NavBar"
 import styled from 'styled-components';
 import axios from "axios";
 import { useEffect } from "react";
-import { TabelaAdicionarEmpresa, TabelaAddImposto, TabelaAddNota, MostrarImposto, TabelaAddFuncionario } from "../components/TabelaEmpresa";
+import { TabelaAdicionarEmpresa, TabelaAddImposto, TabelaAddNota, MostrarImposto, TabelaAddFuncionario, TabelaAddKinay } from "../components/TabelaEmpresa";
 
 const Nav = styled.nav`
 width: 100%;
@@ -113,8 +113,10 @@ export const Empresa = () => {
 
         //Botões Secundarios
         addEmpresa: false,
-        addImposto: false,
         addFuncionarios: false,
+        addNotaF: false,
+        addImposto: false,
+        addKinay: false,
         verImposto: false
     });
 
@@ -124,8 +126,10 @@ export const Empresa = () => {
             ...prevState,
             [key]: !prevState[key],
             ...(key !== 'addEmpresa' && { addEmpresa: false }),
-            ...(key !== 'addImposto' && { addImposto: false }),
             ...(key !== 'addFuncionarios' && { addFuncionarios: false }),
+            ...(key !== 'addNotaF' && { addNotaF: false }),
+            ...(key !== 'addImposto' && { addImposto: false }),
+            ...(key !== 'addKinay' && { addKinay: false }),
             ...(key !== 'verImposto' && { verImposto: false }),
 
         }));
@@ -152,7 +156,7 @@ export const Empresa = () => {
                                                 </TabelaSecund>}
                                         </>
                                     ))}
-                                    <Button TipoButton={2} Titulo={"Adicionar NF"}></Button>
+                                    <Button TipoButton={2} Titulo={"Adicionar NF"} onSecundario={state.addNotaF} onClick={() => handleClick('addNotaF')}></Button>
 
                                     <Button TipoButton={2} Titulo={"Adcionar Empresa"} onFinal={state.addEmpresa} onClick={() => handleClick('addEmpresa')}></Button>
 
@@ -187,7 +191,8 @@ export const Empresa = () => {
                             {state.impostos &&
                                 <Tabela>
                                     <Button TipoButton={2} Titulo={"Ver Impostos"} onSecundario={state.verImposto} onClick={() => handleClick('verImposto')}></Button>
-                                    <Button TipoButton={2} Titulo={"Adcionar Imposto"} onFinal={state.addImposto} onClick={() => handleClick('addImposto')}></Button>
+                                    <Button TipoButton={2} Titulo={"Adcionar Imposto"} onSecundario={state.addImposto} onClick={() => handleClick('addImposto')}></Button>
+                                    <Button TipoButton={2} Titulo={"Adcionar Kinay"} onFinal={state.addKinay} onClick={() => handleClick('addKinay')}></Button>
                                 </Tabela>
                             }
 
@@ -195,11 +200,15 @@ export const Empresa = () => {
 
                     </Div>
                     <Div className="shadow-md shadow-slate-600 flex flex-col justify-center items-center">
+
+                        {state.addKinay &&
+                            <TabelaAddKinay />
+                        }
                         {state.addEmpresa &&
                             <TabelaAdicionarEmpresa />
                         }
 
-                        {state.addNota &&
+                        {state.addNotaF &&
                             <TabelaAddNota />
                         }
 

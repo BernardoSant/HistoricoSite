@@ -26,6 +26,9 @@ app.use("/impostos", imposto)
 const funcionario = require("./controllers/funcionario");
 app.use("/funcionario", funcionario)
 
+const kinay = require("./controllers/kinay");
+app.use("/kinay", kinay)
+
 app.listen(3030, () =>{
     console.log(" Servidor iniciado na porta 3030: http://localhost:3030")
 });
