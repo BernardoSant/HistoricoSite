@@ -64,7 +64,7 @@ const Button = ({ TipoButton, Titulo, onClick, onSecundario, onPrimario, onFinal
     return (<>
         {TipoButton === 1 &&
             <Botao onClick={onClick}
-                className={`mt-2 hover:bg-orange-500 hover:text-gray-200 ${onPrimario ? "bg-orange-600 rounded-b-none drop-shadow-xl " : "bg-[#fffafa]"}  rounded-[20px]  `}
+                className={`mt-2 hover:bg-orange-500 hover:text-gray-200 ${onPrimario ? "bg-orange-600 rounded-b-none drop-shadow-xl underline" : "bg-[#fffafa]"}  rounded-[20px]  `}
             >{Titulo}</Botao>}
 
         {TipoButton === 2 &&
@@ -171,9 +171,7 @@ export const Empresa = () => {
                                 <Tabela >
                                     <Button TipoButton={2} Titulo={"Admitidos"}  ></Button>
                                     <Button TipoButton={2} Titulo={"Demitidos"}  ></Button>
-                                    <Button TipoButton={2} Titulo={"Cargo"}  ></Button>
-                                    <Button TipoButton={2} Titulo={"Adcionar Funcionario"} onSecundario={state.addFuncionarios} onClick={() => handleClick('addFuncionarios')} ></Button>
-                                    <Button TipoButton={2} Titulo={"Adicionar Cargo"}  ></Button>
+                                    <Button TipoButton={2} Titulo={"Adcionar Funcionario"} onFinal={state.addFuncionarios} onClick={() => handleClick('addFuncionarios')} ></Button>
                                 </Tabela>
                             }
 

@@ -8,6 +8,8 @@ height: 100%;
 width: 100%;
 padding-left: 1em;
 padding-right: 1em;
+padding-bottom: 1em;
+padding-top: 1em;
 display: flex;
 flex-wrap: wrap;
 justify-content: center;
@@ -797,10 +799,17 @@ export const TabelaAddFuncionario = () => {
                             name="funcaoFuncionario"
                             onChange={valorInput}
                             value={data.funcaoFuncionario}
-                            className="col-span-1 border-2 border-gray-300 rounded-md px-3 py-[0.2em]">
-                            <option>fazer map</option>
-                            <option value="Particular">fazer map</option>
-                            <option value="Contrato">Contrato</option>
+                            className="col-span-1 border-2 border-gray-300 rounded-md  py-[0.2em]">
+                            <option></option>
+                            <option value="Pedreiro">Pedreiro</option>
+                            <option value="Pintor">Pintor</option>
+                            <option value="Ajudante">Ajudante</option>
+                            <option value="Encarregado">Encarregado</option>
+                            <option value="Soldador">Soldador</option>
+                            <option value="Meio OFF.Pedreiro">Meio OFF.Pedreiro</option>
+                            <option value="Meio OFF.Pintor">Meio OFF.Pintor</option>
+                            <option value="Engenheiro">Engenheiro</option>
+                            <option value="Tecnico Segurança">Técnico Segurança</option>
                         </select>
 
                         <select
@@ -830,7 +839,7 @@ export const TabelaAddFuncionario = () => {
 
                     </div>
 
-                    <button type='submit' className='w-full mt-4 bg-orange-400 py-2 px-7 rounded-lg border-2 border-orange-500 font-semibold hover:text-white hover:scale-95 duration-500'>Salvar</button>
+                    <button type='submit' className='w-full mt-4 bg-orange-400 py-2 px-7 rounded-lg border-2 border-orange-500 font-semibold hover:text-white hover:scale-95 duration-500 mb-3'>Salvar</button>
                 </nav>
             </Form>
         </>
