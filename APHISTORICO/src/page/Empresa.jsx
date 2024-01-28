@@ -3,7 +3,7 @@ import { NavBar } from "../components/NavBar"
 import styled from 'styled-components';
 import axios from "axios";
 import { useEffect } from "react";
-import { TabelaAdicionarEmpresa, TabelaAddImposto, TabelaAddNota, MostrarImposto } from "../components/TabelaEmpresa";
+import { TabelaAdicionarEmpresa, TabelaAddImposto, TabelaAddNota, MostrarImposto, TabelaAddFuncionario } from "../components/TabelaEmpresa";
 
 const Nav = styled.nav`
 width: 100%;
@@ -44,6 +44,7 @@ font-size: medium;
 display: flex;
 flex-direction: column;
 gap:0.5em;
+overflow-x: auto;
 `;
 
 const Botao = styled.button`
@@ -109,19 +110,23 @@ export const Empresa = () => {
         transporte: false,
         impostos: false,
         empregador: false,
-         
+
         //Botões Secundarios
         addEmpresa: false,
-        addImposto: false
+        addImposto: false,
+        addFuncionarios: false,
+        verImposto: false
     });
 
-    
+
     const handleClick = (key) => {
         setState(prevState => ({
             ...prevState,
             [key]: !prevState[key],
-            ...(key !== 'addEmpresa' && { addEmpresa: false}),
-            ...(key !== 'addImposto' && { addImposto: false}),
+            ...(key !== 'addEmpresa' && { addEmpresa: false }),
+            ...(key !== 'addImposto' && { addImposto: false }),
+            ...(key !== 'addFuncionarios' && { addFuncionarios: false }),
+            ...(key !== 'verImposto' && { verImposto: false }),
 
         }));
     }
@@ -164,11 +169,11 @@ export const Empresa = () => {
                             <Button TipoButton={1} Titulo={"Funcionarios"} onPrimario={state.funcionarios} onClick={() => handleClick('funcionarios')}></Button>
                             {state.funcionarios &&
                                 <Tabela >
-                                    <Button TipoButton={3} Titulo={"Admitidos"}  ></Button>
-                                    <Button TipoButton={3} Titulo={"Demitidos"}  ></Button>
-                                    <Button TipoButton={3} Titulo={"Cargo"}  ></Button>
-                                    <Button TipoButton={3} Titulo={"Adcionar Funcionario"}  ></Button>
-                                    <Button TipoButton={3} Titulo={"Adicionar Cargo"}  ></Button>
+                                    <Button TipoButton={2} Titulo={"Admitidos"}  ></Button>
+                                    <Button TipoButton={2} Titulo={"Demitidos"}  ></Button>
+                                    <Button TipoButton={2} Titulo={"Cargo"}  ></Button>
+                                    <Button TipoButton={2} Titulo={"Adcionar Funcionario"} onSecundario={state.addFuncionarios} onClick={() => handleClick('addFuncionarios')} ></Button>
+                                    <Button TipoButton={2} Titulo={"Adicionar Cargo"}  ></Button>
                                 </Tabela>
                             }
 
@@ -183,7 +188,7 @@ export const Empresa = () => {
                             <Button TipoButton={1} Titulo={"Impostos"} onPrimario={state.impostos} onClick={() => handleClick('impostos')} ></Button>
                             {state.impostos &&
                                 <Tabela>
-                                    <Button TipoButton={2} Titulo={"Ver Impostos"}></Button>
+                                    <Button TipoButton={2} Titulo={"Ver Impostos"} onSecundario={state.verImposto} onClick={() => handleClick('verImposto')}></Button>
                                     <Button TipoButton={2} Titulo={"Adcionar Imposto"} onFinal={state.addImposto} onClick={() => handleClick('addImposto')}></Button>
                                 </Tabela>
                             }
@@ -191,18 +196,26 @@ export const Empresa = () => {
                         </nav>
 
                     </Div>
-                    <Div className="shadow-md shadow-slate-600 flex justify-center items-center">
-                        <MostrarImposto/>
+                    <Div className="shadow-md shadow-slate-600 flex flex-col justify-center items-center">
                         {state.addEmpresa &&
                             <TabelaAdicionarEmpresa />
                         }
+
                         {state.addNota &&
                             <TabelaAddNota />
                         }
+
+                        {state.addFuncionarios &&
+                            <TabelaAddFuncionario />
+                        }
+
                         {state.addImposto &&
                             <TabelaAddImposto />
                         }
 
+                        {state.verImposto &&
+                            <MostrarImposto />
+                        }
                     </Div>
                 </Nav>
             </Header >
