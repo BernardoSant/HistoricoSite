@@ -2,6 +2,7 @@ import styled from 'styled-components';
 import { useState, useEffect } from 'react';
 import axios from 'axios';
 import { toast } from 'react-toastify';
+import { useGlobalContext } from '../global/Global';
 
 const Form = styled.form`
 height: 100%;
@@ -147,7 +148,7 @@ export const TabelaAdicionarEmpresa = () => {
                     <H1>CNPJ*</H1>
                     <Input
                         type="text"
-                        maxlength="18"
+                        maxLength="18"
                         name="cnpjEmpresa"
                         onChange={valorInput}
                         value={data.cnpjEmpresa}
@@ -178,7 +179,7 @@ export const TabelaAdicionarEmpresa = () => {
                         <H1 className='col-span-3'>Lougradouro*</H1>
 
                         <Input
-                            maxlength="9"
+                            maxLength="9"
                             type="text"
                             name="cepEmpresa"
                             onChange={valorInput}
@@ -267,8 +268,11 @@ export const TabelaAdicionarEmpresa = () => {
 
 export const TabelaAddNota = () => {
 
+    const { empresa, kinays, impostos } = useGlobalContext();
+
     const [data, setData] = useState({
         numeroPedidoNF: '',
+        idEmpresa: '',
         nomeEmpresaNF: '',
         cnpjEmpresaNF: '',
         retidoNF: '',
@@ -291,67 +295,36 @@ export const TabelaAddNota = () => {
         const Imposto = parseFloat(data.ImpostoNF.replace('%', '')) / 100;
         const valorImpostocalc = CNAE + Imposto * data.valorNF;
         const valoReceber = data.valorNF - valorImpostocalc;
-    
+
         setData({ ...data, valorImpostoNF: valorImpostocalc, valorReceberNF: valoReceber });
     };
-    
+
     const valorInput = (event) => {
         const { name, value } = event.target;
-    
+
         if (name === "nomeEmpresaNF") {
             const parts = value.split(' - ');
-            const NomeEmpresa = parts[0];
-            const CNPJEmpresa = parts[1];
-    
-            setData({ ...data, nomeEmpresaNF: NomeEmpresa, cnpjEmpresaNF: CNPJEmpresa });
+            const idEmpresa = parts[0];
+            const NomeEmpresa = parts[1];
+            const CNPJEmpresa = parts[2];
+
+            setData({ ...data, idEmpresa: idEmpresa, nomeEmpresaNF: NomeEmpresa, cnpjEmpresaNF: CNPJEmpresa });
         } else if (name === "KinayNF") {
             const parts = value.split(' - ');
             const numeroKinay = parts[0];
             const descricaoKinay = parts[1];
             const porcentagemKinay = parts[2];
-    
+
             setData({ ...data, numeroKinayNF: numeroKinay, KinayNF: descricaoKinay, porcentagemKinayNF: porcentagemKinay });
         } else if (name === "ImpostoNF") {
             const parts = value.split(' - ');
             const porcentagemImposto = parts[1];
-    
+
             setData({ ...data, ImpostoNF: porcentagemImposto });
         } else {
             setData({ ...data, [name]: value });
         }
     };
-
-    
-
-    const [kinays, setKinay] = useState([]);
-    useEffect(() => {
-        axios.get('http://localhost:3030/kinay')
-            .then((response) => {
-                setKinay(response.data.data);
-            }).catch((err) => {
-                console.error(err);
-            });
-    }, []);
-
-    const [impostos, setImposto] = useState([]);
-    useEffect(() => {
-        axios.get('http://localhost:3030/impostos')
-            .then((response) => {
-                setImposto(response.data.data);
-            }).catch((err) => {
-                console.error(err);
-            });
-    }, []);
-
-    const [empresa, setEmpresa] = useState([]);
-    useEffect(() => {
-        axios.get('http://localhost:3030/empresa')
-            .then((response) => {
-                setEmpresa(response.data.data);
-            }).catch((err) => {
-                console.error(err);
-            });
-    }, []);
 
     const sendNF = async (e) => {
 
@@ -369,6 +342,7 @@ export const TabelaAddNota = () => {
                 console.log(data)
                 setData({
                     numeroPedidoNF: '',
+                    idEmpresa: '',
                     nomeEmpresaNF: '',
                     cnpjEmpresaNF: '',
                     retidoNF: '',
@@ -423,18 +397,26 @@ export const TabelaAddNota = () => {
 
                             <datalist id='nameE'>
                                 {empresa.map(empresa => (
-                                    <option value={`${empresa.nameEmpresa} - ${empresa.cnpjEmpresa}`}></option>
+                                    <option key={empresa.id} value={`${empresa.id} - ${empresa.nameEmpresa} - ${empresa.cnpjEmpresa}`}></option>
                                 ))}
                             </datalist>
                         </label>
 
                         <Input
                             type="text"
-                            maxlength="18"
+                            maxLength="18"
                             name="cnpjEmpresaNF"
                             onChange={valorInput}
                             value={data.cnpjEmpresaNF}
                             className="col-span-2"
+                        />
+
+                        <Input
+                            type="text"
+                            name="idEmpresa"
+                            onChange={valorInput}
+                            value={data.idEmpresa}
+                            className="hidden"
                         />
 
                         <H1 className='col-span-4'>Local Retido*</H1>
@@ -478,7 +460,7 @@ export const TabelaAddNota = () => {
                             />
                             <datalist id='CNAE'>
                                 {kinays.map(kinay => (
-                                    <option value={`${kinay.numeroKinay} - ${kinay.descricaoKinay} - ${kinay.porcentagemKinay * 100}%`}></option>
+                                    <option key={kinay.id} value={`${kinay.numeroKinay} - ${kinay.descricaoKinay} - ${kinay.porcentagemKinay * 100}%`}></option>
                                 ))}
                             </datalist>
                         </label>
@@ -504,7 +486,7 @@ export const TabelaAddNota = () => {
 
                             <datalist id='IMPST'>
                                 {impostos.map(imposto => (
-                                    <option value={`${imposto.siglaImposto} - ${imposto.porcentagemImposto * 100}%`}></option>
+                                    <option key={imposto.id} value={`${imposto.siglaImposto} - ${imposto.porcentagemImposto * 100}%`}></option>
                                 ))}
                             </datalist>
                         </label>
@@ -523,7 +505,7 @@ export const TabelaAddNota = () => {
                         />
 
                         <Input
-                            maxlength="6"
+                            maxLength="6"
                             type='text'
                             name="valorImpostoNF"
                             onChange={valorInput}
@@ -531,7 +513,7 @@ export const TabelaAddNota = () => {
                         />
 
                         <Input
-                            maxlength="6"
+                            maxLength="6"
                             type='text'
                             name="valorReceberNF"
                             onChange={valorInput}
@@ -782,27 +764,19 @@ export const TabelaAddKinay = () => {
 }
 
 export const MostrarImposto = () => {
-    const [imposto, setImposto] = useState([]);
-    useEffect(() => {
-        axios.get('http://localhost:3030/impostos')
-            .then((response) => {
-                setImposto(response.data.data);
-            }).catch((err) => {
-                toast.error(err);
-            });
-    }, []);
+    const { impostos } = useGlobalContext();
 
     // Filtrar impostos do tipo 'NF'
-    const impostoNotaFiscal = imposto.filter(imposto => imposto.tipoImposto === 'NF');
-    const impostoSalario = imposto.filter(imposto => imposto.tipoImposto === 'Salario');
-    const impostoTodos = imposto.filter(imposto => imposto.tipoImposto === 'Todos');
+    const impostoNotaFiscal = impostos.filter(imposto => imposto.tipoImposto === 'NF');
+    const impostoSalario = impostos.filter(imposto => imposto.tipoImposto === 'Salario');
+    const impostoTodos = impostos.filter(imposto => imposto.tipoImposto === 'Todos');
 
     return (
         <>
             <div className='flex flex-col justify-start h-full w-full '>
                 <h1 className='font-semibold w-full h-auto flex justify-center items-center text-3xl mb-5'>Impostos</h1>
 
-                <table class="table-auto rounded-[10px] bg-gray-200">
+                <table className="table-auto rounded-[10px] bg-gray-200">
                     <thead className='border-b-2 border-gray-500'>
                         <tr >
                             <th>Tipo</th>
@@ -813,7 +787,7 @@ export const MostrarImposto = () => {
                     </thead>
                     <tbody>
                         {impostoNotaFiscal.map(imposto => (
-                            <tr>
+                            <tr key={imposto.id}>
                                 <Td><H2>Notas Fiscais</H2></Td>
                                 <Td><H2>{imposto.siglaImposto}</H2></Td>
                                 <Td><H2>{imposto.porcentagemImposto * 100}%</H2></Td>
@@ -822,7 +796,7 @@ export const MostrarImposto = () => {
                         ))}
 
                         {impostoSalario.map(imposto => (
-                            <tr>
+                            <tr key={imposto.id}>
                                 <Td><H2>Salário</H2></Td>
                                 <Td><H2>{imposto.siglaImposto}</H2></Td>
                                 <Td><H2>{imposto.porcentagemImposto * 100}%</H2></Td>
@@ -830,7 +804,7 @@ export const MostrarImposto = () => {
                             </tr>
                         ))}
                         {impostoTodos.map(imposto => (
-                            <tr>
+                            <tr key={imposto.id}>
                                 <Td><H2>Todos</H2></Td>
                                 <Td><H2>{imposto.siglaImposto}</H2></Td>
                                 <Td><H2>{imposto.porcentagemImposto * 100}%</H2></Td>
@@ -846,7 +820,7 @@ export const MostrarImposto = () => {
 }
 
 export const TabelaAddFuncionario = () => {
-    const [empresas, setEmpresas] = useState([]);
+    const { empresa } = useGlobalContext();
 
     const [data, setData] = useState({
         nameFucionario: '',
@@ -963,16 +937,6 @@ export const TabelaAddFuncionario = () => {
             });
     }
 
-    useEffect(() => {
-        axios.get('http://localhost:3030/empresa')
-            .then((response) => {
-                setEmpresas(response.data.data);
-            }).catch((err) => {
-                console.error(err);
-            });
-    }, []);
-
-
     return (
         <>
             <Form onSubmit={sendFuncionario} >
@@ -1011,7 +975,7 @@ export const TabelaAddFuncionario = () => {
 
                         <Input
                             type="text"
-                            maxlength="14"
+                            maxLength="14"
                             name="cpfFucionario"
                             onChange={valorInput}
                             value={data.cpfFucionario}
@@ -1020,7 +984,7 @@ export const TabelaAddFuncionario = () => {
 
                         <Input
                             type="text"
-                            maxlength="12"
+                            maxLength="12"
                             name="rgFucionario"
                             onChange={valorInput}
                             value={data.rgFucionario}
@@ -1053,7 +1017,7 @@ export const TabelaAddFuncionario = () => {
                         />
 
                         <Input
-                            maxlength="14"
+                            maxLength="14"
                             type="text"
                             name="cpfConjugueFucionario"
                             onChange={valorInput}
@@ -1067,7 +1031,7 @@ export const TabelaAddFuncionario = () => {
                         <H1 className='col-span-4'>Pai*</H1>
 
                         <Input
-                            maxlength="9"
+                            maxLength="9"
                             type="text"
                             name="paiFucionario"
                             onChange={valorInput}
@@ -1078,7 +1042,7 @@ export const TabelaAddFuncionario = () => {
                         <H1 className='col-span-4'>Mãe*</H1>
 
                         <Input
-                            maxlength="9"
+                            maxLength="9"
                             type="text"
                             name="maeFucionario"
                             onChange={valorInput}
@@ -1153,7 +1117,7 @@ export const TabelaAddFuncionario = () => {
                         <H1 className='col-span-4'>CTPS*</H1>
 
                         <Input
-                            maxlength="14"
+                            maxLength="14"
                             type="text"
                             name="ctpsFucionario"
                             onChange={valorInput}
@@ -1165,7 +1129,7 @@ export const TabelaAddFuncionario = () => {
                         <H1 className='col-span-2'>Data Admissão*</H1>
 
                         <Input
-                            maxlength="14"
+                            maxLength="14"
                             type="text"
                             name="titEleitorFucionario"
                             onChange={valorInput}
@@ -1185,7 +1149,7 @@ export const TabelaAddFuncionario = () => {
                         <H1 className='col-span-2'>Salário*</H1>
 
                         <Input
-                            maxlength="14"
+                            maxLength="14"
                             type="text"
                             name="pisFucionario"
                             onChange={valorInput}
@@ -1242,11 +1206,8 @@ export const TabelaAddFuncionario = () => {
                             value={data.CadastroEmprFuncionario}
                             className="col-span-2 border-2 border-gray-300 rounded-md px-3 py-[0.2em]">
                             <option></option>
-                            {empresas.map(empresa => (
-                                <>
-                                    <option value={empresa.nameEmpresa}>{empresa.nameEmpresa}</option>
-                                </>
-
+                            {empresa.map(empresa => (
+                                <option key={empresa.id} value={empresa.nameEmpresa} >{empresa.nameEmpresa}</option>
                             ))}
                         </select>
 

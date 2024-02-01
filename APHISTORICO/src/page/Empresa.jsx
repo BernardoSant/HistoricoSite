@@ -1,9 +1,9 @@
 import { useState } from "react";
 import { NavBar } from "../components/NavBar"
 import styled from 'styled-components';
-import axios from "axios";
-import { useEffect } from "react";
 import { TabelaAdicionarEmpresa, TabelaAddImposto, TabelaAddNota, MostrarImposto, TabelaAddFuncionario, TabelaAddKinay } from "../components/TabelaEmpresa";
+import { MostruarioNota } from "../components/MostruarioEmpresa";
+import { useGlobalContext } from '../global/Global';
 
 const Nav = styled.nav`
 width: 100%;
@@ -69,7 +69,7 @@ const Button = ({ TipoButton, Titulo, onClick, onSecundario, onPrimario, onFinal
 
         {TipoButton === 2 &&
             <Botao onClick={onClick}
-                className={`${onSecundario ? "text-gray-200 bg-orange-400 mt-1" : "text-black"} ${onFinal ? "text-gray-200 bg-orange-400 mt-1 rounded-b-[20px]" : ""} hover:text-gray-200 `}
+                className={`${onSecundario ? "text-gray-200 bg-orange-400 mt-1" : "text-black"} ${onFinal ? "text-gray-200 bg-orange-400 mt-1 rounded-b-[20px]" : ""} hover:text-gray-200 w-full`}
             >{Titulo}</Botao>
         }
 
@@ -84,23 +84,16 @@ const Button = ({ TipoButton, Titulo, onClick, onSecundario, onPrimario, onFinal
 }
 
 export const Empresa = () => {
-    useEffect(() => {
-        axios.get('http://localhost:3030/empresa')
-            .then((response) => {
-                setEmpresas(response.data.data);
-            }).catch((err) => {
-                console.error(err);
-            });
-    }, []);
-
-    const [empresas, setEmpresas] = useState([]);
+    const {empresa} = useGlobalContext();
     const [empregadorState, setEmpregadorState] = useState({});
+    const [empresaSelecionada, setEmpresaSelecionada] = useState(null);
 
     const handleClickEmpregador = (id) => {
         setEmpregadorState(prevState => ({
             ...prevState,
             [id]: !prevState[id]
         }));
+        setEmpresaSelecionada(id);
     }
 
     const [state, setState] = useState({
@@ -145,16 +138,16 @@ export const Empresa = () => {
                             <Button TipoButton={1} Titulo={"Empresas"} onPrimario={state.empresa} onClick={() => handleClick('empresa')}></Button>
                             {state.empresa &&
                                 <Tabela >
-                                    {empresas.map(empresa => (
-                                        <>
-                                            <Button key={empresa.id} TipoButton={2} Titulo={empresa.siglaEmpresa} onSecundario={empregadorState[empresa.id]} onClick={() => handleClickEmpregador(empresa.id)} ></Button>
+                                    {empresa.map(empresa => (
+                                        <div key={empresa.id} >
+                                            <Button  TipoButton={2} Titulo={empresa.siglaEmpresa} onSecundario={empregadorState[empresa.id]} onClick={() => handleClickEmpregador(empresa.id)} ></Button>
                                             {empregadorState[empresa.id] &&
                                                 <TabelaSecund >
                                                     <Button TipoButton={3} Titulo={"Serviços"}></Button>
                                                     <Button TipoButton={3} Titulo={"Notas Fiscais"}></Button>
                                                     <Button TipoButton={3} Titulo={"Funcionario Cadastrado"}></Button>
                                                 </TabelaSecund>}
-                                        </>
+                                        </div>
                                     ))}
                                     <Button TipoButton={2} Titulo={"Adicionar NF"} onSecundario={state.addNotaF} onClick={() => handleClick('addNotaF')}></Button>
 
@@ -200,7 +193,8 @@ export const Empresa = () => {
 
                     </Div>
                     <Div className="shadow-md shadow-slate-600 flex flex-col justify-center items-center">
-
+                        <MostruarioNota 
+                        empresaId={empresaSelecionada}/>
                         {state.addKinay &&
                             <TabelaAddKinay />
                         }
