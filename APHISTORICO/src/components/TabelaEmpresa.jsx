@@ -266,76 +266,94 @@ export const TabelaAdicionarEmpresa = () => {
 }
 
 export const TabelaAddNota = () => {
-    const [empresas, setEmpresas] = useState([]);
 
     const [data, setData] = useState({
-        nameFucionario: '',
-        generoFucionario: '',
-        cpfFucionario: '',
-        rgFucionario: '',
-        estadoCivilFucionario: '',
-        conjugueFucionario: '',
-        cpfConjugueFucionario: '',
-        paiFucionario: '',
-        maeFucionario: '',
-        ruaFucionario: '',
-        numFucionario: '',
-        municipioFucionario: '',
-        estadoFucionario: '',
-        bairroFucionario: '',
-        complFucionario: '',
-        ctpsFucionario: '',
-        titEleitorFucionario: '',
-        dataAdmicaoFucionario: '',
-        pisFucionario: '',
-        salarioFucionario: '',
-        funcaoFuncionario: '',
-        horasTFucionario: '',
-        CadastroEmprFuncionario: ''
+        numeroPedidoNF: '',
+        nomeEmpresaNF: '',
+        cnpjEmpresaNF: '',
+        retidoNF: '',
+        numeroKinayNF: '',
+        KinayNF: '',
+        porcentagemKinayNF: '',
+        descricaoServNF: '',
+        ImpostoNF: '',
+        valorNF: '',
+        valorImpostoNF: '',
+        valorReceberNF: '',
+        valorRecebidoNF: null,
+        situacaoNF: '',
+        prazoPagamentoNF: '',
+        observacaoNF: ''
     });
 
-    // Receber os dados dos campos do formulário
-    const valorInput = e => {
-        let valor = e.target.value;
-        if (e.target.name === "cpfFucionario") {
-            valor = valor.replace(/\D/g, "");
-            valor = valor.replace(/(\d{3})(\d)/, "$1.$2");
-            valor = valor.replace(/(\d{3})(\d)/, "$1.$2");
-            valor = valor.replace(/(\d{3})(\d{1,2})$/, "$1-$2");
-        } else if (e.target.name === "cpfConjugueFucionario") {
-            valor = valor.replace(/\D/g, "");
-            valor = valor.replace(/(\d{3})(\d)/, "$1.$2");
-            valor = valor.replace(/(\d{3})(\d)/, "$1.$2");
-            valor = valor.replace(/(\d{3})(\d{1,2})$/, "$1-$2");
-        } else if (e.target.name === "rgFucionario") {
-            valor = valor.replace(/\D/g, "");
-            valor = valor.replace(/(\d{2})(\d)/, "$1.$2");
-            valor = valor.replace(/(\d{3})(\d)/, "$1.$2");
-            valor = valor.replace(/(\d{3})(\d{1,2})$/, "$1-$2");
-        } else if (e.target.name === "ctpsFucionario") {
-            valor = valor.replace(/\D/g, "");
-            valor = valor.replace(/(\d{3})(\d)/, "$1.$2");
-            valor = valor.replace(/(\d{3})(\d)/, "$1.$2");
-            valor = valor.replace(/(\d{3})(\d{1,2})$/, "$1-$2");
-        } else if (e.target.name === "pisFucionario") {
-            valor = valor.replace(/\D/g, "");
-            valor = valor.replace(/(\d{3})(\d)/, "$1.$2");
-            valor = valor.replace(/(\d{5})(\d)/, "$1.$2");
-            valor = valor.replace(/(\d{2})(\d{1,2})$/, "$1-$2");
-        } else if (e.target.name === "titEleitorFucionario") {
-            valor = valor.replace(/\D/g, "");
-            valor = valor.replace(/(\d{3})(\d)/, "$1.$2");
-            valor = valor.replace(/(\d{3})(\d)/, "$1.$2");
-            valor = valor.replace(/(\d{3})(\d{1,2})$/, "$1-$2");
-        } else if (e.target.name === "salarioFucionario") {
-            valor = valor.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+    const calcularImposto = () => {
+        const CNAE = parseFloat(data.porcentagemKinayNF.replace('%', '')) / 100;
+        const Imposto = parseFloat(data.ImpostoNF.replace('%', '')) / 100;
+        const valorImpostocalc = CNAE + Imposto * data.valorNF;
+        const valoReceber = data.valorNF - valorImpostocalc;
+    
+        setData({ ...data, valorImpostoNF: valorImpostocalc, valorReceberNF: valoReceber });
+    };
+    
+    const valorInput = (event) => {
+        const { name, value } = event.target;
+    
+        if (name === "nomeEmpresaNF") {
+            const parts = value.split(' - ');
+            const NomeEmpresa = parts[0];
+            const CNPJEmpresa = parts[1];
+    
+            setData({ ...data, nomeEmpresaNF: NomeEmpresa, cnpjEmpresaNF: CNPJEmpresa });
+        } else if (name === "KinayNF") {
+            const parts = value.split(' - ');
+            const numeroKinay = parts[0];
+            const descricaoKinay = parts[1];
+            const porcentagemKinay = parts[2];
+    
+            setData({ ...data, numeroKinayNF: numeroKinay, KinayNF: descricaoKinay, porcentagemKinayNF: porcentagemKinay });
+        } else if (name === "ImpostoNF") {
+            const parts = value.split(' - ');
+            const porcentagemImposto = parts[1];
+    
+            setData({ ...data, ImpostoNF: porcentagemImposto });
+        } else {
+            setData({ ...data, [name]: value });
         }
-        setData({ ...data, [e.target.name]: valor });
     };
 
+    
 
+    const [kinays, setKinay] = useState([]);
+    useEffect(() => {
+        axios.get('http://localhost:3030/kinay')
+            .then((response) => {
+                setKinay(response.data.data);
+            }).catch((err) => {
+                console.error(err);
+            });
+    }, []);
 
-    const sendFuncionario = async (e) => {
+    const [impostos, setImposto] = useState([]);
+    useEffect(() => {
+        axios.get('http://localhost:3030/impostos')
+            .then((response) => {
+                setImposto(response.data.data);
+            }).catch((err) => {
+                console.error(err);
+            });
+    }, []);
+
+    const [empresa, setEmpresa] = useState([]);
+    useEffect(() => {
+        axios.get('http://localhost:3030/empresa')
+            .then((response) => {
+                setEmpresa(response.data.data);
+            }).catch((err) => {
+                console.error(err);
+            });
+    }, []);
+
+    const sendNF = async (e) => {
 
         e.preventDefault();
 
@@ -345,142 +363,243 @@ export const TabelaAddNota = () => {
             }
         };
 
-        if (data.nameFucionario === '' && data.cpfFucionario === '' && data.rgFucionario === '') {
-            toast.error('Por favor, preencha todos os campos obrigatórios.');
-            return;
-        }
-
-        axios.post('http://localhost:3030/Funcionario', data, headers)
+        axios.post('http://localhost:3030/nota', data, headers)
             .then((response) => {
                 toast.success(response.data.message);
+                console.log(data)
                 setData({
-                    nameFucionario: '',
-                    generoFucionario: '',
-                    cpfFucionario: '',
-                    rgFucionario: '',
-                    estadoCivilFucionario: '',
-                    conjugueFucionario: '',
-                    cpfConjugueFucionario: '',
-                    paiFucionario: '',
-                    maeFucionario: '',
-                    ruaFucionario: '',
-                    numFucionario: '',
-                    municipioFucionario: '',
-                    estadoFucionario: '',
-                    bairroFucionario: '',
-                    complFucionario: '',
-                    ctpsFucionario: '',
-                    titEleitorFucionario: '',
-                    dataAdmicaoFucionario: '',
-                    pisFucionario: '',
-                    salarioFucionario: '',
-                    funcaoFuncionario: '',
-                    horasTFucionario: '',
-                    CadastroEmprFuncionario: ''
+                    numeroPedidoNF: '',
+                    nomeEmpresaNF: '',
+                    cnpjEmpresaNF: '',
+                    retidoNF: '',
+                    numeroKinayNF: '',
+                    KinayNF: '',
+                    porcentagemKinayNF: '',
+                    descricaoServNF: '',
+                    ImpostoNF: '',
+                    valorNF: '',
+                    valorImpostoNF: '',
+                    valorReceberNF: '',
+                    valorRecebidoNF: null,
+                    situacaoNF: '',
+                    prazoPagamentoNF: '',
+                    observacaoNF: ''
                 });
             }).catch((err) => {
                 toast.info(err.response.data.message);
             });
     }
 
-    useEffect(() => {
-        axios.get('http://localhost:3030/empresa')
-            .then((response) => {
-                setEmpresas(response.data.data);
-            }).catch((err) => {
-                console.error(err);
-            });
-    }, []);
-
-
     return (
         <>
-            <Form onSubmit={sendFuncionario} >
+            <Form onSubmit={sendNF} >
                 <h1 className='font-semibold w-full flex justify-center items-center text-3xl'>Adcionar Funcionario</h1>
 
                 <nav className='flex flex-col max-w-[40em] justify-center mt-[2em]' >
                     <div className=' grid grid-cols-4 gap-x-2'>
-                        <H1 className='col-span-3'>Numero Pedido*</H1>
-                        <H1 className='col-span-1'>cnpj empresa map*</H1>
-                        <H1 className='col-span-1'>Nome da Empresa*</H1>
-                        <H1 className='col-span-1'>Valor sem imposto*</H1>
-                        <H1 className='col-span-1'>Descrição do Serviço*</H1>
-                        <H1 className='col-span-1'>Local Retido*</H1>
-                        <H1 className='col-span-1'>Prazo de pagamento*</H1>
-                        <H1 className='col-span-1'>Situação*
-                            preciso criar atividade com o numero da  key - descrição de atividade e porcentagem de issqn 2% ou 4 %</H1>
+                        <H1 className='col-span-1'>Numero Pedido*</H1>
+                        <p className='col-span-3'></p>
+                        <Input
+                            type="number"
+                            name="numeroPedidoNF"
+                            onChange={valorInput}
+                            value={data.numeroPedidoNF}
+                            className="col-span-1 "
+                        />
+
+                        <p className='col-span-2'></p>
+
+                        <H1 className='col-span-2'>Nome da Empresa*</H1>
+                        <H1 className='col-span-2'>CNPJ*</H1>
+
+                        <label className='col-span-2'>
+                            <Input
+                                type='text'
+                                list='nameE'
+                                name="nomeEmpresaNF"
+                                onChange={valorInput}
+                                value={data.nomeEmpresaNF}
+                            />
+
+                            <datalist id='nameE'>
+                                {empresa.map(empresa => (
+                                    <option value={`${empresa.nameEmpresa} - ${empresa.cnpjEmpresa}`}></option>
+                                ))}
+                            </datalist>
+                        </label>
 
                         <Input
                             type="text"
-                            name="nameFucionario"
+                            maxlength="18"
+                            name="cnpjEmpresaNF"
                             onChange={valorInput}
-                            value={data.nameFucionario}
-                            className="col-span-3 "
+                            value={data.cnpjEmpresaNF}
+                            className="col-span-2"
                         />
 
-                        <select
-                            id="generoFucionario"
-                            name="generoFucionario"
-                            onChange={valorInput}
-                            value={data.generoFucionario}
-                            className="col-span-1 border-2 border-gray-300 rounded-md px-2 ">
-                            <option></option>
-                            <option value="M">Masculino</option>
-                            <option value="F">Feminino</option>
-                        </select>
+                        <H1 className='col-span-4'>Local Retido*</H1>
+
+
+                        <label className='col-span-1'>
+                            <Input
+                                type="text"
+                                list='Retido'
+                                name="retidoNF"
+                                onChange={valorInput}
+                                value={data.retidoNF}
+                            />
+                            <datalist id='Retido'>
+                                <option value="Retida em Outro Munic." ></option>
+                                <option value="Tributada" ></option>
+                            </datalist>
+                        </label>
+
+                        <p className='col-span-3'></p>
+
+                        <H1 className='col-span-1'>Numero(CNAE)</H1>
+                        <H1 className='col-span-3'>Atividade (CNAE)</H1>
 
 
                         <Input
-                            type="text"
-                            maxlength="14"
-                            name="cpfFucionario"
+                            type="number"
+                            name="numeroKinayNF"
                             onChange={valorInput}
-                            value={data.cpfFucionario}
-                            className="col-span-1"
+                            value={data.numeroKinayNF}
+                        />
+
+
+                        <label className='col-span-3 flex flex-row'>
+                            <Input
+                                type="text"
+                                list='CNAE'
+                                name="KinayNF"
+                                onChange={valorInput}
+                                value={data.KinayNF}
+                            />
+                            <datalist id='CNAE'>
+                                {kinays.map(kinay => (
+                                    <option value={`${kinay.numeroKinay} - ${kinay.descricaoKinay} - ${kinay.porcentagemKinay * 100}%`}></option>
+                                ))}
+                            </datalist>
+                        </label>
+
+                        <H1 className='col-span-1'>Porcentagem(CNAE)</H1>
+                        <H1 className='col-span-3'>Imposto</H1>
+
+                        <Input
+                            type='text'
+                            name="porcentagemKinayNF"
+                            onChange={valorInput}
+                            value={data.porcentagemKinayNF}
+                        />
+
+                        <label className='col-span-1 flex flex-row'>
+                            <Input
+                                type="text"
+                                list='IMPST'
+                                name="ImpostoNF"
+                                onChange={valorInput}
+                                value={data.ImpostoNF}
+                            />
+
+                            <datalist id='IMPST'>
+                                {impostos.map(imposto => (
+                                    <option value={`${imposto.siglaImposto} - ${imposto.porcentagemImposto * 100}%`}></option>
+                                ))}
+                            </datalist>
+                        </label>
+                        <p className='col-span-2'></p>
+
+                        <H1 className='col-span-1'>Valor Total*</H1>
+                        <H1 className='col-span-1'>Valor Imposto</H1>
+                        <H1 className='col-span-2'>Valor á Receber</H1>
+
+                        <Input
+                            type='text'
+                            name="valorNF"
+                            onChange={valorInput}
+                            onBlur={calcularImposto}
+                            value={data.valorNF}
                         />
 
                         <Input
-                            type="text"
-                            maxlength="12"
-                            name="rgFucionario"
+                            maxlength="6"
+                            type='text'
+                            name="valorImpostoNF"
                             onChange={valorInput}
-                            value={data.rgFucionario}
-                            className="col-span-1"
+                            value={data.valorImpostoNF}
                         />
 
                         <Input
-                            type="text"
-                            maxlength="14"
-                            name="cpfFucionario"
+                            maxlength="6"
+                            type='text'
+                            name="valorReceberNF"
                             onChange={valorInput}
-                            value={data.cpfFucionario}
-                            className="col-span-1"
+                            value={data.valorReceberNF}
                         />
 
-                        <Input
+                        <H1 className='col-span-4'>Descrição do Serviço</H1>
+                        <textarea
                             type="text"
-                            maxlength="12"
-                            name="rgFucionario"
+                            name="descricaoServNF"
                             onChange={valorInput}
-                            value={data.rgFucionario}
-                            className="col-span-1"
-                        />
+                            value={data.descricaoServNF}
+                            rows="3"
+                            className='col-span-4 border-2 border-gray-300 rounded-md px-2'>
 
-                        <select
-                            id="estadoCivilFucionario"
-                            name="estadoCivilFucionario"
+                        </textarea>
+
+
+                        <H1 className='col-span-4'>Situação</H1>
+
+                        <label className='col-span-1'>
+                            <Input
+                                type="text"
+                                list='Situa'
+                                name="situacaoNF"
+                                onChange={valorInput}
+                                value={data.situacaoNF}
+                            />
+                            <datalist id='Situa'>
+                                <option value="Em Análise" ></option>
+                                <option value="Recebida" ></option>
+                            </datalist>
+                        </label>
+
+                        <p className='col-span-2'></p>
+
+                        <H1 className='col-span-4'>Prazo de pagamento*</H1>
+
+                        <label className='col-span-2'>
+                            <Input
+                                type="text"
+                                list='PRAPAG'
+                                name="prazoPagamentoNF"
+                                onChange={valorInput}
+                                value={data.prazoPagamentoNF}
+                            />
+                            <datalist id='PRAPAG'>
+                                <option value="90 Dias" ></option>
+                                <option value="45 Dias" ></option>
+                                <option value="15 Dias" ></option>
+                                <option value="7 Dias" ></option>
+                            </datalist>
+                        </label>
+                        <H1 className='col-span-4'>Observação</H1>
+                        <textarea
+                            type="text"
+                            name="observacaoNF"
                             onChange={valorInput}
-                            value={data.estadoCivilFucionario}
-                            className="border-2 border-gray-300 rounded-md px-2 ">
-                            <option></option>
-                            <option value="Casado">Casado</option>
-                            <option value="Solteiro">Solteiro</option>
-                        </select>
+                            value={data.observacaoNF}
+                            rows="3"
+                            className='col-span-4 border-2 border-gray-300 rounded-md px-2'>
+
+                        </textarea>
                     </div>
 
                     <button type='submit' className='w-full mt-4 bg-orange-400 py-2 px-7 rounded-lg border-2 border-orange-500 font-semibold hover:text-white hover:scale-95 duration-500 mb-3'>Salvar</button>
                 </nav>
-            </Form>
+            </Form >
         </>
     )
 }
@@ -628,7 +747,6 @@ export const TabelaAddKinay = () => {
                         <H1 className='col-span-1'>Número</H1>
                         <H1 className='col-span-4'>Descrição</H1>
                         <H1 className='col-span-1'>Porcentagem</H1>
-
 
                         <Input
                             type="number"

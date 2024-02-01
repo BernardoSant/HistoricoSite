@@ -29,6 +29,9 @@ app.use("/funcionario", funcionario)
 const kinay = require("./controllers/kinay");
 app.use("/kinay", kinay)
 
+const nota = require("./controllers/nota");
+app.use("/nota", nota)
+
 app.listen(3030, () =>{
     console.log(" Servidor iniciado na porta 3030: http://localhost:3030")
 });
