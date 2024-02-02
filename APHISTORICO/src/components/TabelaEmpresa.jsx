@@ -90,7 +90,7 @@ export const TabelaAdicionarEmpresa = () => {
             }
         };
 
-        if (data.cepEmpresa === '' && data.cnpjEmpresa === '' && data.cadastroEmpresa === '' && data.nameEmpresa === '') {
+        if (data.cepEmpresa === '' || data.cnpjEmpresa === '' || data.cadastroEmpresa === '' || data.nameEmpresa === '') {
             toast.error('Por favor, preencha todos os campos obrigatórios.');
             return;
         }
@@ -281,6 +281,7 @@ export const TabelaAddNota = () => {
         porcentagemKinayNF: '',
         descricaoServNF: '',
         ImpostoNF: '',
+        totalImpostoNF: '',
         valorNF: '',
         valorImpostoNF: '',
         valorReceberNF: '',
@@ -289,14 +290,17 @@ export const TabelaAddNota = () => {
         prazoPagamentoNF: '',
         observacaoNF: ''
     });
-
     const calcularImposto = () => {
         const CNAE = parseFloat(data.porcentagemKinayNF.replace('%', '')) / 100;
         const Imposto = parseFloat(data.ImpostoNF.replace('%', '')) / 100;
-        const valorImpostocalc = CNAE + Imposto * data.valorNF;
+        const valorImpostoCNAE = CNAE * data.valorNF;
+        const valorImposto = Imposto * data.valorNF;
+        const valorImpostocalc = valorImpostoCNAE + valorImposto;
         const valoReceber = data.valorNF - valorImpostocalc;
 
-        setData({ ...data, valorImpostoNF: valorImpostocalc, valorReceberNF: valoReceber });
+        const totalImposto = CNAE * 100 + Imposto * 100
+
+        setData({ ...data, valorImpostoNF: valorImpostocalc, valorReceberNF: valoReceber, totalImpostoNF: totalImposto });
     };
 
     const valorInput = (event) => {
@@ -336,6 +340,11 @@ export const TabelaAddNota = () => {
             }
         };
 
+        if (data.numeroPedidoNF === '' || data.nomeEmpresaNF === '' || data.valorNF === '' ) {
+            toast.error('Por favor, preencha todos os campos obrigatórios.');
+            return;
+        }
+
         axios.post('http://localhost:3030/nota', data, headers)
             .then((response) => {
                 toast.success(response.data.message);
@@ -351,6 +360,7 @@ export const TabelaAddNota = () => {
                     porcentagemKinayNF: '',
                     descricaoServNF: '',
                     ImpostoNF: '',
+                    totalImpostoNF: '',
                     valorNF: '',
                     valorImpostoNF: '',
                     valorReceberNF: '',
@@ -505,7 +515,7 @@ export const TabelaAddNota = () => {
                         />
 
                         <Input
-                            maxLength="6"
+                            maxLength="10"
                             type='text'
                             name="valorImpostoNF"
                             onChange={valorInput}
@@ -513,7 +523,7 @@ export const TabelaAddNota = () => {
                         />
 
                         <Input
-                            maxLength="6"
+                            maxLength="10"
                             type='text'
                             name="valorReceberNF"
                             onChange={valorInput}
@@ -610,7 +620,7 @@ export const TabelaAddImposto = () => {
             }
         };
 
-        if (data.siglaImposto === '' && data.porcentagemImposto === '') {
+        if (data.siglaImposto === '' || data.porcentagemImposto === '') {
             toast.error('Por favor, preencha todos os campos obrigatórios.');
             return;
         }
@@ -700,7 +710,7 @@ export const TabelaAddKinay = () => {
             }
         };
 
-        if (data.numeroKinay === '' && data.porcentagemKinay === '') {
+        if (data.numeroKinay === '' || data.porcentagemKinay === '') {
             toast.error('Por favor, preencha todos os campos obrigatórios.');
             return;
         }
@@ -899,7 +909,7 @@ export const TabelaAddFuncionario = () => {
             }
         };
 
-        if (data.nameFucionario === '' && data.cpfFucionario === '' && data.rgFucionario === '') {
+        if (data.nameFucionario === '' || data.cpfFucionario === '' || data.rgFucionario === '') {
             toast.error('Por favor, preencha todos os campos obrigatórios.');
             return;
         }

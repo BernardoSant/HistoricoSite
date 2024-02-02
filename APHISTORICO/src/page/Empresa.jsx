@@ -193,8 +193,8 @@ export const Empresa = () => {
 
                     </Div>
                     <Div className="shadow-md shadow-slate-600 flex flex-col justify-center items-center">
-                        <MostruarioNota 
-                        empresaId={empresaSelecionada}/>
+                    <MostruarioNota empresaId={empresaSelecionada} />
+
                         {state.addKinay &&
                             <TabelaAddKinay />
                         }

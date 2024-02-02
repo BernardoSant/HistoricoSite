@@ -39,6 +39,9 @@ module.exports = {
       ImpostoNF: {
         type: Sequelize.STRING
       },
+      totalImpostoNF: {
+        type: Sequelize.INTEGER
+      },
       valorNF: {
         type: Sequelize.FLOAT
       },

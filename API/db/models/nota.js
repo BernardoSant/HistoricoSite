@@ -24,6 +24,7 @@ module.exports = (sequelize, DataTypes) => {
     porcentagemKinayNF: DataTypes.STRING,
     descricaoServNF: DataTypes.STRING,
     ImpostoNF: DataTypes.STRING,
+    totalImpostoNF: DataTypes.INTEGER,
     valorNF: DataTypes.FLOAT,
     valorImpostoNF: DataTypes.FLOAT,
     valorReceberNF: DataTypes.FLOAT,
