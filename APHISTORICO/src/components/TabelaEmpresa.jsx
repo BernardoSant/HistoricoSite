@@ -22,11 +22,14 @@ const H1 = styled.h1`
 font-weight: 600;
 margin-top: 5px;
 `;
-const Div = styled.div`
-display: grid;
-grid-column: span 4;
-gap: 12px;
-`;
+const Select = styled.select`
+width: 100%;
+border: 2px solid #d1d5db;
+border-radius: 4px;
+max-width: 40em;
+padding-left: 8px;
+padding: 4px;
+`
 
 const H2 = styled.h2`
 width: auto;
@@ -290,17 +293,18 @@ export const TabelaAddNota = () => {
         prazoPagamentoNF: '',
         observacaoNF: ''
     });
+
     const calcularImposto = () => {
         const CNAE = parseFloat(data.porcentagemKinayNF.replace('%', '')) / 100;
         const Imposto = parseFloat(data.ImpostoNF.replace('%', '')) / 100;
         const valorImpostoCNAE = CNAE * data.valorNF;
         const valorImposto = Imposto * data.valorNF;
         const valorImpostocalc = valorImpostoCNAE + valorImposto;
-        const valoReceber = data.valorNF - valorImpostocalc;
+        const valorReceber = data.valorNF - valorImpostocalc;
 
         const totalImposto = CNAE * 100 + Imposto * 100
 
-        setData({ ...data, valorImpostoNF: valorImpostocalc, valorReceberNF: valoReceber, totalImpostoNF: totalImposto });
+        setData({ ...data, valorImpostoNF: valorImpostocalc, valorReceberNF: valorReceber, totalImpostoNF: totalImposto });
     };
 
     const valorInput = (event) => {
@@ -340,7 +344,7 @@ export const TabelaAddNota = () => {
             }
         };
 
-        if (data.numeroPedidoNF === '' || data.nomeEmpresaNF === '' || data.valorNF === '' ) {
+        if (data.numeroPedidoNF === '' || data.nomeEmpresaNF === '' || data.valorNF === '') {
             toast.error('Por favor, preencha todos os campos obrigatórios.');
             return;
         }
@@ -544,19 +548,15 @@ export const TabelaAddNota = () => {
 
                         <H1 className='col-span-4'>Situação</H1>
 
-                        <label className='col-span-1'>
-                            <Input
-                                type="text"
-                                list='Situa'
-                                name="situacaoNF"
-                                onChange={valorInput}
-                                value={data.situacaoNF}
-                            />
-                            <datalist id='Situa'>
-                                <option value="Em Análise" ></option>
-                                <option value="Recebida" ></option>
-                            </datalist>
-                        </label>
+                        <Select
+                            name="situacaoNF"
+                            onChange={valorInput}
+                            value={data.situacaoNF}>
+                            <option ></option>
+                            <option value="Em Análise">Em Análise</option>
+                            <option value="Recebida">Recebida</option>
+                            <option value="Antecipada">Antecipada</option>
+                        </Select>
 
                         <p className='col-span-2'></p>
 

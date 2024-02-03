@@ -74,7 +74,7 @@ const Button = ({ TipoButton, Titulo, onClick, onSecundario, onPrimario, onFinal
         }
 
         {TipoButton === 3 &&
-            <Botao
+            <Botao  onClick={onClick}
                 className={`hover:text-gray-200`}
             >{Titulo}</Botao>
         }
@@ -84,17 +84,25 @@ const Button = ({ TipoButton, Titulo, onClick, onSecundario, onPrimario, onFinal
 }
 
 export const Empresa = () => {
-    const {empresa} = useGlobalContext();
+    const { empresa } = useGlobalContext();
     const [empregadorState, setEmpregadorState] = useState({});
     const [empresaSelecionada, setEmpresaSelecionada] = useState(null);
 
     const handleClickEmpregador = (id) => {
-        setEmpregadorState(prevState => ({
-            ...prevState,
-            [id]: !prevState[id]
-        }));
-        setEmpresaSelecionada(id);
+        // Primeiro, crie um novo objeto onde todas as chaves são definidas como false
+        const novoEstado = Object.keys(empregadorState).reduce((obj, key) => {
+            obj[key] = false;
+            return obj;
+        }, {});
+    
+        // Em seguida, defina o estado do empregador clicado como true, a menos que já seja true
+        novoEstado[id] = !empregadorState[id];
+    
+        // Finalmente, atualize o estado
+        setEmpregadorState(novoEstado);
+        setEmpresaSelecionada(empregadorState[id] ? id : null);
     }
+    
 
     const [state, setState] = useState({
         empresa: false,
@@ -110,7 +118,10 @@ export const Empresa = () => {
         addNotaF: false,
         addImposto: false,
         addKinay: false,
-        verImposto: false
+        verImposto: false,
+
+        //Botões Terciarios
+        verNota: false
     });
 
 
@@ -118,16 +129,18 @@ export const Empresa = () => {
         setState(prevState => ({
             ...prevState,
             [key]: !prevState[key],
+            ...(key !== 'empregadorState' && { empregadorState: false }),
             ...(key !== 'addEmpresa' && { addEmpresa: false }),
             ...(key !== 'addFuncionarios' && { addFuncionarios: false }),
             ...(key !== 'addNotaF' && { addNotaF: false }),
             ...(key !== 'addImposto' && { addImposto: false }),
             ...(key !== 'addKinay' && { addKinay: false }),
             ...(key !== 'verImposto' && { verImposto: false }),
+            ...(key !== 'verNota' && { verNota: false }),
 
         }));
     }
-
+    
     return (
         <>
             <NavBar Tipo={3} />
@@ -140,11 +153,11 @@ export const Empresa = () => {
                                 <Tabela >
                                     {empresa.map(empresa => (
                                         <div key={empresa.id} >
-                                            <Button  TipoButton={2} Titulo={empresa.siglaEmpresa} onSecundario={empregadorState[empresa.id]} onClick={() => handleClickEmpregador(empresa.id)} ></Button>
+                                            <Button TipoButton={2} Titulo={empresa.siglaEmpresa} onSecundario={empregadorState[empresa.id]} onClick={() => handleClickEmpregador(empresa.id)} ></Button>
                                             {empregadorState[empresa.id] &&
                                                 <TabelaSecund >
                                                     <Button TipoButton={3} Titulo={"Serviços"}></Button>
-                                                    <Button TipoButton={3} Titulo={"Notas Fiscais"}></Button>
+                                                    <Button TipoButton={2} Titulo={"Notas Fiscais"} onSecundario={state.verNota} onClick={() => handleClick('verNota')}></Button>
                                                     <Button TipoButton={3} Titulo={"Funcionario Cadastrado"}></Button>
                                                 </TabelaSecund>}
                                         </div>
@@ -159,7 +172,7 @@ export const Empresa = () => {
                             <Button TipoButton={1} Titulo={"Gastos & Ganhos"} onPrimario={state.gasto} onClick={() => handleClick('gasto')} ></Button>
                             {state.gasto &&
                                 <Tabela>
-                                    <Button TipoButton={2} Titulo={"Ver Gastos e Lucros"}></Button>
+                                    <Button TipoButton={2} Titulo={"Ver Gastos e Lucros"} ></Button>
                                     <Button TipoButton={2} Titulo={"Adcionar Gastos"}></Button>
                                 </Tabela>}
 
@@ -193,8 +206,10 @@ export const Empresa = () => {
 
                     </Div>
                     <Div className="shadow-md shadow-slate-600 flex flex-col justify-center items-center">
-                    <MostruarioNota empresaId={empresaSelecionada} />
 
+                        {state.verNota &&
+                            <MostruarioNota empresaId={empresaSelecionada} />
+                        }
                         {state.addKinay &&
                             <TabelaAddKinay />
                         }
