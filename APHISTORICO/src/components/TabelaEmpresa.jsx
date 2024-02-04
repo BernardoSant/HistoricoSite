@@ -271,10 +271,11 @@ export const TabelaAdicionarEmpresa = () => {
 
 export const TabelaAddNota = () => {
 
-    const { empresa, kinays, impostos } = useGlobalContext();
+    const { empresa, kinays, impostos, pedido } = useGlobalContext();
 
     const [data, setData] = useState({
         numeroPedidoNF: '',
+        numeroNotaNF: '',
         idEmpresa: '',
         nomeEmpresaNF: '',
         cnpjEmpresaNF: '',
@@ -317,6 +318,11 @@ export const TabelaAddNota = () => {
             const CNPJEmpresa = parts[2];
 
             setData({ ...data, idEmpresa: idEmpresa, nomeEmpresaNF: NomeEmpresa, cnpjEmpresaNF: CNPJEmpresa });
+        } else if (name === "numeroPedidoNF") {
+            const parts = value.split(' - ');
+            const NumeroPDD = parts[0];
+
+            setData({ ...data, numeroPedidoNF: NumeroPDD });
         } else if (name === "KinayNF") {
             const parts = value.split(' - ');
             const numeroKinay = parts[0];
@@ -329,9 +335,19 @@ export const TabelaAddNota = () => {
             const porcentagemImposto = parts[1];
 
             setData({ ...data, ImpostoNF: porcentagemImposto });
+        } else if (name === "situacaoNF" && value === "Antecipada") {
+
+            const calculorAntercipa = data.valorReceberNF * 0.02;
+            const valorRecebido = data.valorReceberNF - calculorAntercipa
+
+            setData({ ...data, valorRecebidoNF: valorRecebido, situacaoNF: 'Antecipada' });
+        } else if (name === "situacaoNF" && value === "Recebida") {
+
+            setData({ ...data, valorRecebidoNF: data.valorReceberNF, situacaoNF: 'Recebida' });
         } else {
             setData({ ...data, [name]: value });
         }
+
     };
 
     const sendNF = async (e) => {
@@ -355,6 +371,7 @@ export const TabelaAddNota = () => {
                 console.log(data)
                 setData({
                     numeroPedidoNF: '',
+                    numeroNotaNF: '',
                     idEmpresa: '',
                     nomeEmpresaNF: '',
                     cnpjEmpresaNF: '',
@@ -381,19 +398,36 @@ export const TabelaAddNota = () => {
     return (
         <>
             <Form onSubmit={sendNF} >
-                <h1 className='font-semibold w-full flex justify-center items-center text-3xl'>Adcionar Funcionario</h1>
+                <h1 className='font-semibold w-full flex justify-center items-center text-3xl'>Adcionar Nota Fiscal</h1>
 
                 <nav className='flex flex-col max-w-[40em] justify-center mt-[2em]' >
                     <div className=' grid grid-cols-4 gap-x-2'>
+                        <H1 className='col-span-1'>Numero Nota*</H1>
                         <H1 className='col-span-1'>Numero Pedido*</H1>
-                        <p className='col-span-3'></p>
+                        <p className='col-span-2'></p>
                         <Input
                             type="number"
-                            name="numeroPedidoNF"
+                            name="numeroNotaNF"
                             onChange={valorInput}
-                            value={data.numeroPedidoNF}
+                            value={data.numeroNotaNF}
                             className="col-span-1 "
                         />
+
+                        <label className='col-span-1'>
+                            <Input
+                                type='text'
+                                list='PEDIDO'
+                                name="numeroPedidoNF"
+                                onChange={valorInput}
+                                value={data.numeroPedidoNF}
+                            />
+
+                            <datalist id='PEDIDO'>
+                                {pedido.map(pedido => (
+                                    <option key={pedido.id} value={`${pedido.numeroPDD} - ${pedido.nomePDD}`}></option>
+                                ))}
+                            </datalist>
+                        </label>
 
                         <p className='col-span-2'></p>
 
@@ -1226,6 +1260,132 @@ export const TabelaAddFuncionario = () => {
                     <button type='submit' className='w-full mt-4 bg-orange-400 py-2 px-7 rounded-lg border-2 border-orange-500 font-semibold hover:text-white hover:scale-95 duration-500 mb-3'>Salvar</button>
                 </nav>
             </Form>
+        </>
+    )
+}
+
+export const TabelaAddPedido = () => {
+    const { empresa } = useGlobalContext();
+    const [data, setData] = useState({
+        numeroPDD: '',
+        nomePDD: '',
+        descricaoServPDD: '',
+        empresaPDD: '',
+        situacaoPDD: '',
+        dataPDD: ''
+    });
+
+    const valorInput = e => {
+        let valor = e.target.value;
+        setData({ ...data, [e.target.name]: valor });
+    };
+
+
+    const sendPedido = async (e) => {
+
+        e.preventDefault();
+
+        const headers = {
+            'headers': {
+                'Content-Type': 'application/json'
+            }
+        };
+
+        if (data.numeroPDD === '' || data.situacaoPDD === '') {
+            toast.error('Por favor, preencha todos os campos obrigatórios.');
+            return;
+        }
+
+        const dataParaEnviar = { ...data, porcentagemImposto: data.porcentagemImposto / 100 };
+
+        axios.post('http://localhost:3030/pedido', dataParaEnviar, headers)
+            .then((response) => {
+                toast.success(response.data.message);
+                setData({
+                    numeroPDD: '',
+                    nomePDD: '',
+                    descricaoServPDD: '',
+                    empresaPDD: '',
+                    situacaoPDD: '',
+                    dataPDD: ''
+                });
+            }).catch((err) => {
+                toast.info(err.response.data.message);
+            });
+    }
+
+    return (
+        <>
+            <div className='flex flex-col h-full w-full'>
+                <h1 className='font-semibold w-full h-auto flex justify-center items-center text-3xl'>Adcionar Pedido</h1>
+                <Form onSubmit={sendPedido}>
+                    <div className='grid grid-cols-4 grid-rows-1 items-start gap-x-4 mt-5 '>
+                        <H1 className='col-span-1'>Numero*</H1>
+                        <H1 className='col-span-3'>Nome Brevê</H1>
+
+                        <Input
+                            type="text"
+                            name="numeroPDD"
+                            onChange={valorInput}
+                            value={data.numeroPDD}
+                            className="col-span-1 "
+                        />
+
+                        <Input
+                            type="text"
+                            name="nomePDD"
+                            onChange={valorInput}
+                            value={data.nomePDD}
+                            className="col-span-3 "
+                        />
+                        <H1 className='col-span-1'>Descrição</H1>
+                        <textarea
+                            type="text"
+                            name="descricaoServPDD"
+                            onChange={valorInput}
+                            value={data.descricaoServPDD}
+                            rows="5"
+                            className='col-span-4 border-2 border-gray-300 rounded-md px-2'>
+                        </textarea>
+
+                        <H1 className='col-span-2'>Empresa</H1>
+                        <H1 className='col-span-1'>Situação</H1>
+                        <H1 className='col-span-1'>Data Lançada</H1>
+
+                        <Select
+                            id="empresaPDD"
+                            name="empresaPDD"
+                            onChange={valorInput}
+                            value={data.empresaPDD}
+                            className="col-span-2 border-2 border-gray-300 rounded-[5px] px-2 py-[0.2em]">
+                            <option></option>
+                            {empresa.map((empresa) => (
+                                <option key={empresa.id} value={empresa.nameEmpresa} >{empresa.nameEmpresa}</option>
+                            ))}
+                        </Select>
+
+                        <Select
+                            name="situacaoPDD"
+                            onChange={valorInput}
+                            value={data.situacaoPDD}>
+                            <option ></option>
+                            <option value="Criada">Criada</option>
+                            <option value="Andamento">Em Andamento</option>
+                            <option value="Finalizada">Finalizada</option>
+                        </Select>
+
+                        <Input
+                            type="date"
+                            name="dataPDD"
+                            onChange={valorInput}
+                            value={data.dataPDD}
+                            className="col-span-1"
+                        />
+
+                        <button type='submit' className=' col-span-4 w-full mt-4 bg-orange-400 py-2 px-7 rounded-lg border-2 border-orange-500 font-semibold hover:text-white hover:scale-95 duration-500'>Salvar</button>
+                    </div>
+                </Form>
+            </div>
         </>
     )
 }

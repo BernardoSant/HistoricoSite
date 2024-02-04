@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { NavBar } from "../components/NavBar"
 import styled from 'styled-components';
-import { TabelaAdicionarEmpresa, TabelaAddImposto, TabelaAddNota, MostrarImposto, TabelaAddFuncionario, TabelaAddKinay } from "../components/TabelaEmpresa";
+import { TabelaAdicionarEmpresa, TabelaAddImposto, TabelaAddNota, MostrarImposto, TabelaAddFuncionario, TabelaAddKinay, TabelaAddPedido } from "../components/TabelaEmpresa";
 import { MostruarioNota } from "../components/MostruarioEmpresa";
 import { useGlobalContext } from '../global/Global';
 
@@ -74,7 +74,7 @@ const Button = ({ TipoButton, Titulo, onClick, onSecundario, onPrimario, onFinal
         }
 
         {TipoButton === 3 &&
-            <Botao  onClick={onClick}
+            <Botao onClick={onClick}
                 className={`hover:text-gray-200`}
             >{Titulo}</Botao>
         }
@@ -94,11 +94,11 @@ export const Empresa = () => {
             obj[key] = false;
             return obj;
         }, {});
-    
+
         // Em seguida, defina o estado do empregador clicado como true
         novoEstado[id] = true;
         novoEstado[id] = !empregadorState[id];
-    
+
         // Finalmente, atualize o estado
         setEmpregadorState(novoEstado);
         setEmpresaSelecionada(id);
@@ -116,6 +116,7 @@ export const Empresa = () => {
         addEmpresa: false,
         addFuncionarios: false,
         addNotaF: false,
+        addPedido: false,
         addImposto: false,
         addKinay: false,
         verImposto: false,
@@ -134,13 +135,14 @@ export const Empresa = () => {
             ...(key !== 'addFuncionarios' && { addFuncionarios: false }),
             ...(key !== 'addNotaF' && { addNotaF: false }),
             ...(key !== 'addImposto' && { addImposto: false }),
+            ...(key !== 'addPedido' && { addPedido: false }),
             ...(key !== 'addKinay' && { addKinay: false }),
             ...(key !== 'verImposto' && { verImposto: false }),
             ...(key !== 'verNota' && { verNota: false }),
 
         }));
     }
-    
+
     return (
         <>
             <NavBar Tipo={3} />
@@ -162,9 +164,12 @@ export const Empresa = () => {
                                                 </TabelaSecund>}
                                         </div>
                                     ))}
+                                    <Button TipoButton={2} Titulo={"Adcionar Pedido"} onSecundario={state.addPedido} onClick={() => handleClick('addPedido')}></Button>
+
                                     <Button TipoButton={2} Titulo={"Adicionar NF"} onSecundario={state.addNotaF} onClick={() => handleClick('addNotaF')}></Button>
 
                                     <Button TipoButton={2} Titulo={"Adcionar Empresa"} onFinal={state.addEmpresa} onClick={() => handleClick('addEmpresa')}></Button>
+
 
                                 </Tabela>
                             }
@@ -206,7 +211,9 @@ export const Empresa = () => {
 
                     </Div>
                     <Div className="shadow-md shadow-slate-600 flex flex-col justify-center items-center">
-
+                        {state.addPedido &&
+                            <TabelaAddPedido />
+                        }
                         {state.verNota &&
                             <MostruarioNota empresaId={empresaSelecionada} />
                         }

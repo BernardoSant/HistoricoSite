@@ -15,6 +15,9 @@ module.exports = {
       numeroPedidoNF: {
         type: Sequelize.INTEGER
       },
+      numeroNotaNF: {
+        type: Sequelize.INTEGER
+      },
       nomeEmpresaNF: {
         type: Sequelize.STRING
       },
