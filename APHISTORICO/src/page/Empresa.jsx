@@ -95,14 +95,14 @@ export const Empresa = () => {
             return obj;
         }, {});
     
-        // Em seguida, defina o estado do empregador clicado como true, a menos que já seja true
+        // Em seguida, defina o estado do empregador clicado como true
+        novoEstado[id] = true;
         novoEstado[id] = !empregadorState[id];
     
         // Finalmente, atualize o estado
         setEmpregadorState(novoEstado);
-        setEmpresaSelecionada(empregadorState[id] ? id : null);
+        setEmpresaSelecionada(id);
     }
-    
 
     const [state, setState] = useState({
         empresa: false,
