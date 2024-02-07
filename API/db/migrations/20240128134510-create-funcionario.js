@@ -9,6 +9,9 @@ module.exports = {
         primaryKey: true,
         type: Sequelize.INTEGER
       },
+      statuFucionario: {
+        type: Sequelize.STRING
+      },
       nameFucionario: {
         type: Sequelize.STRING
       },

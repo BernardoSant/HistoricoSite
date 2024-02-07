@@ -3,6 +3,8 @@ import { NavBar } from "../components/NavBar"
 import styled from 'styled-components';
 import { TabelaAdicionarEmpresa, TabelaAddImposto, TabelaAddNota, MostrarImposto, TabelaAddFuncionario, TabelaAddKinay, TabelaAddPedido } from "../components/TabelaEmpresa";
 import { MostruarioNota } from "../components/MostruarioEmpresa";
+import { MostruarioFuncAdmitido } from "../components/Mostruario/FuncionarioAdmitidos";
+import { MostruarioFuncDemitido } from "../components/Mostruario/FuncionarioDemitidos";
 import { useGlobalContext } from '../global/Global';
 
 const Nav = styled.nav`
@@ -122,7 +124,9 @@ export const Empresa = () => {
         verImposto: false,
 
         //Botões Terciarios
-        verNota: false
+        verNota: false,
+        verFunciAdmitido: false,
+        verFunciDemitido: false
     });
 
 
@@ -139,6 +143,8 @@ export const Empresa = () => {
             ...(key !== 'addKinay' && { addKinay: false }),
             ...(key !== 'verImposto' && { verImposto: false }),
             ...(key !== 'verNota' && { verNota: false }),
+            ...(key !== 'verFunciAdmitido' && { verFunciAdmitido: false }),
+            ...(key !== 'verFunciDemitido' && { verFunciDemitido: false }),
 
         }));
     }
@@ -184,8 +190,8 @@ export const Empresa = () => {
                             <Button TipoButton={1} Titulo={"Funcionarios"} onPrimario={state.funcionarios} onClick={() => handleClick('funcionarios')}></Button>
                             {state.funcionarios &&
                                 <Tabela >
-                                    <Button TipoButton={2} Titulo={"Admitidos"}  ></Button>
-                                    <Button TipoButton={2} Titulo={"Demitidos"}  ></Button>
+                                    <Button TipoButton={2} Titulo={"Admitidos"} onSecundario={state.verFunciAdmitido} onClick={() => handleClick('verFunciAdmitido')} ></Button>
+                                    <Button TipoButton={2} Titulo={"Demitidos"} onSecundario={state.verFunciDemitido} onClick={() => handleClick('verFunciDemitido')} ></Button>
                                     <Button TipoButton={2} Titulo={"Adcionar Funcionario"} onFinal={state.addFuncionarios} onClick={() => handleClick('addFuncionarios')} ></Button>
                                 </Tabela>
                             }
@@ -211,15 +217,19 @@ export const Empresa = () => {
 
                     </Div>
                     <Div className="shadow-md shadow-slate-600 flex flex-col justify-center items-center">
+                        
                         {state.addPedido &&
                             <TabelaAddPedido />
                         }
+
                         {state.verNota &&
                             <MostruarioNota empresaId={empresaSelecionada} />
                         }
+
                         {state.addKinay &&
                             <TabelaAddKinay />
                         }
+
                         {state.addEmpresa &&
                             <TabelaAdicionarEmpresa />
                         }
@@ -230,6 +240,12 @@ export const Empresa = () => {
 
                         {state.addFuncionarios &&
                             <TabelaAddFuncionario />
+                        }
+                        {state.verFunciAdmitido &&
+                            <MostruarioFuncAdmitido />
+                        }
+                        {state.verFunciDemitido &&
+                            <MostruarioFuncDemitido/>
                         }
 
                         {state.addImposto &&

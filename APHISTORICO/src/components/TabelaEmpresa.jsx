@@ -867,6 +867,7 @@ export const TabelaAddFuncionario = () => {
     const { empresa } = useGlobalContext();
 
     const [data, setData] = useState({
+        statuFucionario: 'Admitido',
         nameFucionario: '',
         generoFucionario: '',
         cpfFucionario: '',

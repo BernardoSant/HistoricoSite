@@ -14,6 +14,7 @@ module.exports = (sequelize, DataTypes) => {
     }
   }
   Funcionario.init({
+    statuFucionario: DataTypes.STRING,
     nameFucionario: DataTypes.STRING,
     generoFucionario: DataTypes.STRING,
     cpfFucionario: DataTypes.STRING,

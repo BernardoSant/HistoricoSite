@@ -33,5 +33,23 @@ router.get("/", async (req, res) => {
     });
 });
 
+router.put("/:id", async (req, res) => {
+    const { id } = req.params;
+    const data = req.body;
+
+    await db.Funcionario.update(data, {
+        where: { id: id }
+    }).then(() => {
+        return res.json({
+            error: false,
+            message: "Funcionario atualizado com sucesso!"
+        });
+    }).catch(() => {
+        return res.json({
+            error: true,
+            message: "Erro: Não foi possível atualizar o Funcionario!"
+        });
+    });
+});
 
 module.exports = router;

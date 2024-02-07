@@ -26,6 +26,16 @@ const AppContext = ({ children }) => {
       });
   }, []);
 
+  const [funcionario, setFuncionario] = useState([]);
+  useEffect(() => {
+    axios.get('http://localhost:3030/funcionario')
+      .then((response) => {
+        setFuncionario(response.data.data);
+      }).catch((err) => {
+        console.error(err);
+      });
+  }, []);
+
   const [kinays, setKinay] = useState([]);
   useEffect(() => {
     axios.get('http://localhost:3030/kinay')
@@ -61,7 +71,7 @@ const AppContext = ({ children }) => {
 
   return (
     <GlobalContext.Provider
-      value={{empresa, setEmpresa, nota, setNota, kinays, setKinay, impostos, setImpostos, pedido, setPedido }}>
+      value={{empresa, setEmpresa, nota, setNota, kinays, setKinay, impostos, setImpostos, pedido, setPedido, funcionario, setFuncionario }}>
       {children}
     </GlobalContext.Provider>
   );

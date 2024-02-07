@@ -59,8 +59,8 @@ export const MostruarioNota = ({ empresaId }) => {
     const valorTotalNotasAnalise = notasDaEmpresaAnalise.reduce((total, nota) => total + nota.valorReceberNF, 0);
     const valorTotalNotasAntecipadas = notasDaEmpresaAntecipada.reduce((total, nota) => total + nota.valorRecebidoNF, 0);
     const valorTotalNotasRecebidas = notasDaEmpresaRecebida.reduce((total, nota) => total + nota.valorRecebidoNF, 0);
-    
-    const valorTotal = valorTotalNotasAntecipadas + valorTotalNotasRecebidas ;
+
+    const valorTotal = valorTotalNotasAntecipadas + valorTotalNotasRecebidas;
 
     const [notaSelecionada, setNotaSelecionada] = useState(null);
     const [notaSelecionadaCompleta, setNotaSelecionadaCompleta] = useState(null);
@@ -98,7 +98,6 @@ export const MostruarioNota = ({ empresaId }) => {
         }
     }, [notaSelecionadaCompleta]);
 
-
     const updateNota = async (e) => {
         e.preventDefault();
 
@@ -126,19 +125,17 @@ export const MostruarioNota = ({ empresaId }) => {
                     <form onSubmit={updateNota}>
 
                         <div className=' grid grid-cols-4 gap-x-2'>
-                            <H1 className='col-span-1'>Numero Pedido*</H1>
-                            <p className='col-span-3'></p>
+                            <H1 className='col-span-1'>Numero Nota</H1>
+                            <H1 className='col-span-3'>Numero Pedido</H1>
+                            <H2 className='col-span-1'>{String(data.numeroPedidoNF).padStart(8, '0')}</H2>
+                            <H2 className='col-span-3'>{String(data.numeroNotaNF).padStart(8, '0')}</H2>
 
-                            <H2>{String(data.numeroPedidoNF).padStart(8, '0')}</H2>
-
-                            <p className='col-span-2'></p>
-
-                            <H1 className='col-span-2'>Nome da Empresa*</H1>
-                            <H1 className='col-span-2'>CNPJ*</H1>
+                            <H1 className='col-span-2'>Nome da Empresa</H1>
+                            <H1 className='col-span-2'>CNPJ</H1>
                             <H2 className='col-span-2'>{data.nomeEmpresaNF}</H2>
                             <H2 className='col-span-2'>{data.cnpjEmpresaNF}</H2>
 
-                            <H1 className='col-span-4'>Local Retido*</H1>
+                            <H1 className='col-span-4'>Local Retido</H1>
                             <H2 className='col-span-4'>{data.retidoNF}</H2>
 
 
@@ -154,7 +151,7 @@ export const MostruarioNota = ({ empresaId }) => {
                             <H2 className='col-span-3'>{data.ImpostoNF}</H2>
 
 
-                            <H1 className='col-span-1'>Valor Total*</H1>
+                            <H1 className='col-span-1'>Valor Total</H1>
                             <H1 className='col-span-1'>Valor Imposto</H1>
                             <H1 className='col-span-2'>Valor á Receber</H1>
                             <H2 >{Number(data.valorNF).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</H2>
@@ -181,12 +178,12 @@ export const MostruarioNota = ({ empresaId }) => {
                                 name="valorRecebidoNF"
                                 onChange={valorInput}
                                 value={data.valorRecebidoNF}
-                                className="col-span-1 "
+                                className="col-span-1"
                             />
 
                             <p className='col-span-2'></p>
 
-                            <H1 className='col-span-4'>Prazo de pagamento*</H1>
+                            <H1 className='col-span-4'>Prazo de pagamento</H1>
                             <H2 className='col-span-4'>{data.prazoPagamentoNF}</H2>
 
                             <H1 className='col-span-4'>Observação</H1>
@@ -201,19 +198,18 @@ export const MostruarioNota = ({ empresaId }) => {
                         <button onClick={() => setNotaSelecionadaCompleta(null)} className='w-full flex justify-end'><h1 className='bg-red-600 w-auto font-bold p-1 px-3 rounded-full'>Voltar</h1></button>
 
                         <div className=' grid grid-cols-4 gap-x-2'>
-                            <H1 className='col-span-1'>Numero Pedido*</H1>
-                            <p className='col-span-3'></p>
+                            <H1 className='col-span-1'>Numero Nota</H1>
+                            <H1 className='col-span-3'>Numero Pedido</H1>
+                            <H2 className='col-span-1'>{String(data.numeroPedidoNF).padStart(8, '0')}</H2>
+                            <H2 className='col-span-3'>{String(data.numeroNotaNF).padStart(8, '0')}</H2>
 
-                            <H2>{String(data.numeroPedidoNF).padStart(8, '0')}</H2>
 
-                            <p className='col-span-2'></p>
-
-                            <H1 className='col-span-2'>Nome da Empresa*</H1>
-                            <H1 className='col-span-2'>CNPJ*</H1>
+                            <H1 className='col-span-2'>Nome da Empresa</H1>
+                            <H1 className='col-span-2'>CNPJ</H1>
                             <H2 className='col-span-2'>{data.nomeEmpresaNF}</H2>
                             <H2 className='col-span-2'>{data.cnpjEmpresaNF}</H2>
 
-                            <H1 className='col-span-4'>Local Retido*</H1>
+                            <H1 className='col-span-4'>Local Retido</H1>
                             <H2 className='col-span-4'>{data.retidoNF}</H2>
 
 
@@ -229,7 +225,7 @@ export const MostruarioNota = ({ empresaId }) => {
                             <H2 className='col-span-3'>{data.ImpostoNF}</H2>
 
 
-                            <H1 className='col-span-1'>Valor Total*</H1>
+                            <H1 className='col-span-1'>Valor Total</H1>
                             <H1 className='col-span-1'>Valor Imposto</H1>
                             <H1 className='col-span-2'>Valor á Receber</H1>
                             <H2 >{Number(data.valorNF).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</H2>
@@ -244,7 +240,7 @@ export const MostruarioNota = ({ empresaId }) => {
                             <H2 className='col-span-1'>{data.situacaoNF}</H2>
                             <H2 className='col-span-3'>{data.valorRecebidoNF}</H2>
 
-                            <H1 className='col-span-4'>Prazo de pagamento*</H1>
+                            <H1 className='col-span-4'>Prazo de pagamento</H1>
                             <H2 className='col-span-4'>{data.prazoPagamentoNF}</H2>
 
                             <H1 className='col-span-4'>Observação</H1>
@@ -261,7 +257,7 @@ export const MostruarioNota = ({ empresaId }) => {
                                 <table className='w-full bg-orange-500 drop-shadow-2xl rounded-2xl mb-1'>
                                     <thead className='flex justify-between items-center px-4'>
                                         <Th className='text-start text-2xl pt-1'>Notas em Analise</Th>
-                                        <nav  className='bg-orange-600 px-3 rounded-full shadow-inner'>
+                                        <nav className='bg-orange-600 px-3 rounded-full shadow-inner'>
                                             <Th className='text-lg text-end pr-2'>Valor a Receber: </Th>
                                             <Th className='text-lg text-start'>{Number(valorTotalNotasAnalise).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</Th>
                                         </nav>
@@ -308,7 +304,7 @@ export const MostruarioNota = ({ empresaId }) => {
 
                                     <thead className='flex justify-between items-center px-4'>
                                         <Th className='text-start text-2xl pt-1'>Notas Recebidas</Th>
-                                        <nav  className='bg-orange-600 px-3 rounded-full shadow-inner'>
+                                        <nav className='bg-orange-600 px-3 rounded-full shadow-inner'>
                                             <Th className='text-lg text-end pr-2'>Valor Recebido: </Th>
                                             <Th className='text-lg text-start'>{Number(valorTotalNotasRecebidas).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</Th>
                                         </nav>
@@ -356,7 +352,7 @@ export const MostruarioNota = ({ empresaId }) => {
 
                                     <thead className='flex justify-between items-center px-4'>
                                         <Th className='text-start text-2xl pt-1'>Notas Antecipadas</Th>
-                                        <nav  className='bg-orange-600 px-3 rounded-full shadow-inner'>
+                                        <nav className='bg-orange-600 px-3 rounded-full shadow-inner'>
                                             <Th className='text-lg text-end pr-2'>Valor Recebido: </Th>
                                             <Th className='text-lg text-start'>{Number(valorTotalNotasAntecipadas).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</Th>
                                         </nav>
@@ -413,3 +409,4 @@ export const MostruarioNota = ({ empresaId }) => {
         </>
     )
 }
+
