@@ -830,31 +830,48 @@ export const MostrarImposto = () => {
                         </tr>
                     </thead>
                     <tbody>
-                        {impostoNotaFiscal.map(imposto => (
-                            <tr key={imposto.id}>
-                                <Td><H2>Notas Fiscais</H2></Td>
-                                <Td><H2>{imposto.siglaImposto}</H2></Td>
-                                <Td><H2>{imposto.porcentagemImposto * 100}%</H2></Td>
-                                <Td><H2>{imposto.createdAt}</H2></Td>
-                            </tr>
-                        ))}
+                        {impostoNotaFiscal.map(imposto => {
+                            let data = new Date(imposto.createdAt);
+                            let opcoes = { year: 'numeric', month: '2-digit', day: '2-digit' };
+                            let dataFormatada = data.toLocaleDateString('pt-BR', opcoes);
+                            return (
+                                <tr key={imposto.id}>
+                                    <Td><H2>Notas Fiscais</H2></Td>
+                                    <Td><H2>{imposto.siglaImposto}</H2></Td>
+                                    <Td><H2>{imposto.porcentagemImposto * 100}%</H2></Td>
+                                    <Td><H2>{dataFormatada}</H2></Td>
+                                </tr>
+                            )
 
-                        {impostoSalario.map(imposto => (
-                            <tr key={imposto.id}>
-                                <Td><H2>Salário</H2></Td>
-                                <Td><H2>{imposto.siglaImposto}</H2></Td>
-                                <Td><H2>{imposto.porcentagemImposto * 100}%</H2></Td>
-                                <Td><H2>{imposto.createdAt}</H2></Td>
-                            </tr>
-                        ))}
-                        {impostoTodos.map(imposto => (
-                            <tr key={imposto.id}>
-                                <Td><H2>Todos</H2></Td>
-                                <Td><H2>{imposto.siglaImposto}</H2></Td>
-                                <Td><H2>{imposto.porcentagemImposto * 100}%</H2></Td>
-                                <Td><H2>{imposto.createdAt}</H2></Td>
-                            </tr>
-                        ))}
+                        })}
+
+                        {impostoSalario.map(imposto => {
+                            let data = new Date(imposto.createdAt);
+                            let opcoes = { year: 'numeric', month: '2-digit', day: '2-digit' };
+                            let dataFormatada = data.toLocaleDateString('pt-BR', opcoes);
+                            return (
+                                <tr key={imposto.id}>
+                                    <Td><H2>Salário</H2></Td>
+                                    <Td><H2>{imposto.siglaImposto}</H2></Td>
+                                    <Td><H2>{imposto.porcentagemImposto * 100}%</H2></Td>
+                                    <Td><H2>{dataFormatada}</H2></Td>
+                                </tr>
+                            )
+                        })}
+
+                        {impostoTodos.map(imposto => {
+                            let data = new Date(imposto.createdAt);
+                            let opcoes = { year: 'numeric', month: '2-digit', day: '2-digit' };
+                            let dataFormatada = data.toLocaleDateString('pt-BR', opcoes);
+                            return (
+                                <tr key={imposto.id}>
+                                    <Td><H2>Todos</H2></Td>
+                                    <Td><H2>{imposto.siglaImposto}</H2></Td>
+                                    <Td><H2>{imposto.porcentagemImposto * 100}%</H2></Td>
+                                    <Td><H2>{dataFormatada}</H2></Td>
+                                </tr>
+                            )
+                        })}
                     </tbody>
                 </table>
 
@@ -909,21 +926,6 @@ export const TabelaAddFuncionario = () => {
         } else if (e.target.name === "rgFucionario") {
             valor = valor.replace(/\D/g, "");
             valor = valor.replace(/(\d{2})(\d)/, "$1.$2");
-            valor = valor.replace(/(\d{3})(\d)/, "$1.$2");
-            valor = valor.replace(/(\d{3})(\d{1,2})$/, "$1-$2");
-        } else if (e.target.name === "ctpsFucionario") {
-            valor = valor.replace(/\D/g, "");
-            valor = valor.replace(/(\d{3})(\d)/, "$1.$2");
-            valor = valor.replace(/(\d{3})(\d)/, "$1.$2");
-            valor = valor.replace(/(\d{3})(\d{1,2})$/, "$1-$2");
-        } else if (e.target.name === "pisFucionario") {
-            valor = valor.replace(/\D/g, "");
-            valor = valor.replace(/(\d{3})(\d)/, "$1.$2");
-            valor = valor.replace(/(\d{5})(\d)/, "$1.$2");
-            valor = valor.replace(/(\d{2})(\d{1,2})$/, "$1-$2");
-        } else if (e.target.name === "titEleitorFucionario") {
-            valor = valor.replace(/\D/g, "");
-            valor = valor.replace(/(\d{3})(\d)/, "$1.$2");
             valor = valor.replace(/(\d{3})(\d)/, "$1.$2");
             valor = valor.replace(/(\d{3})(\d{1,2})$/, "$1-$2");
         } else if (e.target.name === "salarioFucionario") {
@@ -1076,7 +1078,6 @@ export const TabelaAddFuncionario = () => {
                         <H1 className='col-span-4'>Pai*</H1>
 
                         <Input
-                            maxLength="9"
                             type="text"
                             name="paiFucionario"
                             onChange={valorInput}
@@ -1087,7 +1088,6 @@ export const TabelaAddFuncionario = () => {
                         <H1 className='col-span-4'>Mãe*</H1>
 
                         <Input
-                            maxLength="9"
                             type="text"
                             name="maeFucionario"
                             onChange={valorInput}
@@ -1158,8 +1158,10 @@ export const TabelaAddFuncionario = () => {
                     </div>
 
                     {/* Cadastro de Documentos*/}
-                    <div className='grid grid-cols-4 gap-x-2'>
-                        <H1 className='col-span-4'>CTPS*</H1>
+                    <div className='grid grid-cols-6 gap-x-2'>
+                        <H1 className='col-span-2'>CTPS*</H1>
+                        <H1 className='col-span-2'>TIT.Eleitor*</H1>
+                        <H1 className='col-span-2'>PIS*</H1>
 
                         <Input
                             maxLength="14"
@@ -1167,11 +1169,8 @@ export const TabelaAddFuncionario = () => {
                             name="ctpsFucionario"
                             onChange={valorInput}
                             value={data.ctpsFucionario}
-                            className="col-span-4 "
+                            className="col-span-2"
                         />
-
-                        <H1 className='col-span-2'>TIT.Eleitor*</H1>
-                        <H1 className='col-span-2'>Data Admissão*</H1>
 
                         <Input
                             maxLength="14"
@@ -1183,22 +1182,23 @@ export const TabelaAddFuncionario = () => {
                         />
 
                         <Input
-                            type="date"
-                            name="dataAdmicaoFucionario"
-                            onChange={valorInput}
-                            value={data.dataAdmicaoFucionario}
-                            className="col-span-2 "
-                        />
-
-                        <H1 className='col-span-2'>PIS*</H1>
-                        <H1 className='col-span-2'>Salário*</H1>
-
-                        <Input
                             maxLength="14"
                             type="text"
                             name="pisFucionario"
                             onChange={valorInput}
                             value={data.pisFucionario}
+                            className="col-span-2 "
+                        />
+
+
+                        <H1 className='col-span-2'>Data Admissão*</H1>
+                        <H1 className='col-span-3'>Salário*</H1>
+
+                        <Input
+                            type="date"
+                            name="dataAdmicaoFucionario"
+                            onChange={valorInput}
+                            value={data.dataAdmicaoFucionario}
                             className="col-span-2 "
                         />
 
@@ -1269,6 +1269,7 @@ export const TabelaAddPedido = () => {
     const { empresa } = useGlobalContext();
     const [data, setData] = useState({
         numeroPDD: '',
+        valorPDD: '',
         nomePDD: '',
         descricaoServPDD: '',
         empresaPDD: '',
@@ -1297,13 +1298,12 @@ export const TabelaAddPedido = () => {
             return;
         }
 
-        const dataParaEnviar = { ...data, porcentagemImposto: data.porcentagemImposto / 100 };
-
-        axios.post('http://localhost:3030/pedido', dataParaEnviar, headers)
+        axios.post('http://localhost:3030/pedido', data, headers)
             .then((response) => {
                 toast.success(response.data.message);
                 setData({
                     numeroPDD: '',
+                    valorPDD: '',
                     nomePDD: '',
                     descricaoServPDD: '',
                     empresaPDD: '',
@@ -1319,10 +1319,11 @@ export const TabelaAddPedido = () => {
         <>
             <div className='flex flex-col h-full w-full'>
                 <h1 className='font-semibold w-full h-auto flex justify-center items-center text-3xl'>Adcionar Pedido</h1>
-                <Form onSubmit={sendPedido}>
+                <form onSubmit={sendPedido}>
                     <div className='grid grid-cols-4 grid-rows-1 items-start gap-x-4 mt-5 '>
                         <H1 className='col-span-1'>Numero*</H1>
-                        <H1 className='col-span-3'>Nome Brevê</H1>
+                        <H1 className='col-span-1'>Valor Total</H1>
+                        <H1 className='col-span-2'>Nome Brevê</H1>
 
                         <Input
                             type="text"
@@ -1334,10 +1335,18 @@ export const TabelaAddPedido = () => {
 
                         <Input
                             type="text"
+                            name="valorPDD"
+                            onChange={valorInput}
+                            value={data.valorPDD}
+                            className="col-span-1 "
+                        />
+
+                        <Input
+                            type="text"
                             name="nomePDD"
                             onChange={valorInput}
                             value={data.nomePDD}
-                            className="col-span-3 "
+                            className="col-span-2"
                         />
                         <H1 className='col-span-1'>Descrição</H1>
                         <textarea
@@ -1385,7 +1394,7 @@ export const TabelaAddPedido = () => {
 
                         <button type='submit' className=' col-span-4 w-full mt-4 bg-orange-400 py-2 px-7 rounded-lg border-2 border-orange-500 font-semibold hover:text-white hover:scale-95 duration-500'>Salvar</button>
                     </div>
-                </Form>
+                </form>
             </div>
         </>
     )

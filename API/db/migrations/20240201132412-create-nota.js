@@ -13,7 +13,7 @@ module.exports = {
         type: Sequelize.INTEGER
       },
       numeroPedidoNF: {
-        type: Sequelize.INTEGER
+        type: Sequelize.FLOAT
       },
       numeroNotaNF: {
         type: Sequelize.INTEGER

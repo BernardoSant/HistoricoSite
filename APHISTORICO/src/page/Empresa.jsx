@@ -6,6 +6,7 @@ import { MostruarioNota } from "../components/MostruarioEmpresa";
 import { MostruarioFuncAdmitido } from "../components/Mostruario/FuncionarioAdmitidos";
 import { MostruarioFuncDemitido } from "../components/Mostruario/FuncionarioDemitidos";
 import { useGlobalContext } from '../global/Global';
+import { Teste } from "../components/text";
 
 const Nav = styled.nav`
 width: 100%;
@@ -112,6 +113,7 @@ export const Empresa = () => {
         gasto: false,
         transporte: false,
         impostos: false,
+        outros: false,
         empregador: false,
 
         //Botões Secundarios
@@ -122,6 +124,11 @@ export const Empresa = () => {
         addImposto: false,
         addKinay: false,
         verImposto: false,
+        alimentacao: false,
+        cargos: false,
+        ferramentas: false,
+        uniformes: false,
+        visualizar: false,
 
         //Botões Terciarios
         verNota: false,
@@ -145,6 +152,11 @@ export const Empresa = () => {
             ...(key !== 'verNota' && { verNota: false }),
             ...(key !== 'verFunciAdmitido' && { verFunciAdmitido: false }),
             ...(key !== 'verFunciDemitido' && { verFunciDemitido: false }),
+            ...(key !== 'alimentacao' && { alimentacao: false }),
+            ...(key !== 'cargos' && { cargos: false }),
+            ...(key !== 'ferramentas' && { ferramentas: false }),
+            ...(key !== 'uniformes' && { uniformes: false }),
+            ...(key !== 'visualizar' && { visualizar: false }),
 
         }));
     }
@@ -201,6 +213,7 @@ export const Empresa = () => {
                                 <Tabela>
                                     <Button TipoButton={2} Titulo={"Ver Todos"}></Button>
                                     <Button TipoButton={2} Titulo={"Adcionar Transporte"}></Button>
+                                    <Button TipoButton={2} Titulo={"Adcionar Manutenção"}></Button>
                                 </Tabela>
                             }
 
@@ -213,11 +226,22 @@ export const Empresa = () => {
                                 </Tabela>
                             }
 
+                            <Button TipoButton={1} Titulo={"Outros"} onPrimario={state.outros} onClick={() => handleClick('outros')} ></Button>
+                            {state.outros &&
+                                <Tabela>
+                                    <Button TipoButton={2} Titulo={"Alimentação"} onSecundario={state.alimentacao} onClick={() => handleClick('alimentacao')}></Button>
+                                    <Button TipoButton={2} Titulo={"Cargos"} onSecundario={state.cargos} onClick={() => handleClick('cargos')}></Button>
+                                    <Button TipoButton={2} Titulo={"Ferramentas"} onSecundario={state.ferramentas} onClick={() => handleClick('ferramentas')}></Button>
+                                    <Button TipoButton={2} Titulo={"Uniformes"} onSecundario={state.uniformes} onClick={() => handleClick('uniformes')}></Button>
+                                    <Button TipoButton={2} Titulo={"Visualizar"} onFinal={state.visualizar} onClick={() => handleClick('visualizar')}></Button>
+                                </Tabela>
+                            }
+
                         </nav>
 
                     </Div>
-                    <Div className="shadow-md shadow-slate-600 flex flex-col justify-center items-center">
-                        
+                    <Div className="shadow-md shadow-slate-600 flex flex-col justify-center items-center ">
+                        <Teste/>
                         {state.addPedido &&
                             <TabelaAddPedido />
                         }

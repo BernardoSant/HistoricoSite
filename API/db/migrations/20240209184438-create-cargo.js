@@ -2,36 +2,21 @@
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up(queryInterface, Sequelize) {
-    await queryInterface.createTable('pedidos', {
+    await queryInterface.createTable('Cargos', {
       id: {
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
         type: Sequelize.INTEGER
       },
-      numeroPDD: {
+      nomeCargo: {
+        type: Sequelize.STRING
+      },
+      salarioCargo: {
         type: Sequelize.FLOAT
       },
-      valorPDD: {
+      quantidadeCargo: {
         type: Sequelize.FLOAT
-      },
-      valoRecebidoPDD: {
-        type: Sequelize.FLOAT
-      },
-      nomePDD: {
-        type: Sequelize.STRING
-      },
-      descricaoServPDD: {
-        type: Sequelize.STRING
-      },
-      empresaPDD: {
-        type: Sequelize.STRING
-      },
-      situacaoPDD: {
-        type: Sequelize.STRING
-      },
-      dataPDD: {
-        type: Sequelize.DATEONLY
       },
       createdAt: {
         allowNull: false,
@@ -44,6 +29,6 @@ module.exports = {
     });
   },
   async down(queryInterface, Sequelize) {
-    await queryInterface.dropTable('pedidos');
+    await queryInterface.dropTable('Cargos');
   }
 };

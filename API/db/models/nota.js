@@ -15,7 +15,7 @@ module.exports = (sequelize, DataTypes) => {
   }
   nota.init({
     idEmpresa: DataTypes.INTEGER,
-    numeroPedidoNF: DataTypes.INTEGER,
+    numeroPedidoNF: DataTypes.FLOAT,
     numeroNotaNF: DataTypes.INTEGER,
     nomeEmpresaNF: DataTypes.STRING,
     cnpjEmpresaNF: DataTypes.STRING,

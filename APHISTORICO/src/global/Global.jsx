@@ -66,12 +66,22 @@ const AppContext = ({ children }) => {
       });
   }, []);
 
+  const [cargo, setCargo] = useState([]);
+  useEffect(() => {
+    axios.get('http://localhost:3030/cargo')
+      .then((response) => {
+        setCargo(response.data.data);
+      }).catch((err) => {
+        console.error(err);
+      });
+  }, []);
+
 
   
 
   return (
     <GlobalContext.Provider
-      value={{empresa, setEmpresa, nota, setNota, kinays, setKinay, impostos, setImpostos, pedido, setPedido, funcionario, setFuncionario }}>
+      value={{empresa, setEmpresa, nota, setNota, kinays, setKinay, impostos, setImpostos, pedido, setPedido, funcionario, setFuncionario, cargo, setCargo }}>
       {children}
     </GlobalContext.Provider>
   );

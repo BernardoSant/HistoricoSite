@@ -37,6 +37,13 @@ border-radius: 4px;
 max-width: 40em;
 padding-left: 8px;
 `
+const Header = styled.header`
+width: 100%;
+border-radius: 1em;
+background: #f97316;
+box-shadow: inset 5px -5px 10px #9f4a0e,
+            inset -5px 5px 10px #ff9c1e;
+`
 
 export const MostruarioFuncAdmitido = () => {
     const { funcionario, empresa } = useGlobalContext();
@@ -471,7 +478,7 @@ export const MostruarioFuncAdmitido = () => {
                 </>
             ) : (
                 <>
-                    <table className='w-full bg-orange-500 drop-shadow-2xl rounded-2xl'>
+                    <Header className='w-full bg-orange-500 drop-shadow-2xl rounded-2xl'>
 
                         <thead className='flex justify-center items-center py-4'>
                             <th className='text-start text-3xl pt-1'>Funcionarios Admitidos</th>
@@ -483,7 +490,7 @@ export const MostruarioFuncAdmitido = () => {
                             <th className='col-span-1'>Salario</th>
                             <th className='col-span-1'>Data</th>
                         </thead>
-                    </table>
+                    </Header>
                     <table className='w-full'>
                         {FuncionariosAdmitidos.map(func => {
                             let data = new Date(func.createdAt);
