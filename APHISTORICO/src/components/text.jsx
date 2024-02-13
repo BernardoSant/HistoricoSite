@@ -11,15 +11,16 @@ width: 100%;
 height: 100%;
 border-radius: 1em;
 font-size: medium;
-overflow-x: auto;
+
 `;
 
 const Article = styled.article`
+height: auto;
 border-radius: 1em;
 background: #fb923c;
 box-shadow: inset 5px -5px 10px #a15d26,
             inset -5px 5px 10px #ffc752;
-max-height: 24em;
+
 `;
 
 const Div = styled.div`
@@ -54,7 +55,6 @@ justify-content:center;
 align-items: center;
 gap: 8px;
 border-radius: 9999px;
-padding: 4px;
 padding-left: 8px;
 padding-right: 8px;
 `;
@@ -94,7 +94,8 @@ export const Teste = () => {
         setData({ ...data, [e.target.name]: valor });
     };
     const sendCargo = async (e) => {
-
+        e.preventDefault();
+        
         const headers = {
             'headers': {
                 'Content-Type': 'application/json'
@@ -121,55 +122,54 @@ export const Teste = () => {
     return (
         <Main className='grid grid-cols-2 gap-2 '>
 
-            <Article >
+            <Article>
                 <Div>
-                    <aside className='flex justify-between justify-center'>
+                    <aside className='flex justify-between '>
                         <h1 className='text-xl'>Cargos</h1>
-                        <ButtonClick onPrimario={state.AddCargo} onClick={() => handleClick('AddCargo')}><BsPencilSquare />Adicionar</ButtonClick>
+                        <ButtonClick onClick={() => handleClick('AddCargo')}><BsPencilSquare />Adicionar</ButtonClick>
                     </aside>
-                    <thead className='grid grid-cols-5 justify-center items-center text-lg '>
-                        <th className='col-span-2'>Cargo</th>
-                        <th className='col-span-2'>Salario</th>
+                    <thead className='grid grid-cols-3 justify-center items-center text-lg '>
+                        <th className='col-span-1'>Cargo</th>
+                        <th className='col-span-1'>Salario</th>
                         <th className='col-span-1'>Quant</th>
                     </thead>
                 </Div>
-                <div className='overflow-auto'>
-                    <div className='w-full'>
-                        {state.AddCargo &&
-                            <form onSubmit={sendCargo} className='bg-slate-300 grid grid-cols-5 gap-2 py-1 px-2 bg-slate-300a '>
 
-                                <H1>Cargo:</H1>
-                                <Input
-                                    type="text"
-                                    name="nomeCargo"
-                                    onChange={valorInput}
-                                    value={data.nomeCargo}
-                                    className="col-span-4"
-                                />
+                <div className='w-full '>
+                    {state.AddCargo ? (
+                        <form onSubmit={sendCargo} className=' grid grid-cols-5 gap-2'>
 
-                                <H1>Salario:</H1>
-                                <Input
-                                    type="text"
-                                    name="salarioCargo"
-                                    onChange={valorInput}
-                                    value={data.salarioCargo}
-                                    className="col-span-2"
-                                />
-                                <button type='submit' className='bg-green-500 col-span-2 rounded-lg font-semibold'>Salvar</button>
-                            </form>
-                        }
-                    </div>
-                    <thead className='grid grid-cols-5 justify-center items-center py-1'>
-                        {cargo.map(cargo => {
-                            return (
-                                <>
-                                    <th className='col-span-2'>{cargo.nomeCargo}</th>
-                                    <th className='col-span-2'>{Number(cargo.salarioCargo).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</th>
-                                    <th className='col-span-1'>{cargo.quantidadeCargo}</th>
-                                </>
-                            )
-                        })}
-                    </thead>
+                            <H1>Cargo:</H1>
+                            <Input
+                                type="text"
+                                name="nomeCargo"
+                                onChange={valorInput}
+                                value={data.nomeCargo}
+                                className="col-span-4"
+                            />
+
+                            <H1>Salario:</H1>
+                            <Input
+                                type="text"
+                                name="salarioCargo"
+                                onChange={valorInput}
+                                value={data.salarioCargo}
+                                className="col-span-4"
+                            />
+                            <button type='submit' className='bg-green-400 col-span-5 rounded-lg font-semibold p-1 '>Salvar</button>
+                        </form>) : (
+                        <div className='flex flex-col items-center py-1 overflow-auto h-full max-h-[18em]'>
+                            {cargo.map(cargo => {
+                                return (
+                                    <nav className='grid grid-cols-3 w-full h-full'>
+                                        <th className='col-span-1'>{cargo.nomeCargo}</th>
+                                        <th className='col-span-1'>{Number(cargo.salarioCargo).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</th>
+                                        <th className='col-span-1'>{cargo.quantidadeCargo}</th>
+                                    </nav>
+                                )
+                            })}
+                        </div>
+                    )}
                 </div>
             </Article>
 

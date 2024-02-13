@@ -10,12 +10,9 @@ module.exports = {
         type: Sequelize.INTEGER
       },
       numeroPDD: {
-        type: Sequelize.FLOAT
+        type: Sequelize.STRING
       },
       valorPDD: {
-        type: Sequelize.FLOAT
-      },
-      valoRecebidoPDD: {
         type: Sequelize.FLOAT
       },
       nomePDD: {

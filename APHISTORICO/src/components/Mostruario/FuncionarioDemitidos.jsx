@@ -205,7 +205,7 @@ export const MostruarioFuncDemitido = () => {
                     </Header>
                     <table className='w-full'>
                         {FuncionariosAdmitidos.map(func => {
-                            let data = new Date(func.createdAt);
+                            let data = new Date(func.updatedAt);
                             let opcoes = { year: 'numeric', month: '2-digit', day: '2-digit' };
                             let dataFormatada = data.toLocaleDateString('pt-BR', opcoes);
                             let nameWithInitials = getInitials(func.nameFucionario);

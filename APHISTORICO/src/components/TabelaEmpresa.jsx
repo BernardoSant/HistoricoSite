@@ -1310,6 +1310,7 @@ export const TabelaAddPedido = () => {
                     situacaoPDD: '',
                     dataPDD: ''
                 });
+                console.log(data)
             }).catch((err) => {
                 toast.info(err.response.data.message);
             });
@@ -1326,7 +1327,7 @@ export const TabelaAddPedido = () => {
                         <H1 className='col-span-2'>Nome Brevê</H1>
 
                         <Input
-                            type="text"
+                            type="number"
                             name="numeroPDD"
                             onChange={valorInput}
                             value={data.numeroPDD}

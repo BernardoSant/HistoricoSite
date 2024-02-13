@@ -241,7 +241,10 @@ export const Empresa = () => {
 
                     </Div>
                     <Div className="shadow-md shadow-slate-600 flex flex-col justify-center items-center ">
-                        <Teste/>
+                        {state.outros &&
+                            <Teste />
+                        }
+
                         {state.addPedido &&
                             <TabelaAddPedido />
                         }
@@ -269,7 +272,7 @@ export const Empresa = () => {
                             <MostruarioFuncAdmitido />
                         }
                         {state.verFunciDemitido &&
-                            <MostruarioFuncDemitido/>
+                            <MostruarioFuncDemitido />
                         }
 
                         {state.addImposto &&

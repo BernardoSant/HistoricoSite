@@ -14,9 +14,8 @@ module.exports = (sequelize, DataTypes) => {
     }
   }
   pedido.init({
-    numeroPDD: DataTypes.FLOAT,
+    numeroPDD: DataTypes.STRING,
     valorPDD: DataTypes.FLOAT,
-    valoRecebidoPDD: DataTypes.FLOAT,
     nomePDD: DataTypes.STRING,
     descricaoServPDD: DataTypes.STRING,
     empresaPDD: DataTypes.STRING,
