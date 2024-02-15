@@ -26,7 +26,7 @@ export const BlockEstatistic = ({ Titulo, Estilo }) => {
             <nav className='w-full h-full   text-lg justify-center items-center'>
                 <div className='grid grid-rows-3 grid-flow-col gap-4'>
                     <div className='row-span-1'>{Titulo}</div>
-                    <div className='row-span-3 w-full h-full bg-slate-600'>pica</div>
+                    <div className='row-span-3 w-full h-full bg-slate-600'>rola</div>
                     <div className='row-span-4'>03</div> 
                 </div>
             </nav>
