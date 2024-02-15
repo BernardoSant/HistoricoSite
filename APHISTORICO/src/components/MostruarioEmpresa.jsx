@@ -337,7 +337,8 @@ export const MostruarioNota = ({ empresaId }) => {
                       </Th>
                     </nav>
                   </thead>
-                  <thead className="grid grid-cols-6 justify-center items-center w-full rounded-b-lg drop-shadow-2xl text-lg pb-1">
+                  <thead className="grid grid-cols-7 justify-center items-center w-full rounded-b-lg drop-shadow-2xl text-lg pb-1">
+                    <Th className="col-span-1">N° Pedido</Th>
                     <Th className="col-span-1">N° Nota</Th>
                     <Th className="col-span-2">Situação</Th>
                     <Th className="col-span-1">A Receber</Th>
@@ -556,6 +557,7 @@ export const MostruarioNota = ({ empresaId }) => {
                     );
                   })}
                 </table>
+                
               </>
             ) : null}
 
@@ -577,6 +579,8 @@ export const MostruarioNota = ({ empresaId }) => {
                 </Th>
               </thead>
             </table>
+            <table className="w-full">
+    </table>
           </>
         )}
       </Div>

@@ -11,10 +11,11 @@ padding-left: 1em;
 padding-right: 1em;
 padding-bottom: 1em;
 padding-top: 1em;
+gap: 3em;
 display: flex;
 flex-wrap: wrap;
 justify-content: center;
-align-items: start;
+align-content: start;
 flex-direction: row;
 `;
 
@@ -44,8 +45,41 @@ const Input = styled.input`
 width: 100%;
 border: 2px solid #d1d5db;
 border-radius: 4px;
-max-width: 40em;
 padding-left: 8px;
+`
+const Header = styled.header`
+width: 100%;
+border-radius: 20px;
+background: #f97316;
+box-shadow: inset 5px -5px 10px #9f4a0e,
+            inset -5px 5px 10px #ff9c1e;
+font-weight: 600;
+font-size: xx-large;
+display: flex;
+justify-content: center;
+padding:5px;
+`
+
+const Button = styled.button`
+width: auto;
+border-radius: 20px;
+background: #f97316;
+box-shadow: inset 5px -5px 10px #9f4a0e,
+            inset -5px 5px 10px #ff9c1e;
+font-weight: 600;
+font-size: x-large;
+display: flex;
+justify-content: center;
+padding: 7px;
+padding-left: 3em;
+padding-right: 3em;
+transition-duration: 200ms;
+
+&:hover{
+    cursor: pointer;
+    color: white;
+    scale: 97%;
+}
 `
 
 export const TabelaAdicionarEmpresa = () => {
@@ -124,147 +158,137 @@ export const TabelaAdicionarEmpresa = () => {
     return (
         <>
             <Form onSubmit={sendEmpresa} >
-                <h1 className='font-semibold w-full flex justify-center items-center text-3xl'>Adcionar Empresa</h1>
+                <Header>Adcionar Empresa</Header>
 
-                <nav className='flex flex-col max-w-[40em] mt-[2em]' >
-                    <div className='grid grid-cols-4 gap-x-2'>
-                        <H1 className='col-span-3'>Nome*</H1>
+                <section className='grid grid-cols-4 gap-x-2' >
 
-                        <H1 className='col-span-1'>Sigla*</H1>
+                    <H1 className='col-span-3'>Nome*</H1>
 
-                        <Input
-                            type="text"
-                            name="nameEmpresa"
-                            onChange={valorInput}
-                            value={data.nameEmpresa}
-                            className="col-span-3 " />
+                    <H1 className='col-span-1'>Sigla*</H1>
 
-                        <Input
-                            type="text"
-                            name="siglaEmpresa"
-                            onChange={valorInput}
-                            value={data.siglaEmpresa}
-                            className="col-span-1" />
+                    <Input
+                        type="text"
+                        name="nameEmpresa"
+                        onChange={valorInput}
+                        value={data.nameEmpresa}
+                        className="col-span-3" />
 
-                    </div>
+                    <Input
+                        type="text"
+                        name="siglaEmpresa"
+                        onChange={valorInput}
+                        value={data.siglaEmpresa}
+                        className="col-span-1" />
 
-                    <H1>CNPJ*</H1>
+                    <H1 className='col-span-4'>CNPJ*</H1>
                     <Input
                         type="text"
                         maxLength="18"
                         name="cnpjEmpresa"
                         onChange={valorInput}
                         value={data.cnpjEmpresa}
-                        className="" />
+                        className="col-span-4" />
 
-                    <div className=' grid grid-cols-4 gap-x-2'>
-                        <H1 className='col-span-2'>Responsável</H1>
-                        <H1 className='col-span-2'>Email</H1>
+                    <H1 className='col-span-2'>Responsável</H1>
+                    <H1 className='col-span-2'>Email</H1>
 
-                        <Input
-                            type="text"
-                            name="responsavelEmpresa"
-                            onChange={valorInput}
-                            value={data.responsavelEmpresa}
-                            className="col-span-2" />
+                    <Input
+                        type="text"
+                        name="responsavelEmpresa"
+                        onChange={valorInput}
+                        value={data.responsavelEmpresa}
+                        className="col-span-2" />
 
-                        <Input
-                            type="text"
-                            name="emailEmpresa"
-                            onChange={valorInput}
-                            value={data.emailEmpresa}
-                            className="col-span-2" />
+                    <Input
+                        type="text"
+                        name="emailEmpresa"
+                        onChange={valorInput}
+                        value={data.emailEmpresa}
+                        className="col-span-2" />
 
-                    </div>
+                    <H1 className='col-span-1'>CEP*</H1>
+                    <H1 className='col-span-3'>Lougradouro*</H1>
 
-                    <div className='grid grid-cols-4 gap-x-2'>
-                        <H1 className='col-span-1'>CEP*</H1>
-                        <H1 className='col-span-3'>Lougradouro*</H1>
+                    <Input
+                        maxLength="9"
+                        type="text"
+                        name="cepEmpresa"
+                        onChange={valorInput}
+                        value={data.cepEmpresa}
+                        className="col-span-1" />
 
-                        <Input
-                            maxLength="9"
-                            type="text"
-                            name="cepEmpresa"
-                            onChange={valorInput}
-                            value={data.cepEmpresa}
-                            className="col-span-1" />
+                    <Input
+                        type="text"
+                        name="ruaEmpresa"
+                        onChange={valorInput}
+                        value={data.ruaEmpresa}
+                        className="col-span-3" />
 
-                        <Input
-                            type="text"
-                            name="ruaEmpresa"
-                            onChange={valorInput}
-                            value={data.ruaEmpresa}
-                            className="col-span-3" />
-                    </div>
+                    <H1 className='col-span-1'>Número*</H1>
+                    <H1 className='col-span-3'>Bairro*</H1>
 
-                    <div className='grid grid-cols-5 gap-x-2'>
-                        <H1 className='col-span-1'>Número*</H1>
-                        <H1 className='col-span-4'>Bairro*</H1>
+                    <Input
+                        type="number"
+                        name="numeroEmpresa"
+                        onChange={valorInput}
+                        value={data.numeroEmpresa}
+                        className="col-span-1" />
 
-                        <Input
-                            type="number"
-                            name="numeroEmpresa"
-                            onChange={valorInput}
-                            value={data.numeroEmpresa}
-                            className="col-span-1" />
+                    <Input
+                        type="text"
+                        name="bairroEmpresa"
+                        onChange={valorInput}
+                        value={data.bairroEmpresa}
+                        className="col-span-3" />
 
-                        <Input
-                            type="text"
-                            name="bairroEmpresa"
-                            onChange={valorInput}
-                            value={data.bairroEmpresa}
-                            className="col-span-4" />
+                    <H1 className='col-span-2'>Complemento</H1>
+                    <H1 className="col-span-2">Cidade</H1>
 
-                    </div>
-
-                    <H1>Complemento</H1>
                     <Input
                         type="text"
                         name="complEmpresa"
                         onChange={valorInput}
                         value={data.complEmpresa}
+                        className='col-span-2'
                     />
 
-                    <H1>Cidade</H1>
                     <Input
                         type="text"
                         name="cidadeEmpresa"
                         onChange={valorInput}
                         value={data.cidadeEmpresa}
+                        className='col-span-2'
                     />
 
-                    <div className='flex justify-between items-start md:items-end w-full mt-3 flex-col  md:flex-row gap-6 max-w-[40em] ' >
-                        <dir className="flex flex-col">
-                            <H1 className='text-xl'>Campos Adcionais</H1>
-                            <div className='flex gap-6 flex-wrap'>
-                                <nav>
-                                    <H1>Data de Contrato</H1>
-                                    <Input
-                                        type="date"
-                                        name="cadastroEmpresa"
-                                        onChange={valorInput}
-                                        value={data.cadastroEmpresa}
-                                    />
-                                </nav>
-                                <nav className='flex flex-col justify-end'>
-                                    <H1>Situação*</H1>
-                                    <select
-                                        id="situacaoEmpresa"
-                                        name="situacaoEmpresa"
-                                        onChange={valorInput}
-                                        value={data.situacaoEmpresa}
-                                        className="border-2 border-gray-300 rounded-[5px] px-2 py-[0.2em]">
-                                        <option></option>
-                                        <option value="Particular">Particular</option>
-                                        <option value="Contrato">Contrato</option>
-                                    </select>
-                                </nav>
-                            </div>
-                        </dir>
-                        <button type='submit' className='w-full mt-4 md:w-auto bg-orange-400 py-2 px-7 rounded-lg border-2 border-orange-500 font-semibold hover:text-white hover:scale-95 duration-500'>Salvar</button>
-                    </div>
-                </nav>
-            </Form>
+                    <H1 className='col-span-1'>Data de Contrato</H1>
+                    <H1 className='col-span-3'>Situação*</H1>
+                    <Input
+                        type="date"
+                        name="cadastroEmpresa"
+                        onChange={valorInput}
+                        value={data.cadastroEmpresa}
+                        className='col-span-1'
+                    />
+
+
+                    <select
+                        id="situacaoEmpresa"
+                        name="situacaoEmpresa"
+                        onChange={valorInput}
+                        value={data.situacaoEmpresa}
+                        className="col-span-1 border-2 border-gray-300 rounded-[5px] px-2 py-[0.2em]">
+                        <option></option>
+                        <option value="Particular">Particular</option>
+                        <option value="Contrato">Contrato</option>
+                    </select>
+
+                </section>
+
+                <section className='w-full flex justify-end'>
+                    <Button type='submit' className=''>Salvar</Button>
+                </section>
+
+            </Form >
         </>
     )
 }
@@ -398,9 +422,9 @@ export const TabelaAddNota = () => {
     return (
         <>
             <Form onSubmit={sendNF} >
-                <h1 className='font-semibold w-full flex justify-center items-center text-3xl'>Adcionar Nota Fiscal</h1>
+                <Header>Adcionar Nota Fiscal</Header>
 
-                <nav className='flex flex-col max-w-[40em] justify-center mt-[2em]' >
+                <nav >
                     <div className=' grid grid-cols-4 gap-x-2'>
                         <H1 className='col-span-1'>Numero Nota*</H1>
                         <H1 className='col-span-1'>Numero Pedido*</H1>
@@ -623,7 +647,10 @@ export const TabelaAddNota = () => {
                         </textarea>
                     </div>
 
-                    <button type='submit' className='w-full mt-4 bg-orange-400 py-2 px-7 rounded-lg border-2 border-orange-500 font-semibold hover:text-white hover:scale-95 duration-500 mb-3'>Salvar</button>
+                    <section className='w-full flex justify-end my-4'>
+                        <Button type='submit' className=''>Salvar</Button>
+                    </section>
+
                 </nav>
             </Form >
         </>
@@ -677,13 +704,13 @@ export const TabelaAddImposto = () => {
     return (
         <>
             <div className='flex flex-col h-full w-full'>
-                <h1 className='font-semibold w-full h-auto flex justify-center items-center text-3xl'>Adcionar Impostos</h1>
+                <Header>Adcionar Impostos</Header>
                 <Form onSubmit={sendImposto}>
-                    <div className='grid grid-cols-4 grid-rows-1 items-start gap-x-4 mt-5 '>
+
+                    <div className='grid grid-cols-3 grid-rows-1 items-start gap-x-4 mt-5 '>
                         <H1 className='col-span-1'>Sigla</H1>
                         <H1 className='col-span-1'>Porcentagem</H1>
                         <H1 className='col-span-1'>Atividade</H1>
-                        <button type='submit' className='row-span-2 w-full mt-4 md:w-auto bg-orange-400 py-2 px-7 rounded-lg border-2 border-orange-500 font-semibold hover:text-white hover:scale-95 duration-500'>Salvar</button>
 
                         <Input
                             type="text"
@@ -714,6 +741,9 @@ export const TabelaAddImposto = () => {
                         </select>
 
                     </div>
+                    <section className='w-full flex justify-end'>
+                        <Button type='submit' className=''>Salvar</Button>
+                    </section>
                 </Form>
             </div>
         </>
@@ -767,7 +797,7 @@ export const TabelaAddKinay = () => {
     return (
         <>
             <div className='flex flex-col h-full w-full'>
-                <h1 className='font-semibold w-full h-auto flex justify-center items-center text-3xl'>Adcionar Kinay</h1>
+                <Header>Adcionar Kinay</Header>
                 <Form onSubmit={sendKinay}>
                     <div className='grid grid-cols-6 grid-rows-1 items-start gap-x-4 mt-5 '>
                         <H1 className='col-span-1'>Número</H1>
@@ -797,10 +827,14 @@ export const TabelaAddKinay = () => {
                             value={data.porcentagemKinay}
                             className="col-span-1"
                         />
-                        <div className='col-span-4 flex justify-end'>
-                            <button type='submit' className='row-span-2 w-full mt-4 md:w-auto bg-orange-400 py-2 px-7 rounded-lg border-2 border-orange-500 font-semibold hover:text-white hover:scale-95 duration-500'>Salvar</button>
-                        </div>
+
+
+                        <section className='col-span-6 w-full flex justify-end py-4'>
+                            <Button type='submit' className=''>Salvar</Button>
+                        </section>
                     </div>
+
+
                 </Form>
             </div>
         </>
@@ -818,7 +852,7 @@ export const MostrarImposto = () => {
     return (
         <>
             <div className='flex flex-col justify-start h-full w-full '>
-                <h1 className='font-semibold w-full h-auto flex justify-center items-center text-3xl mb-5'>Impostos</h1>
+                <Header className='font-semibold w-full h-auto flex justify-center items-center text-3xl mb-5'>Impostos</Header>
 
                 <table className="table-auto rounded-[10px] bg-gray-200">
                     <thead className='border-b-2 border-gray-500'>
@@ -987,9 +1021,10 @@ export const TabelaAddFuncionario = () => {
     return (
         <>
             <Form onSubmit={sendFuncionario} >
-                <h1 className='font-semibold w-full flex justify-center items-center text-3xl'>Adcionar Funcionario</h1>
+                <Header >Adcionar Funcionario</Header>
 
-                <nav className='flex flex-col max-w-[40em] justify-center mt-[2em]' >
+                <nav className='flex flex-col justify-center ' >
+
                     <div className=' grid grid-cols-4 gap-x-2'>
                         <H1 className='col-span-3'>Nome*</H1>
                         <H1 className='col-span-1'>Gênero*</H1>
@@ -1258,8 +1293,12 @@ export const TabelaAddFuncionario = () => {
 
                     </div>
 
-                    <button type='submit' className='w-full mt-4 bg-orange-400 py-2 px-7 rounded-lg border-2 border-orange-500 font-semibold hover:text-white hover:scale-95 duration-500 mb-3'>Salvar</button>
+                    <section className='w-full flex justify-end py-4'>
+                        <Button type='submit' className=''>Salvar</Button>
+                    </section>
                 </nav>
+
+
             </Form>
         </>
     )
@@ -1318,10 +1357,11 @@ export const TabelaAddPedido = () => {
 
     return (
         <>
-            <div className='flex flex-col h-full w-full'>
-                <h1 className='font-semibold w-full h-auto flex justify-center items-center text-3xl'>Adcionar Pedido</h1>
+            <Form>
+                <Header>Adcionar Pedido</Header>
+
                 <form onSubmit={sendPedido}>
-                    <div className='grid grid-cols-4 grid-rows-1 items-start gap-x-4 mt-5 '>
+                    <div className='grid grid-cols-4 grid-rows-1 items-start gap-x-4 '>
                         <H1 className='col-span-1'>Numero*</H1>
                         <H1 className='col-span-1'>Valor Total</H1>
                         <H1 className='col-span-2'>Nome Brevê</H1>
@@ -1393,10 +1433,12 @@ export const TabelaAddPedido = () => {
                             className="col-span-1"
                         />
 
-                        <button type='submit' className=' col-span-4 w-full mt-4 bg-orange-400 py-2 px-7 rounded-lg border-2 border-orange-500 font-semibold hover:text-white hover:scale-95 duration-500'>Salvar</button>
                     </div>
+                    <section className='w-full flex justify-end py-4'>
+                        <Button type='submit' className=''>Salvar</Button>
+                    </section>
                 </form>
-            </div>
+            </Form>
         </>
     )
 }
