@@ -5,6 +5,7 @@ import { TabelaAdicionarEmpresa, TabelaAddImposto, TabelaAddNota, MostrarImposto
 import { MostruarioNota } from "../components/MostruarioEmpresa";
 import { MostruarioFuncAdmitido } from "../components/Mostruario/FuncionarioAdmitidos";
 import { MostruarioFuncDemitido } from "../components/Mostruario/FuncionarioDemitidos";
+import { ResumoEmpresa } from "../components/Mostruario/ResumoEmpresa";
 import { useGlobalContext } from '../global/Global';
 import { Teste } from "../components/text";
 
@@ -241,6 +242,8 @@ export const Empresa = () => {
 
                     </Div>
                     <Div className="shadow-md shadow-slate-600 flex flex-col justify-center items-center ">
+                        <ResumoEmpresa/>
+
                         {state.outros &&
                             <Teste />
                         }

@@ -349,8 +349,6 @@ export const MostruarioNota = ({ empresaId }) => {
 
                 <table className="w-full">
                   {notasDaEmpresaAnalise.map((nota) => {
-                    let data = new Date(nota.createdAt);
-                    let dataFormatada = data.toISOString().split("T")[0];
                     return (
                       <>
                         <thead className="w-full flex justify-end ml-2">
@@ -389,7 +387,7 @@ export const MostruarioNota = ({ empresaId }) => {
                               { style: "currency", currency: "BRL" }
                             )}
                           </Th>
-                          <Th className="col-span-1">{dataFormatada}</Th>
+                          <Th className="col-span-1">{nota.dataNF}</Th>
                         </thead>
                       </>
                     );
@@ -430,8 +428,7 @@ export const MostruarioNota = ({ empresaId }) => {
 
                 <table className="w-full">
                   {notasDaEmpresaRecebida.map((nota) => {
-                    let data = new Date(nota.createdAt);
-                    let dataFormatada = data.toISOString().split("T")[0];
+
                     return (
                       <>
                         <thead className=" w-full flex justify-end ml-2">
@@ -470,7 +467,7 @@ export const MostruarioNota = ({ empresaId }) => {
                               { style: "currency", currency: "BRL" }
                             )}
                           </Th>
-                          <Th className="col-span-1">{dataFormatada}</Th>
+                          <Th className="col-span-1">{nota.dataNF}</Th>
                         </thead>
                       </>
                     );
@@ -511,8 +508,6 @@ export const MostruarioNota = ({ empresaId }) => {
 
                 <table className="w-full">
                   {notasDaEmpresaAntecipada.map((nota) => {
-                    let data = new Date(nota.createdAt);
-                    let dataFormatada = data.toISOString().split("T")[0];
                     return (
                       <>
                         <thead className="w-full flex justify-end ml-2">
@@ -551,7 +546,7 @@ export const MostruarioNota = ({ empresaId }) => {
                               { style: "currency", currency: "BRL" }
                             )}
                           </Th>
-                          <Th className="col-span-1">{dataFormatada}</Th>
+                          <Th className="col-span-1">{nota.dataNF}</Th>
                         </thead>
                       </>
                     );

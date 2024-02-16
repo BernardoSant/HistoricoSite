@@ -63,6 +63,9 @@ module.exports = {
       prazoPagamentoNF: {
         type: Sequelize.STRING
       },
+      dataNF: {
+        type: Sequelize.DATEONLY
+      },
       observacaoNF: {
         type: Sequelize.STRING
       },

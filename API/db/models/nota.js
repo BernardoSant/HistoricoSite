@@ -32,6 +32,7 @@ module.exports = (sequelize, DataTypes) => {
     valorRecebidoNF: DataTypes.FLOAT,
     situacaoNF: DataTypes.STRING,
     prazoPagamentoNF: DataTypes.STRING,
+    dataNF: DataTypes.DATEONLY,
     observacaoNF: DataTypes.STRING
   }, {
     sequelize,

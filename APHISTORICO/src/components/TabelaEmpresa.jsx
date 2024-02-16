@@ -316,6 +316,7 @@ export const TabelaAddNota = () => {
         valorRecebidoNF: null,
         situacaoNF: '',
         prazoPagamentoNF: '',
+        dataNF: '',
         observacaoNF: ''
     });
 
@@ -412,6 +413,7 @@ export const TabelaAddNota = () => {
                     valorRecebidoNF: null,
                     situacaoNF: '',
                     prazoPagamentoNF: '',
+                    dataNF: '',
                     observacaoNF: ''
                 });
             }).catch((err) => {
@@ -604,7 +606,8 @@ export const TabelaAddNota = () => {
                         </textarea>
 
 
-                        <H1 className='col-span-4'>Situação</H1>
+                        <H1 className='col-span-1'>Situação</H1>
+                        <H1 className='col-span-3'>Data de Lançamento</H1>
 
                         <Select
                             name="situacaoNF"
@@ -615,6 +618,13 @@ export const TabelaAddNota = () => {
                             <option value="Recebida">Recebida</option>
                             <option value="Antecipada">Antecipada</option>
                         </Select>
+
+                        <Input
+                                type="date"
+                                name="dataNF"
+                                onChange={valorInput}
+                                value={data.dataNFNF}
+                            />
 
                         <p className='col-span-2'></p>
 
