@@ -39,9 +39,9 @@ box-shadow: inset 5px -5px 10px #9f4a0e,
 `
 
 export const MostruarioFuncDemitido = () => {
-    const { funcionario, empresa } = useGlobalContext();
+    const { funcionario } = useGlobalContext();
 
-    const FuncionariosAdmitidos = funcionario.filter(funcionario => funcionario.statuFucionario === 'Demitido');
+    const FuncionariosDemitidos = funcionario.filter(funcionario => funcionario.statuFucionario === 'Demitido');
     function getInitials(name) {
         const splitName = name.trim().split(' ');
 
@@ -53,6 +53,8 @@ export const MostruarioFuncDemitido = () => {
             return `${splitName[0]} ${splitName[1]} .${splitName[2].charAt(0).toUpperCase()}`;
         }
     }
+
+    FuncionariosDemitidos.sort((a, b) => a.nameFucionario.localeCompare(b.nameFucionario))
 
     const [data, setData] = useState({
         nameFucionario: '',
@@ -204,7 +206,7 @@ export const MostruarioFuncDemitido = () => {
                         </thead>
                     </Header>
                     <table className='w-full'>
-                        {FuncionariosAdmitidos.map(func => {
+                        {FuncionariosDemitidos.map(func => {
                             let data = new Date(func.updatedAt);
                             let opcoes = { year: 'numeric', month: '2-digit', day: '2-digit' };
                             let dataFormatada = data.toLocaleDateString('pt-BR', opcoes);

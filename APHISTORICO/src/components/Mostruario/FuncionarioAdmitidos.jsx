@@ -61,6 +61,8 @@ export const MostruarioFuncAdmitido = () => {
         }
     }
 
+    FuncionariosAdmitidos.sort((a, b) => a.nameFucionario.localeCompare(b.nameFucionario))
+
     const [data, setData] = useState({
         nameFucionario: '',
         cpfFucionario: '',

@@ -15,6 +15,9 @@ module.exports = {
       valorPDD: {
         type: Sequelize.FLOAT
       },
+      valorRecebidoPDD: {
+        type: Sequelize.FLOAT
+      },
       nomePDD: {
         type: Sequelize.STRING
       },

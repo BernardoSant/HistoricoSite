@@ -1316,9 +1316,11 @@ export const TabelaAddFuncionario = () => {
 
 export const TabelaAddPedido = () => {
     const { empresa } = useGlobalContext();
+
     const [data, setData] = useState({
         numeroPDD: '',
         valorPDD: '',
+        valorRecebidoPDD: 0,
         nomePDD: '',
         descricaoServPDD: '',
         empresaPDD: '',
@@ -1353,6 +1355,7 @@ export const TabelaAddPedido = () => {
                 setData({
                     numeroPDD: '',
                     valorPDD: '',
+                    valorRecebidoPDD: '',
                     nomePDD: '',
                     descricaoServPDD: '',
                     empresaPDD: '',
@@ -1367,10 +1370,10 @@ export const TabelaAddPedido = () => {
 
     return (
         <>
-            <Form>
+
                 <Header>Adcionar Pedido</Header>
 
-                <form onSubmit={sendPedido}>
+                <Form onSubmit={sendPedido}>
                     <div className='grid grid-cols-4 grid-rows-1 items-start gap-x-4 '>
                         <H1 className='col-span-1'>Numero*</H1>
                         <H1 className='col-span-1'>Valor Total</H1>
@@ -1421,7 +1424,7 @@ export const TabelaAddPedido = () => {
                             className="col-span-2 border-2 border-gray-300 rounded-[5px] px-2 py-[0.2em]">
                             <option></option>
                             {empresa.map((empresa) => (
-                                <option key={empresa.id} value={empresa.nameEmpresa} >{empresa.nameEmpresa}</option>
+                                <option key={empresa.id} value={empresa.siglaEmpresa} >{empresa.nameEmpresa}</option>
                             ))}
                         </Select>
 
@@ -1445,10 +1448,10 @@ export const TabelaAddPedido = () => {
 
                     </div>
                     <section className='w-full flex justify-end py-4'>
-                        <Button type='submit' className=''>Salvar</Button>
+                        <Button type='submit' >Salvar</Button>
                     </section>
-                </form>
-            </Form>
+                </Form>
+
         </>
     )
 }

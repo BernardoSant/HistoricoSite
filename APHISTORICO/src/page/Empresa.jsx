@@ -12,8 +12,8 @@ import { Teste } from "../components/text";
 const Nav = styled.nav`
 width: 100%;
 height: 100%;
-display: grid;
-grid-template-columns: 25% auto;
+display: flex;
+flex-direction: row;
 gap: 2em;
 `;
 
@@ -161,13 +161,14 @@ export const Empresa = () => {
 
         }));
     }
-
+    // ordernar por tamanho de digito
+    empresa.sort((a, b) => String(a.siglaEmpresa).length - String(b.siglaEmpresa).length);
     return (
         <>
             <NavBar Tipo={3} />
             <Header>
                 <Nav>
-                    <Div className=" shadow-md shadow-slate-600 overflow-auto">
+                    <Div className=" shadow-md shadow-slate-600 overflow-auto max-w-[15em] min-w-[15em]">
                         <nav className=" flex flex-col justify-center ">
                             <Button TipoButton={1} Titulo={"Empresas"} onPrimario={state.empresa} onClick={() => handleClick('empresa')}></Button>
                             {state.empresa &&
@@ -241,7 +242,7 @@ export const Empresa = () => {
                         </nav>
 
                     </Div>
-                    <Div className="shadow-md shadow-slate-600 flex flex-col justify-center items-center ">
+                    <Div className="w-full shadow-md shadow-slate-600 flex flex-col justify-center items-center ">
                         <ResumoEmpresa/>
 
                         {state.outros &&
