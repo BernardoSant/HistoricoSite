@@ -87,8 +87,9 @@ export const MostruarioNota = ({ empresaId }) => {
     let newData = { ...data, [e.target.name]: valor };
 
     if (e.target.name === "situacaoNF" && valor === "Antecipada") {
+      let porcentagemAntecipada = data.valorPrcentagemAntNF / 100;
       // Supondo que "valorReceberNF" seja o valor a receber
-      let calculorAntercipa = data.valorReceberNF * 0.02;
+      let calculorAntercipa = data.valorReceberNF * porcentagemAntecipada;
       let valorRecebido = data.valorReceberNF - calculorAntercipa;
       newData = { ...newData, valorRecebidoNF: valorRecebido };
     } else if (e.target.name === "situacaoNF" && valor === "Recebida") {
@@ -215,6 +216,14 @@ export const MostruarioNota = ({ empresaId }) => {
                   name="valorRecebidoNF"
                   onChange={valorInput}
                   value={data.valorRecebidoNF}
+                  className="col-span-1"
+                />
+
+                <Input
+                  type="text"
+                  name="valorPrcentagemAntNF"
+                  onChange={valorInput}
+                  value={data.valorPrcentagemAntNF}
                   className="col-span-1"
                 />
 

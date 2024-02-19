@@ -1,6 +1,6 @@
 import styled from "styled-components";
 import { useState, useEffect } from "react";
-import { toast } from "react-toastify";
+import { Chart } from "react-google-charts";
 import { useGlobalContext } from "../../global/Global";
 
 const Footer = styled.footer`
@@ -71,8 +71,11 @@ const Div = styled.div`
 `;
 
 const H1 = styled.h1`
-  font-weight: 700;
-  font-size: larger;
+width: 100%;
+display: flex;
+flex-direction: space-between;
+font-weight: 700;
+font-size: larger;
 `;
 
 const H2 = styled.h2`
@@ -120,7 +123,7 @@ export const ResumoEmpresa = () => {
 
       setMes(mesAtual);
       setAno(anoAtual);
-    }, 60000); // Atualiza a cada minuto
+    }, 600000); // Atualiza a cada minuto
 
     // Limpa o intervalo quando o componente é desmontado
     return () => clearInterval(intervalId);
@@ -152,16 +155,20 @@ export const ResumoEmpresa = () => {
 
   pedido.sort((a, b) => new Date(a.dataPDD) - new Date(b.dataPDD));
 
-  const notasRecebidas = nota.filter(
-    (nota) => nota.situacaoNF === "Recebida" || nota.situacaoNF === "Antecipada"
-  );
-
-  const notasRecebidasFiltradas = notasRecebidas.filter(nota => {
+  const notasRecebidas = nota.filter(nota => {
     const dataNota = new Date(nota.dataNF);
-    return dataNota.getMonth() + 1 === parseInt(mes) && dataNota.getFullYear() === parseInt(ano);
+    return (
+      (nota.situacaoNF === "Recebida" || nota.situacaoNF === "Antecipada") &&
+      dataNota.getMonth() + 1 === parseInt(mes) &&
+      dataNota.getFullYear() === parseInt(ano)
+    );
   });
-
   notasRecebidas.sort((a, b) => new Date(a.dataNF) - new Date(b.dataNF));
+
+  const valorTotalNotasAnalise = notasRecebidas.reduce(
+    (total, nota) => total + nota.valorReceberNF,
+    0
+  );
 
   const notasReceber = nota.filter(
     (nota) => nota.situacaoNF === "Em Análise"
@@ -184,6 +191,38 @@ export const ResumoEmpresa = () => {
     setMes(mesSelecionado);
     setAno(anoSelecionado);
   };
+
+  // grafico  Donut  
+  const agrupado = notasRecebidas.reduce((acc, nota) => {
+    const chave = nota.nomeEmpresaNF;
+
+    if (!acc[chave]) {
+      acc[chave] = { nomeEmpresaNF: nota.nomeEmpresaNF, valorRecebidoNF: 0 };
+    }
+
+    acc[chave].valorRecebidoNF += nota.valorRecebidoNF;
+
+    return acc;
+  }, {});
+
+
+  const grafico = [];
+  Object.values(agrupado).map(notaAgrupada => {
+    const empresaEncontrada = empresa.find(empresa => empresa.nameEmpresa === notaAgrupada.nomeEmpresaNF);
+    grafico.push([empresaEncontrada ? empresaEncontrada.siglaEmpresa : notaAgrupada.nomeEmpresaNF, notaAgrupada.valorRecebidoNF]);
+  });
+
+  grafico.unshift(["Empresa", "Valor Recebido"]);
+
+  const options = {
+    pieHole: 0.4,
+    is3D: false,
+    backgroundColor: 'transparent',
+    pieSliceTextStyle: {
+      color: 'black',
+    },
+  };
+
   return (<>
 
     <Header>
@@ -233,9 +272,9 @@ export const ResumoEmpresa = () => {
         </Dir>
 
         <Div >
-          {notasRecebidasFiltradas.map((nota) => {
+          {notasRecebidas.map((nota) => {
             return (
-              <H3 key={nota.id} className="cursor-pointer border-b-2 border-gray-400">
+              <H3 key={nota.id} className="cursor-pointer border-b-2 border-gray-400 text-[1.5vh]">
                 <P>{nota.numeroPedidoNF}</P>
                 <P>{String(nota.numeroNotaNF).padStart(5, "0")}</P>
                 <P>{Number(nota.valorRecebidoNF).toLocaleString("pt-BR", { style: "currency", currency: "BRL" })}</P>
@@ -257,7 +296,7 @@ export const ResumoEmpresa = () => {
 
         <Div >
           {notasReceberFiltradas.map((nota) => (
-            <H3 key={nota.id} className="cursor-pointer border-b-2 border-gray-400">
+            <H3 key={nota.id} className="cursor-pointer border-b-2 border-gray-400 text-[1.5vh]">
               <P>{nota.numeroPedidoNF}</P>
               <P>{String(nota.numeroNotaNF).padStart(5, "0")}</P>
               <P>{Number(nota.valorReceberNF).toLocaleString("pt-BR", { style: "currency", currency: "BRL" })}</P>
@@ -278,7 +317,7 @@ export const ResumoEmpresa = () => {
 
           <Div>
             {empresa.map((empresas) => (
-              <H2 key={empresas.id} className="cursor-pointer border-b-2 border-gray-400">
+              <H2 key={empresas.id} className="cursor-pointer border-b-2 border-gray-400 text-[1.5vh]">
                 <P>{empresas.siglaEmpresa}</P>
                 <P>{empresas.cnpjEmpresa}</P>
               </H2>
@@ -305,7 +344,7 @@ export const ResumoEmpresa = () => {
         <Div>
           {pedidosAtualizados.map((pedido) => {
             return (
-              <H4 key={pedido.id} className="cursor-pointer border-b-2 border-gray-400">
+              <H4 key={pedido.id} className="cursor-pointer border-b-2 border-gray-400 text-[1.5vh]">
                 <P>{pedido.numeroPDD}</P>
                 <P>{pedido.empresaPDD}</P>
                 <P>{pedido.situacaoPDD}</P>
@@ -317,8 +356,27 @@ export const ResumoEmpresa = () => {
 
         </Div>
 
-        <Dir>Ganhos Mensal</Dir>
-        <Div>OPA</Div>
+        <Dir>
+          <H1 className="flex justify-between w-full">Ganhos Mensal
+            <p>
+              Valor Ganho
+              {Number(valorTotalNotasAnalise).toLocaleString("pt-BR", {
+                style: "currency",
+                currency: "BRL",
+              })}
+            </p>
+          </H1>
+        </Dir>
+        <Div>
+          <Chart
+            chartType="PieChart"
+            width="100%"
+            height="100%"
+            data={grafico}
+            options={options}
+          />
+
+        </Div>
 
       </Section>
 

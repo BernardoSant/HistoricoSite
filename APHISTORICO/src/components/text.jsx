@@ -156,7 +156,7 @@ export const Teste = () => {
                                 value={data.salarioCargo}
                                 className="col-span-4"
                             />
-                            <button type='submit' className='bg-green-400 col-span-5 rounded-lg font-semibold p-1 '>Salvar</button>
+                            <button type='submit' className='bg-purple-700 col-span-5 rounded-lg font-semibold p-1 mx-10'>Salvar</button>
                         </form>) : (
                         <div className='flex flex-col items-center py-1 overflow-auto h-full max-h-[18em]'>
                             {cargo.map(cargo => {

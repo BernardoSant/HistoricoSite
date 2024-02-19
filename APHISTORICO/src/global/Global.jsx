@@ -4,84 +4,51 @@ import axios from 'axios';
 const GlobalContext = createContext();
 
 export const useGlobalContext = () => useContext(GlobalContext);
-
+const useFetchData = (url, setData) => {
+    useEffect(() => {
+      const fetchData = () => {
+        axios.get(url)
+          .then((response) => {
+            setData(response.data.data);
+          }).catch((err) => {
+            console.error(err);
+          });
+      };
+  
+      fetchData();
+      const intervalId = setInterval(fetchData, 1 * 60 * 1000);
+      return () => clearInterval(intervalId);
+    }, [url, setData]);
+  };
+  
 const AppContext = ({ children }) => {
+  
+  
+  // Uso do hook personalizado
   const [empresa, setEmpresa] = useState([]);
-  useEffect(() => {
-    axios.get('http://localhost:3030/empresa')
-      .then((response) => {
-        setEmpresa(response.data.data);
-      }).catch((err) => {
-        console.error(err);
-      });
-  }, []);
-
+  useFetchData('http://localhost:3030/empresa', setEmpresa);
+  
   const [nota, setNota] = useState([]);
-  useEffect(() => {
-    axios.get('http://localhost:3030/nota')
-      .then((response) => {
-        setNota(response.data.data);
-      }).catch((err) => {
-        console.error(err);
-      });
-  }, []);
+  useFetchData('http://localhost:3030/nota', setNota);
 
   const [funcionario, setFuncionario] = useState([]);
-  useEffect(() => {
-    axios.get('http://localhost:3030/funcionario')
-      .then((response) => {
-        setFuncionario(response.data.data);
-      }).catch((err) => {
-        console.error(err);
-      });
-  }, []);
-
+  useFetchData('http://localhost:3030/funcionario', setFuncionario);
+  
   const [kinays, setKinay] = useState([]);
-  useEffect(() => {
-    axios.get('http://localhost:3030/kinay')
-      .then((response) => {
-        setKinay(response.data.data);
-      }).catch((err) => {
-        console.error(err);
-      });
-  }, []);
+  useFetchData('http://localhost:3030/kinay', setKinay);
 
   const [impostos, setImpostos] = useState([]);
-  useEffect(() => {
-    axios.get('http://localhost:3030/impostos')
-      .then((response) => {
-        setImpostos(response.data.data);
-      }).catch((err) => {
-        console.error(err);
-      });
-  }, []);
+  useFetchData('http://localhost:3030/impostos', setImpostos);
 
   const [pedido, setPedido] = useState([]);
-  useEffect(() => {
-    axios.get('http://localhost:3030/pedido')
-      .then((response) => {
-        setPedido(response.data.data);
-      }).catch((err) => {
-        console.error(err);
-      });
-  }, []);
+  useFetchData('http://localhost:3030/pedido', setPedido);
 
   const [cargo, setCargo] = useState([]);
-  useEffect(() => {
-    axios.get('http://localhost:3030/cargo')
-      .then((response) => {
-        setCargo(response.data.data);
-      }).catch((err) => {
-        console.error(err);
-      });
-  }, []);
-
-
-  
+  useFetchData('http://localhost:3030/cargo', setCargo);
 
   return (
     <GlobalContext.Provider
-      value={{empresa, setEmpresa, nota, setNota, kinays, setKinay, impostos, setImpostos, pedido, setPedido, funcionario, setFuncionario, cargo, setCargo }}>
+      value={{ empresa, setEmpresa, nota, setNota, kinays, setKinay, impostos, setImpostos, pedido, setPedido, funcionario, setFuncionario, cargo, setCargo }}>
       {children}
     </GlobalContext.Provider>
   );

@@ -367,7 +367,6 @@ export const TabelaAddNota = () => {
 
             setData({ ...data, valorRecebidoNF: valorRecebido, situacaoNF: 'Antecipada' });
         } else if (name === "situacaoNF" && value === "Recebida") {
-
             setData({ ...data, valorRecebidoNF: data.valorReceberNF, situacaoNF: 'Recebida' });
         } else {
             setData({ ...data, [name]: value });

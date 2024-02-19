@@ -109,6 +109,7 @@ export const Empresa = () => {
     }
 
     const [state, setState] = useState({
+        inicio: true,
         empresa: false,
         funcionarios: false,
         gasto: false,
@@ -142,8 +143,9 @@ export const Empresa = () => {
         setState(prevState => ({
             ...prevState,
             [key]: !prevState[key],
+            ...(key !== 'empresa' && { inicio: false }),
             ...(key !== 'empregadorState' && { empregadorState: false }),
-            ...(key !== 'addEmpresa' && { addEmpresa: false }),
+            ...(key !== 'addEmpresa' && { addEmpresa: false}),
             ...(key !== 'addFuncionarios' && { addFuncionarios: false }),
             ...(key !== 'addNotaF' && { addNotaF: false }),
             ...(key !== 'addImposto' && { addImposto: false }),
@@ -243,7 +245,13 @@ export const Empresa = () => {
 
                     </Div>
                     <Div className="w-full shadow-md shadow-slate-600 flex flex-col justify-center items-center ">
-                        <ResumoEmpresa/>
+                        {state.empresa && <>
+                            {
+                                state.inicio &&
+                                <ResumoEmpresa />
+                            }
+                        </>
+                        }
 
                         {state.outros &&
                             <Teste />
