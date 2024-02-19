@@ -1,5 +1,6 @@
 import styled from "styled-components";
 import { useState, useEffect } from "react";
+import axios from "axios";
 import { Chart } from "react-google-charts";
 import { useGlobalContext } from "../../global/Global";
 
@@ -71,30 +72,30 @@ const Div = styled.div`
 `;
 
 const H1 = styled.h1`
-width: 100%;
-display: flex;
-flex-direction: space-between;
-font-weight: 700;
-font-size: larger;
+  width: 100%;
+  display: flex;
+  flex-direction: space-between;
+  font-weight: 700;
+  font-size: larger;
 `;
 
 const H2 = styled.h2`
-display: grid;
-grid-template-columns: repeat(2, minmax(0, 1fr));
-text-align: center;
-font-weight: 600;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  text-align: center;
+  font-weight: 600;
 `;
 
 const H3 = styled.h3`
-display: grid;
-grid-template-columns: repeat(3, minmax(0, 1fr));
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
   text-align: center;
   font-weight: 600;
 `;
 
 const H4 = styled.h3`
-display: grid;
-grid-template-columns: repeat(5, minmax(0, 1fr));
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
   text-align: center;
   font-weight: 600;
 `;
@@ -106,10 +107,10 @@ const P = styled.p`
 
 export const ResumoEmpresa = () => {
   const { empresa, nota, pedido } = useGlobalContext();
-  const [data, setData] = useState('');
+  const [data, setData] = useState("");
 
   const dataAtual = new Date();
-  const mesAtual = String(dataAtual.getMonth() + 1).padStart(2, '0');
+  const mesAtual = String(dataAtual.getMonth() + 1).padStart(2, "0");
   const anoAtual = dataAtual.getFullYear();
 
   const [mes, setMes] = useState(mesAtual);
@@ -118,7 +119,7 @@ export const ResumoEmpresa = () => {
   useEffect(() => {
     const intervalId = setInterval(() => {
       const dataAtual = new Date();
-      const mesAtual = String(dataAtual.getMonth() + 1).padStart(2, '0');
+      const mesAtual = String(dataAtual.getMonth() + 1).padStart(2, "0");
       const anoAtual = dataAtual.getFullYear();
 
       setMes(mesAtual);
@@ -129,9 +130,12 @@ export const ResumoEmpresa = () => {
     return () => clearInterval(intervalId);
   }, []);
 
-  const pedidosFiltrados = pedido.filter(pedido => {
+  const pedidosFiltrados = pedido.filter((pedido) => {
     const dataPedido = new Date(pedido.dataPDD);
-    return dataPedido.getMonth() + 1 === parseInt(mes) && dataPedido.getFullYear() === parseInt(ano);
+    return (
+      dataPedido.getMonth() + 1 === parseInt(mes) &&
+      dataPedido.getFullYear() === parseInt(ano)
+    );
   });
 
   const somaNotas = nota.reduce((acc, nota) => {
@@ -142,42 +146,47 @@ export const ResumoEmpresa = () => {
     }
     return acc;
   }, {});
-
-  const pedidosAtualizados = pedidosFiltrados.map(pedido => {
+  const pedidosAtualizados = pedidosFiltrados.map((pedido) => {
     if (somaNotas[pedido.numeroPDD]) {
-      return {
+      const pedidoAtualizado = {
         ...pedido,
         valorRecebidoPDD: somaNotas[pedido.numeroPDD],
       };
+
+      const headers = {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      };
+
+      axios
+        .put(
+          `http://localhost:3030/pedido/${pedido.numeroPDD}`,
+          { valorRecebidoPDD: somaNotas[pedido.numeroPDD] },
+          headers
+        )
+        .then((response) => {
+          console.log("Valor recebido atualizado com sucesso!");
+          console.log(pedido.numeroPDD, pedido.valorRecebidoPDD);
+        })
+        .catch((err) => {
+          console.error(
+            "Erro ao atualizar valor recebido:",
+            err.response.data.message
+          );
+        });
+
+      return pedidoAtualizado;
     }
+
     return pedido;
   });
 
-  useEffect(() => {
-    const interval = setInterval(() => {
-      const pedidosAtualizados = processaPedidos();
-
-      pedidosAtualizados.forEach(pedido => {
-        const headers = {
-          'Content-Type': 'application/json',
-        };
-
-        axios
-          .put(`http://localhost:3030/pedido/${pedido.id}`, { valorRecebido: pedido.valorRecebidoPDD }, headers)
-          .then((response) => {
-            console.log('Valor recebido atualizado com sucesso!');
-          })
-          .catch((err) => {
-            console.error('Erro ao atualizar valor recebido:', err.response.data.message);
-          });
-      });
-    }, 60000);
-    return () => clearInterval(interval);
-  }, [nota, pedidosFiltrados]); 
+  console.log(pedidosAtualizados);
 
   pedido.sort((a, b) => new Date(a.dataPDD) - new Date(b.dataPDD));
 
-  const notasRecebidas = nota.filter(nota => {
+  const notasRecebidas = nota.filter((nota) => {
     const dataNota = new Date(nota.dataNF);
     return (
       (nota.situacaoNF === "Recebida" || nota.situacaoNF === "Antecipada") &&
@@ -192,13 +201,14 @@ export const ResumoEmpresa = () => {
     0
   );
 
-  const notasReceber = nota.filter(
-    (nota) => nota.situacaoNF === "Em Análise"
-  );
+  const notasReceber = nota.filter((nota) => nota.situacaoNF === "Em Análise");
 
-  const notasReceberFiltradas = notasReceber.filter(nota => {
+  const notasReceberFiltradas = notasReceber.filter((nota) => {
     const dataNota = new Date(nota.dataNF);
-    return dataNota.getMonth() + 1 === parseInt(mes) && dataNota.getFullYear() === parseInt(ano);
+    return (
+      dataNota.getMonth() + 1 === parseInt(mes) &&
+      dataNota.getFullYear() === parseInt(ano)
+    );
   });
 
   notasReceber.sort((a, b) => new Date(a.dataNF) - new Date(b.dataNF));
@@ -207,14 +217,17 @@ export const ResumoEmpresa = () => {
     setData(event.target.value);
 
     const dataSelecionada = new Date(event.target.value);
-    const mesSelecionado = String(dataSelecionada.getMonth() + 1).padStart(2, '0');
+    const mesSelecionado = String(dataSelecionada.getMonth() + 1).padStart(
+      2,
+      "0"
+    );
     const anoSelecionado = dataSelecionada.getFullYear();
 
     setMes(mesSelecionado);
     setAno(anoSelecionado);
   };
 
-  // grafico  Donut  
+  // grafico  Donut
   const agrupado = notasRecebidas.reduce((acc, nota) => {
     const chave = nota.nomeEmpresaNF;
 
@@ -227,11 +240,17 @@ export const ResumoEmpresa = () => {
     return acc;
   }, {});
 
-
   const grafico = [];
-  Object.values(agrupado).map(notaAgrupada => {
-    const empresaEncontrada = empresa.find(empresa => empresa.nameEmpresa === notaAgrupada.nomeEmpresaNF);
-    grafico.push([empresaEncontrada ? empresaEncontrada.siglaEmpresa : notaAgrupada.nomeEmpresaNF, notaAgrupada.valorRecebidoNF]);
+  Object.values(agrupado).map((notaAgrupada) => {
+    const empresaEncontrada = empresa.find(
+      (empresa) => empresa.nameEmpresa === notaAgrupada.nomeEmpresaNF
+    );
+    grafico.push([
+      empresaEncontrada
+        ? empresaEncontrada.siglaEmpresa
+        : notaAgrupada.nomeEmpresaNF,
+      notaAgrupada.valorRecebidoNF,
+    ]);
   });
 
   grafico.unshift(["Empresa", "Valor Recebido"]);
@@ -239,170 +258,202 @@ export const ResumoEmpresa = () => {
   const options = {
     pieHole: 0.4,
     is3D: false,
-    backgroundColor: 'transparent',
+    backgroundColor: "transparent",
     pieSliceTextStyle: {
-      color: 'black',
+      color: "black",
     },
   };
 
-  return (<>
+  return (
+    <>
+      <Header>
+        <div className="flex justify-end items-center py-4 gap-5">
+          <th className="w-full text-center text-3xl pt-1">Resumo Mensal</th>
+          <form
+            onSubmit={handleDataChange}
+            className="absolute flex flex-row gap-4 w-auto pr-4"
+          >
+            <select
+              value={mes}
+              onChange={(event) => setMes(event.target.value)}
+            >
+              <option value="">Selecione o mês</option>
+              <option value="01">Janeiro</option>
+              <option value="02">Fevereiro</option>
+              <option value="03">Março</option>
+              <option value="04">Abril</option>
+              <option value="05">Maio</option>
+              <option value="06">Junho</option>
+              <option value="07">Julho</option>
+              <option value="08">Agosto</option>
+              <option value="09">Setembro</option>
+              <option value="10">Outubro</option>
+              <option value="11">Novembro</option>
+              <option value="12">Dezembro</option>
+            </select>
 
-    <Header>
-      <div className="flex justify-end items-center py-4 gap-5">
-        <th className="w-full text-center text-3xl pt-1">Resumo Mensal</th>
-        <form onSubmit={handleDataChange} className="absolute flex flex-row gap-4 w-auto pr-4">
-          <select value={mes} onChange={(event) => setMes(event.target.value)}>
-            <option value="">Selecione o mês</option>
-            <option value="01">Janeiro</option>
-            <option value="02">Fevereiro</option>
-            <option value="03">Março</option>
-            <option value="04">Abril</option>
-            <option value="05">Maio</option>
-            <option value="06">Junho</option>
-            <option value="07">Julho</option>
-            <option value="08">Agosto</option>
-            <option value="09">Setembro</option>
-            <option value="10">Outubro</option>
-            <option value="11">Novembro</option>
-            <option value="12">Dezembro</option>
-          </select>
+            <select
+              value={ano}
+              onChange={(event) => setAno(event.target.value)}
+            >
+              <option value="">Selecione o ano</option>
+              <option value="2022">2022</option>
+              <option value="2023">2023</option>
+              <option value="2024">2024</option>
+              <option value="2025">2025</option>
+              <option value="2026">2026</option>
+            </select>
+          </form>
+        </div>
+      </Header>
 
-          <select value={ano} onChange={(event) => setAno(event.target.value)}>
-            <option value="">Selecione o ano</option>
-            <option value="2022">2022</option>
-            <option value="2023">2023</option>
-            <option value="2024">2024</option>
-            <option value="2025">2025</option>
-            <option value="2026">2026</option>
-          </select>
-        </form>
-      </div>
-    </Header>
-
-    <Footer>
-
-      <Section className="max-w-[23em]">
-
-        <Dir>
-          <H1> Nota Fiscal Recebida</H1>
-
-          <H3>
-            <P>N° Pedido</P>
-            <P>N° Nota</P>
-            <P>V.Recebido</P>
-          </H3>
-        </Dir>
-
-        <Div >
-          {notasRecebidas.map((nota) => {
-            return (
-              <H3 key={nota.id} className="cursor-pointer border-b-2 border-gray-400 text-[1.5vh]">
-                <P>{nota.numeroPedidoNF}</P>
-                <P>{String(nota.numeroNotaNF).padStart(5, "0")}</P>
-                <P>{Number(nota.valorRecebidoNF).toLocaleString("pt-BR", { style: "currency", currency: "BRL" })}</P>
-              </H3>
-            )
-          })}
-        </Div>
-
-
-        <Dir>
-          <H1> Nota Fiscal Em Análise</H1>
-
-          <H3>
-            <P>N° Pedido</P>
-            <P>N° Nota</P>
-            <P>V.Receber</P>
-          </H3>
-        </Dir>
-
-        <Div >
-          {notasReceberFiltradas.map((nota) => (
-            <H3 key={nota.id} className="cursor-pointer border-b-2 border-gray-400 text-[1.5vh]">
-              <P>{nota.numeroPedidoNF}</P>
-              <P>{String(nota.numeroNotaNF).padStart(5, "0")}</P>
-              <P>{Number(nota.valorReceberNF).toLocaleString("pt-BR", { style: "currency", currency: "BRL" })}</P>
-            </H3>
-          ))}
-        </Div>
-
-
-        <Article >
+      <Footer>
+        <Section className="max-w-[23em]">
           <Dir>
-            <H1>Empresas Cadastradas</H1>
+            <H1> Nota Fiscal Recebida</H1>
 
-            <H2>
-              <P>Nome</P>
-              <P>CNPJ</P>
-            </H2>
+            <H3>
+              <P>N° Pedido</P>
+              <P>N° Nota</P>
+              <P>V.Recebido</P>
+            </H3>
           </Dir>
 
           <Div>
-            {empresa.map((empresas) => (
-              <H2 key={empresas.id} className="cursor-pointer border-b-2 border-gray-400 text-[1.5vh]">
-                <P>{empresas.siglaEmpresa}</P>
-                <P>{empresas.cnpjEmpresa}</P>
-              </H2>
+            {notasRecebidas.map((nota) => {
+              return (
+                <H3
+                  key={nota.id}
+                  className="cursor-pointer border-b-2 border-gray-400 text-[1.5vh]"
+                >
+                  <P>{nota.numeroPedidoNF}</P>
+                  <P>{String(nota.numeroNotaNF).padStart(5, "0")}</P>
+                  <P>
+                    {Number(nota.valorRecebidoNF).toLocaleString("pt-BR", {
+                      style: "currency",
+                      currency: "BRL",
+                    })}
+                  </P>
+                </H3>
+              );
+            })}
+          </Div>
+
+          <Dir>
+            <H1> Nota Fiscal Em Análise</H1>
+
+            <H3>
+              <P>N° Pedido</P>
+              <P>N° Nota</P>
+              <P>V.Receber</P>
+            </H3>
+          </Dir>
+
+          <Div>
+            {notasReceberFiltradas.map((nota) => (
+              <H3
+                key={nota.id}
+                className="cursor-pointer border-b-2 border-gray-400 text-[1.5vh]"
+              >
+                <P>{nota.numeroPedidoNF}</P>
+                <P>{String(nota.numeroNotaNF).padStart(5, "0")}</P>
+                <P>
+                  {Number(nota.valorReceberNF).toLocaleString("pt-BR", {
+                    style: "currency",
+                    currency: "BRL",
+                  })}
+                </P>
+              </H3>
             ))}
           </Div>
-        </Article>
 
-      </Section>
+          <Article>
+            <Dir>
+              <H1>Empresas Cadastradas</H1>
 
-      <Section>
+              <H2>
+                <P>Nome</P>
+                <P>CNPJ</P>
+              </H2>
+            </Dir>
 
-        <Dir>
-          <H1>Pedidos</H1>
+            <Div>
+              {empresa.map((empresas) => (
+                <H2
+                  key={empresas.id}
+                  className="cursor-pointer border-b-2 border-gray-400 text-[1.5vh]"
+                >
+                  <P>{empresas.siglaEmpresa}</P>
+                  <P>{empresas.cnpjEmpresa}</P>
+                </H2>
+              ))}
+            </Div>
+          </Article>
+        </Section>
 
-          <H4>
-            <P>N° Pedido</P>
-            <P>Empresa</P>
-            <P>Situação</P>
-            <P>V.Total</P>
-            <P>V.Recebido</P>
-          </H4>
-        </Dir>
+        <Section>
+          <Dir>
+            <H1>Pedidos</H1>
 
-        <Div>
-          {pedidosAtualizados.map((pedido) => {
-            return (
-              <H4 key={pedido.id} className="cursor-pointer border-b-2 border-gray-400 text-[1.5vh]">
-                <P>{pedido.numeroPDD}</P>
-                <P>{pedido.empresaPDD}</P>
-                <P>{pedido.situacaoPDD}</P>
-                <P>{Number(pedido.valorPDD).toLocaleString("pt-BR", { style: "currency", currency: "BRL" })}</P>
-                <P>{Number(pedido.valorRecebidoPDD).toLocaleString("pt-BR", { style: "currency", currency: "BRL" })}</P>
-              </H4>
-            )
-          })}
+            <H4>
+              <P>N° Pedido</P>
+              <P>Empresa</P>
+              <P>Situação</P>
+              <P>V.Total</P>
+              <P>V.Recebido</P>
+            </H4>
+          </Dir>
 
-        </Div>
+          <Div>
+            {pedidosAtualizados.map((pedido) => {
+              return (
+                <H4
+                  key={pedido.id}
+                  className="cursor-pointer border-b-2 border-gray-400 text-[1.5vh]"
+                >
+                  <P>{pedido.numeroPDD}</P>
+                  <P>{pedido.empresaPDD}</P>
+                  <P>{pedido.situacaoPDD}</P>
+                  <P>
+                    {Number(pedido.valorPDD).toLocaleString("pt-BR", {
+                      style: "currency",
+                      currency: "BRL",
+                    })}
+                  </P>
+                  <P>
+                    {Number(pedido.valorRecebidoPDD).toLocaleString("pt-BR", {
+                      style: "currency",
+                      currency: "BRL",
+                    })}
+                  </P>
+                </H4>
+              );
+            })}
+          </Div>
 
-        <Dir>
-          <H1 className="flex justify-between w-full">Ganhos Mensal
-            <p>
-              Valor Ganho
-              {Number(valorTotalNotasAnalise).toLocaleString("pt-BR", {
-                style: "currency",
-                currency: "BRL",
-              })}
-            </p>
-          </H1>
-        </Dir>
-        <Div>
-          <Chart
-            chartType="PieChart"
-            width="100%"
-            height="100%"
-            data={grafico}
-            options={options}
-          />
-
-        </Div>
-
-      </Section>
-
-    </Footer>
-  </>
+          <Dir>
+            <H1 className="flex justify-between w-full">
+              Ganhos Mensal
+              <p>
+                Valor Ganho
+                {Number(valorTotalNotasAnalise).toLocaleString("pt-BR", {
+                  style: "currency",
+                  currency: "BRL",
+                })}
+              </p>
+            </H1>
+          </Dir>
+          <Div>
+            <Chart
+              chartType="PieChart"
+              width="100%"
+              height="100%"
+              data={grafico}
+              options={options}
+            />
+          </Div>
+        </Section>
+      </Footer>
+    </>
   );
 };
