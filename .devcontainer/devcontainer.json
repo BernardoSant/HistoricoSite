@@ -3,8 +3,25 @@
   "ghcr.io/devcontainers-contrib/features/mysql-homebrew:1": {
     
   },
-  "ghcr.io/devcontainers-contrib/features/node-asdf:0": {
-    
+  "ghcr.io/devcontainers/features/node:1": {
+    "id": "node-asdf",
+    "version": "18",
+    "name": "Node.js (via asdf)",
+    "documentationURL": "http://github.com/devcontainers-contrib/features/tree/main/src/node-asdf",
+    "description": "Installs Node.js via asdf.",
+    "options": {
+        "version": {
+            "default": "latest",
+            "description": "Select the version to install.",
+            "proposals": [
+                "latest"
+            ],
+            "type": "string"
+        }
+    },
+    "installsAfter": [
+        "ghcr.io/devcontainers-contrib/features/asdf-package"
+    ]
   },
   "features": {
   }
