@@ -153,6 +153,28 @@ export const ResumoEmpresa = () => {
     return pedido;
   });
 
+  useEffect(() => {
+    const interval = setInterval(() => {
+      const pedidosAtualizados = processaPedidos();
+
+      pedidosAtualizados.forEach(pedido => {
+        const headers = {
+          'Content-Type': 'application/json',
+        };
+
+        axios
+          .put(`http://localhost:3030/pedido/${pedido.id}`, { valorRecebido: pedido.valorRecebidoPDD }, headers)
+          .then((response) => {
+            console.log('Valor recebido atualizado com sucesso!');
+          })
+          .catch((err) => {
+            console.error('Erro ao atualizar valor recebido:', err.response.data.message);
+          });
+      });
+    }, 60000);
+    return () => clearInterval(interval);
+  }, [nota, pedidosFiltrados]); 
+
   pedido.sort((a, b) => new Date(a.dataPDD) - new Date(b.dataPDD));
 
   const notasRecebidas = nota.filter(nota => {

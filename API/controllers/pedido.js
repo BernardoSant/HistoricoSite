@@ -33,21 +33,21 @@ router.get("/", async (req, res) => {
     });
 });
 
-router.put("/:id", async (req, res) => {
-    const { id } = req.params;
+router.put("/:numeroPDD", async (req, res) => {
+    const { numeroPDD } = req.params;
     const data = req.body;
 
     await db.pedido.update(data, {
-        where: { id: id }
+        where: { numeroPDD: numeroPDD }
     }).then(() => {
         return res.json({
             error: false,
-            message: "Pedido atualizada com sucesso!"
+            message: "Pedido atualizado com sucesso!"
         });
     }).catch(() => {
         return res.json({
             error: true,
-            message: "Erro: Não foi possível atualizar a Pedido!"
+            message: "Erro: Não foi possível atualizar o pedido!"
         });
     });
 });
