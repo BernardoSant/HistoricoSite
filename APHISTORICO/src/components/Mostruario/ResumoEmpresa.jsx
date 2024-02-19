@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 import axios from "axios";
 import { Chart } from "react-google-charts";
 import { useGlobalContext } from "../../global/Global";
+import { toast } from "react-toastify";
 
 const Footer = styled.footer`
   height: 100vh;
@@ -146,12 +147,63 @@ export const ResumoEmpresa = () => {
     }
     return acc;
   }, {});
+
+  atualizarEstado.forEach((pedido) => {
+    const headers = {
+      headers: {
+        "Content-Type": "application/json",
+      },
+    };
+
+    const diferença = somaNotas[pedido.numeroPDD] - pedido.valorPDD;
+
+    let status;
+    if (diferença === 0) {
+      status = "Finalizada";
+    } else if (diferença === pedido.valorPDD / 2) {
+      status = "Em andamento";
+    } else {
+      status = "Não iniciada";
+    }
+
+    axios
+      .put(
+        `http://localhost:3030/pedido/${pedido.numeroPDD}`,
+        {
+          valorRecebidoPDD: somaNotas[pedido.numeroPDD],
+          statusPDD: status,
+        },
+        headers
+      )
+      .then((response) => {
+        console.log(`Pedido ${pedido.numeroPDD} atualizado com sucesso.`);
+      })
+      .catch((err) => {
+        toast.error(
+          "Erro ao atualizar valor recebido:",
+          err.response.data.message
+        );
+      });
+  });
+
+  console.log(atualizarEstado);
   const pedidosAtualizados = pedidosFiltrados.map((pedido) => {
     if (somaNotas[pedido.numeroPDD]) {
       const pedidoAtualizado = {
         ...pedido,
         valorRecebidoPDD: somaNotas[pedido.numeroPDD],
       };
+
+      const diferença = somaNotas[pedido.numeroPDD] - pedido.valorPDD;
+
+      let status;
+      if (diferença === 0) {
+        status = "Finalizada";
+      } else if (diferença === pedido.valorPDD / 2) {
+        status = "Em andamento";
+      } else {
+        status = "";
+      }
 
       const headers = {
         headers: {
@@ -162,15 +214,17 @@ export const ResumoEmpresa = () => {
       axios
         .put(
           `http://localhost:3030/pedido/${pedido.numeroPDD}`,
-          { valorRecebidoPDD: somaNotas[pedido.numeroPDD] },
+          {
+            valorRecebidoPDD: somaNotas[pedido.numeroPDD],
+            situacaoPDD: status,
+          },
           headers
         )
         .then((response) => {
-          console.log("Valor recebido atualizado com sucesso!");
-          console.log(pedido.numeroPDD, pedido.valorRecebidoPDD);
+          console.log(`Pedido ${pedido.numeroPDD} atualizado com sucesso.`);
         })
         .catch((err) => {
-          console.error(
+          toast.error(
             "Erro ao atualizar valor recebido:",
             err.response.data.message
           );
@@ -181,8 +235,6 @@ export const ResumoEmpresa = () => {
 
     return pedido;
   });
-
-  console.log(pedidosAtualizados);
 
   pedido.sort((a, b) => new Date(a.dataPDD) - new Date(b.dataPDD));
 
