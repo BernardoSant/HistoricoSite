@@ -148,45 +148,6 @@ export const ResumoEmpresa = () => {
     return acc;
   }, {});
 
-  atualizarEstado.forEach((pedido) => {
-    const headers = {
-      headers: {
-        "Content-Type": "application/json",
-      },
-    };
-
-    const diferença = somaNotas[pedido.numeroPDD] - pedido.valorPDD;
-
-    let status;
-    if (diferença === 0) {
-      status = "Finalizada";
-    } else if (diferença === pedido.valorPDD / 2) {
-      status = "Em andamento";
-    } else {
-      status = "Não iniciada";
-    }
-
-    axios
-      .put(
-        `http://localhost:3030/pedido/${pedido.numeroPDD}`,
-        {
-          valorRecebidoPDD: somaNotas[pedido.numeroPDD],
-          statusPDD: status,
-        },
-        headers
-      )
-      .then((response) => {
-        console.log(`Pedido ${pedido.numeroPDD} atualizado com sucesso.`);
-      })
-      .catch((err) => {
-        toast.error(
-          "Erro ao atualizar valor recebido:",
-          err.response.data.message
-        );
-      });
-  });
-
-  console.log(atualizarEstado);
   const pedidosAtualizados = pedidosFiltrados.map((pedido) => {
     if (somaNotas[pedido.numeroPDD]) {
       const pedidoAtualizado = {
