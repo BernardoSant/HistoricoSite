@@ -10,7 +10,6 @@ const Footer = styled.footer`
   width: 100%;
   padding: 1em;
   display: flex;
-  flex-wrap: wrap;
   justify-content: start;
   align-content: start;
   flex-direction: row;
@@ -18,6 +17,10 @@ const Footer = styled.footer`
 `;
 
 const Header = styled.header`
+  display: flex;
+  align-content: center;
+  justify-content: center;
+  padding: 8px;
   width: 100%;
   margin-bottom: 7px;
   border-radius: 1em;
@@ -155,13 +158,11 @@ export const ResumoEmpresa = () => {
         valorRecebidoPDD: somaNotas[pedido.numeroPDD],
       };
 
-      const diferença = somaNotas[pedido.numeroPDD] - pedido.valorPDD;
-
       let status;
-      if (diferença === 0) {
+      if (somaNotas[pedido.numeroPDD] > pedido.valorPDD / 1.5) {
         status = "Finalizada";
-      } else if (diferença === pedido.valorPDD / 2) {
-        status = "Em andamento";
+      } else if (pedido.valorPDD > 0) {
+        status = "Em Andamento";
       } else {
         status = "";
       }
@@ -181,9 +182,7 @@ export const ResumoEmpresa = () => {
           },
           headers
         )
-        .then((response) => {
-          console.log(`Pedido ${pedido.numeroPDD} atualizado com sucesso.`);
-        })
+        .then((response) => {})
         .catch((err) => {
           toast.error(
             "Erro ao atualizar valor recebido:",
@@ -280,44 +279,46 @@ export const ResumoEmpresa = () => {
   return (
     <>
       <Header>
-        <div className="flex justify-end items-center py-4 gap-5">
-          <th className="w-full text-center text-3xl pt-1">Resumo Mensal</th>
-          <form
-            onSubmit={handleDataChange}
-            className="absolute flex flex-row gap-4 w-auto pr-4"
+        <h1 className=" w-full text-center text-3xl flex justify-center items-center font-bold">
+          Resumo Mensal
+        </h1>
+        <form
+          onSubmit={handleDataChange}
+          className="flex flex-col gap-2 w-auto justify-end pr-4"
+        >
+          <select
+            className="w-auto bg-gray-300 border-2 rounded-md border-gray-500"
+            value={mes}
+            onChange={(event) => setMes(event.target.value)}
           >
-            <select
-              value={mes}
-              onChange={(event) => setMes(event.target.value)}
-            >
-              <option value="">Selecione o mês</option>
-              <option value="01">Janeiro</option>
-              <option value="02">Fevereiro</option>
-              <option value="03">Março</option>
-              <option value="04">Abril</option>
-              <option value="05">Maio</option>
-              <option value="06">Junho</option>
-              <option value="07">Julho</option>
-              <option value="08">Agosto</option>
-              <option value="09">Setembro</option>
-              <option value="10">Outubro</option>
-              <option value="11">Novembro</option>
-              <option value="12">Dezembro</option>
-            </select>
+            <option value="">Selecione o mês</option>
+            <option value="01">Janeiro</option>
+            <option value="02">Fevereiro</option>
+            <option value="03">Março</option>
+            <option value="04">Abril</option>
+            <option value="05">Maio</option>
+            <option value="06">Junho</option>
+            <option value="07">Julho</option>
+            <option value="08">Agosto</option>
+            <option value="09">Setembro</option>
+            <option value="10">Outubro</option>
+            <option value="11">Novembro</option>
+            <option value="12">Dezembro</option>
+          </select>
 
-            <select
-              value={ano}
-              onChange={(event) => setAno(event.target.value)}
-            >
-              <option value="">Selecione o ano</option>
-              <option value="2022">2022</option>
-              <option value="2023">2023</option>
-              <option value="2024">2024</option>
-              <option value="2025">2025</option>
-              <option value="2026">2026</option>
-            </select>
-          </form>
-        </div>
+          <select
+            className="w-auto bg-gray-300 border-2 rounded-md border-gray-500"
+            value={ano}
+            onChange={(event) => setAno(event.target.value)}
+          >
+            <option value="">Selecione o ano</option>
+            <option value="2022">2022</option>
+            <option value="2023">2023</option>
+            <option value="2024">2024</option>
+            <option value="2025">2025</option>
+            <option value="2026">2026</option>
+          </select>
+        </form>
       </Header>
 
       <Footer>
@@ -447,13 +448,15 @@ export const ResumoEmpresa = () => {
           <Dir>
             <H1 className="flex justify-between w-full">
               Ganhos Mensal
-              <p>
-                Valor Ganho
-                {Number(valorTotalNotasAnalise).toLocaleString("pt-BR", {
-                  style: "currency",
-                  currency: "BRL",
-                })}
-              </p>
+              <div className="flex gap-x-3">
+                <p>Valor Ganho </p>
+                <p>
+                  {Number(valorTotalNotasAnalise).toLocaleString("pt-BR", {
+                    style: "currency",
+                    currency: "BRL",
+                  })}
+                </p>
+              </div>
             </H1>
           </Dir>
           <Div>
