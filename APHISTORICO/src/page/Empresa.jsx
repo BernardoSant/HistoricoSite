@@ -1,18 +1,17 @@
 import { useState } from "react";
 import { NavBar } from "../components/NavBar";
 import styled from "styled-components";
-import {
-  TabelaAdicionarEmpresa,
-  TabelaAddImposto,
-  TabelaAddNota,
-  MostrarImposto,
-  TabelaAddFuncionario,
-  TabelaAddKinay,
-  TabelaAddPedido,
-} from "../components/TabelaEmpresa";
-import { MostruarioNota } from "../components/MostruarioEmpresa";
-import { MostruarioFuncAdmitido } from "../components/Mostruario/FuncionarioAdmitidos";
-import { MostruarioFuncDemitido } from "../components/Mostruario/FuncionarioDemitidos";
+
+import { TabelaAdicionarEmpresa } from "../components/Empresa/AddEmpresa"
+import { MostruarioNota } from "../components/Nota/MtrNota";
+import { TabelaAddNota } from "../components/Nota/AddNota";
+import { TabelaAddPedido } from "../components/Pedidos/AddPedido";
+import { TabelaAddKinay } from "../components/Cnae/AddKinay";
+import { TabelaAddImposto } from "../components/Imposto/AddImposto";
+import { MostrarImposto } from "../components/Imposto/MtrImposto";
+import { TabelaAddFuncionario } from "../components/Funcionarios/AddFuncionario";
+import { MostruarioFuncAdmitido } from "../components/Funcionarios/FuncionarioAdmitidos";
+import { MostruarioFuncDemitido } from "../components/Funcionarios/FuncionarioDemitidos";
 import { ResumoEmpresa } from "../components/Mostruario/ResumoEmpresa";
 import { useGlobalContext } from "../global/Global";
 import { Teste } from "../components/text";

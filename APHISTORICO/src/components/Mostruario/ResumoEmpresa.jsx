@@ -159,7 +159,7 @@ export const ResumoEmpresa = () => {
       };
 
       let status;
-      if (somaNotas[pedido.numeroPDD] > pedido.valorPDD / 1.5) {
+      if (somaNotas[pedido.numeroPDD] > pedido.valorPDD / 1.3) {
         status = "Finalizada";
       } else if (pedido.valorPDD > 0) {
         status = "Em Andamento";
