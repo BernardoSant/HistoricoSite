@@ -15,6 +15,7 @@ import { MostruarioFuncDemitido } from "../components/Funcionarios/FuncionarioDe
 import { ResumoEmpresa } from "../components/Mostruario/ResumoEmpresa";
 import { useGlobalContext } from "../global/Global";
 import { Teste } from "../components/text";
+import TelaDeGasto from "../components/test";
 
 const Nav = styled.nav`
   width: 100%;
