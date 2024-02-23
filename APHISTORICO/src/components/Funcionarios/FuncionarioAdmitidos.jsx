@@ -80,8 +80,6 @@ export const MostruarioFuncAdmitido = () => {
         cargoFuncionario: '',
         horasTFucionario: '',
         dataAdmicaoFucionario: '',
-        conjugueFucionario: '',
-        cpfConjugueFucionario: '',
         paiFucionario: '',
         maeFucionario: '',
         complementoFucionario: '',
@@ -310,7 +308,6 @@ export const MostruarioFuncAdmitido = () => {
 
                         <H1 className='col-span-2'>CTPS</H1>
                         <H1 className='col-span-2'>PIS</H1>
-                        <H1 className='col-span-1'>TIT.Eleitor</H1>
 
                         <Input
                             maxLength="14"
@@ -328,15 +325,6 @@ export const MostruarioFuncAdmitido = () => {
                             onChange={valorInput}
                             name='pisFucionario'
                             value={data.pisFucionario}
-                        />
-
-                        <Input
-                            maxLength="14"
-                            className='col-span-1'
-                            type="text"
-                            onChange={valorInput}
-                            name='titEleitorFucionario'
-                            value={data.titEleitorFucionario}
                         />
 
                         <H1 className='col-span-2'>Função</H1>
@@ -459,10 +447,8 @@ export const MostruarioFuncAdmitido = () => {
 
                         <H1 className='col-span-2'>CTPS</H1>
                         <H1 className='col-span-2'>PIS</H1>
-                        <H1 className='col-span-1'>TIT.Eleitor</H1>
                         <H2 className='col-span-2'>{data.ctpsFucionario}</H2>
                         <H2 className='col-span-2'>{data.pisFucionario}</H2>
-                        <H2 className='col-span-1'>{data.titEleitorFucionario}</H2>
 
                         <H1 className='col-span-2'>Função</H1>
                         <H1 className='col-span-2'>Salario</H1>

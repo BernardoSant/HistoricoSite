@@ -27,12 +27,6 @@ module.exports = {
       estadoCivilFucionario: {
         type: Sequelize.STRING
       },
-      conjugueFucionario: {
-        type: Sequelize.STRING
-      },
-      cpfConjugueFucionario: {
-        type: Sequelize.STRING
-      },
       paiFucionario: {
         type: Sequelize.STRING
       },
@@ -60,10 +54,10 @@ module.exports = {
       ctpsFucionario: {
         type: Sequelize.STRING
       },
-      titEleitorFucionario: {
-        type: Sequelize.STRING
-      },
       dataAdmicaoFucionario: {
+        type: Sequelize.DATEONLY
+      },
+      dataFeriasFucionario: {
         type: Sequelize.DATEONLY
       },
       pisFucionario: {
