@@ -360,7 +360,7 @@ export const MostruarioNota = ({ empresaId }) => {
                   {notasDaEmpresaAnalise.map((nota) => {
                     return (
                       <>
-                        <thead className="w-full flex justify-end ml-2">
+                        <thead className="relative w-full flex justify-end ml-2">
                           <span
                             className="absolute h-6 w-6 rounded-full bg-orange-500 flex justify-center items-center cursor-pointer "
                             onClick={() => {
@@ -437,7 +437,7 @@ export const MostruarioNota = ({ empresaId }) => {
                   {notasDaEmpresaRecebida.map((nota) => {
                     return (
                       <>
-                        <thead className=" w-full flex justify-end ml-2">
+                        <thead className="relative w-full flex justify-end ml-2">
                           <span
                             className="absolute h-6 w-6 rounded-full bg-gray-400 flex justify-center items-center cursor-pointer "
                             onClick={() => {
@@ -514,7 +514,7 @@ export const MostruarioNota = ({ empresaId }) => {
                   {notasDaEmpresaAntecipada.map((nota) => {
                     return (
                       <>
-                        <thead className="w-full flex justify-end ml-2">
+                        <thead className="relative w-full flex justify-end ml-2">
                           <span
                             className="absolute h-6 w-6 rounded-full bg-gray-400 flex justify-center items-center cursor-pointer "
                             onClick={() => {

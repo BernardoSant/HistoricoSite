@@ -6,7 +6,7 @@ import { TabelaAdicionarEmpresa } from "../components/Empresa/AddEmpresa"
 import { MostruarioNota } from "../components/Nota/MtrNota";
 import { TabelaAddNota } from "../components/Nota/AddNota";
 import { TabelaAddPedido } from "../components/Pedidos/AddPedido";
-import { TabelaAddKinay } from "../components/Cnae/AddKinay";
+import { TabelaAddKinay } from "../components/Outros/AddKinay";
 import { TabelaAddImposto } from "../components/Imposto/AddImposto";
 import { MostrarImposto } from "../components/Imposto/MtrImposto";
 import { TabelaAddFuncionario } from "../components/Funcionarios/AddFuncionario";
@@ -15,7 +15,7 @@ import { MostruarioFuncDemitido } from "../components/Funcionarios/FuncionarioDe
 import { ResumoEmpresa } from "../components/Mostruario/ResumoEmpresa";
 import { useGlobalContext } from "../global/Global";
 import { Teste } from "../components/text";
-import TelaDeGasto from "../components/test";
+import { Outros } from "../components/Outros/Outros";
 
 const Nav = styled.nav`
   width: 100%;
@@ -396,6 +396,7 @@ export const Empresa = () => {
             </nav>
           </Div>
           <Div className="w-full shadow-md shadow-slate-600 flex flex-col justify-center items-center ">
+            <Outros></Outros>
             {state.resumoMensal && <ResumoEmpresa />}
 
             {state.outros && <Teste />}
