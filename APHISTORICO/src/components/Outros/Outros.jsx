@@ -113,7 +113,7 @@ const P = styled.p`
 `;
 
 const Input = styled.input`
-  font-size: medium;
+  font-size: 1rem;
   border: 2px solid #d1d5db;
   border-radius: 10px;
   padding-left: 8px;
@@ -144,10 +144,10 @@ export const Outros = () => {
       <Footer>
         <Section>
           <Dir>
-            <nav className="relative w-full flex flex-wrap justify-end ml-2 ">
+            <nav className="relative w-full flex flex-wrap justify-end ml-2 text-[1rem]">
               {state.addCargo && (
                 <span
-                  className={`absolute h-6 w-6 rounded-full bg-gray-200 flex justify-center items-center cursor-pointer mt-[1.7em] xl:mt-0 xl:mr-[1.7em]`}
+                  className={`absolute p-1 rounded-full bg-gray-200 flex justify-center items-center cursor-pointer mt-[1.7em] xl:mt-0 xl:mr-[1.7em]`}
                   title="Salvar"
                   onClick={() => handleClick("addCargo")}
                 >
@@ -156,7 +156,7 @@ export const Outros = () => {
               )}
 
               <span
-                className={`absolute h-6 w-6 rounded-full bg-gray-300 flex justify-center items-center cursor-pointer drop-shadow-lg ${
+                className={`absolute p-1 rounded-full bg-gray-300 flex justify-center items-center cursor-pointer drop-shadow-lg ${
                   state.addCargo ? "bg-red-600" : ""
                 }`}
                 title={`${state.addCargo ? "Voltar" : "Adicionar"}`}
