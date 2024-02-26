@@ -210,8 +210,8 @@ export const TabelaAddFuncionario = () => {
               className="col-span-1 border-2 border-gray-300 rounded-md px-2 "
             >
               <option></option>
-              <option value="M">Masculino</option>
-              <option value="F">Feminino</option>
+              <option value="Masculino">Masculino</option>
+              <option value="Feminino">Feminino</option>
             </select>
           </div>
 
