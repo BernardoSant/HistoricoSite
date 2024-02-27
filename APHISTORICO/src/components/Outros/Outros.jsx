@@ -4,7 +4,11 @@ import axios from "axios";
 import { Chart } from "react-google-charts";
 import { useGlobalContext } from "../../global/Global";
 import { toast } from "react-toastify";
-import { HiOutlinePlusSm } from "react-icons/hi";
+import {
+  HiOutlinePlusSm,
+  HiOutlineDocumentDuplicate,
+  HiOutlineTrash,
+} from "react-icons/hi";
 import { RiSaveLine } from "react-icons/ri";
 import { LuArrowRightFromLine } from "react-icons/lu";
 
@@ -60,6 +64,7 @@ const Dir = styled.div`
   background: #f97316;
   box-shadow: inset 3px -3px 10px #9f4a0e, inset -5px 5px 10px #ff9c1e;
   z-index: 10;
+  font-size: 1.2em;
 `;
 
 const Div = styled.div`
@@ -83,7 +88,7 @@ const H1 = styled.h1`
   display: flex;
   flex-direction: space-between;
   font-weight: 700;
-  font-size: larger;
+  font-size: 1.3em;
 `;
 
 const H2 = styled.h2`
@@ -91,6 +96,7 @@ const H2 = styled.h2`
   grid-template-columns: repeat(2, minmax(0, 1fr));
   text-align: center;
   font-weight: 600;
+  font-size: 1.4em;
 `;
 
 const H3 = styled.h3`
@@ -113,8 +119,9 @@ const P = styled.p`
 `;
 
 const Input = styled.input`
-  font-size: 1rem;
-  border: 2px solid #d1d5db;
+  font-size: 0.9em;
+  border: 2px solid #5a5a5a;
+  background-color: #dfdddd;
   border-radius: 10px;
   padding-left: 8px;
 `;
@@ -124,6 +131,8 @@ export const Outros = () => {
 
   const [state, setState] = useState({
     addCargo: false,
+    edtCargo: false,
+    delCargo: false,
   });
 
   const handleClick = (key) => {
@@ -131,7 +140,49 @@ export const Outros = () => {
       ...prevState,
       [key]: !prevState[key],
       ...(key !== "addCargo" && { addCargo: false }),
+      ...(key !== "edtCargo" && { edtCargo: false }),
+      ...(key !== "delCargo" && { delCargo: false }),
     }));
+  };
+
+  const [data, setData] = useState({
+    nomeCargo: "",
+    salarioCargo: "",
+    quantidadeCargo: "0",
+  });
+
+  const valorInput = (e) => {
+    let valor = e.target.value;
+    setData({ ...data, [e.target.name]: valor });
+  };
+
+  const sendCargo = async (e) => {
+    e.preventDefault();
+
+    const headers = {
+      headers: {
+        "Content-Type": "application/json",
+      },
+    };
+
+    if (data.nomeCargo === "" || data.salarioCargo === "") {
+      toast.error("Por favor, preencha todos os campos obrigatórios.");
+      return;
+    }
+
+    axios
+      .post("http://localhost:3030/cargo", data, headers)
+      .then((response) => {
+        toast.success(response.data.message);
+        setData({
+          nomeCargo: "",
+          salarioCargo: "",
+          quantidadeCargo: "",
+        });
+      })
+      .catch((err) => {
+        toast.info(err.response.data.message);
+      });
   };
 
   return (
@@ -141,49 +192,143 @@ export const Outros = () => {
           Outros
         </h1>
       </Header>
+
       <Footer>
         <Section>
           <Dir>
-            <nav className="relative w-full flex flex-wrap justify-end ml-2 text-[1rem]">
-              {state.addCargo && (
-                <span
-                  className={`absolute p-1 rounded-full bg-gray-200 flex justify-center items-center cursor-pointer mt-[1.7em] xl:mt-0 xl:mr-[1.7em]`}
-                  title="Salvar"
+            <div className="flex flex-row justify-between items-center py-1">
+              <H1 className="flex-auto">
+                {state.addCargo ? (
+                  <form
+                    id="addCargoForm"
+                    onSubmit={sendCargo}
+                    className="grid grid-cols-2 gap-3 pr-2"
+                  >
+                    <Input
+                      type="text"
+                      name="nomeCargo"
+                      placeholder="Cargo"
+                      onChange={valorInput}
+                      value={data.nomeCargo}
+                    />
+                    <Input
+                      type="text"
+                      name="salarioCargo"
+                      placeholder="Salario"
+                      onChange={valorInput}
+                      value={data.salarioCargo}
+                    />
+                  </form>
+                ) : state.edtCargo ? (
+                  <form
+                    id="edtCargoForm"
+                    className="grid grid-cols-2 gap-3 pr-2"
+                  >
+                    <Input
+                      type="text"
+                      list="deltCargo"
+                      name="nomeCargo"
+                      placeholder="Selecione o cargo"
+                      onChange={valorInput}
+                      value={data.nomeCargo}
+                    />
+                    <datalist id="deltCargo">
+                      {cargo.map((cargo) => (
+                        <option key={cargo.id} value={cargo.nomeCargo} />
+                      ))}
+                    </datalist>
+
+                    <Input
+                      type="text"
+                      name="salarioCargo"
+                      placeholder="Atualizar Salario"
+                      onChange={valorInput}
+                      value={data.salarioCargo}
+                    />
+                  </form>
+                ) : state.delCargo ? (
+                  <form
+                    id="delCargoForm"
+                    className="grid grid-cols-2 gap-3 pr-2"
+                  >
+                    <Input
+                      type="text"
+                      list="deltCargo"
+                      name="nomeCargo"
+                      placeholder="Selecione o cargo"
+                      onChange={valorInput}
+                      value={data.nomeCargo}
+                    />
+                    <datalist id="deltCargo">
+                      {cargo.map((cargo) => (
+                        <option key={cargo.id} value={cargo.nomeCargo} />
+                      ))}
+                    </datalist>
+                  </form>
+                ) : (
+                  <p>Cargo</p>
+                )}
+              </H1>
+
+              <nav className="flex flex-col xl:flex-row  gap-2 justify-end text-[1rem]">
+                {state.addCargo || state.edtCargo || state.delCargo ? (
+                  <button
+                    className={`flex-1 p-1 rounded-full bg-gray-200 cursor-pointer drop-shadow-lg`}
+                    title={state.addCargo ? "Salvar" : state.edtCargo ? "Atualizar" : "Excluir"}
+                    type="submit"
+                    form={state.addCargo ? "addCargoForm" : state.edtCargo ? "edtCargoForm" : "delCargoForm"}
+                  >
+                    <RiSaveLine />
+                  </button>
+                ) : null}
+
+                <button
+                  className={`p-1 rounded-full bg-red-600 cursor-pointer drop-shadow-lg text-[1.2em] 
+                  ${state.addCargo ? "hidden" : ""} ${
+                    state.edtCargo ? "hidden" : ""
+                  } ${state.delCargo ? "bg-red-600" : ""}`}
+                  title={`${state.delCargo ? "Voltar" : "Excluir"}`}
+                  onClick={() => handleClick("delCargo")}
+                >
+                  {state.delCargo ? (
+                    <LuArrowRightFromLine />
+                  ) : (
+                    <HiOutlineTrash />
+                  )}
+                </button>
+
+                <button
+                  className={`p-1 rounded-full bg-green-600 cursor-pointer drop-shadow-lg text-[1.2em] 
+                  ${state.addCargo ? "hidden" : ""} ${
+                    state.delCargo ? "hidden" : ""
+                  } ${state.edtCargo ? "bg-red-600" : ""}`}
+                  title={`${state.edtCargo ? "Voltar" : "Alterar"}`}
+                  onClick={() => handleClick("edtCargo")}
+                >
+                  {state.edtCargo ? (
+                    <LuArrowRightFromLine />
+                  ) : (
+                    <HiOutlineDocumentDuplicate />
+                  )}
+                </button>
+
+                <button
+                  className={`p-1 rounded-full bg-gray-300 cursor-pointer drop-shadow-lg text-[1.2em] 
+                  ${state.delCargo ? "hidden" : ""} ${
+                    state.edtCargo ? "hidden" : ""
+                  } ${state.addCargo ? "bg-red-600" : ""}`}
+                  title={`${state.addCargo ? "Voltar" : "Adicionar"}`}
                   onClick={() => handleClick("addCargo")}
                 >
-                  <RiSaveLine />
-                </span>
-              )}
+                  {state.addCargo ? (
+                    <LuArrowRightFromLine />
+                  ) : (
+                    <HiOutlinePlusSm />
+                  )}
+                </button>
+              </nav>
+            </div>
 
-              <span
-                className={`absolute p-1 rounded-full bg-gray-300 flex justify-center items-center cursor-pointer drop-shadow-lg ${
-                  state.addCargo ? "bg-red-600" : ""
-                }`}
-                title={`${state.addCargo ? "Voltar" : "Adicionar"}`}
-                onClick={() => handleClick("addCargo")}
-              >
-                {state.addCargo ? (
-                  <LuArrowRightFromLine />
-                ) : (
-                  <HiOutlinePlusSm />
-                )}
-              </span>
-            </nav>
-
-            <H1 className="">
-              {state.addCargo ? (
-                <p className="flex flex-row flex-wrap gap-3 items-center justify-start pr-4">
-                  <Input type="text" name="nomeCargo" placeholder="Cargo" />
-                  <Input
-                    type="text"
-                    name="salarioCargo"
-                    placeholder="Salario"
-                  />
-                </p>
-              ) : (
-                <p>Cargo</p>
-              )}
-            </H1>
             <H3>
               <P>Nome/Cargo</P>
               <P>Salario</P>
