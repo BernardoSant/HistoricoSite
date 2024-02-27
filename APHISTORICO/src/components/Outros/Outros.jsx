@@ -153,7 +153,20 @@ export const Outros = () => {
 
   const valorInput = (e) => {
     let valor = e.target.value;
+    let name = e.target.name;
     setData({ ...data, [e.target.name]: valor });
+
+    if ((name === "nomeCargo" && state.delCargo) || state.edtCargo) {
+      const parts = valor.split(" - ");
+      const idCargo = parts[0];
+      const NomeCargo = parts[1];
+
+      setData({
+        ...data,
+        idCargo: idCargo,
+        nomeCargo: NomeCargo,
+      });
+    }
   };
 
   const sendCargo = async (e) => {
@@ -179,6 +192,56 @@ export const Outros = () => {
           salarioCargo: "",
           quantidadeCargo: "",
         });
+      })
+      .catch((err) => {
+        toast.info(err.response.data.message);
+      });
+  };
+  const EdtCargo = async (e) => {
+    e.preventDefault();
+
+    const headers = {
+      headers: {
+        "Content-Type": "application/json",
+      },
+    };
+
+    if (data.nomeCargo === "" || data.salarioCargo === "") {
+      toast.error("Por favor, preencha todos os campos obrigatórios.");
+      return;
+    }
+
+    axios
+      .post("http://localhost:3030/cargo", data, headers)
+      .then((response) => {
+        toast.success(response.data.message);
+        setData({
+          nomeCargo: "",
+          salarioCargo: "",
+          quantidadeCargo: "",
+        });
+      })
+      .catch((err) => {
+        toast.info(err.response.data.message);
+      });
+  };
+
+  const DelCargo = async (e) => {
+    e.preventDefault();
+
+    const headers = {
+      headers: {
+        "Content-Type": "application/json",
+      },
+    };
+
+    axios
+      .delete(
+        "http://localhost:3030/cargo/" + data.idCargo,
+        headers
+      )
+      .then((response) => {
+        toast.success(response.data.message);
       })
       .catch((err) => {
         toast.info(err.response.data.message);
@@ -212,9 +275,9 @@ export const Outros = () => {
                       value={data.nomeCargo}
                     />
                     <Input
-                      type="text"
+                      type="number"
                       name="salarioCargo"
-                      placeholder="Salario"
+                      placeholder="Salario EX: 00.00"
                       onChange={valorInput}
                       value={data.salarioCargo}
                     />
@@ -222,6 +285,7 @@ export const Outros = () => {
                 ) : state.edtCargo ? (
                   <form
                     id="edtCargoForm"
+                    onSubmit={EdtCargo}
                     className="grid grid-cols-2 gap-3 pr-2"
                   >
                     <Input
@@ -234,20 +298,24 @@ export const Outros = () => {
                     />
                     <datalist id="deltCargo">
                       {cargo.map((cargo) => (
-                        <option key={cargo.id} value={cargo.nomeCargo} />
+                        <option
+                          key={cargo.id}
+                          value={`${cargo.id} - ${cargo.nomeCargo}`}
+                        />
                       ))}
                     </datalist>
 
                     <Input
-                      type="text"
+                      type="number"
                       name="salarioCargo"
-                      placeholder="Atualizar Salario"
+                      placeholder="Atualizar Salario "
                       onChange={valorInput}
                       value={data.salarioCargo}
                     />
                   </form>
                 ) : state.delCargo ? (
                   <form
+                    onSubmit={DelCargo}
                     id="delCargoForm"
                     className="grid grid-cols-2 gap-3 pr-2"
                   >
@@ -261,7 +329,10 @@ export const Outros = () => {
                     />
                     <datalist id="deltCargo">
                       {cargo.map((cargo) => (
-                        <option key={cargo.id} value={cargo.nomeCargo} />
+                        <option
+                          key={cargo.id}
+                          value={`${cargo.id} - ${cargo.nomeCargo}`}
+                        />
                       ))}
                     </datalist>
                   </form>
@@ -274,9 +345,21 @@ export const Outros = () => {
                 {state.addCargo || state.edtCargo || state.delCargo ? (
                   <button
                     className={`flex-1 p-1 rounded-full bg-gray-200 cursor-pointer drop-shadow-lg`}
-                    title={state.addCargo ? "Salvar" : state.edtCargo ? "Atualizar" : "Excluir"}
+                    title={
+                      state.addCargo
+                        ? "Salvar"
+                        : state.edtCargo
+                        ? "Atualizar"
+                        : "Excluir"
+                    }
                     type="submit"
-                    form={state.addCargo ? "addCargoForm" : state.edtCargo ? "edtCargoForm" : "delCargoForm"}
+                    form={
+                      state.addCargo
+                        ? "addCargoForm"
+                        : state.edtCargo
+                        ? "edtCargoForm"
+                        : "delCargoForm"
+                    }
                   >
                     <RiSaveLine />
                   </button>
