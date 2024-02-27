@@ -557,7 +557,7 @@ export const MostruarioNota = ({ empresaId }) => {
               </>
             ) : null}
 
-            <table className="w-full bg-orange-500 drop-shadow-2xl rounded-2xl mb-1">
+            <table className="w-full bg-orange-600 drop-shadow-2xl rounded-2xl mb-1">
               <thead className="grid grid-cols-4 justify-center items-center w-full rounded-b-lg drop-shadow-2xl text-lg py-1">
                 <Th className="col-span-1 text-end">Valor Recebido:</Th>
                 <Th className="col-span-1 text-start px-3">

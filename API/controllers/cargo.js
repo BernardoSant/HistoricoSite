@@ -37,7 +37,7 @@ router.put("/:id", async (req, res) => {
     const { id } = req.params;
     const data = req.body;
 
-    await db.nota.update(data, {
+    await db.Cargo.update(data, {
         where: { id: id }
     }).then(() => {
         return res.json({

@@ -129,27 +129,15 @@ const Input = styled.input`
 export const Outros = () => {
   const { cargo } = useGlobalContext();
 
-  const [state, setState] = useState({
-    addCargo: false,
-    edtCargo: false,
-    delCargo: false,
-  });
-
-  const handleClick = (key) => {
-    setState((prevState) => ({
-      ...prevState,
-      [key]: !prevState[key],
-      ...(key !== "addCargo" && { addCargo: false }),
-      ...(key !== "edtCargo" && { edtCargo: false }),
-      ...(key !== "delCargo" && { delCargo: false }),
-    }));
-  };
-
   const [data, setData] = useState({
     nomeCargo: "",
     salarioCargo: "",
     quantidadeCargo: "0",
   });
+  const valorInput2 = (e) => {
+    let valor = e.target.value;
+    setData({ ...data, [e.target.name]: valor });
+  };
 
   const valorInput = (e) => {
     let valor = e.target.value;
@@ -197,6 +185,7 @@ export const Outros = () => {
         toast.info(err.response.data.message);
       });
   };
+
   const EdtCargo = async (e) => {
     e.preventDefault();
 
@@ -212,14 +201,9 @@ export const Outros = () => {
     }
 
     axios
-      .post("http://localhost:3030/cargo", data, headers)
+      .put("http://localhost:3030/cargo/" + data.idCargo, data, headers)
       .then((response) => {
         toast.success(response.data.message);
-        setData({
-          nomeCargo: "",
-          salarioCargo: "",
-          quantidadeCargo: "",
-        });
       })
       .catch((err) => {
         toast.info(err.response.data.message);
@@ -235,17 +219,47 @@ export const Outros = () => {
       },
     };
 
+    if (data.nomeCargo === "") {
+      toast.error("Por favor, preencha todos os campos obrigatórios.");
+      return;
+    }
+
     axios
-      .delete(
-        "http://localhost:3030/cargo/" + data.idCargo,
-        headers
-      )
+      .delete("http://localhost:3030/cargo/" + data.idCargo, headers)
       .then((response) => {
         toast.success(response.data.message);
       })
       .catch((err) => {
         toast.info(err.response.data.message);
       });
+  };
+
+  const [state, setState] = useState({
+    addCargo: false,
+    edtCargo: false,
+    delCargo: false,
+  });
+
+  const handleClick = (key) => {
+    setState((prevState) => ({
+      ...prevState,
+      [key]: !prevState[key],
+      ...(key !== "addCargo" && {
+        addCargo: false,
+      }),
+      ...(key !== "edtCargo" && {
+        edtCargo: false,
+      }),
+      ...(key !== "delCargo" && {
+        delCargo: false,
+      }),
+    }));
+
+    setData({
+      nomeCargo: "",
+      salarioCargo: "",
+      quantidadeCargo: "0",
+    });
   };
 
   return (
@@ -278,7 +292,7 @@ export const Outros = () => {
                       type="number"
                       name="salarioCargo"
                       placeholder="Salario EX: 00.00"
-                      onChange={valorInput}
+                      onChange={valorInput2}
                       value={data.salarioCargo}
                     />
                   </form>
@@ -309,7 +323,7 @@ export const Outros = () => {
                       type="number"
                       name="salarioCargo"
                       placeholder="Atualizar Salario "
-                      onChange={valorInput}
+                      onChange={valorInput2}
                       value={data.salarioCargo}
                     />
                   </form>
@@ -323,6 +337,7 @@ export const Outros = () => {
                       type="text"
                       list="deltCargo"
                       name="nomeCargo"
+                      className="col-span-2"
                       placeholder="Selecione o cargo"
                       onChange={valorInput}
                       value={data.nomeCargo}
