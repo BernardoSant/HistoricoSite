@@ -6,7 +6,6 @@ import { TabelaAdicionarEmpresa } from "../components/Empresa/AddEmpresa";
 import { MostruarioNota } from "../components/Nota/MtrNota";
 import { TabelaAddNota } from "../components/Nota/AddNota";
 import { TabelaAddPedido } from "../components/Pedidos/AddPedido";
-import { TabelaAddKinay } from "../components/Outros/AddKinay";
 import { TabelaAddImposto } from "../components/Imposto/AddImposto";
 import { MostrarImposto } from "../components/Imposto/MtrImposto";
 import { TabelaAddFuncionario } from "../components/Funcionarios/AddFuncionario";
@@ -149,7 +148,6 @@ export const Empresa = () => {
     addNotaF: false,
     addPedido: false,
     addImposto: false,
-    addKinay: false,
     verImposto: false,
     alimentacao: false,
     cargos: false,
@@ -174,7 +172,6 @@ export const Empresa = () => {
       ...(key !== "addNotaF" && { addNotaF: false }),
       ...(key !== "addImposto" && { addImposto: false }),
       ...(key !== "addPedido" && { addPedido: false }),
-      ...(key !== "addKinay" && { addKinay: false }),
       ...(key !== "verImposto" && { verImposto: false }),
       ...(key !== "verNota" && { verNota: false }),
       ...(key !== "verFunciAdmitido" && { verFunciAdmitido: false }),
@@ -184,6 +181,7 @@ export const Empresa = () => {
       ...(key !== "ferramentas" && { ferramentas: false }),
       ...(key !== "uniformes" && { uniformes: false }),
       ...(key !== "visualizar" && { visualizar: false }),
+      ...(key !== "outros" && { outros: false }),
     }));
   };
   // ordernar por tamanho de digito
@@ -344,12 +342,6 @@ export const Empresa = () => {
                     onSecundario={state.addImposto}
                     onClick={() => handleClick("addImposto")}
                   ></Button>
-                  <Button
-                    TipoButton={2}
-                    Titulo={"Adcionar Kinay"}
-                    onFinal={state.addKinay}
-                    onClick={() => handleClick("addKinay")}
-                  ></Button>
                 </Tabela>
               )}
 
@@ -403,8 +395,6 @@ export const Empresa = () => {
             {state.addPedido && <TabelaAddPedido />}
 
             {state.verNota && <MostruarioNota empresaId={empresaSelecionada} />}
-
-            {state.addKinay && <TabelaAddKinay />}
 
             {state.addEmpresa && <TabelaAdicionarEmpresa />}
 

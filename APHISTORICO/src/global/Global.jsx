@@ -45,7 +45,7 @@ const AppContext = ({ children }) => {
   useFetchData("http://localhost:3030/impostos", setImpostos, 30 * 1000);
 
   const [cargo, setCargo] = useState([]);
-  useFetchData("http://localhost:3030/cargo", setCargo, 30 * 1000);
+  useFetchData("http://localhost:3030/cargo", setCargo, 10 * 1000);
 
   return (
     <GlobalContext.Provider

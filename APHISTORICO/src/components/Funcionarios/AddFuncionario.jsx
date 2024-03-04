@@ -64,7 +64,7 @@ const Button = styled.button`
 `;
 
 export const TabelaAddFuncionario = () => {
-  const { empresa } = useGlobalContext();
+  const { empresa, cargo } = useGlobalContext();
 
   const [data, setData] = useState({
     statuFucionario: "Admitido",
@@ -129,8 +129,7 @@ export const TabelaAddFuncionario = () => {
       dataFeriasFucionario: dataFerias.toISOString().split('T')[0],
     });
   };
-
-  console.log(data.dataFeriasFucionario)
+  
   const sendFuncionario = async (e) => {
     e.preventDefault();
 
@@ -179,7 +178,6 @@ export const TabelaAddFuncionario = () => {
         });
       })
       .catch((err) => {
-        console.log(data)
         toast.info(err.response.data.message);
       });
   };
@@ -392,15 +390,9 @@ export const TabelaAddFuncionario = () => {
               className="col-span-1 border-2 border-gray-300 rounded-md  py-[0.2em]"
             >
               <option></option>
-              <option value="Pedreiro">Pedreiro</option>
-              <option value="Pintor">Pintor</option>
-              <option value="Ajudante">Ajudante</option>
-              <option value="Encarregado">Encarregado</option>
-              <option value="Soldador">Soldador</option>
-              <option value="Meio OFF.Pedreiro">Meio OFF.Pedreiro</option>
-              <option value="Meio OFF.Pintor">Meio OFF.Pintor</option>
-              <option value="Engenheiro">Engenheiro</option>
-              <option value="Tecnico Segurança">Técnico Segurança</option>
+              {cargo.map((cargo) => (
+                <option key={cargo.id} value={cargo.nomeCargo}>{cargo.nomeCargo}</option>
+              ))}
             </select>
 
             <select
