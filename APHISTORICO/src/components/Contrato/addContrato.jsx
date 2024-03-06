@@ -90,7 +90,7 @@ export const TabelaAddContrato = () => {
     setData({ ...data, [e.target.name]: valor });
   };
 
-  const sendPedido = async (e) => {
+  const sendContrato = async (e) => {
     e.preventDefault();
 
     const headers = {
@@ -127,10 +127,10 @@ export const TabelaAddContrato = () => {
     <>
       <Header>Adcionar Contrato</Header>
 
-      <Form onSubmit={sendPedido}>
+      <Form onSubmit={sendContrato}>
         <div className="grid grid-cols-4 grid-rows-1 items-start gap-x-4 ">
           <H1 className="col-span-1">Numero*</H1>
-          <H1 className="col-span-3">Nome Breve</H1>
+          <H1 className="col-span-3">Nome do Contrato</H1>
 
           <Input
             type="number"
@@ -148,7 +148,7 @@ export const TabelaAddContrato = () => {
             className="col-span-3"
           />
           <H1 className="col-span-2">Valor Total</H1>
-          <H1 className="col-span-2">Empresa</H1>
+          <H1 className="col-span-2">Empresa Prestadora</H1>
 
           <Input
             type="text"
@@ -172,7 +172,7 @@ export const TabelaAddContrato = () => {
               </option>
             ))}
           </Select>
-          <H1 className="col-span-4">Data Lançada</H1>
+          <H1 className="col-span-4">Data Contrato</H1>
           <Input
             type="date"
             name="dataCT"
