@@ -35,6 +35,9 @@ app.use("/nota", nota)
 const pedido = require("./controllers/pedido");
 app.use("/pedido", pedido)
 
+const contrato = require("./controllers/contrato");
+app.use("/contrato", contrato)
+
 const cargo = require("./controllers/cargo");
 app.use("/cargo", cargo)
 

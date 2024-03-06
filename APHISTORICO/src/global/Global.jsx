@@ -38,6 +38,9 @@ const AppContext = ({ children }) => {
   const [pedido, setPedido] = useState([]);
   useFetchData("http://localhost:3030/pedido", setPedido, 30 * 1000);
 
+  const [contrato, setContrato] = useState([]);
+  useFetchData("http://localhost:3030/contrato", setContrato, 30 * 1000);
+
   const [kinays, setKinay] = useState([]);
   useFetchData("http://localhost:3030/kinay", setKinay, 30 * 1000);
 
@@ -60,6 +63,8 @@ const AppContext = ({ children }) => {
         setImpostos,
         pedido,
         setPedido,
+        contrato,
+        setContrato,
         funcionario,
         setFuncionario,
         cargo,

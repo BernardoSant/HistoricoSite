@@ -12,6 +12,7 @@ import { TabelaAddFuncionario } from "../components/Funcionarios/AddFuncionario"
 import { MostruarioFuncAdmitido } from "../components/Funcionarios/FuncionarioAdmitidos";
 import { MostruarioFuncDemitido } from "../components/Funcionarios/FuncionarioDemitidos";
 import { ResumoEmpresa } from "../components/Mostruario/ResumoEmpresa";
+import { TabelaAddContrato } from "../components/Contrato/AddContrato";
 import { useGlobalContext } from "../global/Global";
 import { Teste } from "../components/text";
 import { Outros } from "../components/Outros/Outros";
@@ -79,11 +80,10 @@ const Button = ({
       {TipoButton === 1 && (
         <Botao
           onClick={onClick}
-          className={`mt-2 hover:bg-orange-500 hover:text-gray-200 ${
-            onPrimario
-              ? "bg-orange-600 rounded-b-none drop-shadow-xl underline"
-              : "bg-[#fffafa]"
-          }  rounded-[20px]  `}
+          className={`mt-2 hover:bg-orange-500 hover:text-gray-200 ${onPrimario
+            ? "bg-orange-600 rounded-b-none drop-shadow-xl underline"
+            : "bg-[#fffafa]"
+            }  rounded-[20px]  `}
         >
           {Titulo}
         </Botao>
@@ -92,11 +92,9 @@ const Button = ({
       {TipoButton === 2 && (
         <Botao
           onClick={onClick}
-          className={`${
-            onSecundario ? "text-gray-200 bg-orange-400 mt-1" : "text-black"
-          } ${
-            onFinal ? "text-gray-200 bg-orange-400 mt-1 rounded-b-[20px]" : ""
-          } hover:text-gray-200 w-full`}
+          className={`${onSecundario ? "text-gray-200 bg-orange-400 mt-1" : "text-black"
+            } ${onFinal ? "text-gray-200 bg-orange-400 mt-1 rounded-b-[20px]" : ""
+            } hover:text-gray-200 w-full`}
         >
           {Titulo}
         </Botao>
@@ -181,7 +179,8 @@ export const Empresa = () => {
       ...(key !== "ferramentas" && { ferramentas: false }),
       ...(key !== "uniformes" && { uniformes: false }),
       ...(key !== "visualizar" && { visualizar: false }),
-      ...(key !== "outros" && { outros: false }),
+      ...(key !== "outros" && { outros: false, icon: false }),
+
     }));
   };
   // ordernar por tamanho de digito
@@ -388,6 +387,9 @@ export const Empresa = () => {
             </nav>
           </Div>
           <Div className="w-full shadow-md shadow-slate-600 flex flex-col justify-center items-center ">
+
+            <TabelaAddContrato></TabelaAddContrato>
+            
             {state.resumoMensal && <ResumoEmpresa />}
 
             {state.outros && <Outros />}

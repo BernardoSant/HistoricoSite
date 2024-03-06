@@ -162,7 +162,7 @@ export const ResumoEmpresa = () => {
       if (somaNotas[pedido.numeroPDD] > pedido.valorPDD / 1.3) {
         status = "Finalizada";
       } else if (pedido.valorPDD > 0) {
-        status = "Em Andamento";
+        status = "Andamento";
       } else {
         status = "";
       }
@@ -182,7 +182,7 @@ export const ResumoEmpresa = () => {
           },
           headers
         )
-        .then((response) => {})
+        .then((response) => { })
         .catch((err) => {
           toast.error(
             "Erro ao atualizar valor recebido:",
@@ -419,14 +419,19 @@ export const ResumoEmpresa = () => {
           </Dir>
 
           <Div>
+            
             {pedidosAtualizados.map((pedido) => {
+
+              const empresaEncontrada = empresa.find(empresas => empresas.id === pedido.empresaPDD);
+              const siglaEmpresa = empresaEncontrada ? empresaEncontrada.siglaEmpresa : 'N/A';
+
               return (
                 <H4
                   key={pedido.id}
                   className="cursor-pointer border-b-2 border-gray-400 text-[1.5vh]"
                 >
                   <P>{pedido.numeroPDD}</P>
-                  <P>{pedido.empresaPDD}</P>
+                  <P>{siglaEmpresa}</P>
                   <P>{pedido.situacaoPDD}</P>
                   <P>
                     {Number(pedido.valorPDD).toLocaleString("pt-BR", {

@@ -83,7 +83,7 @@ export const TabelaAddPedido = () => {
       nomePDD: "",
       descricaoServPDD: "",
       empresaPDD: "",
-      situacaoPDD: "",
+      situacaoPDD: "Criada",
       dataPDD: "",
     });
   
@@ -113,11 +113,11 @@ export const TabelaAddPedido = () => {
           setData({
             numeroPDD: "",
             valorPDD: "",
-            valorRecebidoPDD: "",
+            valorRecebidoPDD: 0,
             nomePDD: "",
             descricaoServPDD: "",
             empresaPDD: "",
-            situacaoPDD: "",
+            situacaoPDD: "Criada",
             dataPDD: "",
           });
           console.log(data);
@@ -135,7 +135,7 @@ export const TabelaAddPedido = () => {
           <div className="grid grid-cols-4 grid-rows-1 items-start gap-x-4 ">
             <H1 className="col-span-1">Numero*</H1>
             <H1 className="col-span-1">Valor Total</H1>
-            <H1 className="col-span-2">Nome Brevê</H1>
+            <H1 className="col-span-2">Nome Breve</H1>
   
             <Input
               type="number"
@@ -171,7 +171,7 @@ export const TabelaAddPedido = () => {
             ></textarea>
   
             <H1 className="col-span-2">Empresa</H1>
-            <H1 className="col-span-1">Situação</H1>
+
             <H1 className="col-span-1">Data Lançada</H1>
   
             <Select
@@ -183,21 +183,10 @@ export const TabelaAddPedido = () => {
             >
               <option></option>
               {empresa.map((empresa) => (
-                <option key={empresa.id} value={empresa.siglaEmpresa}>
+                <option key={empresa.id} value={empresa.id}>
                   {empresa.nameEmpresa}
                 </option>
               ))}
-            </Select>
-  
-            <Select
-              name="situacaoPDD"
-              onChange={valorInput}
-              value={data.situacaoPDD}
-            >
-              <option></option>
-              <option value="Criada">Criada</option>
-              <option value="Andamento">Em Andamento</option>
-              <option value="Finalizada">Finalizada</option>
             </Select>
   
             <Input

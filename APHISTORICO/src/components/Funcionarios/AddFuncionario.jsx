@@ -153,6 +153,7 @@ export const TabelaAddFuncionario = () => {
       .then((response) => {
         toast.success(response.data.message);
         setData({
+          statuFucionario: "Admitido",
           nameFucionario: "",
           generoFucionario: "",
           cpfFucionario: "",
