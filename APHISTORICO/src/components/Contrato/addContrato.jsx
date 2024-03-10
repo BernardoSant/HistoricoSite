@@ -74,13 +74,14 @@ const Button = styled.button`
 `;
 
 export const TabelaAddContrato = () => {
-  const { empresa } = useGlobalContext();
+  const {ip, empresa } = useGlobalContext();
 
   const [data, setData] = useState({
     numeroCT: "",
     ValorCT: "",
-    valorRecebidoCT: 0,
+    ValorRecebidoCT: 0,
     nomeCT: "",
+    situacaoCT: "Ativo",
     empresaCT: "",
     dataCT: "",
   });
@@ -105,14 +106,15 @@ export const TabelaAddContrato = () => {
     }
 
     axios
-      .post("http://localhost:3030/contrato", data, headers)
+      .post(ip + "/contrato", data, headers)
       .then((response) => {
         toast.success(response.data.message);
         setData({
           numeroCT: "",
           ValorCT: "",
-          valorRecebidoCT: 0,
+          ValorRecebidoCT: 0,
           nomeCT: "",
+          situacaoCT: "Ativo",
           empresaCT: "",
           dataCT: "",
         });

@@ -74,134 +74,135 @@ const Button = styled.button`
 `;
 
 export const TabelaAddPedido = () => {
-    const { empresa } = useGlobalContext();
-  
-    const [data, setData] = useState({
-      numeroPDD: "",
-      valorPDD: "",
-      valorRecebidoPDD: 0,
-      nomePDD: "",
-      descricaoServPDD: "",
-      empresaPDD: "",
-      situacaoPDD: "Criada",
-      dataPDD: "",
-    });
-  
-    const valorInput = (e) => {
-      let valor = e.target.value;
-      setData({ ...data, [e.target.name]: valor });
-    };
-  
-    const sendPedido = async (e) => {
-      e.preventDefault();
-  
-      const headers = {
-        headers: {
-          "Content-Type": "application/json",
-        },
-      };
-  
-      if (data.numeroPDD === "" || data.situacaoPDD === "") {
-        toast.error("Por favor, preencha todos os campos obrigatórios.");
-        return;
-      }
-  
-      axios
-        .post("http://localhost:3030/pedido", data, headers)
-        .then((response) => {
-          toast.success(response.data.message);
-          setData({
-            numeroPDD: "",
-            valorPDD: "",
-            valorRecebidoPDD: 0,
-            nomePDD: "",
-            descricaoServPDD: "",
-            empresaPDD: "",
-            situacaoPDD: "Criada",
-            dataPDD: "",
-          });
-          console.log(data);
-        })
-        .catch((err) => {
-          toast.info(err.response.data.message);
-        });
-    };
-  
-    return (
-      <>
-        <Header>Adcionar Pedido</Header>
-  
-        <Form onSubmit={sendPedido}>
-          <div className="grid grid-cols-4 grid-rows-1 items-start gap-x-4 ">
-            <H1 className="col-span-1">Numero*</H1>
-            <H1 className="col-span-1">Valor Total</H1>
-            <H1 className="col-span-2">Nome Breve</H1>
-  
-            <Input
-              type="number"
-              name="numeroPDD"
-              onChange={valorInput}
-              value={data.numeroPDD}
-              className="col-span-1 "
-            />
-  
-            <Input
-              type="text"
-              name="valorPDD"
-              onChange={valorInput}
-              value={data.valorPDD}
-              className="col-span-1 "
-            />
-  
-            <Input
-              type="text"
-              name="nomePDD"
-              onChange={valorInput}
-              value={data.nomePDD}
-              className="col-span-2"
-            />
-            <H1 className="col-span-1">Descrição</H1>
-            <textarea
-              type="text"
-              name="descricaoServPDD"
-              onChange={valorInput}
-              value={data.descricaoServPDD}
-              rows="5"
-              className="col-span-4 border-2 border-gray-300 rounded-md px-2"
-            ></textarea>
-  
-            <H1 className="col-span-2">Empresa</H1>
+  const {ip, empresa } = useGlobalContext();
 
-            <H1 className="col-span-1">Data Lançada</H1>
-  
-            <Select
-              id="empresaPDD"
-              name="empresaPDD"
-              onChange={valorInput}
-              value={data.empresaPDD}
-              className="col-span-2 border-2 border-gray-300 rounded-[5px] px-2 py-[0.2em]"
-            >
-              <option></option>
-              {empresa.map((empresa) => (
-                <option key={empresa.id} value={empresa.id}>
-                  {empresa.nameEmpresa}
-                </option>
-              ))}
-            </Select>
-  
-            <Input
-              type="date"
-              name="dataPDD"
-              onChange={valorInput}
-              value={data.dataPDD}
-              className="col-span-1"
-            />
-          </div>
-          <section className="w-full flex justify-end py-4">
-            <Button type="submit">Salvar</Button>
-          </section>
-        </Form>
-      </>
-    );
+  const filtroEmpresa = empresa.filter;
+
+  const [data, setData] = useState({
+    numeroPDD: "",
+    valorPDD: "",
+    valorRecebidoPDD: 0,
+    nomePDD: "",
+    descricaoServPDD: "",
+    empresaPDD: "",
+    situacaoPDD: "Criada",
+    dataPDD: "",
+  });
+
+  const valorInput = (e) => {
+    let valor = e.target.value;
+    setData({ ...data, [e.target.name]: valor });
   };
-  
+
+  const sendPedido = async (e) => {
+    e.preventDefault();
+
+    const headers = {
+      headers: {
+        "Content-Type": "application/json",
+      },
+    };
+
+    if (data.numeroPDD === "" || data.situacaoPDD === "") {
+      toast.error("Por favor, preencha todos os campos obrigatórios.");
+      return;
+    }
+
+    axios
+      .post(ip + "/pedido", data, headers)
+      .then((response) => {
+        toast.success(response.data.message);
+        setData({
+          numeroPDD: "",
+          valorPDD: "",
+          valorRecebidoPDD: 0,
+          nomePDD: "",
+          descricaoServPDD: "",
+          empresaPDD: "",
+          situacaoPDD: "Criada",
+          dataPDD: "",
+        });
+        console.log(data);
+      })
+      .catch((err) => {
+        toast.info(err.response.data.message);
+      });
+  };
+
+  return (
+    <>
+      <Header>Adcionar Pedido</Header>
+
+      <Form onSubmit={sendPedido}>
+        <div className="grid grid-cols-4 grid-rows-1 items-start gap-x-4 ">
+          <H1 className="col-span-1">Numero*</H1>
+          <H1 className="col-span-1">Valor Total</H1>
+          <H1 className="col-span-2">Nome Breve</H1>
+
+          <Input
+            type="number"
+            name="numeroPDD"
+            onChange={valorInput}
+            value={data.numeroPDD}
+            className="col-span-1 "
+          />
+
+          <Input
+            type="text"
+            name="valorPDD"
+            onChange={valorInput}
+            value={data.valorPDD}
+            className="col-span-1 "
+          />
+
+          <Input
+            type="text"
+            name="nomePDD"
+            onChange={valorInput}
+            value={data.nomePDD}
+            className="col-span-2"
+          />
+          <H1 className="col-span-1">Descrição</H1>
+          <textarea
+            type="text"
+            name="descricaoServPDD"
+            onChange={valorInput}
+            value={data.descricaoServPDD}
+            rows="5"
+            className="col-span-4 border-2 border-gray-300 rounded-md px-2"
+          ></textarea>
+
+          <H1 className="col-span-2">Empresa</H1>
+
+          <H1 className="col-span-1">Data Lançada</H1>
+
+          <Select
+            id="empresaPDD"
+            name="empresaPDD"
+            onChange={valorInput}
+            value={data.empresaPDD}
+            className="col-span-2 border-2 border-gray-300 rounded-[5px] px-2 py-[0.2em]"
+          >
+            <option></option>
+            {empresa.map((empresa) => (
+              <option key={empresa.id} value={empresa.id}>
+                {empresa.nameEmpresa}
+              </option>
+            ))}
+          </Select>
+
+          <Input
+            type="date"
+            name="dataPDD"
+            onChange={valorInput}
+            value={data.dataPDD}
+            className="col-span-1"
+          />
+        </div>
+        <section className="w-full flex justify-end py-4">
+          <Button type="submit">Salvar</Button>
+        </section>
+      </Form>
+    </>
+  );
+};

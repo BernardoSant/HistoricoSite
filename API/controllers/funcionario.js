@@ -8,7 +8,7 @@ router.post("/", async (req, res) => {
     await db.Funcionario.create(data).then((dataFuncionario) => {
         return res.json({
             error: false,
-            message: "Funcionario cadastrada com sucesso!",   
+            message: "Funcionario cadastrado com sucesso!",   
             data: dataFuncionario    
         });
     }).catch(() => {
@@ -28,7 +28,7 @@ router.get("/", async (req, res) => {
     }).catch(() => {
         return res.status(500).json({
             error: true,
-            message: "Erro: Não foi possível buscar as Funcionario!"
+            message: "Erro: Não foi possível buscar os Funcionario!"
         });
     });
 });

@@ -26,33 +26,35 @@ const useFetchData = (url, setData, interval) => {
 };
 
 const AppContext = ({ children }) => {
+  let ip = "http://localhost:3030";
   const [empresa, setEmpresa] = useState([]);
-  useFetchData("http://localhost:3030/empresa", setEmpresa, 30 * 1000);
+  useFetchData(ip + "/empresa", setEmpresa, 30 * 1000);
 
   const [nota, setNota] = useState([]);
-  useFetchData("http://localhost:3030/nota", setNota, 30 * 1000);
+  useFetchData(ip + "/nota", setNota, 30 * 1000);
 
   const [funcionario, setFuncionario] = useState([]);
-  useFetchData("http://localhost:3030/funcionario", setFuncionario, 30 * 1000);
+  useFetchData(ip + "/funcionario", setFuncionario, 30 * 1000);
 
   const [pedido, setPedido] = useState([]);
-  useFetchData("http://localhost:3030/pedido", setPedido, 30 * 1000);
-
-  const [contrato, setContrato] = useState([]);
-  useFetchData("http://localhost:3030/contrato", setContrato, 30 * 1000);
+  useFetchData(ip + "/pedido", setPedido, 30 * 1000);
 
   const [kinays, setKinay] = useState([]);
-  useFetchData("http://localhost:3030/kinay", setKinay, 30 * 1000);
+  useFetchData(ip + "/kinay", setKinay, 30 * 1000);
 
   const [impostos, setImpostos] = useState([]);
-  useFetchData("http://localhost:3030/impostos", setImpostos, 30 * 1000);
+  useFetchData(ip + "/impostos", setImpostos, 30 * 1000);
 
+  const [contrato, setContrato] = useState([]);
+  useFetchData(ip + "/contrato", setContrato, 10 * 1000);
+  
   const [cargo, setCargo] = useState([]);
-  useFetchData("http://localhost:3030/cargo", setCargo, 10 * 1000);
+  useFetchData(ip + "/cargo", setCargo, 10 * 1000);
 
   return (
     <GlobalContext.Provider
       value={{
+        ip,
         empresa,
         setEmpresa,
         nota,

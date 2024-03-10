@@ -20,6 +20,28 @@ const Div = styled.div`
   flex-direction: row;
 `;
 
+const Article = styled.article`
+  width: 100%;
+  height: 100vh;
+  max-height: 65vh;
+  overflow: auto;
+  margin-top: 4px;
+  margin-bottom: 8px;
+  border-radius: 1em;
+  overflow-y: auto;
+  position: relative;
+  padding-right: 4px;
+
+  &::-webkit-scrollbar {
+    width: 5px;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: #575757;
+    border-radius: 1em;
+  }
+`;
+
 const H1 = styled.h1`
   font-weight: 600;
   margin-top: 5px;
@@ -51,7 +73,7 @@ const Header = styled.header`
 `;
 
 export const MostruarioFuncAdmitido = () => {
-  const { funcionario, empresa } = useGlobalContext();
+  const {ip , funcionario, empresa } = useGlobalContext();
 
   const FuncionariosAdmitidos = funcionario.filter(
     (funcionario) => funcionario.statuFucionario === "Admitido"
@@ -86,7 +108,6 @@ export const MostruarioFuncAdmitido = () => {
     estadoFucionario: "",
     ctpsFucionario: "",
     pisFucionario: "",
-    titEleitorFucionario: "",
     funcaoFuncionario: "",
     cargoFuncionario: "",
     horasTFucionario: "",
@@ -121,11 +142,6 @@ export const MostruarioFuncAdmitido = () => {
       valor = valor.replace(/(\d{3})(\d)/, "$1.$2");
       valor = valor.replace(/(\d{5})(\d)/, "$1.$2");
       valor = valor.replace(/(\d{2})(\d{1,2})$/, "$1-$2");
-    } else if (e.target.name === "titEleitorFucionario") {
-      valor = valor.replace(/\D/g, "");
-      valor = valor.replace(/(\d{3})(\d)/, "$1.$2");
-      valor = valor.replace(/(\d{3})(\d)/, "$1.$2");
-      valor = valor.replace(/(\d{3})(\d{1,2})$/, "$1-$2");
     }
     setData({ ...data, [e.target.name]: valor });
   };
@@ -155,11 +171,7 @@ export const MostruarioFuncAdmitido = () => {
     };
 
     axios
-      .put(
-        "http://localhost:3030/funcionario/" + funcionarioSelecionado.id,
-        data,
-        headers
-      )
+      .put(ip + "/funcionario/" + funcionarioSelecionado.id, data, headers)
       .then((response) => {
         toast.success(response.data.message);
       })
@@ -179,7 +191,7 @@ export const MostruarioFuncAdmitido = () => {
 
     axios
       .put(
-        "http://localhost:3030/funcionario/" + funcionarioSelecionado.id,
+        ip + "/funcionario/" + funcionarioSelecionado.id,
         { statuFucionario: "Demitido" },
         headers
       )
@@ -520,9 +532,9 @@ export const MostruarioFuncAdmitido = () => {
               <th className="col-span-1">Data</th>
             </thead>
           </Header>
-          <table className="w-full">
+          <Article>
             {FuncionariosAdmitidos.map((func) => {
-              let data = new Date(func.createdAt);
+              let data = new Date(func.dataAdmicaoFucionario);
               let opcoes = {
                 year: "numeric",
                 month: "2-digit",
@@ -533,7 +545,7 @@ export const MostruarioFuncAdmitido = () => {
 
               return (
                 <>
-                  <thead className="w-full flex justify-end ml-2">
+                  <thead className="w-auto flex justify-end ml-2">
                     <span
                       className="absolute h-6 w-6 rounded-full bg-gray-400 flex justify-center items-center cursor-pointer "
                       onClick={() => {
@@ -557,7 +569,7 @@ export const MostruarioFuncAdmitido = () => {
                 </>
               );
             })}
-          </table>
+          </Article>
         </>
       )}
     </Div>

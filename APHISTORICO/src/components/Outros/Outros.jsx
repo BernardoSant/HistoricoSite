@@ -82,6 +82,15 @@ const Div = styled.div`
   border-bottom-right-radius: 1em;
   border-bottom-left-radius: 1em;
   flex: 1 1 0%;
+
+  &::-webkit-scrollbar {
+    width: 5px;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: #575757;
+    border-radius: 1em;
+  }
 `;
 
 const H1 = styled.h1`
@@ -133,7 +142,7 @@ const Input = styled.input`
 `;
 
 export const Outros = () => {
-  const { cargo, kinays } = useGlobalContext();
+  const { ip, cargo, kinays } = useGlobalContext();
 
   const [data, setData] = useState({
     nomeCargo: "",
@@ -192,7 +201,7 @@ export const Outros = () => {
     }
 
     axios
-      .post("http://localhost:3030/cargo", data, headers)
+      .post(ip + "/cargo", data, headers)
       .then((response) => {
         toast.success(response.data.message);
         setData({
@@ -224,7 +233,7 @@ export const Outros = () => {
     }
 
     axios
-      .put("http://localhost:3030/cargo/" + data.idCargo, data, headers)
+      .put(ip + "/cargo/" + data.idCargo, data, headers)
       .then((response) => {
         setData({
           idCargo: "",
@@ -257,7 +266,7 @@ export const Outros = () => {
     }
 
     axios
-      .delete("http://localhost:3030/cargo/" + data.idCargo, headers)
+      .delete(ip + "/cargo/" + data.idCargo, headers)
       .then((response) => {
         toast.success(response.data.message);
         setData({
@@ -275,8 +284,7 @@ export const Outros = () => {
       });
   };
 
-
-  // Cnae 
+  // Cnae
   //Adcionar CNAE
   const sendKinay = async (e) => {
     e.preventDefault();
@@ -298,7 +306,7 @@ export const Outros = () => {
     };
 
     axios
-      .post("http://localhost:3030/kinay", dataParaEnviar, headers)
+      .post(ip + "/kinay", dataParaEnviar, headers)
       .then((response) => {
         toast.success(response.data.message);
         setData({
@@ -315,7 +323,6 @@ export const Outros = () => {
       });
   };
 
-
   const DelKinay = async (e) => {
     e.preventDefault();
 
@@ -331,7 +338,7 @@ export const Outros = () => {
     }
 
     axios
-      .delete("http://localhost:3030/kinay/" + data.idKinay, headers)
+      .delete(ip + "/kinay/" + data.idKinay, headers)
       .then((response) => {
         setData({
           idKinay: "",
@@ -492,16 +499,16 @@ export const Outros = () => {
                         state.addCargo
                           ? "Salvar"
                           : state.edtCargo
-                            ? "Atualizar"
-                            : "Excluir"
+                          ? "Atualizar"
+                          : "Excluir"
                       }
                       type="submit"
                       form={
                         state.addCargo
                           ? "addCargoForm"
                           : state.edtCargo
-                            ? "edtCargoForm"
-                            : "delCargoForm"
+                          ? "edtCargoForm"
+                          : "delCargoForm"
                       }
                     >
                       <RiSaveLine />
@@ -510,8 +517,9 @@ export const Outros = () => {
 
                   <button
                     className={`p-1 rounded-full bg-red-600 cursor-pointer drop-shadow-lg text-[1.2em] 
-                  ${state.addCargo ? "hidden" : ""} ${state.edtCargo ? "hidden" : ""
-                      } ${state.delCargo ? "bg-red-600" : ""}`}
+                  ${state.addCargo ? "hidden" : ""} ${
+                      state.edtCargo ? "hidden" : ""
+                    } ${state.delCargo ? "bg-red-600" : ""}`}
                     title={`${state.delCargo ? "Voltar" : "Excluir"}`}
                     onClick={() => handleClick("delCargo")}
                   >
@@ -524,8 +532,9 @@ export const Outros = () => {
 
                   <button
                     className={`p-1 rounded-full bg-green-600 cursor-pointer drop-shadow-lg text-[1.2em] 
-                  ${state.addCargo ? "hidden" : ""} ${state.delCargo ? "hidden" : ""
-                      } ${state.edtCargo ? "bg-red-600" : ""}`}
+                  ${state.addCargo ? "hidden" : ""} ${
+                      state.delCargo ? "hidden" : ""
+                    } ${state.edtCargo ? "bg-red-600" : ""}`}
                     title={`${state.edtCargo ? "Voltar" : "Alterar"}`}
                     onClick={() => handleClick("edtCargo")}
                   >
@@ -538,8 +547,9 @@ export const Outros = () => {
 
                   <button
                     className={`p-1 rounded-full bg-gray-300 cursor-pointer drop-shadow-lg text-[1.2em] 
-                  ${state.delCargo ? "hidden" : ""} ${state.edtCargo ? "hidden" : ""
-                      } ${state.addCargo ? "bg-red-600" : ""}`}
+                  ${state.delCargo ? "hidden" : ""} ${
+                      state.edtCargo ? "hidden" : ""
+                    } ${state.addCargo ? "bg-red-600" : ""}`}
                     title={`${state.addCargo ? "Voltar" : "Adicionar"}`}
                     onClick={() => handleClick("addCargo")}
                   >
@@ -596,7 +606,6 @@ export const Outros = () => {
               </H3>
             </Dir>
             <Div>Planejar oque vai fazer aq</Div>
-
           </Article>
         </Section>
 
@@ -639,11 +648,7 @@ export const Outros = () => {
                       />
                     </form>
                   ) : state.delKinay ? (
-                    <form
-                      onSubmit={DelKinay}
-                      id="delkinayForm"
-                    >
-
+                    <form onSubmit={DelKinay} id="delkinayForm">
                       <Input
                         type="text"
                         list="deltkinay"
@@ -671,15 +676,9 @@ export const Outros = () => {
                   {state.addKinay || state.delKinay ? (
                     <button
                       className={`flex-1 p-1 rounded-full bg-gray-200 cursor-pointer drop-shadow-lg`}
-                      title={
-                        state.addKinay
-                          ? "Salvar"
-                          : "Excluir"
-                      }
+                      title={state.addKinay ? "Salvar" : "Excluir"}
                       type="submit"
-                      form={
-                        state.addKinay ? "addKinayForm" : "delkinayForm"
-                      }
+                      form={state.addKinay ? "addKinayForm" : "delkinayForm"}
                     >
                       <RiSaveLine />
                     </button>
@@ -687,7 +686,9 @@ export const Outros = () => {
 
                   <button
                     className={`p-1 rounded-full bg-red-600 cursor-pointer drop-shadow-lg text-[1.2em] 
-                  ${state.addKinay ? "hidden" : ""} ${state.delKinay ? "bg-red-600" : ""}`}
+                  ${state.addKinay ? "hidden" : ""} ${
+                      state.delKinay ? "bg-red-600" : ""
+                    }`}
                     title={`${state.delKinay ? "Voltar" : "Excluir"}`}
                     onClick={() => handleClick("delKinay")}
                   >
@@ -698,10 +699,11 @@ export const Outros = () => {
                     )}
                   </button>
 
-
                   <button
                     className={`p-1 rounded-full bg-gray-300 cursor-pointer drop-shadow-lg text-[1.2em] 
-                  ${state.delKinay ? "hidden" : ""} ${state.addKinay ? "bg-red-600" : ""}`}
+                  ${state.delKinay ? "hidden" : ""} ${
+                      state.addKinay ? "bg-red-600" : ""
+                    }`}
                     title={`${state.addKinay ? "Voltar" : "Adicionar"}`}
                     onClick={() => handleClick("addKinay")}
                   >
@@ -722,14 +724,18 @@ export const Outros = () => {
             </Dir>
             <Div className="max-h-[22vh]">
               {kinays.map((kinay) => {
-
                 return (
-                  <H5 key={kinay.id} className="grid grid-cols-5 gap-3 text-[0.9em]">
+                  <H5
+                    key={kinay.id}
+                    className="grid grid-cols-5 gap-3 text-[0.9em]"
+                  >
                     <P className="col-span-1">{kinay.numeroKinay}</P>
                     <P className="col-span-3">{kinay.descricaoKinay}</P>
-                    <P className="col-span-1">{kinay.porcentagemKinay * 100}%</P>
+                    <P className="col-span-1">
+                      {kinay.porcentagemKinay * 100}%
+                    </P>
                   </H5>
-                )
+                );
               })}
             </Div>
           </Article>

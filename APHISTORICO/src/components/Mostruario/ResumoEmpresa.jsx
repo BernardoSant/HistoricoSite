@@ -8,6 +8,7 @@ import { toast } from "react-toastify";
 const Footer = styled.footer`
   height: 100vh;
   width: 100%;
+  flex-wrap: wrap;
   padding: 1em;
   display: flex;
   justify-content: start;
@@ -30,6 +31,7 @@ const Header = styled.header`
 
 const Section = styled.section`
   height: 100%;
+  width: 100%;
   display: flex;
   gap: 7px;
   flex-direction: column;
@@ -38,6 +40,7 @@ const Section = styled.section`
 `;
 
 const Article = styled.article`
+  width: 100%;
   display: flex;
   flex-direction: column;
   gap: 10px;
@@ -62,8 +65,6 @@ const Dir = styled.div`
 const Div = styled.div`
   display: flex;
   flex-direction: column;
-  padding-left: 1em;
-  padding-right: 1em;
   background-color: #d8d6d679;
   margin-top: -15px;
   z-index: 0;
@@ -73,6 +74,15 @@ const Div = styled.div`
   border-bottom-right-radius: 1em;
   border-bottom-left-radius: 1em;
   flex: 1 1 0%;
+
+  &::-webkit-scrollbar {
+    width: 5px;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: #575757;
+    border-radius: 1em;
+  }
 `;
 
 const H1 = styled.h1`
@@ -97,11 +107,14 @@ const H3 = styled.h3`
   font-weight: 600;
 `;
 
-const H4 = styled.h3`
+const H4 = styled(H3)`
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+`;
+
+const H5 = styled(H3)`
   display: grid;
   grid-template-columns: repeat(5, minmax(0, 1fr));
-  text-align: center;
-  font-weight: 600;
 `;
 
 const P = styled.p`
@@ -110,7 +123,7 @@ const P = styled.p`
 `;
 
 export const ResumoEmpresa = () => {
-  const { empresa, nota, pedido } = useGlobalContext();
+  const {ip, empresa, nota, pedido, contrato } = useGlobalContext();
   const [data, setData] = useState("");
 
   const dataAtual = new Date();
@@ -142,6 +155,8 @@ export const ResumoEmpresa = () => {
     );
   });
 
+  const ContratoAtivo = contrato.filter((ctt) => ctt.situacaoCT === "Ativo");
+
   const somaNotas = nota.reduce((acc, nota) => {
     if (acc[nota.numeroPedidoNF]) {
       acc[nota.numeroPedidoNF] += nota.valorRecebidoNF;
@@ -150,6 +165,36 @@ export const ResumoEmpresa = () => {
     }
     return acc;
   }, {});
+console.log(ip)
+  const contratoAtualizado = ContratoAtivo.map((ctt) => {
+    if (somaNotas[ctt.numeroCT]) {
+      const cttAtualizado = {
+        ...ctt,
+        ValorRecebidoCT: somaNotas[ctt.numeroCT],
+      };
+
+      const headers = {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      };
+
+      axios
+        .put(
+          ip + `/contrato/${ctt.numeroCT}`,
+          { ValorRecebidoCT: somaNotas[ctt.numeroCT] },
+          headers
+        )
+        .then((response) => {})
+        .catch((err) => {
+          toast.error(err.response.data.message);
+        });
+
+      return cttAtualizado;
+    }
+
+    return ctt;
+  });
 
   const pedidosAtualizados = pedidosFiltrados.map((pedido) => {
     if (somaNotas[pedido.numeroPDD]) {
@@ -175,14 +220,14 @@ export const ResumoEmpresa = () => {
 
       axios
         .put(
-          `http://localhost:3030/pedido/${pedido.numeroPDD}`,
+          ip +`/pedido/${pedido.numeroPDD}`,
           {
             valorRecebidoPDD: somaNotas[pedido.numeroPDD],
             situacaoPDD: status,
           },
           headers
         )
-        .then((response) => { })
+        .then((response) => {})
         .catch((err) => {
           toast.error(
             "Erro ao atualizar valor recebido:",
@@ -206,6 +251,7 @@ export const ResumoEmpresa = () => {
       dataNota.getFullYear() === parseInt(ano)
     );
   });
+
   notasRecebidas.sort((a, b) => new Date(a.dataNF) - new Date(b.dataNF));
 
   const valorTotalNotasAnalise = notasRecebidas.reduce(
@@ -322,7 +368,7 @@ export const ResumoEmpresa = () => {
       </Header>
 
       <Footer>
-        <Section className="max-w-[23em]">
+        <Section className="lg:max-w-[23em] min-w-[27em] lg:min-w-[23em]">
           <Dir>
             <H1> Nota Fiscal Recebida</H1>
 
@@ -333,12 +379,12 @@ export const ResumoEmpresa = () => {
             </H3>
           </Dir>
 
-          <Div>
+          <Div className="max-h-[18em]">
             {notasRecebidas.map((nota) => {
               return (
                 <H3
                   key={nota.id}
-                  className="cursor-pointer border-b-2 border-gray-400 text-[1.5vh]"
+                  className="cursor-pointer border-b-2 border-gray-400 text-[1.5vh] mx-[1em]"
                 >
                   <P>{nota.numeroPedidoNF}</P>
                   <P>{String(nota.numeroNotaNF).padStart(5, "0")}</P>
@@ -354,7 +400,7 @@ export const ResumoEmpresa = () => {
           </Div>
 
           <Dir>
-            <H1> Nota Fiscal Em Análise</H1>
+            <H1> Nota Fiscal em Análise</H1>
 
             <H3>
               <P>N° Pedido</P>
@@ -363,11 +409,11 @@ export const ResumoEmpresa = () => {
             </H3>
           </Dir>
 
-          <Div>
+          <Div className="max-h-[18em]">
             {notasReceberFiltradas.map((nota) => (
               <H3
                 key={nota.id}
-                className="cursor-pointer border-b-2 border-gray-400 text-[1.5vh]"
+                className="cursor-pointer border-b-2 border-gray-400 text-[1.5vh] mx-[1em]"
               >
                 <P>{nota.numeroPedidoNF}</P>
                 <P>{String(nota.numeroNotaNF).padStart(5, "0")}</P>
@@ -395,7 +441,7 @@ export const ResumoEmpresa = () => {
               {empresa.map((empresas) => (
                 <H2
                   key={empresas.id}
-                  className="cursor-pointer border-b-2 border-gray-400 text-[1.5vh]"
+                  className="cursor-pointer border-b-2 border-gray-400 text-[1.5vh] mx-[1em]"
                 >
                   <P>{empresas.siglaEmpresa}</P>
                   <P>{empresas.cnpjEmpresa}</P>
@@ -405,30 +451,32 @@ export const ResumoEmpresa = () => {
           </Article>
         </Section>
 
-        <Section>
+        <Section className=" min-w-[27em]">
           <Dir>
             <H1>Pedidos</H1>
 
-            <H4>
+            <H5>
               <P>N° Pedido</P>
               <P>Empresa</P>
               <P>Situação</P>
               <P>V.Total</P>
               <P>V.Recebido</P>
-            </H4>
+            </H5>
           </Dir>
 
-          <Div>
-            
+          <Div className=" min-w-[27em]">
             {pedidosAtualizados.map((pedido) => {
-
-              const empresaEncontrada = empresa.find(empresas => empresas.id === pedido.empresaPDD);
-              const siglaEmpresa = empresaEncontrada ? empresaEncontrada.siglaEmpresa : 'N/A';
+              const empresaEncontrada = empresa.find(
+                (empresas) => empresas.id === pedido.empresaPDD
+              );
+              const siglaEmpresa = empresaEncontrada
+                ? empresaEncontrada.siglaEmpresa
+                : "N/A";
 
               return (
-                <H4
+                <H5
                   key={pedido.id}
-                  className="cursor-pointer border-b-2 border-gray-400 text-[1.5vh]"
+                  className="cursor-pointer border-b-2 border-gray-400 text-[1.5vh] mx-[1em]"
                 >
                   <P>{pedido.numeroPDD}</P>
                   <P>{siglaEmpresa}</P>
@@ -445,34 +493,93 @@ export const ResumoEmpresa = () => {
                       currency: "BRL",
                     })}
                   </P>
-                </H4>
+                </H5>
               );
             })}
           </Div>
 
           <Dir>
-            <H1 className="flex justify-between w-full">
-              Ganhos Mensal
-              <div className="flex gap-x-3">
-                <p>Valor Ganho </p>
-                <p>
-                  {Number(valorTotalNotasAnalise).toLocaleString("pt-BR", {
-                    style: "currency",
-                    currency: "BRL",
-                  })}
-                </p>
-              </div>
-            </H1>
+            <H1>Contrato</H1>
+
+            <H4>
+              <P>N° Contrato</P>
+              <P>Empresa</P>
+              <P>V.Total</P>
+              <P>V.Recebido</P>
+            </H4>
           </Dir>
-          <Div>
-            <Chart
-              chartType="PieChart"
-              width="100%"
-              height="100%"
-              data={grafico}
-              options={options}
-            />
-          </Div>
+
+          <Article className="min-h-[7vh]">
+            <Div>
+              {contratoAtualizado.map((ctt) => {
+                const empresaEncontrada = empresa.find(
+                  (empresas) => empresas.id === ctt.empresaCT
+                );
+                const siglaEmpresa = empresaEncontrada
+                  ? empresaEncontrada.siglaEmpresa
+                  : "N/A";
+
+                return (
+                  <>
+                    <div
+                      className="relative ml-2 "
+                      title={
+                        ctt.situacaoCT === "Ativo"
+                          ? "Ativo"
+                          : "Contrato Encerrado"
+                      }
+                    >
+                      <p className="absolute bg-green-600 w-3 h-3 rounded-full mt-1"></p>
+                    </div>
+                    <H4
+                      key={ctt.id}
+                      className="cursor-pointer border-b-2 border-gray-400 text-[1.5vh] mx-[1em]"
+                    >
+                      <P>{ctt.numeroCT}</P>
+                      <P>{siglaEmpresa}</P>
+                      <P>
+                        {Number(ctt.ValorCT).toLocaleString("pt-BR", {
+                          style: "currency",
+                          currency: "BRL",
+                        })}
+                      </P>
+                      <P>
+                        {Number(ctt.ValorRecebidoCT).toLocaleString("pt-BR", {
+                          style: "currency",
+                          currency: "BRL",
+                        })}
+                      </P>
+                    </H4>
+                  </>
+                );
+              })}
+            </Div>
+          </Article>
+          <Article>
+            <Dir>
+              <H1 className="flex justify-between w-full">
+                Ganhos Mensal
+                <div className="flex gap-x-3">
+                  <p>Valor Ganho </p>
+                  <p>
+                    {Number(valorTotalNotasAnalise).toLocaleString("pt-BR", {
+                      style: "currency",
+                      currency: "BRL",
+                    })}
+                  </p>
+                </div>
+              </H1>
+            </Dir>
+            <Div>
+              <Chart
+                chartType="PieChart"
+                width="100%"
+                height="100%"
+                data={grafico}
+                options={options}
+              />
+            </Div>
+          </Article>
         </Section>
       </Footer>
     </>

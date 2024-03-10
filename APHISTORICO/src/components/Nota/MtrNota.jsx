@@ -19,6 +19,40 @@ const Div = styled.div`
   align-content: start;
   flex-direction: row;
 `;
+
+const Article = styled.article`
+  width: 100%;
+  max-height: 20em;
+  overflow: auto;
+  margin-top: 4px;
+  margin-bottom: 8px;
+  border-radius: 1em;
+  overflow-y: auto;
+  position: relative;
+  padding-right: 4px;
+
+  &::-webkit-scrollbar {
+    width: 5px;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: #575757;
+    border-radius: 1em;
+  }
+`;
+
+const Header = styled.header`
+  width: 100%;
+  border-radius: 20px;
+  background: #f97316;
+  box-shadow: inset 5px -5px 10px #9f4a0e, inset -5px 5px 10px #ff9c1e;
+  font-weight: 600;
+  font-size: xx-large;
+  display: flex;
+  justify-content: center;
+  padding: 5px;
+`;
+
 const Th = styled.th``;
 
 const Input = styled.input`
@@ -48,7 +82,16 @@ const H2 = styled.h1`
 `;
 
 export const MostruarioNota = ({ empresaId }) => {
-  const { nota } = useGlobalContext();
+  const {ip, nota, contrato, empresa } = useGlobalContext();
+
+  const empresaSelecionada = empresa.find(
+    (empresas) => empresas.id === empresaId
+  );
+
+  const siglaEmpresa = empresaSelecionada
+    ? empresaSelecionada.siglaEmpresa
+    : "N/A";
+
   const notasDaEmpresaAntecipada = nota.filter(
     (nota) => nota.idEmpresa === empresaId && nota.situacaoNF === "Antecipada"
   );
@@ -78,22 +121,33 @@ export const MostruarioNota = ({ empresaId }) => {
   const [notaSelecionadaCompleta, setNotaSelecionadaCompleta] = useState(null);
 
   const [data, setData] = useState({
+    valorPrcentagemAntNF: "",
     situacaoNF: "",
     valorRecebidoNF: "",
   });
 
   const valorInput = (e) => {
-    let valor = e.target.value;
-    let newData = { ...data, [e.target.name]: valor };
+    const { name, value } = e.target;
+    let newData = { ...data, [name]: value };
 
-    if (e.target.name === "situacaoNF" && valor === "Antecipada") {
-      let porcentagemAntecipada = data.valorPrcentagemAntNF / 100;
-      // Supondo que "valorReceberNF" seja o valor a receber
-      let calculorAntercipa = data.valorReceberNF * porcentagemAntecipada;
-      let valorRecebido = data.valorReceberNF - calculorAntercipa;
+    if (name === "valorPrcentagemAntNF") {
+      const porcentagemAntecipada = parseFloat(value / 100);
+      const calculorAntercipa = data.valorReceberNF * porcentagemAntecipada;
+      const valorRecebido = data.valorReceberNF - calculorAntercipa;
       newData = { ...newData, valorRecebidoNF: valorRecebido };
-    } else if (e.target.name === "situacaoNF" && valor === "Recebida") {
-      newData = { ...newData, valorRecebidoNF: data.valorReceberNF };
+    } else if (name === "situacaoNF" && value === "Recebida") {
+      newData = {
+        ...newData,
+        valorRecebidoNF: data.valorReceberNF,
+        valorPrcentagemAntNF: "",
+      };
+    } else if (name === "situacaoNF" && value === "") {
+      newData = {
+        ...newData,
+        valorRecebidoNF: "",
+        situacaoNF: "",
+        valorPrcentagemAntNF: "",
+      };
     }
 
     setData(newData);
@@ -121,9 +175,14 @@ export const MostruarioNota = ({ empresaId }) => {
     };
 
     axios
-      .put("http://localhost:3030/nota/" + notaSelecionada.id, data, headers)
+      .put(ip + "/nota/" + notaSelecionada.id, data, headers)
       .then((response) => {
         toast.success(response.data.message);
+         setData({
+          valorPrcentagemAntNF: "",
+          situacaoNF: "",
+          valorRecebidoNF: "",
+        });
       })
       .catch((err) => {
         toast.info(err.response.data.message);
@@ -199,31 +258,46 @@ export const MostruarioNota = ({ empresaId }) => {
                 <H2 className="col-span-4">{data.descricaoServNF}</H2>
 
                 <H1 className="col-span-1">Situação</H1>
-                <H1 className="col-span-3">Valor Recebido</H1>
+                {data.situacaoNF === "Antecipada" && (
+                  <H1 className="col-span-1">Porcentagem</H1>
+                )}
+
+                <H1
+                  className={`${
+                    data.situacaoNF === "Antecipada"
+                      ? "col-span-2"
+                      : "col-span-3"
+                  } `}
+                >
+                  Valor Recebido
+                </H1>
+
                 <Select
                   name="situacaoNF"
                   onChange={valorInput}
                   value={data.situacaoNF}
                 >
                   <option></option>
-                  <option value="Em Análise">Em Análise</option>
                   <option value="Recebida">Recebida</option>
                   <option value="Antecipada">Antecipada</option>
                 </Select>
 
-                <Input
-                  type="text"
-                  name="valorRecebidoNF"
-                  onChange={valorInput}
-                  value={data.valorRecebidoNF}
-                  className="col-span-1"
-                />
+                {data.situacaoNF === "Antecipada" && (
+                  <Input
+                    type="text"
+                    name="valorPrcentagemAntNF"
+                    onChange={valorInput}
+                    value={data.valorPrcentagemAntNF}
+                    className="col-span-1"
+                  />
+                )}
 
                 <Input
                   type="text"
-                  name="valorPrcentagemAntNF"
+                  readOnly
+                  name="valorRecebidoNF"
                   onChange={valorInput}
-                  value={data.valorPrcentagemAntNF}
+                  value={data.valorRecebidoNF}
                   className="col-span-1"
                 />
 
@@ -312,7 +386,12 @@ export const MostruarioNota = ({ empresaId }) => {
               <H1 className="col-span-1">Situação</H1>
               <H1 className="col-span-3">Valor Recebido</H1>
               <H2 className="col-span-1">{data.situacaoNF}</H2>
-              <H2 className="col-span-3">{data.valorRecebidoNF}</H2>
+              <H2 className="col-span-3">
+                {Number(data.valorRecebidoNF).toLocaleString("pt-BR", {
+                  style: "currency",
+                  currency: "BRL",
+                })}
+              </H2>
 
               <H1 className="col-span-4">Prazo de pagamento</H1>
               <H2 className="col-span-4">{data.prazoPagamentoNF}</H2>
@@ -323,13 +402,13 @@ export const MostruarioNota = ({ empresaId }) => {
           </>
         ) : (
           <>
-            <h1 className="font-semibold w-full h-auto flex justify-center items-center text-3xl mb-5">
-              Notas da empresa
-            </h1>
+            <Header className="font-semibold w-full h-auto flex justify-center items-center text-3xl mb-5">
+              Notas da {siglaEmpresa}
+            </Header>
 
             {notasDaEmpresaAnalise.length > 0 ? (
               <>
-                <table className="w-full bg-orange-500 drop-shadow-2xl rounded-2xl mb-1">
+                <table className="w-full bg-orange-500 drop-shadow-2xl rounded-2xl mb-1 ">
                   <thead className="flex justify-between items-center px-4">
                     <Th className="text-start text-2xl pt-1">
                       Notas em Analise
@@ -356,11 +435,11 @@ export const MostruarioNota = ({ empresaId }) => {
                   </thead>
                 </table>
 
-                <table className="w-full">
+                <Article>
                   {notasDaEmpresaAnalise.map((nota) => {
                     return (
                       <>
-                        <thead className="relative w-full flex justify-end ml-2">
+                        <thead className="relative w-auto flex justify-end ml-2">
                           <span
                             className="absolute h-6 w-6 rounded-full bg-orange-500 flex justify-center items-center cursor-pointer "
                             onClick={() => {
@@ -399,13 +478,13 @@ export const MostruarioNota = ({ empresaId }) => {
                       </>
                     );
                   })}
-                </table>
+                </Article>
               </>
             ) : null}
 
             {notasDaEmpresaRecebida.length > 0 ? (
               <>
-                <table className="w-full bg-orange-500 drop-shadow-2xl rounded-2xl">
+                <table className="w-full bg-orange-500 drop-shadow-2xl rounded-2xl ">
                   <thead className="flex justify-between items-center px-4">
                     <Th className="text-start text-2xl pt-1">
                       Notas Recebidas
@@ -433,11 +512,11 @@ export const MostruarioNota = ({ empresaId }) => {
                   </thead>
                 </table>
 
-                <table className="w-full">
+                <Article className="w-full max-h-[20em] overflow-auto mt-2 rounded-[1em]">
                   {notasDaEmpresaRecebida.map((nota) => {
                     return (
                       <>
-                        <thead className="relative w-full flex justify-end ml-2">
+                        <thead className="relative w-auto flex justify-end ml-2">
                           <span
                             className="absolute h-6 w-6 rounded-full bg-gray-400 flex justify-center items-center cursor-pointer "
                             onClick={() => {
@@ -449,7 +528,7 @@ export const MostruarioNota = ({ empresaId }) => {
                         </thead>
                         <thead
                           key={nota.id}
-                          className="grid grid-cols-7 justify-center items-center shadow-inner bg-gray-200 rounded-2xl p-2 my-2"
+                          className="w-full grid grid-cols-7 justify-center items-center shadow-inner bg-gray-200 rounded-2xl p-2 my-2"
                         >
                           <Th className="col-span-1">{nota.numeroPedidoNF}</Th>
 
@@ -476,7 +555,7 @@ export const MostruarioNota = ({ empresaId }) => {
                       </>
                     );
                   })}
-                </table>
+                </Article>
               </>
             ) : null}
 
@@ -510,11 +589,11 @@ export const MostruarioNota = ({ empresaId }) => {
                   </thead>
                 </table>
 
-                <table className="w-full">
+                <Article>
                   {notasDaEmpresaAntecipada.map((nota) => {
                     return (
                       <>
-                        <thead className="relative w-full flex justify-end ml-2">
+                        <thead className="relative w-auto flex justify-end ml-2">
                           <span
                             className="absolute h-6 w-6 rounded-full bg-gray-400 flex justify-center items-center cursor-pointer "
                             onClick={() => {
@@ -553,7 +632,7 @@ export const MostruarioNota = ({ empresaId }) => {
                       </>
                     );
                   })}
-                </table>
+                </Article>
               </>
             ) : null}
 

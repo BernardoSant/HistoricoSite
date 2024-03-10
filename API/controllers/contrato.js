@@ -32,12 +32,12 @@ router.get("/", async (req, res) => {
     });
 });
 
-router.put("/:numeroPDD", async (req, res) => {
-    const { numeroPDD } = req.params;
+router.put("/:numeroCT", async (req, res) => {
+    const { numeroCT } = req.params;
     const data = req.body;
 
     await db.Contrato.update(data, {
-        where: { numeroPDD: numeroPDD }
+        where: { numeroCT: numeroCT }
     }).then(() => {
         return res.json({
             error: false,

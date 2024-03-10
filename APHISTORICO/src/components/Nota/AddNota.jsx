@@ -73,12 +73,12 @@ const Button = styled.button`
   }
 `;
 export const TabelaAddNota = () => {
-  const { empresa, kinays, impostos, pedido } = useGlobalContext();
+  const {ip, empresa, kinays, impostos, pedido, contrato } = useGlobalContext();
 
   const [data, setData] = useState({
     numeroPedidoNF: "",
     numeroNotaNF: "",
-    idEmpresa: "",
+    idEmpresa: 0,
     nomeEmpresaNF: "",
     cnpjEmpresaNF: "",
     retidoNF: "",
@@ -99,21 +99,25 @@ export const TabelaAddNota = () => {
   });
 
   const calcularImposto = () => {
-    const CNAE = parseFloat(data.porcentagemKinayNF.replace("%", "")) / 100;
-    const Imposto = parseFloat(data.ImpostoNF.replace("%", "")) / 100;
-    const valorImpostoCNAE = CNAE * data.valorNF;
-    const valorImposto = Imposto * data.valorNF;
-    const valorImpostocalc = valorImpostoCNAE + valorImposto;
-    const valorReceber = data.valorNF - valorImpostocalc;
+    if (data.ImpostoNF === " " && data.porcentagemKinayNF === " ") {
+      toast.info("Por favor, preencha todos os Impostos");
+    } else {
+      const CNAE = parseFloat(data.porcentagemKinayNF.replace("%", "")) / 100;
+      const Imposto = parseFloat(data.ImpostoNF.replace("%", "")) / 100;
+      const valorImpostoCNAE = CNAE * data.valorNF;
+      const valorImposto = Imposto * data.valorNF;
+      const valorImpostocalc = valorImpostoCNAE + valorImposto;
+      const valorReceber = data.valorNF - valorImpostocalc;
 
-    const totalImposto = CNAE * 100 + Imposto * 100;
+      const totalImposto = CNAE * 100 + Imposto * 100;
 
-    setData({
-      ...data,
-      valorImpostoNF: valorImpostocalc,
-      valorReceberNF: valorReceber,
-      totalImpostoNF: totalImposto,
-    });
+      setData({
+        ...data,
+        valorImpostoNF: valorImpostocalc.toFixed(2),
+        valorReceberNF: valorReceber.toFixed(2),
+        totalImpostoNF: totalImposto,
+      });
+    }
   };
 
   const valorInput = (event) => {
@@ -121,7 +125,7 @@ export const TabelaAddNota = () => {
 
     if (name === "nomeEmpresaNF") {
       const parts = value.split(" - ");
-      const idEmpresa = parts[0];
+      const idEmpresa = Number(parts[0]);
       const NomeEmpresa = parts[1];
       const CNPJEmpresa = parts[2];
 
@@ -136,7 +140,7 @@ export const TabelaAddNota = () => {
       const NumeroPDD = parts[0];
 
       setData({ ...data, numeroPedidoNF: NumeroPDD });
-    } else if (name === "KinayNF") {
+    } else if (name === "numeroKinayNF") {
       const parts = value.split(" - ");
       const numeroKinay = parts[0];
       const descricaoKinay = parts[1];
@@ -172,6 +176,19 @@ export const TabelaAddNota = () => {
       setData({ ...data, [name]: value });
     }
   };
+  const filtroPedido = pedido.filter((pedido) => {
+    const idEmpresa = data.idEmpresa === pedido.empresaPDD;
+    return idEmpresa;
+  });
+  
+  const ContratoEmpresa = contrato.filter((contrato) => {
+    const isEmpresaCorrespondente = contrato.empresaCT === data.idEmpresa;
+
+    const empresaEncontrada = empresa.find((emp) => emp.id === data.idEmpresa);
+    const isContratada = empresaEncontrada?.situacaoEmpresa === "Contrato";
+
+    return isEmpresaCorrespondente && isContratada;
+  });
 
   const sendNF = async (e) => {
     e.preventDefault();
@@ -192,14 +209,13 @@ export const TabelaAddNota = () => {
     }
 
     axios
-      .post("http://localhost:3030/nota", data, headers)
+      .post(ip +"/nota", data, headers)
       .then((response) => {
         toast.success(response.data.message);
-        console.log(data);
         setData({
           numeroPedidoNF: "",
           numeroNotaNF: "",
-          idEmpresa: "",
+          idEmpresa: 0,
           nomeEmpresaNF: "",
           cnpjEmpresaNF: "",
           retidoNF: "",
@@ -231,37 +247,17 @@ export const TabelaAddNota = () => {
 
         <nav>
           <div className=" grid grid-cols-4 gap-x-2">
-            <H1 className="col-span-1">Numero Nota*</H1>
-            <H1 className="col-span-1">Numero Pedido*</H1>
-            <p className="col-span-2"></p>
+            <H1 className="col-span-4">Numero Nota*</H1>
+
             <Input
               type="number"
               name="numeroNotaNF"
               onChange={valorInput}
               value={data.numeroNotaNF}
-              className="col-span-1 "
+              className="col-span-1"
             />
 
-            <label className="col-span-1">
-              <Input
-                type="text"
-                list="PEDIDO"
-                name="numeroPedidoNF"
-                onChange={valorInput}
-                value={data.numeroPedidoNF}
-              />
-
-              <datalist id="PEDIDO">
-                {pedido.map((pedido) => (
-                  <option
-                    key={pedido.id}
-                    value={`${pedido.numeroPDD} - ${pedido.nomePDD}`}
-                  ></option>
-                ))}
-              </datalist>
-            </label>
-
-            <p className="col-span-2"></p>
+            <p className="col-span-3"></p>
 
             <H1 className="col-span-2">Nome da Empresa*</H1>
             <H1 className="col-span-2">CNPJ*</H1>
@@ -288,11 +284,51 @@ export const TabelaAddNota = () => {
             <Input
               type="text"
               maxLength="18"
+              readOnly
               name="cnpjEmpresaNF"
               onChange={valorInput}
               value={data.cnpjEmpresaNF}
               className="col-span-2"
             />
+            {ContratoEmpresa.length > 0 ? (
+              <H1 className="col-span-4">Numero Contrato*</H1>
+            ) : (
+              <H1 className="col-span-4">Numero Pedido*</H1>
+            )}
+
+            <label className="col-span-1">
+              <Input
+                type="text"
+                list="PEDIDO"
+                name="numeroPedidoNF"
+                onChange={valorInput}
+                value={data.numeroPedidoNF}
+              />
+
+              <datalist id="PEDIDO">
+                {ContratoEmpresa.length > 0 ? (
+                  <>
+                    {ContratoEmpresa.map((contrato) => (
+                      <option
+                        key={contrato.id}
+                        value={`${contrato.numeroCT} - ${contrato.nomeCT}`}
+                      ></option>
+                    ))}
+                  </>
+                ) : filtroPedido.length > 0 ? (
+                  <>
+                    {filtroPedido.map((pedido) => (
+                      <option
+                        key={pedido.id}
+                        value={`${pedido.numeroPDD} - ${pedido.nomePDD}`}
+                      ></option>
+                    ))}
+                  </>
+                ) : (
+                  <option value="Não encontrado. Por favor, insira um novo pedido, contrato na aba Adicionar Pedido ou Contratos."></option>
+                )}
+              </datalist>
+            </label>
 
             <Input
               type="text"
@@ -322,32 +358,34 @@ export const TabelaAddNota = () => {
 
             <H1 className="col-span-1">Numero(CNAE)</H1>
             <H1 className="col-span-3">Atividade (CNAE)</H1>
-
-            <Input
-              type="number"
-              name="numeroKinayNF"
-              onChange={valorInput}
-              value={data.numeroKinayNF}
-            />
-
-            <label className="col-span-3 flex flex-row">
+            <label>
               <Input
                 type="text"
                 list="CNAE"
-                name="KinayNF"
+                name="numeroKinayNF"
                 onChange={valorInput}
-                value={data.KinayNF}
+                value={data.numeroKinayNF}
               />
+
               <datalist id="CNAE">
                 {kinays.map((kinay) => (
                   <option
                     key={kinay.id}
-                    value={`${kinay.numeroKinay} - ${kinay.descricaoKinay} - ${kinay.porcentagemKinay * 100
-                      }%`}
+                    value={`${kinay.numeroKinay} - ${kinay.descricaoKinay} - ${
+                      kinay.porcentagemKinay * 100
+                    }%`}
                   ></option>
                 ))}
               </datalist>
             </label>
+            <Input
+              className="col-span-3 flex flex-row"
+              readOnly
+              type="text"
+              name="KinayNF"
+              onChange={valorInput}
+              value={data.KinayNF}
+            />
 
             <H1 className="col-span-1">Porcentagem(CNAE)</H1>
             <H1 className="col-span-3">Imposto</H1>
@@ -372,8 +410,9 @@ export const TabelaAddNota = () => {
                 {impostos.map((imposto) => (
                   <option
                     key={imposto.id}
-                    value={`${imposto.siglaImposto} - ${imposto.porcentagemImposto * 100
-                      }%`}
+                    value={`${imposto.siglaImposto} - ${
+                      imposto.porcentagemImposto * 100
+                    }%`}
                   ></option>
                 ))}
               </datalist>
@@ -386,6 +425,7 @@ export const TabelaAddNota = () => {
 
             <Input
               type="text"
+              placeholder="1000.00"
               name="valorNF"
               onChange={valorInput}
               onBlur={calcularImposto}
@@ -394,6 +434,7 @@ export const TabelaAddNota = () => {
 
             <Input
               maxLength="10"
+              readOnly
               type="text"
               name="valorImpostoNF"
               onChange={valorInput}
@@ -402,6 +443,7 @@ export const TabelaAddNota = () => {
 
             <Input
               maxLength="10"
+              readOnly
               type="text"
               name="valorReceberNF"
               onChange={valorInput}
@@ -478,4 +520,4 @@ export const TabelaAddNota = () => {
       </Form>
     </>
   );
-}
+};

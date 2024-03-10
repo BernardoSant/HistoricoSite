@@ -64,7 +64,7 @@ const Button = styled.button`
 `;
 
 export const TabelaAddFuncionario = () => {
-  const { empresa, cargo } = useGlobalContext();
+  const {ip, empresa, cargo } = useGlobalContext();
 
   const [data, setData] = useState({
     statuFucionario: "Admitido",
@@ -149,7 +149,7 @@ export const TabelaAddFuncionario = () => {
     }
 
     axios
-      .post("http://localhost:3030/Funcionario", data, headers)
+      .post(ip + "/Funcionario", data, headers)
       .then((response) => {
         toast.success(response.data.message);
         setData({

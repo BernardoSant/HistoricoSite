@@ -13,6 +13,7 @@ import { MostruarioFuncAdmitido } from "../components/Funcionarios/FuncionarioAd
 import { MostruarioFuncDemitido } from "../components/Funcionarios/FuncionarioDemitidos";
 import { ResumoEmpresa } from "../components/Mostruario/ResumoEmpresa";
 import { TabelaAddContrato } from "../components/Contrato/AddContrato";
+import { MtrPedidos } from "../components/Pedidos/MtrPedidos";
 import { useGlobalContext } from "../global/Global";
 import { Teste } from "../components/text";
 import { Outros } from "../components/Outros/Outros";
@@ -80,10 +81,9 @@ const Button = ({
       {TipoButton === 1 && (
         <Botao
           onClick={onClick}
-          className={`mt-2 hover:bg-orange-500 hover:text-gray-200 ${onPrimario
-            ? "bg-orange-600 rounded-b-none drop-shadow-xl underline"
-            : "bg-[#fffafa]"
-            }  rounded-[20px]  `}
+          className={`mt-2 hover:bg-orange-500 hover:text-gray-200 ${onPrimario ? "bg-orange-600 rounded-b-none drop-shadow-xl underline" : "bg-[#fffafa]"} ${
+            onFinal ?  "bg-orange-600 drop-shadow-xl underline text-gray-200" : ""
+          }  rounded-[20px]  `}
         >
           {Titulo}
         </Botao>
@@ -92,9 +92,11 @@ const Button = ({
       {TipoButton === 2 && (
         <Botao
           onClick={onClick}
-          className={`${onSecundario ? "text-gray-200 bg-orange-400 mt-1" : "text-black"
-            } ${onFinal ? "text-gray-200 bg-orange-400 mt-1 rounded-b-[20px]" : ""
-            } hover:text-gray-200 w-full`}
+          className={`${
+            onSecundario ? "text-gray-200 bg-orange-400 mt-1" : "text-black"
+          } ${
+            onFinal ? "text-gray-200 bg-orange-400 mt-1 rounded-b-[20px]" : ""
+          } hover:text-gray-200 w-full`}
         >
           {Titulo}
         </Botao>
@@ -145,6 +147,7 @@ export const Empresa = () => {
     addFuncionarios: false,
     addNotaF: false,
     addPedido: false,
+    addContrato: false,
     addImposto: false,
     verImposto: false,
     alimentacao: false,
@@ -155,6 +158,8 @@ export const Empresa = () => {
 
     //Botões Terciarios
     verNota: false,
+    verPedidos: false,
+    verContrato: false,
     verFunciAdmitido: false,
     verFunciDemitido: false,
   });
@@ -170,8 +175,11 @@ export const Empresa = () => {
       ...(key !== "addNotaF" && { addNotaF: false }),
       ...(key !== "addImposto" && { addImposto: false }),
       ...(key !== "addPedido" && { addPedido: false }),
+      ...(key !== "addContrato" && { addContrato: false }),
       ...(key !== "verImposto" && { verImposto: false }),
       ...(key !== "verNota" && { verNota: false }),
+      ...(key !== "verPedidos" && { verPedidos: false }),
+      ...(key !== "verContrato" && { verContrato: false }),
       ...(key !== "verFunciAdmitido" && { verFunciAdmitido: false }),
       ...(key !== "verFunciDemitido" && { verFunciDemitido: false }),
       ...(key !== "alimentacao" && { alimentacao: false }),
@@ -180,7 +188,6 @@ export const Empresa = () => {
       ...(key !== "uniformes" && { uniformes: false }),
       ...(key !== "visualizar" && { visualizar: false }),
       ...(key !== "outros" && { outros: false, icon: false }),
-
     }));
   };
   // ordernar por tamanho de digito
@@ -213,12 +220,23 @@ export const Empresa = () => {
                       {empregadorState[empresa.id] && (
                         <TabelaSecund>
                           <Button TipoButton={3} Titulo={"Serviços"}></Button>
+
                           <Button
                             TipoButton={2}
                             Titulo={"Notas Fiscais"}
                             onSecundario={state.verNota}
                             onClick={() => handleClick("verNota")}
                           ></Button>
+
+                          {empresa.situacaoEmpresa === "Particular" ? (
+                            <Button
+                              TipoButton={2}
+                              Titulo={"Pedidos"}
+                              onSecundario={state.verPedidos}
+                              onClick={() => handleClick("verPedidos")}
+                            ></Button>
+                          ) : null}
+
                           <Button
                             TipoButton={3}
                             Titulo={"Funcionario Cadastrado"}
@@ -238,6 +256,13 @@ export const Empresa = () => {
                     Titulo={"Adcionar Pedido"}
                     onSecundario={state.addPedido}
                     onClick={() => handleClick("addPedido")}
+                  ></Button>
+
+                  <Button
+                    TipoButton={2}
+                    Titulo={"Adcionar Contrato"}
+                    onSecundario={state.addContrato}
+                    onClick={() => handleClick("addContrato")}
                   ></Button>
 
                   <Button
@@ -338,7 +363,7 @@ export const Empresa = () => {
                   <Button
                     TipoButton={2}
                     Titulo={"Adcionar Imposto"}
-                    onSecundario={state.addImposto}
+                    onFinal={state.addImposto}
                     onClick={() => handleClick("addImposto")}
                   ></Button>
                 </Tabela>
@@ -347,49 +372,16 @@ export const Empresa = () => {
               <Button
                 TipoButton={1}
                 Titulo={"Outros"}
-                onPrimario={state.outros}
+                onFinal={state.outros}
+                className="rounded-1em"
                 onClick={() => handleClick("outros")}
               ></Button>
-              {state.outros && (
-                <Tabela>
-                  <Button
-                    TipoButton={2}
-                    Titulo={"Alimentação"}
-                    onSecundario={state.alimentacao}
-                    onClick={() => handleClick("alimentacao")}
-                  ></Button>
-                  <Button
-                    TipoButton={2}
-                    Titulo={"Cargos"}
-                    onSecundario={state.cargos}
-                    onClick={() => handleClick("cargos")}
-                  ></Button>
-                  <Button
-                    TipoButton={2}
-                    Titulo={"Ferramentas"}
-                    onSecundario={state.ferramentas}
-                    onClick={() => handleClick("ferramentas")}
-                  ></Button>
-                  <Button
-                    TipoButton={2}
-                    Titulo={"Uniformes"}
-                    onSecundario={state.uniformes}
-                    onClick={() => handleClick("uniformes")}
-                  ></Button>
-                  <Button
-                    TipoButton={2}
-                    Titulo={"Visualizar"}
-                    onFinal={state.visualizar}
-                    onClick={() => handleClick("visualizar")}
-                  ></Button>
-                </Tabela>
-              )}
+              
             </nav>
           </Div>
           <Div className="w-full shadow-md shadow-slate-600 flex flex-col justify-center items-center ">
+            {state.addContrato && <TabelaAddContrato />}
 
-            <TabelaAddContrato></TabelaAddContrato>
-            
             {state.resumoMensal && <ResumoEmpresa />}
 
             {state.outros && <Outros />}
@@ -397,6 +389,8 @@ export const Empresa = () => {
             {state.addPedido && <TabelaAddPedido />}
 
             {state.verNota && <MostruarioNota empresaId={empresaSelecionada} />}
+
+            {state.verPedidos && <MtrPedidos empresaId={empresaSelecionada} />}
 
             {state.addEmpresa && <TabelaAdicionarEmpresa />}
 

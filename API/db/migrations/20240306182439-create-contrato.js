@@ -10,12 +10,12 @@ module.exports = {
         type: Sequelize.INTEGER
       },
       numeroCT: {
-        type: Sequelize.FLOAT
+        type: Sequelize.STRING
       },
       ValorCT: {
         type: Sequelize.FLOAT
       },
-      ValorReceberCT: {
+      ValorRecebidoCT: {
         type: Sequelize.FLOAT
       },
       nomeCT: {
@@ -23,6 +23,9 @@ module.exports = {
       },
       empresaCT: {
         type: Sequelize.INTEGER
+      },
+      situacaoCT: {
+        type: Sequelize.STRING
       },
       dataCT: {
         type: Sequelize.DATEONLY

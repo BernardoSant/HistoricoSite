@@ -14,9 +14,10 @@ module.exports = (sequelize, DataTypes) => {
     }
   }
   Contrato.init({
-    numeroCT: DataTypes.FLOAT,
+    numeroCT: DataTypes.STRING,
+    situacaoCT: DataTypes.STRING,
     ValorCT: DataTypes.FLOAT,
-    ValorReceberCT: DataTypes.FLOAT,
+    ValorRecebidoCT: DataTypes.FLOAT,
     nomeCT: DataTypes.STRING,
     empresaCT: DataTypes.INTEGER,
     dataCT: DataTypes.DATEONLY

@@ -2,6 +2,7 @@ import styled from "styled-components";
 import { useState } from "react";
 import axios from "axios";
 import { toast } from "react-toastify";
+import { useGlobalContext } from "../../global/Global";
 
 const Form = styled.form`
   height: 100%;
@@ -63,6 +64,7 @@ const Button = styled.button`
 `;
 
 export const TabelaAdicionarEmpresa = () => {
+  const { ip } = useGlobalContext();
   const [data, setData] = useState({
     nameEmpresa: "",
     siglaEmpresa: "",
@@ -115,7 +117,7 @@ export const TabelaAdicionarEmpresa = () => {
     }
 
     axios
-      .post("http://localhost:3030/empresa", data, headers)
+      .post(ip + "/empresa", data, headers)
       .then((response) => {
         toast.success(response.data.message);
         setData({
@@ -271,6 +273,7 @@ export const TabelaAdicionarEmpresa = () => {
           >
             <option></option>
             <option value="Particular">Particular</option>
+            <option value="ParticularEmp">Empresa Particular</option>
             <option value="Contrato">Contrato</option>
           </select>
         </section>
