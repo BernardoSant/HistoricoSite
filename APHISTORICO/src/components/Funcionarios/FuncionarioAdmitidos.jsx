@@ -4,6 +4,7 @@ import { BiCategory } from "react-icons/bi";
 import { useState, useEffect } from "react";
 import axios from "axios";
 import { toast } from "react-toastify";
+import { AiOutlineRight, AiOutlineLeft } from "react-icons/ai";
 
 const Div = styled.div`
   height: 100%;
@@ -14,7 +15,7 @@ const Div = styled.div`
   padding-top: 1em;
   display: flex;
   flex-wrap: wrap;
-  max-width: 50em;
+  max-width: 70em;
   justify-content: start;
   align-content: start;
   flex-direction: row;
@@ -65,6 +66,7 @@ const Input = styled.input`
   max-width: 40em;
   padding-left: 8px;
 `;
+
 const Header = styled.header`
   width: 100%;
   border-radius: 1em;
@@ -72,8 +74,21 @@ const Header = styled.header`
   box-shadow: inset 5px -5px 10px #9f4a0e, inset -5px 5px 10px #ff9c1e;
 `;
 
+const Button = styled.button`
+  padding: 5px;
+  padding-left: 20px;
+  padding-right: 20px;
+  font-weight: 600;
+  border-radius: 9999px;
+  --tw-drop-shadow: drop-shadow(0 10px 8px rgb(0 0 0 / 0.04))
+    drop-shadow(0 4px 3px rgb(0 0 0 / 0.1));
+  filter: var(--tw-blur) var(--tw-brightness) var(--tw-contrast)
+    var(--tw-grayscale) var(--tw-hue-rotate) var(--tw-invert) var(--tw-saturate)
+    var(--tw-sepia) var(--tw-drop-shadow);
+`;
+
 export const MostruarioFuncAdmitido = () => {
-  const {ip , funcionario, empresa } = useGlobalContext();
+  const { ip, funcionario, empresa } = useGlobalContext();
 
   const FuncionariosAdmitidos = funcionario.filter(
     (funcionario) => funcionario.statuFucionario === "Admitido"
@@ -103,20 +118,18 @@ export const MostruarioFuncAdmitido = () => {
     estadoCivilFucionario: "",
     ruaFucionario: "",
     numFucionario: "",
-    bairroFucionario: "",
     municipioFucionario: "",
     estadoFucionario: "",
+    bairroFucionario: "",
+    complFucionario: "",
     ctpsFucionario: "",
-    pisFucionario: "",
-    funcaoFuncionario: "",
-    cargoFuncionario: "",
-    horasTFucionario: "",
     dataAdmicaoFucionario: "",
-    paiFucionario: "",
-    maeFucionario: "",
-    complementoFucionario: "",
-    generoFucionario: "",
+    dataFeriasFucionario: "",
+    quantidadeFerias: 0,
+    pisFucionario: "",
     salarioFucionario: "",
+    funcaoFuncionario: "",
+    horasTFucionario: "",
     CadastroEmprFuncionario: "",
   });
 
@@ -161,6 +174,48 @@ export const MostruarioFuncAdmitido = () => {
     }
   }, [funcionarioEditar]);
 
+  if (funcionarioSelecionado) {
+    const hoje = new Date();
+    const dataAdimicao = new Date(funcionarioSelecionado.dataAdmicaoFucionario);
+    const dataFerias = new Date(funcionarioSelecionado.dataFeriasFucionario);
+    const dataNasc = new Date(funcionarioSelecionado.dataNascimento);
+
+    const opcoes = {
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit",
+    };
+
+    // Cálculo da idade
+    var idade = hoje.getFullYear() - dataNasc.getFullYear();
+    const mesIdade = hoje.getMonth() - dataNasc.getMonth();
+    if (
+      mesIdade < 0 ||
+      (mesIdade === 0 && hoje.getDate() < dataNasc.getDate())
+    ) {
+      idade--;
+    }
+
+    // Cálculo da quantidade de férias
+    let Qferias = hoje.getFullYear() - dataAdimicao.getFullYear();
+    const mesFerias = hoje.getMonth() - dataAdimicao.getMonth();
+    if (
+      mesFerias < 0 ||
+      (mesFerias === 0 && hoje.getDate() < dataAdimicao.getDate())
+    ) {
+      Qferias--;
+    }
+
+    for (let i = 0; i < Qferias; i++) {
+      dataFerias.setFullYear(dataFerias.getFullYear() + 1);
+    }
+
+    var ferias = Qferias - funcionarioSelecionado.feriasPaga;
+    var dataFormatadaAdmicao = dataAdimicao.toLocaleDateString("pt-BR", opcoes);
+    var dataFormatadaFerias = dataFerias.toLocaleDateString("pt-BR", opcoes);
+    var dataFormatadaNasc = dataNasc.toLocaleDateString("pt-BR", opcoes);
+  }
+
   const updateFuncionario = async (e) => {
     e.preventDefault();
 
@@ -203,24 +258,37 @@ export const MostruarioFuncAdmitido = () => {
       });
   };
 
+  const [state, setState] = useState({
+    Menu: false,
+  });
+
+  const handleClick = (key) => {
+    setState((prevState) => ({
+      ...prevState,
+      [key]: !prevState[key],
+      ...(key !== "Menu" && {
+        addCargo: false,
+      }),
+    }));
+  };
+
   return (
     <Div>
       {funcionarioEditar ? (
         <>
-          <button className="w-full flex justify-end">
-            <h1
+          <div className="flex w-full justify-end">
+            <Button
               onClick={() => setFuncionarioEditar(null)}
-              className="bg-red-600 w-auto font-bold p-1 px-3 rounded-full"
+              className="bg-red-600"
             >
               Voltar
-            </h1>
-          </button>
-
+            </Button>
+          </div>
           <form
             onSubmit={updateFuncionario}
-            className=" grid grid-cols-5 gap-x-2 mt-3"
+            className=" grid grid-cols-6 gap-x-2 mt-3"
           >
-            <h3 className="text-3xl mb-5 font-semibold col-span-5 -ml-3">
+            <h3 className="text-3xl mb-5 font-semibold col-span-6 -ml-3">
               Identificação
             </h3>
 
@@ -233,7 +301,9 @@ export const MostruarioFuncAdmitido = () => {
             </p>
 
             <H1 className="col-span-3">Nome</H1>
-            <H1 className="col-span-1">Gênero</H1>
+            <H1 className="col-span-1">Idade</H1>
+            <H1 className="col-span-1">Data Nasc.</H1>
+
             <Input
               className="col-span-3"
               type="text"
@@ -241,12 +311,15 @@ export const MostruarioFuncAdmitido = () => {
               name="nameFucionario"
               value={data.nameFucionario}
             />
-            <H2>{data.generoFucionario}</H2>
+            <H2>{idade}</H2>
+            <H2>{dataFormatadaNasc}</H2>
 
+            <H1 className="col-span-1">Gênero</H1>
             <H1 className="col-span-1">CPF</H1>
             <H1 className="col-span-2">RG</H1>
             <H1 className="col-span-1">Estado Civil</H1>
 
+            <H2>{data.generoFucionario}</H2>
             <Input
               maxLength="14"
               className="col-span-1"
@@ -277,23 +350,32 @@ export const MostruarioFuncAdmitido = () => {
               <option value="Solteiro">Solteiro</option>
             </select>
 
-            <p className="mt-3 col-span-5"></p>
+            <p className="mt-3 col-span-6"></p>
 
-            <H1 className="col-span-2">Pai</H1>
+            <H1 className="col-span-3">Pai</H1>
             <H1 className="col-span-3">Mãe</H1>
 
-            <H2 className="col-span-2">{data.paiFucionario}</H2>
+            <H2 className="col-span-3">{data.paiFucionario}</H2>
             <H2 className="col-span-3">{data.maeFucionario}</H2>
 
-            <H1 className="col-span-4">Lougradouro</H1>
+            <H1 className="col-span-2">Lougradouro</H1>
+            <H1 className="col-span-3">Bairro</H1>
             <H1 className="col-span-1">Número</H1>
 
             <Input
-              className="col-span-4"
+              className="col-span-2"
               type="text"
               onChange={valorInput}
               name="ruaFucionario"
               value={data.ruaFucionario}
+            />
+
+            <Input
+              className="col-span-3"
+              type="text"
+              onChange={valorInput}
+              name="bairroFucionario"
+              value={data.bairroFucionario}
             />
 
             <Input
@@ -304,27 +386,31 @@ export const MostruarioFuncAdmitido = () => {
               value={data.numFucionario}
             />
 
-            <H1 className="col-span-3">Bairro</H1>
             <H1 className="col-span-1">Cidade</H1>
-            <H1 className="col-span-1">Estado</H1>
+            <H1 className="col-span-5">Estado</H1>
 
             <Input
-              className="col-span-3"
+              className="col-span-1"
               type="text"
               onChange={valorInput}
-              name="bairroFucionario"
-              value={data.bairroFucionario}
+              name="municipioFucionario"
+              value={data.municipioFucionario}
             />
 
-            <H2 className="col-span-1">{data.municipioFucionario}</H2>
-            <H2>{data.municipioFucionario}</H2>
+            <Input
+              className="col-span-1"
+              type="text"
+              onChange={valorInput}
+              name="municipioFucionario"
+              value={data.municipioFucionario}
+            />
 
             <h3 className="text-3xl my-4 font-semibold col-span-5 -ml-3">
               Documentos
             </h3>
 
             <H1 className="col-span-2">CTPS</H1>
-            <H1 className="col-span-2">PIS</H1>
+            <H1 className="col-span-4">PIS</H1>
 
             <Input
               maxLength="14"
@@ -343,10 +429,12 @@ export const MostruarioFuncAdmitido = () => {
               name="pisFucionario"
               value={data.pisFucionario}
             />
+            <p className=" col-span-2"></p>
 
             <H1 className="col-span-2">Função</H1>
             <H1 className="col-span-2">Salario</H1>
             <H1 className="col-span-1">Horas trabalhada</H1>
+            <H1 className="col-span-1">Data Admição</H1>
 
             <select
               id="funcaoFuncionario"
@@ -374,7 +462,6 @@ export const MostruarioFuncAdmitido = () => {
               name="salarioFucionario"
               value={data.salarioFucionario}
             />
-
             <Input
               className="col-span-1"
               type="text"
@@ -382,17 +469,20 @@ export const MostruarioFuncAdmitido = () => {
               name="horasTFucionario"
               value={data.horasTFucionario}
             />
+            <H2 className="col-span-1">{data.dataAdmicaoFucionario}</H2>
 
-            <H1 className="col-span-2">Data Admição</H1>
-            <H1 className="col-span-3">Cadastro em Empresa</H1>
-            <H2 className="col-span-2">{data.dataAdmicaoFucionario}</H2>
+            <H1 className="col-span-1">Data Ferias</H1>
+            <H1 className="col-span-1">Quant Ferias</H1>
+            <H1 className="col-span-4">Cadastro em Empresa</H1>
 
+            <H2 className="col-span-1">{dataFormatadaFerias}</H2>
+            <H2 className="col-span-1">{ferias}</H2>
             <select
               id="CadastroEmprFuncionario"
               name="CadastroEmprFuncionario"
               onChange={valorInput}
               value={data.CadastroEmprFuncionario}
-              className="col-span-2 border-2 border-gray-300 rounded-md px-3 py-[0.2em]"
+              className="col-span-4 border-2 border-gray-300 rounded-md px-3 py-[0.2em]"
             >
               <option></option>
               {empresa.map((empresa) => (
@@ -404,7 +494,7 @@ export const MostruarioFuncAdmitido = () => {
 
             <button
               type="submit"
-              className="col-span-5 mt-4 bg-orange-400 py-2 px-7 rounded-lg border-2 border-orange-500 font-semibold hover:text-white hover:scale-95 duration-500 mb-3"
+              className="col-span-6 mt-4 bg-orange-400 py-2 px-7 rounded-lg border-2 border-orange-500 font-semibold hover:text-white hover:scale-95 duration-500 mb-3"
             >
               Salvar
             </button>
@@ -412,37 +502,60 @@ export const MostruarioFuncAdmitido = () => {
         </>
       ) : funcionarioSelecionado ? (
         <>
-          <nav className="w-full flex flex-row justify-end items-center gap-3">
-            <button className="w-full flex justify-end">
-              <h1
-                onClick={demitirFuncionario}
-                className="bg-red-600 w-auto font-bold p-1 px-3 rounded-full"
+          <article className="relative w-full ">
+            <nav className="w-full flex flex-row justify-end items-center gap-3 absolute ">
+              <div
+                className={` ${
+                  state.Menu &&
+                  "bg-slate-200 flex flex-row  rounded-full p-2 gap-3"
+                }`}
               >
-                Demitir
-              </h1>
-            </button>
+                {state.Menu && (
+                  <div className="flex justify-between gap-2 w-auto  rounded-full ">
+                    <p className="">
+                      <Button
+                        className="bg-yellow-500 z-10"
+                      >
+                        Adicionar Ferias
+                      </Button>
 
-            <button>
-              <h1
+                    </p>
+
+                    <Button
+                      onClick={demitirFuncionario}
+                      className="bg-red-500 z-10"
+                    >
+                      Demitir
+                    </Button>
+                  </div>
+                )}
+
+                <button
+                  onClick={() => handleClick("Menu")}
+                  className={`bg-gray-400 text-2xl w-auto p-1 flex justify-center items-center rounded-full drop-shadow-lg mt-2 ${
+                    state.Menu && "mt-0"
+                  }`}
+                >
+                  {state.Menu ? <AiOutlineRight /> : <AiOutlineLeft />}
+                </button>
+              </div>
+              <Button
                 onClick={() => setFuncionarioSelecionado(null)}
-                className="bg-orange-600 w-auto font-bold p-1 px-3 rounded-full"
+                className={`bg-orange-600 pt-2 mt-2 ${state.Menu && "mt-0"}`}
               >
                 Voltar
-              </h1>
-            </button>
+              </Button>
 
-            <button>
-              <h1
+              <Button
                 onClick={() => setFuncionarioEditar(funcionarioSelecionado)}
-                className="bg-green-600 w-auto font-bold p-1 px-3 rounded-full"
+                className={`bg-green-600 pt-2 mt-2 ${state.Menu && "mt-0"}`}
               >
                 Editar
-              </h1>
-            </button>
-          </nav>
-
-          <div className=" grid grid-cols-5 gap-x-2 mt-3">
-            <h3 className="text-3xl mb-5 font-semibold col-span-5 -ml-3">
+              </Button>
+            </nav>
+          </article>
+          <div className=" grid grid-cols-6 gap-x-2 mt-3">
+            <h3 className="text-3xl mb-5 font-semibold col-span-6 -ml-3">
               Identificação
             </h3>
 
@@ -454,36 +567,40 @@ export const MostruarioFuncAdmitido = () => {
               />
             </p>
             <H1 className="col-span-3">Nome</H1>
-            <H1 className="col-span-1">Gênero</H1>
+            <H1 className="col-span-1">Idade</H1>
+            <H1 className="col-span-1">Data Nasc.</H1>
             <H2 className="col-span-3">{data.nameFucionario}</H2>
-            <H2 className="col-span-1">{data.generoFucionario}</H2>
+            <H2 className="col-span-1">{idade}</H2>
+            <H2 className="col-span-1">{dataFormatadaNasc}</H2>
 
+            <H1 className="col-span-1">Gênero</H1>
             <H1 className="col-span-1">CPF</H1>
             <H1 className="col-span-2">RG</H1>
             <H1 className="col-span-1">Estado Civil</H1>
 
+            <H2 className="col-span-1">{data.generoFucionario}</H2>
             <H2 className="col-span-1">{data.cpfFucionario}</H2>
             <H2 className="col-span-2">{data.rgFucionario}</H2>
             <H2 className="col-span-1">{data.estadoCivilFucionario}</H2>
 
-            <p className="mt-3 col-span-5"></p>
+            <p className="mt-3 col-span-6"></p>
 
-            <H1 className="col-span-2">Pai</H1>
+            <H1 className="col-span-3">Pai</H1>
             <H1 className="col-span-3">Mãe</H1>
 
-            <H2 className="col-span-2">{data.paiFucionario}</H2>
+            <H2 className="col-span-3">{data.paiFucionario}</H2>
             <H2 className="col-span-3">{data.maeFucionario}</H2>
 
-            <H1 className="col-span-4">Lougradouro</H1>
+            <H1 className="col-span-2">Lougradouro</H1>
+            <H1 className="col-span-3">Bairro</H1>
             <H1 className="col-span-1">Número</H1>
 
-            <H2 className="col-span-4">{data.ruaFucionario}</H2>
+            <H2 className="col-span-2">{data.ruaFucionario}</H2>
+            <H2 className="col-span-3">{data.bairroFucionario}</H2>
             <H2 className="col-span-1">{data.numFucionario}°</H2>
 
-            <H1 className="col-span-3">Bairro</H1>
             <H1 className="col-span-1">Cidade</H1>
-            <H1 className="col-span-1">Estado</H1>
-            <H2 className="col-span-3">{data.bairroFucionario}</H2>
+            <H1 className="col-span-5">Estado</H1>
             <H2 className="col-span-1">{data.municipioFucionario}</H2>
             <H2 className="col-span-1">{data.estadoFucionario}</H2>
 
@@ -492,13 +609,17 @@ export const MostruarioFuncAdmitido = () => {
             </h3>
 
             <H1 className="col-span-2">CTPS</H1>
-            <H1 className="col-span-2">PIS</H1>
+            <H1 className="col-span-4">PIS</H1>
+
             <H2 className="col-span-2">{data.ctpsFucionario}</H2>
             <H2 className="col-span-2">{data.pisFucionario}</H2>
+            <p className=" col-span-2"></p>
 
             <H1 className="col-span-2">Função</H1>
             <H1 className="col-span-2">Salario</H1>
             <H1 className="col-span-1">Horas trabalhada</H1>
+            <H1 className="col-span-1">Data Admição</H1>
+
             <H2 className="col-span-2">{data.funcaoFuncionario}</H2>
             <H2 className="col-span-2">
               {Number(data.salarioFucionario).toLocaleString("pt-BR", {
@@ -507,13 +628,15 @@ export const MostruarioFuncAdmitido = () => {
               })}
             </H2>
             <H2 className="col-span-1">{data.horasTFucionario}</H2>
+            <H2 className="col-span-1">{dataFormatadaAdmicao}</H2>
 
-            <H1 className="col-span-1">Data Admição</H1>
             <H1 className="col-span-1">Ferias</H1>
-            <H1 className="col-span-3">Cadastro em Empresa</H1>
-            <H2 className="col-span-1">{data.dataAdmicaoFucionario}</H2>
-            <H2 className="col-span-1">{data.dataFeriasFucionario}</H2>
-            <H2 className="col-span-3">{data.CadastroEmprFuncionario}</H2>
+            <H1 className="col-span-1">Quant Ferias</H1>
+            <H1 className="col-span-4">Cadastro em Empresa</H1>
+
+            <H2 className="col-span-1">{dataFormatadaFerias}</H2>
+            <H2 className="col-span-1">{ferias}</H2>
+            <H2 className="col-span-4">{data.CadastroEmprFuncionario}</H2>
           </div>
         </>
       ) : (

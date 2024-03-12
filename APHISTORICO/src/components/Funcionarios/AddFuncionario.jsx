@@ -64,7 +64,7 @@ const Button = styled.button`
 `;
 
 export const TabelaAddFuncionario = () => {
-  const {ip, empresa, cargo } = useGlobalContext();
+  const { ip, empresa, cargo } = useGlobalContext();
 
   const [data, setData] = useState({
     statuFucionario: "Admitido",
@@ -82,9 +82,11 @@ export const TabelaAddFuncionario = () => {
     bairroFucionario: "",
     complFucionario: "",
     ctpsFucionario: "",
-    titEleitorFucionario: "",
+    dataNascimento: "",
     dataAdmicaoFucionario: "",
     dataFeriasFucionario: "",
+    quantidadeFerias: 0,
+    feriasPaga: 0,
     pisFucionario: "",
     salarioFucionario: "",
     funcaoFuncionario: "",
@@ -126,10 +128,10 @@ export const TabelaAddFuncionario = () => {
 
     setData({
       ...data,
-      dataFeriasFucionario: dataFerias.toISOString().split('T')[0],
+      dataFeriasFucionario: dataFerias.toISOString().split("T")[0],
     });
   };
-  
+
   const sendFuncionario = async (e) => {
     e.preventDefault();
 
@@ -168,9 +170,11 @@ export const TabelaAddFuncionario = () => {
           bairroFucionario: "",
           complFucionario: "",
           ctpsFucionario: "",
-          titEleitorFucionario: "",
+          dataNascimento: "",
           dataAdmicaoFucionario: "",
           dataFeriasFucionario: "",
+          quantidadeFerias: 0,
+          feriasPaga: 0,
           pisFucionario: "",
           salarioFucionario: "",
           funcaoFuncionario: "",
@@ -189,8 +193,9 @@ export const TabelaAddFuncionario = () => {
         <Header>Adcionar Funcionario</Header>
 
         <nav className="flex flex-col justify-center ">
-          <div className=" grid grid-cols-4 gap-x-2">
+          <div className=" grid grid-cols-5 gap-x-2">
             <H1 className="col-span-3">Nome*</H1>
+            <H1 className="col-span-1">Data Nascimento*</H1>
             <H1 className="col-span-1">Gênero*</H1>
 
             <Input
@@ -198,7 +203,15 @@ export const TabelaAddFuncionario = () => {
               name="nameFucionario"
               onChange={valorInput}
               value={data.nameFucionario}
-              className="col-span-3 "
+              className="col-span-3"
+            />
+
+            <Input
+              type="date"
+              name="dataNascimento"
+              onChange={valorInput}
+              value={data.dataNascimento}
+              className="col-span-1"
             />
 
             <select
@@ -392,7 +405,9 @@ export const TabelaAddFuncionario = () => {
             >
               <option></option>
               {cargo.map((cargo) => (
-                <option key={cargo.id} value={cargo.nomeCargo}>{cargo.nomeCargo}</option>
+                <option key={cargo.id} value={cargo.nomeCargo}>
+                  {cargo.nomeCargo}
+                </option>
               ))}
             </select>
 
