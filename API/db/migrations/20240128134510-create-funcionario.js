@@ -54,11 +54,20 @@ module.exports = {
       ctpsFucionario: {
         type: Sequelize.STRING
       },
+      dataNascimento: {
+        type: Sequelize.DATEONLY
+      },
       dataAdmicaoFucionario: {
         type: Sequelize.DATEONLY
       },
       dataFeriasFucionario: {
         type: Sequelize.DATEONLY
+      },
+      quantidadeFerias:{
+        type: Sequelize.INTEGER
+      },
+      feriasPaga:{
+        type: Sequelize.INTEGER
       },
       pisFucionario: {
         type: Sequelize.STRING
