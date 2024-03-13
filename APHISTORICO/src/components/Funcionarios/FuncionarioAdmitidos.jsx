@@ -236,11 +236,11 @@ export const MostruarioFuncAdmitido = () => {
   };
 
   const [dataFerias, setDataFerias] = useState({
-    idFuncionario: 0,
-    situacaoFerias: "",
-    dataInicioFerias: "",
-    dataFinalizacaoFerias: "",
-    valorFerias: 0,
+    idFuncionario: "",
+    situacaoFerias: "Ferias Vendida",
+    dataInicioFerias: null,
+    dataFinalizacaoFerias: null,
+    valorFerias: null,
   });
 
   const valorInputFerias = (e) => {
@@ -254,11 +254,13 @@ export const MostruarioFuncAdmitido = () => {
       dataFinalizacao.setMonth(dataFinalizacao.getMonth() + 1);
       setDataFerias({
         ...dataFerias,
+        situacaoFerias: "Em Ferias",
+        idFuncionario: funcionarioSelecionado.id,
         dataInicioFerias: dataInicio.toISOString().split("T")[0],
         dataFinalizacaoFerias: dataFinalizacao.toISOString().split("T")[0],
       });
     } else {
-      setDataFerias({ ...dataFerias, [e.target.name]: valor });
+      setDataFerias({ ...dataFerias,idFuncionario: funcionarioSelecionado.id, [e.target.name]: valor });
     }
   };
 
@@ -269,28 +271,28 @@ export const MostruarioFuncAdmitido = () => {
         "Content-Type": "application/json",
       },
     };
-
+    console.log(funcionarioSelecionado.id);
+    console.log(dataFerias);
     axios
       .post(ip + "/ferias", dataFerias, headers)
       .then((response) => {
         setDataFerias({
-          idFuncionario: 0,
-          situacaoFerias: "",
-          dataInicioFerias: "",
-          dataFinalizacaoFerias: "",
-          valorFerias: 0,
+          idFuncionario: "",
+          situacaoFerias: "Ferias Vendida",
+          dataInicioFerias: null,
+          dataFinalizacaoFerias: null,
+          valorFerias: null,
         });
         toast.success(response.data.message);
-        axios
-          .put(
-            ip + "/funcionario/" + funcionarioSelecionado.id,
-            { feriasPaga: funcionarioSelecionado.feriasPaga + 1 },
-            headers
-          )
       })
       .catch((err) => {
         toast.info(err.response.data.message);
       });
+    axios.put(
+      ip + "/funcionario/" + funcionarioSelecionado.id,
+      { feriasPaga: funcionarioSelecionado.feriasPaga + 1 },
+      headers
+    );
   };
 
   const demitirFuncionario = async (e) => {
@@ -330,11 +332,11 @@ export const MostruarioFuncAdmitido = () => {
     }));
 
     setDataFerias({
-      idFuncionario: 0,
-      situacaoFerias: "",
-      dataInicioFerias: "",
-      dataFinalizacaoFerias: "",
-      valorFerias: 0,
+      idFuncionario: "",
+      situacaoFerias: "Ferias Vendida",
+      dataInicioFerias: null,
+      dataFinalizacaoFerias: null,
+      valorFerias: null,
     });
   };
 
@@ -357,11 +359,11 @@ export const MostruarioFuncAdmitido = () => {
     }));
 
     setDataFerias({
-      idFuncionario: 0,
-      situacaoFerias: "",
-      dataInicioFerias: "",
-      dataFinalizacaoFerias: "",
-      valorFerias: 0,
+      idFuncionario: "",
+      situacaoFerias: "Ferias Vendida",
+      dataInicioFerias: null,
+      dataFinalizacaoFerias: null,
+      valorFerias: null,
     });
   };
 
@@ -693,7 +695,6 @@ export const MostruarioFuncAdmitido = () => {
                     <label class="relative inline-flex items-center cursor-pointer my-2">
                       <input
                         type="checkbox"
-                        value={dataFerias.situacaoFerias ? "Iniciada" : "Paga"}
                         onClick={() => handleFerias("FeriasPaga")}
                         class="sr-only peer"
                       />
