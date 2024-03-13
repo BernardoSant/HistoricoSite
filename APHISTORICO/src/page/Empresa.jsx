@@ -12,7 +12,7 @@ import { TabelaAddFuncionario } from "../components/Funcionarios/AddFuncionario"
 import { MostruarioFuncAdmitido } from "../components/Funcionarios/FuncionarioAdmitidos";
 import { MostruarioFuncDemitido } from "../components/Funcionarios/FuncionarioDemitidos";
 import { ResumoEmpresa } from "../components/Mostruario/ResumoEmpresa";
-import { TabelaAddContrato } from "../components/Contrato/AddContrato";
+import { TabelaAddContrato } from "../components/Contrato/addContrato";
 import { MtrPedidos } from "../components/Pedidos/MtrPedidos";
 import { useGlobalContext } from "../global/Global";
 import { Teste } from "../components/text";
