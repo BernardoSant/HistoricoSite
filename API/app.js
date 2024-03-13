@@ -41,6 +41,6 @@ app.use("/contrato", contrato)
 const cargo = require("./controllers/cargo");
 app.use("/cargo", cargo)
 
-app.listen(3030, () =>{
-    console.log("Servidor iniciado na porta 3030")
+app.listen(2604, () =>{
+    console.log("Servidor iniciado na porta 7000")
 });
