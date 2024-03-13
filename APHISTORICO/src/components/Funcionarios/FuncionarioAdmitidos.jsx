@@ -271,8 +271,6 @@ export const MostruarioFuncAdmitido = () => {
         "Content-Type": "application/json",
       },
     };
-    console.log(funcionarioSelecionado.id);
-    console.log(dataFerias);
     axios
       .post(ip + "/ferias", dataFerias, headers)
       .then((response) => {
