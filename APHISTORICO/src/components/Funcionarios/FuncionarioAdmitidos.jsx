@@ -235,6 +235,64 @@ export const MostruarioFuncAdmitido = () => {
       });
   };
 
+  const [dataFerias, setDataFerias] = useState({
+    idFuncionario: 0,
+    situacaoFerias: "",
+    dataInicioFerias: "",
+    dataFinalizacaoFerias: "",
+    valorFerias: 0,
+  });
+
+  const valorInputFerias = (e) => {
+    let valor = e.target.value;
+    let name = e.target.name;
+
+    if (e.target.name === "dataInicioFerias") {
+      const dataInicio = new Date(valor);
+      const dataFinalizacao = new Date(dataInicio);
+
+      dataFinalizacao.setMonth(dataFinalizacao.getMonth() + 1);
+      setDataFerias({
+        ...dataFerias,
+        dataInicioFerias: dataInicio.toISOString().split("T")[0],
+        dataFinalizacaoFerias: dataFinalizacao.toISOString().split("T")[0],
+      });
+    } else {
+      setDataFerias({ ...dataFerias, [e.target.name]: valor });
+    }
+  };
+
+  const sendFerias = async (e) => {
+    e.preventDefault();
+    const headers = {
+      headers: {
+        "Content-Type": "application/json",
+      },
+    };
+
+    axios
+      .post(ip + "/ferias", dataFerias, headers)
+      .then((response) => {
+        setDataFerias({
+          idFuncionario: 0,
+          situacaoFerias: "",
+          dataInicioFerias: "",
+          dataFinalizacaoFerias: "",
+          valorFerias: 0,
+        });
+        toast.success(response.data.message);
+        axios
+          .put(
+            ip + "/funcionario/" + funcionarioSelecionado.id,
+            { feriasPaga: funcionarioSelecionado.feriasPaga + 1 },
+            headers
+          )
+      })
+      .catch((err) => {
+        toast.info(err.response.data.message);
+      });
+  };
+
   const demitirFuncionario = async (e) => {
     e.preventDefault();
 
@@ -258,19 +316,53 @@ export const MostruarioFuncAdmitido = () => {
       });
   };
 
+  const [feriasPaga, setFeriasPaga] = useState({
+    FeriasPaga: false,
+  });
+
+  const handleFerias = (key) => {
+    setFeriasPaga((prevState) => ({
+      ...prevState,
+      [key]: !prevState[key],
+      ...(key !== "FeriasPaga" && {
+        FeriasPaga: false,
+      }),
+    }));
+
+    setDataFerias({
+      idFuncionario: 0,
+      situacaoFerias: "",
+      dataInicioFerias: "",
+      dataFinalizacaoFerias: "",
+      valorFerias: 0,
+    });
+  };
+
   const [state, setState] = useState({
     Menu: false,
     AddFerias: false,
+    TipoFerias: false,
   });
 
   const handleClick = (key) => {
     setState((prevState) => ({
       ...prevState,
       [key]: !prevState[key],
+      ...(key !== "FeriasPaga" && {
+        FeriasPaga: false,
+      }),
       ...(key !== "AddFerias" && {
         AddFerias: false,
       }),
     }));
+
+    setDataFerias({
+      idFuncionario: 0,
+      situacaoFerias: "",
+      dataInicioFerias: "",
+      dataFinalizacaoFerias: "",
+      valorFerias: 0,
+    });
   };
 
   return (
@@ -508,7 +600,7 @@ export const MostruarioFuncAdmitido = () => {
               <dir
                 className={` ${
                   state.Menu &&
-                  "bg-slate-200 flex flex-col  rounded-[1.5em] p-2 gap-3 absolute"
+                  "bg-slate-200 flex flex-col  rounded-[1.5em] p-2 gap-3 absolute drop-shadow-lg"
                 }`}
               >
                 <div className="flex gap-3">
@@ -535,16 +627,97 @@ export const MostruarioFuncAdmitido = () => {
                   <button
                     onClick={() => handleClick("Menu")}
                     className={`bg-gray-400 text-2xl w-auto p-1 flex justify-center items-center rounded-full drop-shadow-lg ${
-                      state.Menu ? "mt-0" : "mt-2"
+                      state.Menu ? "mt-0 " : "mt-2"
                     }`}
                   >
                     {state.Menu ? <AiOutlineRight /> : <AiOutlineLeft />}
                   </button>
                 </div>
-                {state.AddFerias ? <>
-                 <div>oslk</div>
-                </> : null}
-               
+                {state.AddFerias ? (
+                  <div className="bg-slate-300 rounded-[1.5em] drop-shadow-lg grid grid-cols-5">
+                    {feriasPaga.FeriasPaga ? (
+                      <>
+                        <form
+                          onSubmit={sendFerias}
+                          id="fromFeriasPaga"
+                          className=" p-2 px-4 grid grid-cols-5 col-span-5 gap-2"
+                        >
+                          <H1 className="col-span-1 flex justify-center items-center">
+                            Valor:
+                          </H1>
+                          <input
+                            className="rounded-[1.5em] text-center col-span-4 shadow-inner px-2"
+                            type="number"
+                            placeholder="1000.00"
+                            onChange={valorInputFerias}
+                            name="valorFerias"
+                            value={dataFerias.valorFerias}
+                          />
+                        </form>
+                      </>
+                    ) : (
+                      <>
+                        <form
+                          onSubmit={sendFerias}
+                          id="fromFerias"
+                          className=" p-2 px-4 grid grid-cols-5 col-span-5 gap-2"
+                        >
+                          <H1 className="col-span-1 flex justify-center items-center">
+                            Dé:
+                          </H1>
+                          <input
+                            className="rounded-[1.5em] text-center col-span-4 shadow-inner px-2"
+                            type="date"
+                            onChange={valorInputFerias}
+                            name="dataInicioFerias"
+                            value={dataFerias.dataInicioFerias}
+                          />
+                          <H1 className="col-span-1 flex justify-center items-center">
+                            Ate:
+                          </H1>
+                          <input
+                            className="rounded-[1.5em] text-center col-span-4 shadow-inner px-2"
+                            type="date"
+                            onChange={valorInputFerias}
+                            name="dataFinalizacaoFerias"
+                            value={dataFerias.dataFinalizacaoFerias}
+                          />
+                        </form>
+                      </>
+                    )}
+
+                    <H1 className="col-span-3 flex justify-center items-center">
+                      Vender Ferias
+                    </H1>
+
+                    <label class="relative inline-flex items-center cursor-pointer my-2">
+                      <input
+                        type="checkbox"
+                        value={dataFerias.situacaoFerias ? "Iniciada" : "Paga"}
+                        onClick={() => handleFerias("FeriasPaga")}
+                        class="sr-only peer"
+                      />
+                      <div
+                        class="text-sm group peer ring-0 bg-gradient-to-tr from-red-300 to-red-500  
+                      rounded-full outline-none duration-300 after:duration-300 w-12 h-6  shadow-md peer-checked:bg-green-500  
+                      peer-focus:outline-none   after:rounded-full after:absolute after:bg-gray-50 after:outline-none after:h-5
+                      after:w-5 after:top-0.5 after:left-0.5 after:-rotate-180 after:flex after:justify-center after:items-center peer-checked:after:translate-x-6 
+                      peer-hover:after:scale-95 peer-checked:after:rotate-0 peer-checked:bg-gradient-to-tr peer-checked:from-green-300
+                     peer-checked:to-lime-500"
+                      ></div>
+                    </label>
+
+                    <button
+                      form={
+                        feriasPaga.FeriasPaga ? "fromFeriasPaga" : "fromFerias"
+                      }
+                      type="submit"
+                      className="col-span-5 bg-orange-600 font-bold rounded-full text-lg p-0.7 shadow-inner m-2"
+                    >
+                      Salvar
+                    </button>
+                  </div>
+                ) : null}
               </dir>
             </article>
 

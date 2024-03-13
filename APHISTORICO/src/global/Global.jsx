@@ -26,7 +26,7 @@ const useFetchData = (url, setData, interval) => {
 };
 
 const AppContext = ({ children }) => {
-  let ip = "http://192.168.15.2:2604";
+  let ip = "http://localhost:2604";
   const [empresa, setEmpresa] = useState([]);
   useFetchData(ip + "/empresa", setEmpresa, 30 * 1000);
 
@@ -51,6 +51,9 @@ const AppContext = ({ children }) => {
   const [cargo, setCargo] = useState([]);
   useFetchData(ip + "/cargo", setCargo, 10 * 1000);
 
+  const [ferias, setFerias] = useState([]);
+  useFetchData(ip + "/ferias", setFerias, 60 * 1000);
+
   return (
     <GlobalContext.Provider
       value={{
@@ -71,6 +74,8 @@ const AppContext = ({ children }) => {
         setFuncionario,
         cargo,
         setCargo,
+        ferias,
+        setFerias,
       }}
     >
       {children}

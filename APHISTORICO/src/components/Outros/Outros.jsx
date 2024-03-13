@@ -13,7 +13,7 @@ import { RiSaveLine } from "react-icons/ri";
 import { LuArrowRightFromLine } from "react-icons/lu";
 
 const Footer = styled.footer`
-  height: 100vh;
+  height: 100%;
   width: 100%;
   padding: 1em;
   display: flex;
@@ -36,6 +36,7 @@ const Header = styled.header`
 `;
 
 const Section = styled.section`
+
   height: 100%;
   display: flex;
   gap: 7px;
@@ -405,8 +406,8 @@ export const Outros = () => {
       </Header>
 
       <Footer>
-        <Section className="min-h-[21em] max-h-[21em]">
-          <Article>
+        <Section >
+          <Article className="max-h-[20em]">
             <Dir>
               <div className="flex flex-row justify-between items-center py-1">
                 <H1 className="flex-auto">
@@ -586,7 +587,7 @@ export const Outros = () => {
             </Div>
           </Article>
 
-          <Article>
+          <Article className="max-h-[20em]">
             <Dir>
               <H1>Transporte</H1>
               <H3 className="text-[0.9em]">
