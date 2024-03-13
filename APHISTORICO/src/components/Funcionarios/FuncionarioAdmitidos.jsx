@@ -260,14 +260,15 @@ export const MostruarioFuncAdmitido = () => {
 
   const [state, setState] = useState({
     Menu: false,
+    AddFerias: false,
   });
 
   const handleClick = (key) => {
     setState((prevState) => ({
       ...prevState,
       [key]: !prevState[key],
-      ...(key !== "Menu" && {
-        addCargo: false,
+      ...(key !== "AddFerias" && {
+        AddFerias: false,
       }),
     }));
   };
@@ -502,58 +503,70 @@ export const MostruarioFuncAdmitido = () => {
         </>
       ) : funcionarioSelecionado ? (
         <>
-          <article className="relative w-full ">
-            <nav className="w-full flex flex-row justify-end items-center gap-3 absolute ">
-              <div
+          <section className="flex w-full justify-end relative gap-2">
+            <article className="w-full  flex flex-col relative items-end">
+              <dir
                 className={` ${
                   state.Menu &&
-                  "bg-slate-200 flex flex-row  rounded-full p-2 gap-3"
+                  "bg-slate-200 flex flex-col  rounded-[1.5em] p-2 gap-3 absolute"
                 }`}
               >
-                {state.Menu && (
-                  <div className="flex justify-between gap-2 w-auto  rounded-full ">
-                    <p className="">
+                <div className="flex gap-3">
+                  {state.Menu && (
+                    <div className="flex justify-between gap-2 w-auto  rounded-full ">
+                      <p className="">
+                        <Button
+                          className="bg-yellow-500 z-10"
+                          onClick={() => handleClick("AddFerias")}
+                        >
+                          Adicionar Ferias
+                        </Button>
+                      </p>
+
                       <Button
-                        className="bg-yellow-500 z-10"
+                        onClick={demitirFuncionario}
+                        className="bg-red-500 z-10"
                       >
-                        Adicionar Ferias
+                        Demitir
                       </Button>
+                    </div>
+                  )}
 
-                    </p>
+                  <button
+                    onClick={() => handleClick("Menu")}
+                    className={`bg-gray-400 text-2xl w-auto p-1 flex justify-center items-center rounded-full drop-shadow-lg ${
+                      state.Menu ? "mt-0" : "mt-2"
+                    }`}
+                  >
+                    {state.Menu ? <AiOutlineRight /> : <AiOutlineLeft />}
+                  </button>
+                </div>
+                {state.AddFerias ? <>
+                 <div>oslk</div>
+                </> : null}
+               
+              </dir>
+            </article>
 
-                    <Button
-                      onClick={demitirFuncionario}
-                      className="bg-red-500 z-10"
-                    >
-                      Demitir
-                    </Button>
-                  </div>
-                )}
-
-                <button
-                  onClick={() => handleClick("Menu")}
-                  className={`bg-gray-400 text-2xl w-auto p-1 flex justify-center items-center rounded-full drop-shadow-lg mt-2 ${
-                    state.Menu && "mt-0"
-                  }`}
+            <article className=" inline-block">
+              <div className="flex gap-3">
+                <Button
+                  onClick={() => setFuncionarioSelecionado(null)}
+                  className={`bg-orange-600 pt-2 mt-2 ${state.Menu && "mt-0"}`}
                 >
-                  {state.Menu ? <AiOutlineRight /> : <AiOutlineLeft />}
-                </button>
-              </div>
-              <Button
-                onClick={() => setFuncionarioSelecionado(null)}
-                className={`bg-orange-600 pt-2 mt-2 ${state.Menu && "mt-0"}`}
-              >
-                Voltar
-              </Button>
+                  Voltar
+                </Button>
 
-              <Button
-                onClick={() => setFuncionarioEditar(funcionarioSelecionado)}
-                className={`bg-green-600 pt-2 mt-2 ${state.Menu && "mt-0"}`}
-              >
-                Editar
-              </Button>
-            </nav>
-          </article>
+                <Button
+                  onClick={() => setFuncionarioEditar(funcionarioSelecionado)}
+                  className={`bg-green-600 pt-2 mt-2 ${state.Menu && "mt-0"}`}
+                >
+                  Editar
+                </Button>
+              </div>
+            </article>
+          </section>
+
           <div className=" grid grid-cols-6 gap-x-2 mt-3">
             <h3 className="text-3xl mb-5 font-semibold col-span-6 -ml-3">
               Identificação
