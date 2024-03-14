@@ -84,8 +84,8 @@ export const TabelaAddFuncionario = () => {
     ctpsFucionario: "",
     dataNascimento: "",
     dataAdmicaoFucionario: "",
+    dataExames: "",
     dataFeriasFucionario: "",
-    quantidadeFerias: 0,
     feriasPaga: 0,
     pisFucionario: "",
     salarioFucionario: "",
@@ -172,8 +172,8 @@ export const TabelaAddFuncionario = () => {
           ctpsFucionario: "",
           dataNascimento: "",
           dataAdmicaoFucionario: "",
+          dataExames: "",
           dataFeriasFucionario: "",
-          quantidadeFerias: 0,
           feriasPaga: 0,
           pisFucionario: "",
           salarioFucionario: "",
@@ -370,7 +370,8 @@ export const TabelaAddFuncionario = () => {
 
             <p className="col-span-2"></p>
 
-            <H1 className="col-span-2">Data Admissão*</H1>
+            <H1 className="col-span-1">Data Admissão*</H1>
+            <H1 className="col-span-1">Data Exame</H1>
             <H1 className="col-span-4">Salário*</H1>
 
             <Input
@@ -379,7 +380,14 @@ export const TabelaAddFuncionario = () => {
               onChange={valorInput}
               onBlur={calcFerias}
               value={data.dataAdmicaoFucionario}
-              className="col-span-2 "
+              className="col-span-1 "
+            />
+            <Input
+              type="date"
+              name="dataExames"
+              onChange={valorInput}
+              value={data.dataExames}
+              className="col-span-1"
             />
 
             <Input
@@ -387,8 +395,9 @@ export const TabelaAddFuncionario = () => {
               name="salarioFucionario"
               onChange={valorInput}
               value={data.salarioFucionario}
-              className="col-span-2"
+              className="col-span-1"
             />
+            <p className="col-span-2"></p>
           </div>
 
           <div className="grid grid-cols-5 gap-x-2">

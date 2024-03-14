@@ -124,8 +124,9 @@ export const MostruarioFuncAdmitido = () => {
     complFucionario: "",
     ctpsFucionario: "",
     dataAdmicaoFucionario: "",
+    dataExames: "",
+    dataExamesNew: "",
     dataFeriasFucionario: "",
-    quantidadeFerias: 0,
     pisFucionario: "",
     salarioFucionario: "",
     funcaoFuncionario: "",
@@ -179,6 +180,7 @@ export const MostruarioFuncAdmitido = () => {
     const dataAdimicao = new Date(funcionarioSelecionado.dataAdmicaoFucionario);
     const dataFerias = new Date(funcionarioSelecionado.dataFeriasFucionario);
     const dataNasc = new Date(funcionarioSelecionado.dataNascimento);
+    const dataExames = new Date(funcionarioSelecionado.dataExames);
 
     const opcoes = {
       year: "numeric",
@@ -214,6 +216,7 @@ export const MostruarioFuncAdmitido = () => {
     var dataFormatadaAdmicao = dataAdimicao.toLocaleDateString("pt-BR", opcoes);
     var dataFormatadaFerias = dataFerias.toLocaleDateString("pt-BR", opcoes);
     var dataFormatadaNasc = dataNasc.toLocaleDateString("pt-BR", opcoes);
+    var dataFormatadaExames = dataExames.toLocaleDateString("pt-BR", opcoes);
   }
 
   const updateFuncionario = async (e) => {
@@ -260,7 +263,11 @@ export const MostruarioFuncAdmitido = () => {
         dataFinalizacaoFerias: dataFinalizacao.toISOString().split("T")[0],
       });
     } else {
-      setDataFerias({ ...dataFerias,idFuncionario: funcionarioSelecionado.id, [e.target.name]: valor });
+      setDataFerias({
+        ...dataFerias,
+        idFuncionario: funcionarioSelecionado.id,
+        [e.target.name]: valor,
+      });
     }
   };
 
@@ -291,6 +298,31 @@ export const MostruarioFuncAdmitido = () => {
       { feriasPaga: funcionarioSelecionado.feriasPaga + 1 },
       headers
     );
+  };
+
+  const sendExames = async (e) => {
+    e.preventDefault();
+
+    const headers = {
+      headers: {
+        "Content-Type": "application/json",
+      },
+    };
+
+    axios
+    axios.put(
+      ip + "/funcionario/" + funcionarioSelecionado.id,
+      { dataExames: data.dataExamesNew },
+      headers
+    ).then((response) => {
+        setDataFerias({
+          dataExamesNew: "",
+        });
+        toast.success("Data de exames enviada com sucesso!");
+      })
+      .catch((err) => {
+        toast.info("ERRO: Data de exames não foi enviada com sucesso!");
+      });
   };
 
   const demitirFuncionario = async (e) => {
@@ -342,6 +374,7 @@ export const MostruarioFuncAdmitido = () => {
     Menu: false,
     AddFerias: false,
     TipoFerias: false,
+    AddExames: false,
   });
 
   const handleClick = (key) => {
@@ -353,6 +386,17 @@ export const MostruarioFuncAdmitido = () => {
       }),
       ...(key !== "AddFerias" && {
         AddFerias: false,
+      }),
+      ...(key !== "AddExames" && {
+        AddExames: false,
+      }),
+    }));
+
+    setFeriasPaga((prevState) => ({
+      ...prevState,
+      [key]: !prevState[key],
+      ...(key !== "FeriasPaga" && {
+        FeriasPaga: false,
       }),
     }));
 
@@ -606,14 +650,19 @@ export const MostruarioFuncAdmitido = () => {
                 <div className="flex gap-3">
                   {state.Menu && (
                     <div className="flex justify-between gap-2 w-auto  rounded-full ">
-                      <p className="">
-                        <Button
-                          className="bg-yellow-500 z-10"
-                          onClick={() => handleClick("AddFerias")}
-                        >
-                          Adicionar Ferias
-                        </Button>
-                      </p>
+                      <Button
+                        className="bg-green-500 z-10"
+                        onClick={() => handleClick("AddExames")}
+                      >
+                        Adicionar Exames
+                      </Button>
+
+                      <Button
+                        className="bg-yellow-500 z-10"
+                        onClick={() => handleClick("AddFerias")}
+                      >
+                        Adicionar Ferias
+                      </Button>
 
                       <Button
                         onClick={demitirFuncionario}
@@ -716,6 +765,40 @@ export const MostruarioFuncAdmitido = () => {
                       Salvar
                     </button>
                   </div>
+                ) : state.AddExames ? (
+                  <div className="bg-slate-300 rounded-[1.5em] drop-shadow-lg flex flex-col">
+                    <form
+                      onSubmit={sendExames}
+                      id="fromExames"
+                      className=" p-2 px-4 flex flex-row gap-5 justify-center items-center"
+                    >
+                      <H1 className="col-span-1 flex justify-center items-center">
+                        Data Exame:
+                      </H1>
+                      <input
+                        className="rounded-[1.5em] text-center col-span-4 shadow-inner px-2"
+                        type="date"
+                        onChange={valorInput}
+                        name="dataExamesNew"
+                        value={data.dataExamesNew}
+                      />
+                    </form>
+                    <p className="flex justify-center items-center ">
+                      <button
+                        form={
+                          feriasPaga.FeriasPaga
+                            ? "fromFeriasPaga"
+                            : state.AddExames
+                            ? "fromExames"
+                            : "fromFerias"
+                        }
+                        type="submit"
+                        className="w-full px-10 bg-orange-600 font-bold rounded-full text-lg p-0.7 shadow-inner m-2"
+                      >
+                        Salvar
+                      </button>
+                    </p>
+                  </div>
                 ) : null}
               </dir>
             </article>
@@ -801,12 +884,13 @@ export const MostruarioFuncAdmitido = () => {
             <p className=" col-span-2"></p>
 
             <H1 className="col-span-2">Função</H1>
-            <H1 className="col-span-2">Salario</H1>
+            <H1 className="col-span-1">Salario</H1>
             <H1 className="col-span-1">Horas trabalhada</H1>
             <H1 className="col-span-1">Data Admição</H1>
+            <H1 className="col-span-1">Data Exame</H1>
 
             <H2 className="col-span-2">{data.funcaoFuncionario}</H2>
-            <H2 className="col-span-2">
+            <H2 className="col-span-1">
               {Number(data.salarioFucionario).toLocaleString("pt-BR", {
                 style: "currency",
                 currency: "BRL",
@@ -814,6 +898,7 @@ export const MostruarioFuncAdmitido = () => {
             </H2>
             <H2 className="col-span-1">{data.horasTFucionario}</H2>
             <H2 className="col-span-1">{dataFormatadaAdmicao}</H2>
+            <H2 className="col-span-1">{dataFormatadaExames}</H2>
 
             <H1 className="col-span-1">Ferias</H1>
             <H1 className="col-span-1">Quant Ferias</H1>

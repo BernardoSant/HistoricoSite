@@ -60,11 +60,11 @@ module.exports = {
       dataAdmicaoFucionario: {
         type: Sequelize.DATEONLY
       },
-      dataFeriasFucionario: {
+      dataExames: {
         type: Sequelize.DATEONLY
       },
-      quantidadeFerias:{
-        type: Sequelize.INTEGER
+      dataFeriasFucionario: {
+        type: Sequelize.DATEONLY
       },
       feriasPaga:{
         type: Sequelize.INTEGER
