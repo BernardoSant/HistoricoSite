@@ -4,6 +4,7 @@ import { BiCategory } from "react-icons/bi";
 import { useState, useEffect } from "react";
 import axios from "axios";
 import { toast } from "react-toastify";
+import { AiOutlineRight, AiOutlineLeft } from "react-icons/ai";
 
 const Div = styled.div`
   height: 100%;
@@ -73,6 +74,19 @@ const Input = styled.input`
   padding-left: 8px;
 `;
 
+const Button = styled.button`
+  padding: 5px;
+  padding-left: 20px;
+  padding-right: 20px;
+  font-weight: 600;
+  border-radius: 9999px;
+  --tw-drop-shadow: drop-shadow(0 10px 8px rgb(0 0 0 / 0.04))
+    drop-shadow(0 4px 3px rgb(0 0 0 / 0.1));
+  filter: var(--tw-blur) var(--tw-brightness) var(--tw-contrast)
+    var(--tw-grayscale) var(--tw-hue-rotate) var(--tw-invert) var(--tw-saturate)
+    var(--tw-sepia) var(--tw-drop-shadow);
+`;
+
 export const MostruarioFuncDemitido = () => {
   const { ip, funcionario } = useGlobalContext();
 
@@ -82,6 +96,7 @@ export const MostruarioFuncDemitido = () => {
 
   const [state, setState] = useState({
     Admitir: false,
+    Menu: false,
   });
 
   const valorInput = (e) => {
@@ -151,7 +166,18 @@ export const MostruarioFuncDemitido = () => {
     }
   }, [funcionarioSelecionado]);
 
-  const demitirFuncionario = async (e) => {
+  const dataAdimicao = new Date(data.DataAdmicaoFucionarioDE);
+  const dataFerias = new Date(dataAdimicao);
+  dataFerias.setFullYear(dataFerias.getFullYear() + 1);
+
+  const diaFerias = dataFerias.getDate();
+  const mesFerias = dataFerias.getMonth() + 1;
+  const anoFerias = dataFerias.getFullYear();
+
+  const dataFormatada = `${anoFerias}-0${mesFerias}-${diaFerias}`;
+
+  console.log(dataFormatada);
+  const sendAdmitir = async (e) => {
     e.preventDefault();
 
     const headers = {
@@ -166,6 +192,8 @@ export const MostruarioFuncDemitido = () => {
         {
           statuFucionario: "Admitido",
           dataAdmicaoFucionario: data.DataAdmicaoFucionarioDE,
+          feriasPaga: 0,
+          dataFeriasFucionario: dataFormatada,
         },
         headers
       )
@@ -181,47 +209,78 @@ export const MostruarioFuncDemitido = () => {
     <Div>
       {funcionarioSelecionado ? (
         <>
-          <nav className="w-full flex flex-row justify-end items-center gap-3">
-            {state.Admitir && (
-              <>
-                <Input
-                  type="date"
-                  name="DataAdmicaoFucionarioDE"
-                  onChange={valorInput}
-                  value={data.DataAdmicaoFucionarioDE}
-                  className="w-auto flex justify-center"
-                ></Input>
-              </>
-            )}
-
-            <button
-              onClick={
-                state.Admitir
-                  ? demitirFuncionario
-                  : () => handleClick("Admitir")
-              }
-            >
-              <h1
+          <section className="flex w-full justify-end relative gap-2">
+            <article className="w-full  flex flex-col relative items-end">
+              <dir
                 className={` ${
-                  state.Admitir ? "bg-gray-400" : "bg-green-600"
-                } w-auto font-bold p-1 px-3 rounded-full`}
+                  state.Menu &&
+                  "bg-slate-200 flex flex-col  rounded-[1.5em] p-2 gap-3 absolute drop-shadow-lg"
+                }`}
               >
-                {state.Admitir ? "Salvar" : "Admitir"}
-              </h1>
-            </button>
+                <div className=" flex gap-3 justify-between">
+                  {state.Menu && (
+                    <div className="w-full  rounded-full flex justify-end">
+                      <Button
+                        className="bg-green-500 z-10 w-auto "
+                        onClick={() => handleClick("Admitir")}
+                      >
+                        Adimitir
+                      </Button>
+                    </div>
+                  )}
 
-            <button
-              onClick={
-                state.Admitir
-                  ? () => handleClick("Admitir")
-                  : () => setFuncionarioSelecionado(null)
-              }
-            >
-              <h1 className="bg-red-600 w-auto font-bold p-1 px-3 rounded-full">
-                Voltar
-              </h1>
-            </button>
-          </nav>
+                  <button
+                    onClick={() => handleClick("Menu")}
+                    className={`bg-gray-400 text-2xl w-auto p-1 flex justify-center items-center rounded-full drop-shadow-lg ${
+                      state.Menu ? "mt-0 " : "mt-2"
+                    }`}
+                  >
+                    {state.Menu ? <AiOutlineRight /> : <AiOutlineLeft />}
+                  </button>
+                </div>
+                {state.Admitir ? (
+                  <div className="bg-slate-300 rounded-[1.5em] drop-shadow-lg grid grid-cols-1">
+                    <>
+                      <form
+                        onSubmit={sendAdmitir}
+                        id="AdmitirFrom"
+                        className=" p-2 px-4 grid grid-cols-2 col-span-5 gap-2"
+                      >
+                        <H1 className="col-span-1 flex justify-center items-center">
+                          Data:
+                        </H1>
+                        <Input
+                          type="date"
+                          name="DataAdmicaoFucionarioDE"
+                          onChange={valorInput}
+                          value={data.DataAdmicaoFucionarioDE}
+                          className="w-auto flex justify-center"
+                        ></Input>
+                      </form>
+                      <button
+                        form="AdmitirFrom"
+                        type="submit"
+                        className="w-auto col-span-1 bg-orange-600 font-bold rounded-full text-lg p-0.7 shadow-inner m-2"
+                      >
+                        <p>Salvar</p>
+                      </button>
+                    </>
+                  </div>
+                ) : null}
+              </dir>
+            </article>
+
+            <article className=" inline-block">
+              <div className="flex gap-3">
+                <Button
+                  onClick={() => setFuncionarioSelecionado(null)}
+                  className={`bg-orange-600 pt-2 mt-2 ${state.Menu && "mt-0"}`}
+                >
+                  Voltar
+                </Button>
+              </div>
+            </article>
+          </section>
 
           <div className=" grid grid-cols-5 gap-x-2 mt-3">
             <h3 className="text-3xl mb-5 font-semibold col-span-5 -ml-3">
