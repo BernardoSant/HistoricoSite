@@ -15,8 +15,7 @@ module.exports = (sequelize, DataTypes) => {
   }
   Impostos.init({
     siglaImposto: DataTypes.STRING,
-    porcentagemImposto: DataTypes.FLOAT,
-    tipoImposto: DataTypes.STRING
+    porcentagemImposto: DataTypes.FLOAT
   }, {
     sequelize,
     modelName: 'Impostos',

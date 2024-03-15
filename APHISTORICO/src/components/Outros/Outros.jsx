@@ -21,6 +21,15 @@ const Footer = styled.footer`
   align-content: start;
   flex-direction: column;
   gap: 10px;
+
+  &::-webkit-scrollbar {
+    width: 5px;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: #575757;
+    border-radius: 1em;
+  }
 `;
 
 const Header = styled.header`
@@ -36,13 +45,16 @@ const Header = styled.header`
 `;
 
 const Section = styled.section`
-
   height: 100%;
   display: flex;
-  gap: 7px;
+  gap: 10px;
   flex-direction: row;
   flex-wrap: wrap;
   flex: 1 1 0%;
+`;
+const Section2 = styled(Section)`
+  flex-direction: column;
+  padding-bottom: 12px;
 `;
 
 const Article = styled.article`
@@ -143,7 +155,7 @@ const Input = styled.input`
 `;
 
 export const Outros = () => {
-  const { ip, cargo, kinays } = useGlobalContext();
+  const { ip, cargo, kinays, impostos } = useGlobalContext();
 
   const [data, setData] = useState({
     nomeCargo: "",
@@ -152,11 +164,9 @@ export const Outros = () => {
     numeroKinay: "",
     descricaoKinay: "",
     porcentagemKinay: "",
+    siglaImposto:"",
+    porcentagemImposto: "",
   });
-  const valorInput2 = (e) => {
-    let valor = e.target.value;
-    setData({ ...data, [e.target.name]: valor });
-  };
 
   const valorInput = (e) => {
     let valor = e.target.value;
@@ -183,6 +193,17 @@ export const Outros = () => {
         ...data,
         idKinay: idKinay,
         descricaoKinay: descricaosKinay,
+      });
+    }
+    if (name === "siglaImposto" && state.delImposto) {
+      const parts = valor.split(" - ");
+      const idImposto = parts[0];
+      const siglaImposto = parts[1];
+
+      setData({
+        ...data,
+        idImposto: idImposto,
+        siglaImposto: siglaImposto,
       });
     }
   };
@@ -356,6 +377,67 @@ export const Outros = () => {
         toast.info(err.response.data.message);
       });
   };
+  const sendImposto = async (e) => {
+    e.preventDefault();
+
+    const headers = {
+      headers: {
+        "Content-Type": "application/json",
+      },
+    };
+
+    if (data.siglaImposto === "" || data.porcentagemImposto === "") {
+      toast.error("Por favor, preencha todos os campos obrigatórios.");
+      return;
+    }
+
+    const dataParaEnviar = {
+      ...data,
+      porcentagemImposto: data.porcentagemImposto / 100,
+    };
+
+    axios
+      .post(ip + "/impostos", dataParaEnviar, headers)
+      .then((response) => {
+        toast.success(response.data.message);
+        setData({
+          siglaImposto: "",
+          porcentagemImposto: "",
+        });
+      })
+      .catch((err) => {
+        toast.info(err.response.data.message);
+      });
+  };
+
+  const delImposto = async (e) => {
+    e.preventDefault();
+
+    const headers = {
+      headers: {
+        "Content-Type": "application/json",
+      },
+    };
+
+    if (data.siglaImposto === "") {
+      toast.error("Por favor, preencha todos os campos obrigatórios.");
+      return;
+    }
+
+    axios
+      .delete(ip + "/impostos/" + data.idImposto, headers)
+      .then((response) => {
+        setData({
+          idImposto: "",
+          siglaImposto: "",
+          porcentagemImposto: "",
+        });
+        toast.success(response.data.message);
+      })
+      .catch((err) => {
+        toast.info(err.response.data.message);
+      });
+  };
 
   const [state, setState] = useState({
     addCargo: false,
@@ -363,6 +445,8 @@ export const Outros = () => {
     delCargo: false,
     addKinay: false,
     delKinay: false,
+    addImposto: false,
+    delImposto: false,
   });
 
   const handleClick = (key) => {
@@ -385,6 +469,13 @@ export const Outros = () => {
       ...(key !== "delKinay" && {
         delKinay: false,
       }),
+
+      ...(key !== "addImposto" && {
+        addImposto: false,
+      }),
+      ...(key !== "delImposto" && {
+        delImposto: false,
+      }),
     }));
 
     setData({
@@ -394,6 +485,8 @@ export const Outros = () => {
       numeroKinay: "",
       descricaoKinay: "",
       porcentagemKinay: "",
+      siglaImposto: "",
+      porcentagemImposto: "",
     });
   };
 
@@ -406,7 +499,7 @@ export const Outros = () => {
       </Header>
 
       <Footer>
-        <Section >
+        <Section>
           <Article className="max-h-[20em]">
             <Dir>
               <div className="flex flex-row justify-between items-center py-1">
@@ -428,7 +521,7 @@ export const Outros = () => {
                         type="number"
                         name="salarioCargo"
                         placeholder="Salario EX: 00.00"
-                        onChange={valorInput2}
+                        onChange={valorInput}
                         value={data.salarioCargo}
                       />
                     </form>
@@ -459,7 +552,7 @@ export const Outros = () => {
                         type="number"
                         name="salarioCargo"
                         placeholder="Atualizar Salario "
-                        onChange={valorInput2}
+                        onChange={valorInput}
                         value={data.salarioCargo}
                       />
                     </form>
@@ -625,7 +718,7 @@ export const Outros = () => {
                         type="number"
                         name="numeroKinay"
                         placeholder="Numero"
-                        onChange={valorInput2}
+                        onChange={valorInput}
                         value={data.numeroKinay}
                         className="col-span-1 "
                       />
@@ -633,7 +726,7 @@ export const Outros = () => {
                       <Input
                         type="text"
                         name="descricaoKinay"
-                        onChange={valorInput2}
+                        onChange={valorInput}
                         placeholder="Descrição"
                         value={data.descricaoKinay}
                         className="col-span-2"
@@ -643,7 +736,7 @@ export const Outros = () => {
                         type="number"
                         name="porcentagemKinay"
                         placeholder="Porcentagem EX: 0.0"
-                        onChange={valorInput2}
+                        onChange={valorInput}
                         value={data.porcentagemKinay}
                         className="col-span-1"
                       />
@@ -730,12 +823,133 @@ export const Outros = () => {
                     key={kinay.id}
                     className="grid grid-cols-5 gap-3 text-[0.9em]"
                   >
-                    <P className="col-span-1">{kinay.numeroKinay}</P>
+                    <P className="col-span-1 flex justify-center items-center">
+                      {kinay.numeroKinay}
+                    </P>
                     <P className="col-span-3">{kinay.descricaoKinay}</P>
                     <P className="col-span-1">
                       {kinay.porcentagemKinay * 100}%
                     </P>
                   </H5>
+                );
+              })}
+            </Div>
+          </Article>
+
+          <Article className="max-w-[22vw]">
+            <Dir>
+              <div className="flex flex-row justify-between items-center py-1">
+                <H1 className="flex-auto">
+                  {state.addImposto ? (
+                    <form
+                      id="addImpostoForm"
+                      onSubmit={sendImposto}
+                      className="grid grid-cols-2 gap-3 pr-2"
+                    >
+                      <Input
+                        type="text"
+                        name="siglaImposto"
+                        placeholder="Ex: INSS"
+                        onChange={valorInput}
+                        value={data.siglaImposto}
+                        className="col-span-1 uppercase"
+                      />
+
+                      <Input
+                        type="number"
+                        name="porcentagemImposto"
+                        placeholder="Ex: 0.0"
+                        onChange={valorInput}
+                        value={data.porcentagemImposto}
+                        className="col-span-1"
+                      />
+                    </form>
+                  ) : state.delImposto ? (
+                    <form onSubmit={delImposto} id="delImpostoForm">
+                      <Input
+                        type="text"
+                        list="deltImposto"
+                        name="siglaImposto"
+                        placeholder="Selecione o Imposto"
+                        onChange={valorInput}
+                        value={data.siglaImposto}
+                      />
+
+                      <datalist id="deltImposto">
+                        {impostos.map((impt) => (
+                          <option
+                            key={impt.id}
+                            value={`${impt.id} - ${impt.siglaImposto} - ${impt.porcentagemImposto * 100}%`}
+                          />
+                        ))}
+                      </datalist>
+                    </form>
+                  ) : (
+                    <p>Impostos</p>
+                  )}
+                </H1>
+
+                <nav className="flex flex-col md:flex-row  gap-2 justify-end text-[1rem]">
+                  {state.addImposto || state.delImposto ? (
+                    <button
+                      className={`flex-1 p-1 rounded-full bg-gray-200 cursor-pointer drop-shadow-lg`}
+                      title={state.addImposto ? "Salvar" : "Excluir"}
+                      type="submit"
+                      form={state.addImposto ? "addImpostoForm" : "delImpostoForm"}
+                    >
+                      <RiSaveLine />
+                    </button>
+                  ) : null}
+
+                  <button
+                    className={`p-1 rounded-full bg-red-600 cursor-pointer drop-shadow-lg text-[1.2em] 
+                  ${state.addImposto ? "hidden" : ""} ${
+                      state.delImposto ? "bg-red-600" : ""
+                    }`}
+                    title={`${state.delImposto ? "Voltar" : "Excluir"}`}
+                    onClick={() => handleClick("delImposto")}
+                  >
+                    {state.delImposto ? (
+                      <LuArrowRightFromLine />
+                    ) : (
+                      <HiOutlineTrash />
+                    )}
+                  </button>
+
+                  <button
+                    className={`p-1 rounded-full bg-gray-300 cursor-pointer drop-shadow-lg text-[1.2em] 
+                  ${state.delImposto ? "hidden" : ""} ${
+                      state.addImposto ? "bg-red-600" : ""
+                    }`}
+                    title={`${state.addImposto ? "Voltar" : "Adicionar"}`}
+                    onClick={() => handleClick("addImposto")}
+                  >
+                    {state.addImposto ? (
+                      <LuArrowRightFromLine />
+                    ) : (
+                      <HiOutlinePlusSm />
+                    )}
+                  </button>
+                </nav>
+              </div>
+
+              <H2 className="grid grid-cols-2 gap-3 text-[0.9em]">
+                <P className="col-span-1">Sigla</P>
+                <P className="col-span-1">Porcentagem</P>
+              </H2>
+            </Dir>
+            <Div className="max-h-[22vh]">
+              {impostos.map((impt) => {
+                return (
+                  <H2
+                    key={impt.id}
+                    className="grid grid-cols-2 gap-3 text-[0.9em]"
+                  >
+                    <P className="col-span-1">{impt.siglaImposto}</P>
+                    <P className="col-span-1">
+                      {impt.porcentagemImposto * 100}%
+                    </P>
+                  </H2>
                 );
               })}
             </Div>

@@ -178,7 +178,8 @@ export const MostruarioFuncAdmitido = () => {
   if (funcionarioSelecionado) {
     const hoje = new Date();
     const dataAdimicao = new Date(funcionarioSelecionado.dataAdmicaoFucionario);
-    const dataFerias = new Date(funcionarioSelecionado.dataFeriasFucionario);
+    const dataFerias = new Date(dataAdimicao);
+    dataFerias.setFullYear(dataFerias.getFullYear() + 1);
     const dataNasc = new Date(funcionarioSelecionado.dataNascimento);
     const dataExames = new Date(funcionarioSelecionado.dataExames);
 
@@ -309,12 +310,14 @@ export const MostruarioFuncAdmitido = () => {
       },
     };
 
+    axios;
     axios
-    axios.put(
-      ip + "/funcionario/" + funcionarioSelecionado.id,
-      { dataExames: data.dataExamesNew },
-      headers
-    ).then((response) => {
+      .put(
+        ip + "/funcionario/" + funcionarioSelecionado.id,
+        { dataExames: data.dataExamesNew },
+        headers
+      )
+      .then((response) => {
         setDataFerias({
           dataExamesNew: "",
         });
@@ -922,25 +925,60 @@ export const MostruarioFuncAdmitido = () => {
               <th className="col-span-2">Nome</th>
               <th className="col-span-2">Cargo</th>
               <th className="col-span-1">Salario</th>
-              <th className="col-span-1">Data</th>
+              <th className="col-span-1">Situação</th>
             </thead>
           </Header>
           <Article>
             {FuncionariosAdmitidos.map((func) => {
-              let data = new Date(func.dataAdmicaoFucionario);
+              const dataAdimicao = new Date(func.dataAdmicaoFucionario);
               let opcoes = {
                 year: "numeric",
                 month: "2-digit",
                 day: "2-digit",
               };
-              let dataFormatada = data.toLocaleDateString("pt-BR", opcoes);
+              let dataFormatada = dataAdimicao.toLocaleDateString(
+                "pt-BR",
+                opcoes
+              );
               let nameWithInitials = getInitials(func.nameFucionario);
+
+              const hoje = new Date();
+
+              const dataFerias = new Date(dataAdimicao);
+              dataFerias.setFullYear(dataFerias.getFullYear() + 1);
+
+              const dataExames = new Date(func.dataExames);
+              dataExames.setFullYear(dataExames.getFullYear() + 1);
+
+              let Qferias = hoje.getFullYear() - dataAdimicao.getFullYear();
+              const mesFerias = hoje.getMonth() - dataAdimicao.getMonth();
+              if (
+                mesFerias < 0 ||
+                (mesFerias === 0 && hoje.getDate() < dataAdimicao.getDate())
+              ) {
+                Qferias--;
+              }
+
+              for (let i = 0; i < Qferias; i++) {
+                dataFerias.setFullYear(dataFerias.getFullYear() + 1);
+              }
+
+              const diferenca = dataFerias - hoje;
+              const diferencaExame = dataExames - hoje;
+
+              // Converte a diferença para dias
+              let diasRestantesFerias = Math.ceil(
+                diferenca / (24 * 60 * 60 * 1000)
+              );
+              let diasRestantesExames = Math.ceil(
+                diferencaExame / (24 * 60 * 60 * 1000)
+              );
 
               return (
                 <>
                   <thead className="w-auto flex justify-end ml-2">
                     <span
-                      className="absolute h-6 w-6 rounded-full bg-gray-400 flex justify-center items-center cursor-pointer "
+                      className="absolute h-6 w-6 rounded-full bg-gray-400 flex justify-center items-center cursor-pointer drop-shadow-lg"
                       onClick={() => {
                         setFuncionarioSelecionado(func);
                       }}
@@ -957,7 +995,30 @@ export const MostruarioFuncAdmitido = () => {
                         currency: "BRL",
                       })}
                     </th>
-                    <th className="col-span-1">{dataFormatada}</th>
+                    <th className="col-span-1 ">
+                      {diasRestantesFerias !== null &&
+                      diasRestantesFerias <= 30 &&
+                      diasRestantesFerias >= 0 ? (
+                        <p className="bg-yellow-500 p-1 px-2 rounded-[9999px]">{diasRestantesFerias} dias para férias!</p>
+                      ) : Qferias > 0 ? (
+                        <p className="bg-yellow-600 p-1 px-2 rounded-[9999px]">Ferias Atrasada!</p>
+                      ) : diasRestantesExames !== null &&
+                        diasRestantesExames <= 30 &&
+                        diasRestantesExames >= 0 ? (
+                        <p className="bg-red-500 p-1 px-2 rounded-[9999px]">
+                          {diasRestantesExames} dias para os Exames!
+                        </p>
+                      ) : diasRestantesExames < 0 ? (
+                        <p className="bg-red-600 p-1 px-2 rounded-[9999px] ">Exame Atrasado!</p>
+                      ) : diasRestantesFerias >= 0 &&
+                        diasRestantesFerias <= 30 &&
+                        diasRestantesExames <= 30 &&  
+                        diasRestantesExames >= 0 ? (
+                        <p className="bg-orange-500 p-1 px-2 rounded-[9999px]">{diasRestantesFerias} dias para férias e {diasRestantesExames} dias para Exames!</p>
+                      ) : (
+                        <p className="bg-green-500 p-1 px-2 rounded-[9999px]">Bom!</p>
+                      )}
+                    </th>
                   </thead>
                 </>
               );

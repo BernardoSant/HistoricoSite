@@ -15,9 +15,6 @@ module.exports = {
       porcentagemImposto: {
         type: Sequelize.FLOAT
       },
-      tipoImposto: {
-        type: Sequelize.STRING
-      },
       createdAt: {
         allowNull: false,
         type: Sequelize.DATE

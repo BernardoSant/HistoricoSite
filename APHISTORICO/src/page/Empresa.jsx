@@ -6,8 +6,6 @@ import { TabelaAdicionarEmpresa } from "../components/Empresa/AddEmpresa";
 import { MostruarioNota } from "../components/Nota/MtrNota";
 import { TabelaAddNota } from "../components/Nota/AddNota";
 import { TabelaAddPedido } from "../components/Pedidos/AddPedido";
-import { TabelaAddImposto } from "../components/Imposto/AddImposto";
-import { MostrarImposto } from "../components/Imposto/MtrImposto";
 import { TabelaAddFuncionario } from "../components/Funcionarios/AddFuncionario";
 import { MostruarioFuncAdmitido } from "../components/Funcionarios/FuncionarioAdmitidos";
 import { MostruarioFuncDemitido } from "../components/Funcionarios/FuncionarioDemitidos";
@@ -137,7 +135,6 @@ export const Empresa = () => {
     funcionarios: false,
     gasto: false,
     transporte: false,
-    impostos: false,
     outros: false,
     empregador: false,
 
@@ -148,8 +145,6 @@ export const Empresa = () => {
     addNotaF: false,
     addPedido: false,
     addContrato: false,
-    addImposto: false,
-    verImposto: false,
     alimentacao: false,
     cargos: false,
     ferramentas: false,
@@ -173,10 +168,8 @@ export const Empresa = () => {
       ...(key !== "addEmpresa" && { addEmpresa: false }),
       ...(key !== "addFuncionarios" && { addFuncionarios: false }),
       ...(key !== "addNotaF" && { addNotaF: false }),
-      ...(key !== "addImposto" && { addImposto: false }),
       ...(key !== "addPedido" && { addPedido: false }),
       ...(key !== "addContrato" && { addContrato: false }),
-      ...(key !== "verImposto" && { verImposto: false }),
       ...(key !== "verNota" && { verNota: false }),
       ...(key !== "verPedidos" && { verPedidos: false }),
       ...(key !== "verContrato" && { verContrato: false }),
@@ -348,29 +341,6 @@ export const Empresa = () => {
 
               <Button
                 TipoButton={1}
-                Titulo={"Impostos"}
-                onPrimario={state.impostos}
-                onClick={() => handleClick("impostos")}
-              ></Button>
-              {state.impostos && (
-                <Tabela>
-                  <Button
-                    TipoButton={2}
-                    Titulo={"Ver Impostos"}
-                    onSecundario={state.verImposto}
-                    onClick={() => handleClick("verImposto")}
-                  ></Button>
-                  <Button
-                    TipoButton={2}
-                    Titulo={"Adcionar Imposto"}
-                    onFinal={state.addImposto}
-                    onClick={() => handleClick("addImposto")}
-                  ></Button>
-                </Tabela>
-              )}
-
-              <Button
-                TipoButton={1}
                 Titulo={"Outros"}
                 onFinal={state.outros}
                 className="rounded-1em"
@@ -399,10 +369,6 @@ export const Empresa = () => {
             {state.addFuncionarios && <TabelaAddFuncionario />}
             {state.verFunciAdmitido && <MostruarioFuncAdmitido />}
             {state.verFunciDemitido && <MostruarioFuncDemitido />}
-
-            {state.addImposto && <TabelaAddImposto />}
-
-            {state.verImposto && <MostrarImposto />}
           </Div>
         </Nav>
       </Header>
