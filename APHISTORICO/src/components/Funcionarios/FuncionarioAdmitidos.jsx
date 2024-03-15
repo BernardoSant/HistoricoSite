@@ -809,17 +809,16 @@ export const MostruarioFuncAdmitido = () => {
             <article className=" inline-block">
               <div className="flex gap-3">
                 <Button
-                  onClick={() => setFuncionarioSelecionado(null)}
-                  className={`bg-orange-600 pt-2 mt-2 ${state.Menu && "mt-0"}`}
-                >
-                  Voltar
-                </Button>
-
-                <Button
                   onClick={() => setFuncionarioEditar(funcionarioSelecionado)}
                   className={`bg-green-600 pt-2 mt-2 ${state.Menu && "mt-0"}`}
                 >
                   Editar
+                </Button>
+                <Button
+                  onClick={() => setFuncionarioSelecionado(null)}
+                  className={`bg-orange-600 pt-2 mt-2 ${state.Menu && "mt-0"}`}
+                >
+                  Voltar
                 </Button>
               </div>
             </article>
@@ -999,9 +998,13 @@ export const MostruarioFuncAdmitido = () => {
                       {diasRestantesFerias !== null &&
                       diasRestantesFerias <= 30 &&
                       diasRestantesFerias >= 0 ? (
-                        <p className="bg-yellow-500 p-1 px-2 rounded-[9999px]">{diasRestantesFerias} dias para férias!</p>
+                        <p className="bg-yellow-500 p-1 px-2 rounded-[9999px]">
+                          {diasRestantesFerias} dias para férias!
+                        </p>
                       ) : Qferias > 0 ? (
-                        <p className="bg-yellow-600 p-1 px-2 rounded-[9999px]">Ferias Atrasada!</p>
+                        <p className="bg-yellow-600 p-1 px-2 rounded-[9999px]">
+                          Ferias Atrasada!
+                        </p>
                       ) : diasRestantesExames !== null &&
                         diasRestantesExames <= 30 &&
                         diasRestantesExames >= 0 ? (
@@ -1009,14 +1012,21 @@ export const MostruarioFuncAdmitido = () => {
                           {diasRestantesExames} dias para os Exames!
                         </p>
                       ) : diasRestantesExames < 0 ? (
-                        <p className="bg-red-600 p-1 px-2 rounded-[9999px] ">Exame Atrasado!</p>
+                        <p className="bg-red-600 p-1 px-2 rounded-[9999px] ">
+                          Exame Atrasado!
+                        </p>
                       ) : diasRestantesFerias >= 0 &&
                         diasRestantesFerias <= 30 &&
-                        diasRestantesExames <= 30 &&  
+                        diasRestantesExames <= 30 &&
                         diasRestantesExames >= 0 ? (
-                        <p className="bg-orange-500 p-1 px-2 rounded-[9999px]">{diasRestantesFerias} dias para férias e {diasRestantesExames} dias para Exames!</p>
+                        <p className="bg-orange-500 p-1 px-2 rounded-[9999px]">
+                          {diasRestantesFerias} dias para férias e{" "}
+                          {diasRestantesExames} dias para Exames!
+                        </p>
                       ) : (
-                        <p className="bg-green-500 p-1 px-2 rounded-[9999px]">Bom!</p>
+                        <p className="bg-green-500 p-1 px-2 rounded-[9999px]">
+                          Bom!
+                        </p>
                       )}
                     </th>
                   </thead>

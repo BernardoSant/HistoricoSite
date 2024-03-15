@@ -15,7 +15,7 @@ const Div = styled.div`
   padding-top: 1em;
   display: flex;
   flex-wrap: wrap;
-  max-width: 50em;
+  max-width: 70em;
   justify-content: start;
   align-content: start;
   flex-direction: row;
@@ -176,7 +176,6 @@ export const MostruarioFuncDemitido = () => {
 
   const dataFormatada = `${anoFerias}-0${mesFerias}-${diaFerias}`;
 
-  console.log(dataFormatada);
   const sendAdmitir = async (e) => {
     e.preventDefault();
 
@@ -357,7 +356,7 @@ export const MostruarioFuncDemitido = () => {
         </>
       ) : (
         <>
-          <Header>
+          <Header className="drop-shadow-lg">
             <thead className="flex justify-center items-center py-4">
               <th className="text-start text-3xl pt-1">
                 Funcionarios Demitidos
