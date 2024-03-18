@@ -49,8 +49,11 @@ const Header = styled.header`
   font-weight: 600;
   font-size: xx-large;
   display: flex;
-  justify-content: center;
+  justify-content: space-between;
+  align-items: center;
   padding: 5px;
+  padding-left: 1em;
+  padding-right: 1em;
 `;
 
 const Th = styled.th``;
@@ -82,7 +85,37 @@ const H2 = styled.h1`
 `;
 
 export const MostruarioNota = ({ empresaId }) => {
-  const {ip, nota, contrato, empresa } = useGlobalContext();
+  const { ip, nota, empresa } = useGlobalContext();
+
+  const handleDataChange = (event) => {
+    setData(event.target.value);
+
+    const dataSelecionada = new Date(event.target.value);
+    const anoSelecionado = dataSelecionada.getFullYear();
+
+    setAno(anoSelecionado);
+  };
+
+  const dataAtual = new Date();
+  const anoAtual = dataAtual.getFullYear();
+  const [ano, setAno] = useState(anoAtual);
+
+  useEffect(() => {
+    const intervalId = setInterval(() => {
+      const dataAtual = new Date();
+      const anoAtual = dataAtual.getFullYear();
+
+      setAno(anoAtual);
+    }, 600000); // Atualiza a cada minuto
+
+    // Limpa o intervalo quando o componente é desmontado
+    return () => clearInterval(intervalId);
+  }, []);
+
+  const pedidosFiltrados = nota.filter((nota) => {
+    const dataNota = new Date(nota.dataNF);
+    return dataNota.getFullYear() === parseInt(ano);
+  });
 
   const empresaSelecionada = empresa.find(
     (empresas) => empresas.id === empresaId
@@ -92,13 +125,13 @@ export const MostruarioNota = ({ empresaId }) => {
     ? empresaSelecionada.siglaEmpresa
     : "N/A";
 
-  const notasDaEmpresaAntecipada = nota.filter(
+  const notasDaEmpresaAntecipada = pedidosFiltrados.filter(
     (nota) => nota.idEmpresa === empresaId && nota.situacaoNF === "Antecipada"
   );
-  const notasDaEmpresaRecebida = nota.filter(
+  const notasDaEmpresaRecebida = pedidosFiltrados.filter(
     (nota) => nota.idEmpresa === empresaId && nota.situacaoNF === "Recebida"
   );
-  const notasDaEmpresaAnalise = nota.filter(
+  const notasDaEmpresaAnalise = pedidosFiltrados.filter(
     (nota) => nota.idEmpresa === empresaId && nota.situacaoNF === "Em Análise"
   );
 
@@ -178,7 +211,7 @@ export const MostruarioNota = ({ empresaId }) => {
       .put(ip + "/nota/" + notaSelecionada.id, data, headers)
       .then((response) => {
         toast.success(response.data.message);
-         setData({
+        setData({
           valorPrcentagemAntNF: "",
           situacaoNF: "",
           valorRecebidoNF: "",
@@ -402,8 +435,24 @@ export const MostruarioNota = ({ empresaId }) => {
           </>
         ) : (
           <>
-            <Header className="font-semibold w-full h-auto flex justify-center items-center text-3xl mb-5">
-              Notas da {siglaEmpresa}
+            <Header className="mb-5 px-20">
+              <p>Notas da {siglaEmpresa}</p>
+              <form
+                onSubmit={handleDataChange}
+                className="flex justify-center items-center "
+              >
+                <select
+                  className="font-semibold text-[1.7vh] rounded-2xl p-1 px-4 drop-shadow-lg focus:rounded-b-none"
+                  value={ano}
+                  onChange={(event) => setAno(event.target.value)}
+                >
+                  <option value="2022">2022</option>
+                  <option value="2023">2023</option>
+                  <option value="2024">2024</option>
+                  <option value="2025">2025</option>
+                  <option value="2026">2026</option>
+                </select>
+              </form>
             </Header>
 
             {notasDaEmpresaAnalise.length > 0 ? (
@@ -438,7 +487,7 @@ export const MostruarioNota = ({ empresaId }) => {
                 <Article>
                   {notasDaEmpresaAnalise.map((nota) => {
                     return (
-                      <>
+                      <div key={nota.id}>
                         <thead className="relative w-auto flex justify-end ml-2">
                           <span
                             className="absolute h-6 w-6 rounded-full bg-orange-500 flex justify-center items-center cursor-pointer "
@@ -475,7 +524,7 @@ export const MostruarioNota = ({ empresaId }) => {
                           </Th>
                           <Th className="col-span-1">{nota.dataNF}</Th>
                         </thead>
-                      </>
+                      </div>
                     );
                   })}
                 </Article>

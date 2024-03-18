@@ -333,11 +333,10 @@ console.log(ip)
           className="flex flex-col gap-2 w-auto justify-end pr-4"
         >
           <select
-            className="w-auto bg-gray-300 border-2 rounded-md border-gray-500"
+            className="w-auto border-2 rounded-xl focus:rounded-b-none border-gray-500 flex justify-center p-1 focus:border-b-0"
             value={mes}
             onChange={(event) => setMes(event.target.value)}
           >
-            <option value="">Selecione o mês</option>
             <option value="01">Janeiro</option>
             <option value="02">Fevereiro</option>
             <option value="03">Março</option>
@@ -353,11 +352,10 @@ console.log(ip)
           </select>
 
           <select
-            className="w-auto bg-gray-300 border-2 rounded-md border-gray-500"
+            className="w-auto border-2 rounded-xl focus:rounded-b-none border-gray-500 flex justify-center p-1 focus:border-b-0"
             value={ano}
             onChange={(event) => setAno(event.target.value)}
           >
-            <option value="">Selecione o ano</option>
             <option value="2022">2022</option>
             <option value="2023">2023</option>
             <option value="2024">2024</option>
