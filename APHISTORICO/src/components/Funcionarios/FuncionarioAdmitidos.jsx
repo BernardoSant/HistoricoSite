@@ -88,7 +88,7 @@ const Button = styled.button`
 `;
 
 export const MostruarioFuncAdmitido = () => {
-  const { ip, funcionario, empresa } = useGlobalContext();
+  const { ip, funcionario, empresa, ferias } = useGlobalContext();
 
   const FuncionariosAdmitidos = funcionario.filter(
     (funcionario) => funcionario.statuFucionario === "Admitido"
@@ -176,6 +176,9 @@ export const MostruarioFuncAdmitido = () => {
   }, [funcionarioEditar]);
 
   if (funcionarioSelecionado) {
+    const FuncionarioFerias = ferias.filter(
+      (ferias) => ferias.idFuncionario === funcionarioSelecionado.id
+    );
     const hoje = new Date();
     const dataAdimicao = new Date(funcionarioSelecionado.dataAdmicaoFucionario);
     const dataFerias = new Date(dataAdimicao);
@@ -213,7 +216,7 @@ export const MostruarioFuncAdmitido = () => {
       dataFerias.setFullYear(dataFerias.getFullYear() + 1);
     }
 
-    var ferias = Qferias - funcionarioSelecionado.feriasPaga;
+    var feriass = Qferias - FuncionarioFerias.length;
     var dataFormatadaAdmicao = dataAdimicao.toLocaleDateString("pt-BR", opcoes);
     var dataFormatadaFerias = dataFerias.toLocaleDateString("pt-BR", opcoes);
     var dataFormatadaNasc = dataNasc.toLocaleDateString("pt-BR", opcoes);
@@ -287,7 +290,7 @@ export const MostruarioFuncAdmitido = () => {
           situacaoFerias: "Ferias Vendida",
           dataInicioFerias: null,
           dataFinalizacaoFerias: null,
-          valorFerias: null,
+          valorFerias: "",
         });
         toast.success(response.data.message);
       })
@@ -616,7 +619,7 @@ export const MostruarioFuncAdmitido = () => {
             <H1 className="col-span-4">Cadastro em Empresa</H1>
 
             <H2 className="col-span-1">{dataFormatadaFerias}</H2>
-            <H2 className="col-span-1">{ferias}</H2>
+            <H2 className="col-span-1">{feriass}</H2>
             <select
               id="CadastroEmprFuncionario"
               name="CadastroEmprFuncionario"
@@ -907,7 +910,7 @@ export const MostruarioFuncAdmitido = () => {
             <H1 className="col-span-4">Cadastro em Empresa</H1>
 
             <H2 className="col-span-1">{dataFormatadaFerias}</H2>
-            <H2 className="col-span-1">{ferias}</H2>
+            <H2 className="col-span-1">{feriass}</H2>
             <H2 className="col-span-4">{data.CadastroEmprFuncionario}</H2>
           </div>
         </>
@@ -969,9 +972,22 @@ export const MostruarioFuncAdmitido = () => {
               let diasRestantesFerias = Math.ceil(
                 diferenca / (24 * 60 * 60 * 1000)
               );
+
               let diasRestantesExames = Math.ceil(
                 diferencaExame / (24 * 60 * 60 * 1000)
               );
+
+              const feriasAndamento = ferias.filter(
+                (f) =>
+                  f.situacaoFerias === "Em Ferias" &&
+                  f.idFuncionario === func.id
+              );
+
+              const feriasEmAndamento = feriasAndamento.some((f) => {
+                const inicioFerias = new Date(f.dataInicioFerias);
+                const finalFerias = new Date(f.dataFinalizacaoFerias);
+                return inicioFerias <= hoje && hoje <= finalFerias;
+              });
 
               return (
                 <>
@@ -1001,7 +1017,7 @@ export const MostruarioFuncAdmitido = () => {
                         <p className="bg-yellow-500 p-1 px-2 rounded-[9999px]">
                           {diasRestantesFerias} dias para férias!
                         </p>
-                      ) : Qferias > 0 ? (
+                      ) : feriass > 0 ? (
                         <p className="bg-yellow-600 p-1 px-2 rounded-[9999px]">
                           Ferias Atrasada!
                         </p>
@@ -1022,6 +1038,10 @@ export const MostruarioFuncAdmitido = () => {
                         <p className="bg-orange-500 p-1 px-2 rounded-[9999px]">
                           {diasRestantesFerias} dias para férias e{" "}
                           {diasRestantesExames} dias para Exames!
+                        </p>
+                      ) : feriasEmAndamento ? (
+                        <p className="bg-orange-600 p-1 px-2 rounded-[9999px]">
+                          Esta de ferias!
                         </p>
                       ) : (
                         <p className="bg-green-500 p-1 px-2 rounded-[9999px]">
