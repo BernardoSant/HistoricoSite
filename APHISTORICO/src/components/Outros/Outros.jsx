@@ -665,7 +665,7 @@ export const Outros = () => {
             <Div>
               {cargo.map((cargo) => {
                 return (
-                  <H3 key={cargo.id}>
+                  <H3 key={cargo.id} className="text-[0.9em] border-b-2 border-gray-400">
                     <P>{cargo.nomeCargo}</P>
                     <P>
                       {Number(cargo.salarioCargo).toLocaleString("pt-BR", {
@@ -821,7 +821,7 @@ export const Outros = () => {
                 return (
                   <H5
                     key={kinay.id}
-                    className="grid grid-cols-5 gap-3 text-[0.9em]"
+                    className="grid grid-cols-5 gap-3 text-[0.9em] border-b-2 border-gray-400"
                   >
                     <P className="col-span-1 flex justify-center items-center">
                       {kinay.numeroKinay}
@@ -943,7 +943,7 @@ export const Outros = () => {
                 return (
                   <H2
                     key={impt.id}
-                    className="grid grid-cols-2 gap-3 text-[0.9em]"
+                    className="grid grid-cols-2 gap-3 text-[0.9em] border-b-2 border-gray-400"
                   >
                     <P className="col-span-1">{impt.siglaImposto}</P>
                     <P className="col-span-1">

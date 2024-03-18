@@ -350,6 +350,7 @@ export const Empresa = () => {
             </nav>
           </Div>
           <Div className="w-full shadow-md shadow-slate-600 flex flex-col justify-center items-center ">
+
             {state.addContrato && <TabelaAddContrato />}
 
             {state.resumoMensal && <ResumoEmpresa />}
