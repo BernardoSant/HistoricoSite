@@ -18,7 +18,7 @@ if (config.use_env_variable) {
 }
 
 try{
- console.log("Conexaão com o banco da dedos realizada com sucesso!")
+ console.log("Conexão com o banco da dedos realizada com sucesso!")
 }catch(ERROR){
   console.log("Erro: Conexão com o banco de dados não realizada com sucesso:", error);
 }

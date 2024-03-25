@@ -2,15 +2,11 @@ import styled from "styled-components";
 import { useState } from "react";
 import axios from "axios";
 import { toast } from "react-toastify";
-import { useGlobalContext } from "../../global/Global";
+import { useGlobalContext } from "../../../global/Global";
 
 const Form = styled.form`
   height: 100%;
   width: 100%;
-  padding-left: 1em;
-  padding-right: 1em;
-  padding-bottom: 1em;
-  padding-top: 1em;
   gap: 3em;
   display: flex;
   flex-wrap: wrap;
@@ -273,7 +269,6 @@ export const TabelaAdicionarEmpresa = () => {
           >
             <option></option>
             <option value="Particular">Particular</option>
-            <option value="ParticularEmp">Empresa Particular</option>
             <option value="Contrato">Contrato</option>
           </select>
         </section>

@@ -2,7 +2,7 @@ import styled from "styled-components";
 import { useState, useEffect } from "react";
 import axios from "axios";
 import { Chart } from "react-google-charts";
-import { useGlobalContext } from "../../global/Global";
+import { useGlobalContext } from "../../../global/Global";
 import { toast } from "react-toastify";
 import {
   HiOutlinePlusSm,
@@ -52,13 +52,10 @@ const Section = styled.section`
   flex-wrap: wrap;
   flex: 1 1 0%;
 `;
-const Section2 = styled(Section)`
-  flex-direction: column;
-  padding-bottom: 12px;
-`;
 
 const Article = styled.article`
   display: flex;
+  height: 100%;
   flex-direction: column;
   flex: 1 1 0%;
   gap: 10px;
@@ -491,7 +488,7 @@ export const Outros = () => {
   };
 
   return (
-    <>
+    <div className="w-full h-full">
       <Header>
         <h1 className=" w-full text-center text-3xl flex justify-center items-center font-bold">
           Outros
@@ -499,8 +496,8 @@ export const Outros = () => {
       </Header>
 
       <Footer>
-        <Section>
-          <Article className="max-h-[20em]">
+        <Section className="max-h-[17em] ">
+          <Article >
             <Dir>
               <div className="flex flex-row justify-between items-center py-1">
                 <H1 className="flex-auto">
@@ -852,7 +849,7 @@ export const Outros = () => {
                         placeholder="Ex: INSS"
                         onChange={valorInput}
                         value={data.siglaImposto}
-                        className="col-span-1 uppercase"
+                        className="col-span-1"
                       />
 
                       <Input
@@ -865,12 +862,13 @@ export const Outros = () => {
                       />
                     </form>
                   ) : state.delImposto ? (
-                    <form onSubmit={delImposto} id="delImpostoForm">
+                    <form onSubmit={delImposto} id="delImpostoForm" >
                       <Input
                         type="text"
                         list="deltImposto"
                         name="siglaImposto"
-                        placeholder="Selecione o Imposto"
+                        placeholder="Selecione"
+                        className="max-w-[14vw]"
                         onChange={valorInput}
                         value={data.siglaImposto}
                       />
@@ -956,6 +954,6 @@ export const Outros = () => {
           </Article>
         </Section>
       </Footer>
-    </>
+    </div>
   );
 };

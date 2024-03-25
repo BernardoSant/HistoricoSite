@@ -2,7 +2,7 @@ import styled from "styled-components";
 import { useState, useEffect } from "react";
 import axios from "axios";
 import { Chart } from "react-google-charts";
-import { useGlobalContext } from "../../global/Global";
+import { useGlobalContext } from "../../../global/Global";
 import { toast } from "react-toastify";
 
 const Footer = styled.footer`
@@ -23,7 +23,7 @@ const Header = styled.header`
   justify-content: center;
   padding: 8px;
   width: 100%;
-  margin-bottom: 7px;
+
   border-radius: 1em;
   background: #f97316;
   box-shadow: inset 5px -5px 10px #9f4a0e, inset -5px 5px 10px #ff9c1e;
@@ -165,7 +165,7 @@ export const ResumoEmpresa = () => {
     }
     return acc;
   }, {});
-console.log(ip)
+
   const contratoAtualizado = ContratoAtivo.map((ctt) => {
     if (somaNotas[ctt.numeroCT]) {
       const cttAtualizado = {
@@ -330,10 +330,10 @@ console.log(ip)
         </h1>
         <form
           onSubmit={handleDataChange}
-          className="flex flex-col gap-2 w-auto justify-end pr-4"
+          className="flex flex-row gap-2 w-auto justify-end pr-4"
         >
           <select
-            className="w-auto border-2 rounded-xl focus:rounded-b-none border-gray-500 flex justify-center p-1 focus:border-b-0"
+            className="w-auto border-2 rounded-xl border-gray-500 flex justify-center p-1 font-bold"
             value={mes}
             onChange={(event) => setMes(event.target.value)}
           >
@@ -352,7 +352,7 @@ console.log(ip)
           </select>
 
           <select
-            className="w-auto border-2 rounded-xl focus:rounded-b-none border-gray-500 flex justify-center p-1 focus:border-b-0"
+            className="w-auto border-2 rounded-xl border-gray-500 flex justify-center p-1 font-bold"
             value={ano}
             onChange={(event) => setAno(event.target.value)}
           >
@@ -507,7 +507,7 @@ console.log(ip)
             </H4>
           </Dir>
 
-          <Article className="min-h-[7vh]">
+          <Article className="min-h-[6vh]">
             <Div>
               {contratoAtualizado.map((ctt) => {
                 const empresaEncontrada = empresa.find(
@@ -520,14 +520,14 @@ console.log(ip)
                 return (
                   <>
                     <div
-                      className="relative ml-2 "
+                      className="relative ml-2 flex pb-1"
                       title={
                         ctt.situacaoCT === "Ativo"
                           ? "Ativo"
                           : "Contrato Encerrado"
                       }
                     >
-                      <p className="absolute bg-green-600 w-3 h-3 rounded-full mt-1"></p>
+                      <p className="absolute bg-green-600 w-[1.5vh] h-[1.5vh] rounded-full mt-1"></p>
                     </div>
                     <H4
                       key={ctt.id}
@@ -552,10 +552,11 @@ console.log(ip)
                 );
               })}
             </Div>
+
           </Article>
           <Article>
             <Dir>
-              <H1 className="flex justify-between w-full">
+              <H1 className="flex justify-between w-full ">
                 Ganhos Mensal
                 <div className="flex gap-x-3">
                   <p>Valor Ganho </p>
@@ -568,7 +569,7 @@ console.log(ip)
                 </div>
               </H1>
             </Dir>
-            <Div>
+            <Div className="min-h-[11em] max-h-[11em]">
               <Chart
                 chartType="PieChart"
                 width="100%"

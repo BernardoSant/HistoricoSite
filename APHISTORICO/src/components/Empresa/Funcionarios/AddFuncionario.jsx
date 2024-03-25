@@ -2,7 +2,7 @@ import styled from "styled-components";
 import { useState } from "react";
 import axios from "axios";
 import { toast } from "react-toastify";
-import { useGlobalContext } from "../../global/Global";
+import { useGlobalContext } from "../../../global/Global";
 
 const Form = styled.form`
   height: 100%;

@@ -1,5 +1,5 @@
 import styled from "styled-components";
-import { useGlobalContext } from "../../global/Global";
+import { useGlobalContext } from "../../../global/Global";
 import { BiCategory } from "react-icons/bi";
 import { useState, useEffect } from "react";
 import axios from "axios";
@@ -8,13 +8,8 @@ import { toast } from "react-toastify";
 const Div = styled.div`
   height: 100%;
   width: 100%;
-  padding-left: 1em;
-  padding-right: 1em;
-  padding-bottom: 1em;
-  padding-top: 1em;
   display: flex;
   flex-wrap: wrap;
-  max-width: 50em;
   justify-content: start;
   align-content: start;
   flex-direction: row;
@@ -24,12 +19,9 @@ const Article = styled.article`
   width: 100%;
   max-height: 20em;
   overflow: auto;
-  margin-top: 4px;
-  margin-bottom: 8px;
   border-radius: 1em;
   overflow-y: auto;
   position: relative;
-  padding-right: 4px;
 
   &::-webkit-scrollbar {
     width: 5px;
@@ -84,8 +76,19 @@ const H2 = styled.h1`
   margin-top: 5px;
 `;
 
+const H4 = styled.h1`
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  text-align: center;
+  font-weight: 600;
+`;
+const P = styled.p`
+  text-align: center;
+  width: 100%;
+`;
+
 export const MostruarioNota = ({ empresaId }) => {
-  const { ip, nota, empresa } = useGlobalContext();
+  const { ip, nota, empresa, contrato } = useGlobalContext();
 
   const handleDataChange = (event) => {
     setData(event.target.value);
@@ -221,6 +224,47 @@ export const MostruarioNota = ({ empresaId }) => {
         toast.info(err.response.data.message);
       });
   };
+
+  const somaNotas = nota.reduce((acc, nota) => {
+    if (acc[nota.numeroPedidoNF]) {
+      acc[nota.numeroPedidoNF] += nota.valorRecebidoNF;
+    } else {
+      acc[nota.numeroPedidoNF] = nota.valorRecebidoNF;
+    }
+    return acc;
+  }, {});
+
+  const ContratoAtivo = contrato.filter((ctt) => ctt.situacaoCT === "Ativo" && ctt.empresaCT === empresaId);
+
+  const contratoAtualizado = ContratoAtivo.map((ctt) => {
+    if (somaNotas[ctt.numeroCT]) {
+      const cttAtualizado = {
+        ...ctt,
+        ValorRecebidoCT: somaNotas[ctt.numeroCT],
+      };
+
+      const headers = {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      };
+
+      axios
+        .put(
+          ip + `/contrato/${ctt.numeroCT}`,
+          { ValorRecebidoCT: somaNotas[ctt.numeroCT] },
+          headers
+        )
+        .then((response) => {})
+        .catch((err) => {
+          toast.error(err.response.data.message);
+        });
+
+      return cttAtualizado;
+    }
+
+    return ctt;
+  });
 
   return (
     <>
@@ -435,14 +479,14 @@ export const MostruarioNota = ({ empresaId }) => {
           </>
         ) : (
           <>
-            <Header className="mb-5 px-20">
+            <Header className="mb-4 ">
               <p>Notas da {siglaEmpresa}</p>
               <form
                 onSubmit={handleDataChange}
                 className="flex justify-center items-center "
               >
                 <select
-                  className="font-semibold text-[1.7vh] rounded-2xl p-1 px-4 drop-shadow-lg focus:rounded-b-none"
+                  className="w-auto border-2 text-[2vh] rounded-xl border-gray-500 flex justify-center p-1 "
                   value={ano}
                   onChange={(event) => setAno(event.target.value)}
                 >
@@ -454,6 +498,60 @@ export const MostruarioNota = ({ empresaId }) => {
                 </select>
               </form>
             </Header>
+            {contratoAtualizado.length > 0 ? (
+              <>
+                <table className="w-full bg-orange-500 drop-shadow-2xl rounded-2xl mb-1 ">
+                  <thead className="flex justify-between items-center px-4">
+                    <Th className="text-start text-2xl pt-1">Contrato</Th>
+                  </thead>
+                  <thead className="grid grid-cols-5 justify-center items-center w-full rounded-b-lg drop-shadow-2xl text-lg pb-1">
+                    <Th className="col-span-1">N° Contrato</Th>
+                    <Th className="col-span-1">Situação</Th>
+                    <Th className="col-span-1">Valor</Th>
+                    <Th className="col-span-1">Recebido</Th>
+                    <Th className="col-span-1">Data</Th>
+                  </thead>
+                </table>
+
+                <Article className="min-h-[6vh]">
+                  <Div>
+                    {contratoAtualizado.map((ctt) => {
+                      return (
+                        <div key={ctt.id} className="w-full">
+                          <thead
+                            key={nota.id}
+                            className="grid grid-cols-5 justify-center items-center shadow-inner bg-gray-200 rounded-2xl p-2 my-2"
+                          >
+                            <Th className="col-span-1">{ctt.numeroCT}</Th>
+
+                            <Th className="col-span-1">{ctt.situacaoCT}</Th>
+
+                            <Th className="col-span-1">
+                              {Number(ctt.ValorCT).toLocaleString("pt-BR", {
+                                style: "currency",
+                                currency: "BRL",
+                              })}
+                            </Th>
+
+                            <Th className="col-span-1">
+                              {Number(ctt.ValorRecebidoCT).toLocaleString(
+                                "pt-BR",
+                                {
+                                  style: "currency",
+                                  currency: "BRL",
+                                }
+                              )}
+                            </Th>
+
+                            <Th className="col-span-1">{ctt.dataCT}</Th>
+                          </thead>
+                        </div>
+                      );
+                    })}
+                  </Div>
+                </Article>
+              </>
+            ) : null}
 
             {notasDaEmpresaAnalise.length > 0 ? (
               <>

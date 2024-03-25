@@ -2,15 +2,12 @@ import styled from "styled-components";
 import { useState } from "react";
 import axios from "axios";
 import { toast } from "react-toastify";
-import { useGlobalContext } from "../../global/Global";
+import { useGlobalContext } from "../../../global/Global";
 
 const Form = styled.form`
   height: 100%;
   width: 100%;
-  padding-left: 1em;
-  padding-right: 1em;
-  padding-bottom: 1em;
-  padding-top: 1em;
+
   gap: 3em;
   display: flex;
   flex-wrap: wrap;
@@ -29,8 +26,7 @@ const Select = styled.select`
   border: 2px solid #d1d5db;
   border-radius: 4px;
   max-width: 40em;
-  padding-left: 8px;
-  padding: 4px;
+
 `;
 
 const Input = styled.input`

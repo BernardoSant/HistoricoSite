@@ -1,37 +1,30 @@
 import { useState } from "react";
-import { NavBar } from "../components/NavBar";
 import styled from "styled-components";
-
-import { TabelaAdicionarEmpresa } from "../components/Empresa/AddEmpresa";
-import { MostruarioNota } from "../components/Nota/MtrNota";
-import { TabelaAddNota } from "../components/Nota/AddNota";
-import { TabelaAddPedido } from "../components/Pedidos/AddPedido";
-import { TabelaAddFuncionario } from "../components/Funcionarios/AddFuncionario";
-import { MostruarioFuncAdmitido } from "../components/Funcionarios/FuncionarioAdmitidos";
-import { MostruarioFuncDemitido } from "../components/Funcionarios/FuncionarioDemitidos";
-import { ResumoEmpresa } from "../components/Mostruario/ResumoEmpresa";
-import { TabelaAddContrato } from "../components/Contrato/addContrato";
-import { MtrPedidos } from "../components/Pedidos/MtrPedidos";
-import { useGlobalContext } from "../global/Global";
-import { Teste } from "../components/text";
-import { Outros } from "../components/Outros/Outros";
+import { TabelaAdicionarEmpresa } from "../Prestadores/AddEmpresa";
+import { MostruarioNota } from "../Nota/MtrNota";
+import { TabelaAddNota } from "../Nota/AddNota";
+import { TabelaAddPedido } from "../Pedidos/AddPedido";
+import { TabelaAddFuncionario } from "../Funcionarios/AddFuncionario";
+import { MostruarioFuncAdmitido } from "../Funcionarios/FuncionarioAdmitidos";
+import { MostruarioFuncDemitido } from "../Funcionarios/FuncionarioDemitidos";
+import { ResumoEmpresa } from "../Mostruario/ResumoEmpresa";
+import { TabelaAddContrato } from "../Contrato/addContrato";
+import { MtrPedidos } from "../Pedidos/MtrPedidos";
+import { useGlobalContext } from "../../../global/Global";
+import { Outros } from "../Outros/Outros";
 
 const Nav = styled.nav`
-  width: 100%;
   height: 100%;
   display: flex;
   flex-direction: row;
-  gap: 2em;
 `;
 
 const Header = styled.header`
-  height: 100vh;
+  height: 100%;
   width: 100%;
-  padding-top: 7em;
+  display: flex;
+  gap: 2em;
   background-color: #fffafa;
-  padding-left: 2em;
-  padding-right: 2em;
-  padding-bottom: 2em;
 `;
 
 const Tabela = styled.div`
@@ -48,13 +41,28 @@ const TabelaSecund = styled.div`
 `;
 
 const Div = styled.div`
-  border-radius: 1em;
-  padding: 1em;
+  box-shadow: -1px 2px 13px #b5b2b2, -4px -5px 13px #ffffff;
+  border-bottom-right-radius: 1em;
+  border-bottom-left-radius: 1em;
+  border-top-right-radius: 1em;
+  padding-bottom: 1em;
+  padding-left:1em;
+  padding-right:1em;
   font-size: medium;
   display: flex;
   flex-direction: column;
   gap: 0.5em;
   overflow-x: auto;
+  z-index: 10;
+  
+  &::-webkit-scrollbar {
+    width: 5px;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: #575757;
+    border-radius: 1em;
+  }
 `;
 
 const Botao = styled.button`
@@ -79,8 +87,14 @@ const Button = ({
       {TipoButton === 1 && (
         <Botao
           onClick={onClick}
-          className={`mt-2 hover:bg-orange-500 hover:text-gray-200 ${onPrimario ? "bg-orange-600 rounded-b-none drop-shadow-xl underline" : "bg-[#fffafa]"} ${
-            onFinal ?  "bg-orange-600 drop-shadow-xl underline text-gray-200" : ""
+          className={`mt-2 hover:bg-orange-500 hover:text-gray-200 ${
+            onPrimario
+              ? "bg-orange-600 rounded-b-none drop-shadow-xl underline"
+              : "bg-[#fffafa]"
+          } ${
+            onFinal
+              ? "bg-orange-600 drop-shadow-xl underline text-gray-200"
+              : ""
           }  rounded-[20px]  `}
         >
           {Titulo}
@@ -189,11 +203,10 @@ export const Empresa = () => {
   );
   return (
     <>
-      <NavBar Tipo={3} />
       <Header>
         <Nav>
-          <Div className=" shadow-md shadow-slate-600 overflow-auto max-w-[15em] min-w-[15em]">
-            <nav className=" flex flex-col justify-center ">
+          <Div className="overflow-auto max-w-[13em] min-w-[13em]">
+            <nav className="flex flex-col justify-center ">
               <Button
                 TipoButton={1}
                 Titulo={"Empresas"}
@@ -221,14 +234,14 @@ export const Empresa = () => {
                             onClick={() => handleClick("verNota")}
                           ></Button>
 
-                          {empresa.situacaoEmpresa === "Particular" ? (
+                          {empresa.situacaoEmpresa === "Contrato" ? null : (
                             <Button
                               TipoButton={2}
                               Titulo={"Pedidos"}
                               onSecundario={state.verPedidos}
                               onClick={() => handleClick("verPedidos")}
                             ></Button>
-                          ) : null}
+                          )}
 
                           <Button
                             TipoButton={3}
@@ -346,32 +359,30 @@ export const Empresa = () => {
                 className="rounded-1em"
                 onClick={() => handleClick("outros")}
               ></Button>
-              
             </nav>
           </Div>
-          <Div className="w-full shadow-md shadow-slate-600 flex flex-col justify-center items-center ">
-
-            {state.addContrato && <TabelaAddContrato />}
-
-            {state.resumoMensal && <ResumoEmpresa />}
-
-            {state.outros && <Outros />}
-
-            {state.addPedido && <TabelaAddPedido />}
-
-            {state.verNota && <MostruarioNota empresaId={empresaSelecionada} />}
-
-            {state.verPedidos && <MtrPedidos empresaId={empresaSelecionada} />}
-
-            {state.addEmpresa && <TabelaAdicionarEmpresa />}
-
-            {state.addNotaF && <TabelaAddNota />}
-
-            {state.addFuncionarios && <TabelaAddFuncionario />}
-            {state.verFunciAdmitido && <MostruarioFuncAdmitido />}
-            {state.verFunciDemitido && <MostruarioFuncDemitido />}
-          </Div>
         </Nav>
+        <Div className="w-full flex flex-col justify-center items-center rounded-[1em] p-[1em]">
+          {state.addContrato && <TabelaAddContrato />}
+
+          {state.resumoMensal && <ResumoEmpresa />}
+
+          {state.outros && <Outros />}
+
+          {state.addPedido && <TabelaAddPedido />}
+
+          {state.verNota && <MostruarioNota empresaId={empresaSelecionada} />}
+
+          {state.verPedidos && <MtrPedidos empresaId={empresaSelecionada} />}
+
+          {state.addEmpresa && <TabelaAdicionarEmpresa />}
+
+          {state.addNotaF && <TabelaAddNota />}
+
+          {state.addFuncionarios && <TabelaAddFuncionario />}
+          {state.verFunciAdmitido && <MostruarioFuncAdmitido />}
+          {state.verFunciDemitido && <MostruarioFuncDemitido />}
+        </Div>
       </Header>
     </>
   );

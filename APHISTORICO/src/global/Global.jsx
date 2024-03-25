@@ -26,7 +26,7 @@ const useFetchData = (url, setData, interval) => {
 };
 
 const AppContext = ({ children }) => {
-  let ip = "http://localhost:2604";
+  let ip = "http://192.168.15.2:2523";
   const [empresa, setEmpresa] = useState([]);
   useFetchData(ip + "/empresa", setEmpresa, 30 * 1000);
 

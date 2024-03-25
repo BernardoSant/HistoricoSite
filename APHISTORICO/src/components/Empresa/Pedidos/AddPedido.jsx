@@ -2,7 +2,7 @@ import styled from "styled-components";
 import { useState } from "react";
 import axios from "axios";
 import { toast } from "react-toastify";
-import { useGlobalContext } from "../../global/Global";
+import { useGlobalContext } from "../../../global/Global";
 
 const Form = styled.form`
   height: 100%;
@@ -73,17 +73,20 @@ const Button = styled.button`
   }
 `;
 
-export const TabelaAddContrato = () => {
+export const TabelaAddPedido = () => {
   const {ip, empresa } = useGlobalContext();
 
+  const filtroEmpresa = empresa.filter;
+
   const [data, setData] = useState({
-    numeroCT: "",
-    ValorCT: "",
-    ValorRecebidoCT: 0,
-    nomeCT: "",
-    situacaoCT: "Ativo",
-    empresaCT: "",
-    dataCT: "",
+    numeroPDD: "",
+    valorPDD: "",
+    valorRecebidoPDD: 0,
+    nomePDD: "",
+    descricaoServPDD: "",
+    empresaPDD: "",
+    situacaoPDD: "Criada",
+    dataPDD: "",
   });
 
   const valorInput = (e) => {
@@ -91,7 +94,7 @@ export const TabelaAddContrato = () => {
     setData({ ...data, [e.target.name]: valor });
   };
 
-  const sendContrato = async (e) => {
+  const sendPedido = async (e) => {
     e.preventDefault();
 
     const headers = {
@@ -100,23 +103,24 @@ export const TabelaAddContrato = () => {
       },
     };
 
-    if (data.numeroCT === "" || data.situacaoCT === "") {
+    if (data.numeroPDD === "" || data.situacaoPDD === "") {
       toast.error("Por favor, preencha todos os campos obrigatórios.");
       return;
     }
 
     axios
-      .post(ip + "/contrato", data, headers)
+      .post(ip + "/pedido", data, headers)
       .then((response) => {
         toast.success(response.data.message);
         setData({
-          numeroCT: "",
-          ValorCT: "",
-          ValorRecebidoCT: 0,
-          nomeCT: "",
-          situacaoCT: "Ativo",
-          empresaCT: "",
-          dataCT: "",
+          numeroPDD: "",
+          valorPDD: "",
+          valorRecebidoPDD: 0,
+          nomePDD: "",
+          descricaoServPDD: "",
+          empresaPDD: "",
+          situacaoPDD: "Criada",
+          dataPDD: "",
         });
         console.log(data);
       })
@@ -127,44 +131,56 @@ export const TabelaAddContrato = () => {
 
   return (
     <>
-      <Header>Adcionar Contrato</Header>
+      <Header>Adcionar Pedido</Header>
 
-      <Form onSubmit={sendContrato}>
+      <Form onSubmit={sendPedido}>
         <div className="grid grid-cols-4 grid-rows-1 items-start gap-x-4 ">
           <H1 className="col-span-1">Numero*</H1>
-          <H1 className="col-span-3">Nome do Contrato</H1>
+          <H1 className="col-span-1">Valor Total</H1>
+          <H1 className="col-span-2">Nome Breve</H1>
 
           <Input
             type="number"
-            name="numeroCT"
+            name="numeroPDD"
             onChange={valorInput}
-            value={data.numeroCT}
+            value={data.numeroPDD}
             className="col-span-1 "
           />
 
           <Input
             type="text"
-            name="nomeCT"
+            name="valorPDD"
             onChange={valorInput}
-            value={data.nomeCT}
-            className="col-span-3"
+            value={data.valorPDD}
+            className="col-span-1 "
           />
-          <H1 className="col-span-2">Valor Total</H1>
-          <H1 className="col-span-2">Empresa Prestadora</H1>
 
           <Input
             type="text"
-            name="ValorCT"
+            name="nomePDD"
             onChange={valorInput}
-            value={data.ValorCT}
-            className="col-span-2 "
+            value={data.nomePDD}
+            className="col-span-2"
           />
+          <H1 className="col-span-1">Descrição</H1>
+          <textarea
+            type="text"
+            name="descricaoServPDD"
+            onChange={valorInput}
+            value={data.descricaoServPDD}
+            rows="5"
+            className="col-span-4 border-2 border-gray-300 rounded-md px-2"
+          ></textarea>
+
+          <H1 className="col-span-2">Empresa</H1>
+
+          <H1 className="col-span-1">Data Lançada</H1>
 
           <Select
-            id="empresaCT"
-            name="empresaCT"
+            id="empresaPDD"
+            name="empresaPDD"
             onChange={valorInput}
-            value={data.empresaCT}
+            value={data.empresaPDD}
             className="col-span-2 border-2 border-gray-300 rounded-[5px] px-2 py-[0.2em]"
           >
             <option></option>
@@ -174,16 +190,15 @@ export const TabelaAddContrato = () => {
               </option>
             ))}
           </Select>
-          <H1 className="col-span-4">Data Contrato</H1>
+
           <Input
             type="date"
-            name="dataCT"
+            name="dataPDD"
             onChange={valorInput}
-            value={data.dataCT}
+            value={data.dataPDD}
             className="col-span-1"
           />
         </div>
-
         <section className="w-full flex justify-end py-4">
           <Button type="submit">Salvar</Button>
         </section>

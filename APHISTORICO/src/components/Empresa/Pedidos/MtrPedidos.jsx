@@ -1,17 +1,12 @@
 import styled from "styled-components";
-import { useGlobalContext } from "../../global/Global";
+import { useGlobalContext } from "../../../global/Global";
 
 const Div = styled.div`
   height: 100%;
   width: 100%;
   margin-bottom: 2em;
-  padding-left: 1em;
-  padding-right: 1em;
-  padding-bottom: 1em;
-  padding-top: 1em;
   display: flex;
   flex-wrap: wrap;
-  max-width: 50em;
   justify-content: start;
   align-content: start;
   flex-direction: row;

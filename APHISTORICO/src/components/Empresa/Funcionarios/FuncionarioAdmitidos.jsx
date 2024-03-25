@@ -1,5 +1,5 @@
 import styled from "styled-components";
-import { useGlobalContext } from "../../global/Global";
+import { useGlobalContext } from "../../../global/Global";
 import { BiCategory } from "react-icons/bi";
 import { useState, useEffect } from "react";
 import axios from "axios";
