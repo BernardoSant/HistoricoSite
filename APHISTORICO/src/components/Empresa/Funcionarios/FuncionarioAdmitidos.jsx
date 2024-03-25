@@ -827,7 +827,7 @@ export const MostruarioFuncAdmitido = () => {
             </article>
           </section>
 
-          <div className=" grid grid-cols-6 gap-x-2 mt-3">
+          <div className="pb-3 grid grid-cols-6 gap-x-2 mt-3">
             <h3 className="text-3xl mb-5 font-semibold col-span-6 -ml-3">
               Identificação
             </h3>

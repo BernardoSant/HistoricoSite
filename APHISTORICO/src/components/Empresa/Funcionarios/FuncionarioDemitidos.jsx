@@ -202,13 +202,15 @@ export const MostruarioFuncDemitido = () => {
       .catch((err) => {
         toast.info(err.response.data.message);
       });
+
+    axios.delete(ip + "/ferias/" + funcionarioSelecionado.id, headers);
   };
 
   return (
     <Div>
       {funcionarioSelecionado ? (
         <>
-          <section className="flex w-full justify-end relative gap-2">
+          <section className="pb-3 flex w-full justify-end relative gap-2">
             <article className="w-full  flex flex-col relative items-end">
               <dir
                 className={` ${
@@ -281,7 +283,7 @@ export const MostruarioFuncDemitido = () => {
             </article>
           </section>
 
-          <div className=" grid grid-cols-5 gap-x-2 mt-3">
+          <div className="w-full grid grid-cols-5 gap-x-2 mt-3">
             <h3 className="text-3xl mb-5 font-semibold col-span-5 -ml-3">
               Identificação
             </h3>
