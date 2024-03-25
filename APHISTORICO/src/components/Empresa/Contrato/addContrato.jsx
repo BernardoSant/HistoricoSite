@@ -118,7 +118,6 @@ export const TabelaAddContrato = () => {
           empresaCT: "",
           dataCT: "",
         });
-        console.log(data);
       })
       .catch((err) => {
         toast.info(err.response.data.message);

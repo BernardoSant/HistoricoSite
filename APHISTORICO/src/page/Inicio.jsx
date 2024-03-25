@@ -59,7 +59,7 @@ export const Inicio = () => {
   const handleClick = (key) => {
     setState((prevState) => ({
       ...prevState,
-      [key]: !prevState[key],
+      [key]: true,
       ...(key !== "Inicio" && { Inicio: false }),
       ...(key !== "Empresa" && { Empresa: false }),
       ...(key !== "Casa" && { Casa: false }),

@@ -122,7 +122,6 @@ export const TabelaAddPedido = () => {
           situacaoPDD: "Criada",
           dataPDD: "",
         });
-        console.log(data);
       })
       .catch((err) => {
         toast.info(err.response.data.message);
