@@ -362,7 +362,7 @@ export const Empresa = () => {
             </nav>
           </Div>
         </Nav>
-        <Div className="w-full flex flex-col justify-center items-center rounded-[1em] p-[1em]">
+        <Div className="w-full flex flex-col justify-center items-center rounded-[1em] p-[1em] relative">
           {state.addContrato && <TabelaAddContrato />}
 
           {state.resumoMensal && <ResumoEmpresa />}

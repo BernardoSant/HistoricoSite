@@ -13,23 +13,13 @@ import { RiSaveLine } from "react-icons/ri";
 import { LuArrowRightFromLine } from "react-icons/lu";
 
 const Footer = styled.footer`
-  height: 100%;
-  width: 100%;
+
   padding: 1em;
   display: flex;
   justify-content: start;
   align-content: start;
   flex-direction: column;
   gap: 10px;
-
-  &::-webkit-scrollbar {
-    width: 5px;
-  }
-
-  &::-webkit-scrollbar-thumb {
-    background: #575757;
-    border-radius: 1em;
-  }
 `;
 
 const Header = styled.header`
@@ -45,12 +35,10 @@ const Header = styled.header`
 `;
 
 const Section = styled.section`
-  height: 100%;
   display: flex;
   gap: 10px;
   flex-direction: row;
   flex-wrap: wrap;
-  flex: 1 1 0%;
 `;
 
 const Article = styled.article`
@@ -495,7 +483,7 @@ export const Outros = () => {
         </h1>
       </Header>
 
-      <Footer>
+      <Footer className="bg-[#000000] h-[80vh]">
         <Section className="max-h-[17em] ">
           <Article >
             <Dir>
@@ -700,7 +688,7 @@ export const Outros = () => {
           </Article>
         </Section>
 
-        <Section>
+        <section className="flex flex-row gap-3 w-auto overflow-auto ">
           <Article>
             <Dir>
               <div className="flex flex-row justify-between items-center py-1">
@@ -813,7 +801,7 @@ export const Outros = () => {
                 <P className="col-span-1">Porcentagem</P>
               </H5>
             </Dir>
-            <Div className="max-h-[22vh]">
+            <Div className="h-auto">
               {kinays.map((kinay) => {
                 return (
                   <H5
@@ -936,7 +924,7 @@ export const Outros = () => {
                 <P className="col-span-1">Porcentagem</P>
               </H2>
             </Dir>
-            <Div className="max-h-[22vh]">
+            <Div className="h-auto">
               {impostos.map((impt) => {
                 return (
                   <H2
@@ -952,7 +940,7 @@ export const Outros = () => {
               })}
             </Div>
           </Article>
-        </Section>
+        </section>
       </Footer>
     </div>
   );

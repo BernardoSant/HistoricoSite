@@ -41,8 +41,11 @@ const Header = styled.header`
   font-weight: 600;
   font-size: xx-large;
   display: flex;
-  justify-content: center;
+  justify-content: space-between;
+  align-items: center;
   padding: 5px;
+  padding-left: 1em;
+  padding-right: 1em;
 `;
 
 const Th = styled.th``;
@@ -88,7 +91,7 @@ export const MtrPedidos = ({ empresaId }) => {
 
   return (
     <Div>
-      <Header className="font-semibold w-full h-auto flex justify-center items-center text-3xl mb-5">
+      <Header className="w-full h-auto flex justify-center items-start text-3xl mb-5">
         Pedidos da {siglaEmpresa}
       </Header>
       {pedidosDaEmpresaAndamento.length > 0 ? (
@@ -270,25 +273,26 @@ export const MtrPedidos = ({ empresaId }) => {
           </Article>
         </>
       ) : null}
-
-      <table className="w-full bg-orange-600 drop-shadow-2xl rounded-2xl ">
-        <thead className="grid grid-cols-4 justify-center items-center w-full rounded-b-lg drop-shadow-2xl text-lg py-1">
-          <Th className="col-span-1 text-end">Valor Recebido:</Th>
-          <Th className="col-span-1 text-start px-3">
-            {Number(valorTotal).toLocaleString("pt-BR", {
-              style: "currency",
-              currency: "BRL",
-            })}
-          </Th>
-          <Th className="col-span-1 text-end">A Receber:</Th>
-          <Th className="col-span-1 text-start px-3">
-            {Number(valorTotalPedidosCriada).toLocaleString("pt-BR", {
-              style: "currency",
-              currency: "BRL",
-            })}
-          </Th>
-        </thead>
-      </table>
+      <div className="w-full px-3 pb-3 absolute bottom-0 left-0">
+        <table className="w-full bg-orange-600 drop-shadow-2xl rounded-2xl ">
+          <thead className="grid grid-cols-4 justify-center items-center w-full rounded-b-lg drop-shadow-2xl text-lg py-1">
+            <Th className="col-span-1 text-end">Valor Recebido:</Th>
+            <Th className="col-span-1 text-start px-3">
+              {Number(valorTotal).toLocaleString("pt-BR", {
+                style: "currency",
+                currency: "BRL",
+              })}
+            </Th>
+            <Th className="col-span-1 text-end">A Receber:</Th>
+            <Th className="col-span-1 text-start px-3">
+              {Number(valorTotalPedidosCriada).toLocaleString("pt-BR", {
+                style: "currency",
+                currency: "BRL",
+              })}
+            </Th>
+          </thead>
+        </table>
+      </div>
     </Div>
   );
 };
