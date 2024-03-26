@@ -13,47 +13,36 @@ import { RiSaveLine } from "react-icons/ri";
 import { LuArrowRightFromLine } from "react-icons/lu";
 
 const Footer = styled.footer`
-
-  padding: 1em;
-  display: flex;
-  justify-content: start;
-  align-content: start;
-  flex-direction: column;
-  gap: 10px;
+  height: 100%;
+  display: grid;
+  padding-bottom: 1.5vw;
+  grid-template-rows: 50% 50%;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
 `;
 
 const Header = styled.header`
   display: flex;
   align-content: center;
   justify-content: center;
+  margin-bottom: 12px;
   padding: 8px;
   width: 100%;
-  margin-bottom: 7px;
   border-radius: 1em;
   background: #f97316;
   box-shadow: inset 5px -5px 10px #9f4a0e, inset -5px 5px 10px #ff9c1e;
 `;
 
-const Section = styled.section`
-  display: flex;
-  gap: 10px;
-  flex-direction: row;
-  flex-wrap: wrap;
-`;
 
-const Article = styled.article`
+const Article = styled.div`
+height: auto;
   display: flex;
-  height: 100%;
   flex-direction: column;
-  flex: 1 1 0%;
-  gap: 10px;
 `;
 
 const Dir = styled.div`
   border-top-right-radius: 1em;
   border-top-left-radius: 1em;
-  border-bottom-right-radius: 0.3em;
-  border-bottom-left-radius: 0.3em;
   display: flex;
   flex-direction: column;
   align-content: center;
@@ -67,19 +56,17 @@ const Dir = styled.div`
 `;
 
 const Div = styled.div`
-  display: flex;
+height: 100%;
+  display: inline-block;
   flex-direction: column;
   padding-left: 1em;
   padding-right: 1em;
   padding-top: 20px;
   padding-bottom: 5px;
   background-color: #d8d6d679;
-  margin-top: -15px;
-  z-index: 0;
-  overflow: auto;
+  overflow-x: auto;
   border-bottom-right-radius: 1em;
   border-bottom-left-radius: 1em;
-  flex: 1 1 0%;
 
   &::-webkit-scrollbar {
     width: 5px;
@@ -149,7 +136,7 @@ export const Outros = () => {
     numeroKinay: "",
     descricaoKinay: "",
     porcentagemKinay: "",
-    siglaImposto:"",
+    siglaImposto: "",
     porcentagemImposto: "",
   });
 
@@ -476,471 +463,470 @@ export const Outros = () => {
   };
 
   return (
-    <div className="w-full h-full">
+    <div className="h-[92%] w-full  ">
       <Header>
         <h1 className=" w-full text-center text-3xl flex justify-center items-center font-bold">
           Outros
         </h1>
       </Header>
 
-      <Footer className="bg-[#000000] h-[80vh]">
-        <Section className="max-h-[17em] ">
-          <Article >
-            <Dir>
-              <div className="flex flex-row justify-between items-center py-1">
-                <H1 className="flex-auto">
-                  {state.addCargo ? (
-                    <form
-                      id="addCargoForm"
-                      onSubmit={sendCargo}
-                      className="grid grid-cols-2 gap-3 pr-2"
-                    >
-                      <Input
-                        type="text"
-                        name="nomeCargo"
-                        placeholder="Cargo"
-                        onChange={valorInput}
-                        value={data.nomeCargo}
-                      />
-                      <Input
-                        type="number"
-                        name="salarioCargo"
-                        placeholder="Salario EX: 00.00"
-                        onChange={valorInput}
-                        value={data.salarioCargo}
-                      />
-                    </form>
-                  ) : state.edtCargo ? (
-                    <form
-                      id="edtCargoForm"
-                      onSubmit={EdtCargo}
-                      className="grid grid-cols-2 gap-3 pr-2"
-                    >
-                      <Input
-                        type="text"
-                        list="deltCargo"
-                        name="nomeCargo"
-                        placeholder="Selecione o cargo"
-                        onChange={valorInput}
-                        value={data.nomeCargo}
-                      />
-                      <datalist id="deltCargo">
-                        {cargo.map((cargo) => (
-                          <option
-                            key={cargo.id}
-                            value={`${cargo.id} - ${cargo.nomeCargo}`}
-                          />
-                        ))}
-                      </datalist>
+      <Footer>
+        <Article className="col-span-2 row-span-1">
+          <Dir>
+            <div className="flex flex-row justify-between items-center py-1">
+              <H1 className="flex-auto">
+                {state.addCargo ? (
+                  <form
+                    id="addCargoForm"
+                    onSubmit={sendCargo}
+                    className="grid grid-cols-2 gap-3 pr-2"
+                  >
+                    <Input
+                      type="text"
+                      name="nomeCargo"
+                      placeholder="Cargo"
+                      onChange={valorInput}
+                      value={data.nomeCargo}
+                    />
+                    <Input
+                      type="number"
+                      name="salarioCargo"
+                      placeholder="Salario EX: 00.00"
+                      onChange={valorInput}
+                      value={data.salarioCargo}
+                    />
+                  </form>
+                ) : state.edtCargo ? (
+                  <form
+                    id="edtCargoForm"
+                    onSubmit={EdtCargo}
+                    className="grid grid-cols-2 gap-3 pr-2"
+                  >
+                    <Input
+                      type="text"
+                      list="deltCargo"
+                      name="nomeCargo"
+                      placeholder="Selecione o cargo"
+                      onChange={valorInput}
+                      value={data.nomeCargo}
+                    />
+                    <datalist id="deltCargo">
+                      {cargo.map((cargo) => (
+                        <option
+                          key={cargo.id}
+                          value={`${cargo.id} - ${cargo.nomeCargo}`}
+                        />
+                      ))}
+                    </datalist>
 
-                      <Input
-                        type="number"
-                        name="salarioCargo"
-                        placeholder="Atualizar Salario "
-                        onChange={valorInput}
-                        value={data.salarioCargo}
-                      />
-                    </form>
-                  ) : state.delCargo ? (
-                    <form
-                      onSubmit={DelCargo}
-                      id="delCargoForm"
-                      className="grid grid-cols-2 gap-3 pr-2"
-                    >
-                      <Input
-                        type="text"
-                        list="deltCargo"
-                        name="nomeCargo"
-                        className="col-span-2"
-                        placeholder="Selecione o cargo"
-                        onChange={valorInput}
-                        value={data.nomeCargo}
-                      />
-                      <datalist id="deltCargo">
-                        {cargo.map((cargo) => (
-                          <option
-                            key={cargo.id}
-                            value={`${cargo.id} - ${cargo.nomeCargo}`}
-                          />
-                        ))}
-                      </datalist>
-                    </form>
+                    <Input
+                      type="number"
+                      name="salarioCargo"
+                      placeholder="Atualizar Salario "
+                      onChange={valorInput}
+                      value={data.salarioCargo}
+                    />
+                  </form>
+                ) : state.delCargo ? (
+                  <form
+                    onSubmit={DelCargo}
+                    id="delCargoForm"
+                    className="grid grid-cols-2 gap-3 pr-2"
+                  >
+                    <Input
+                      type="text"
+                      list="deltCargo"
+                      name="nomeCargo"
+                      className="col-span-2"
+                      placeholder="Selecione o cargo"
+                      onChange={valorInput}
+                      value={data.nomeCargo}
+                    />
+                    <datalist id="deltCargo">
+                      {cargo.map((cargo) => (
+                        <option
+                          key={cargo.id}
+                          value={`${cargo.id} - ${cargo.nomeCargo}`}
+                        />
+                      ))}
+                    </datalist>
+                  </form>
+                ) : (
+                  <p>Cargo</p>
+                )}
+              </H1>
+
+              <nav className="flex flex-col md:flex-row  gap-2 justify-end text-[1rem]">
+                {state.addCargo || state.edtCargo || state.delCargo ? (
+                  <button
+                    className={`flex-1 p-1 rounded-full bg-gray-200 cursor-pointer drop-shadow-lg`}
+                    title={
+                      state.addCargo
+                        ? "Salvar"
+                        : state.edtCargo
+                        ? "Atualizar"
+                        : "Excluir"
+                    }
+                    type="submit"
+                    form={
+                      state.addCargo
+                        ? "addCargoForm"
+                        : state.edtCargo
+                        ? "edtCargoForm"
+                        : "delCargoForm"
+                    }
+                  >
+                    <RiSaveLine />
+                  </button>
+                ) : null}
+
+                <button
+                  className={`p-1 rounded-full bg-red-600 cursor-pointer drop-shadow-lg text-[1.2em] 
+                  ${state.addCargo ? "hidden" : ""} ${
+                    state.edtCargo ? "hidden" : ""
+                  } ${state.delCargo ? "bg-red-600" : ""}`}
+                  title={`${state.delCargo ? "Voltar" : "Excluir"}`}
+                  onClick={() => handleClick("delCargo")}
+                >
+                  {state.delCargo ? (
+                    <LuArrowRightFromLine />
                   ) : (
-                    <p>Cargo</p>
+                    <HiOutlineTrash />
                   )}
-                </H1>
+                </button>
 
-                <nav className="flex flex-col md:flex-row  gap-2 justify-end text-[1rem]">
-                  {state.addCargo || state.edtCargo || state.delCargo ? (
-                    <button
-                      className={`flex-1 p-1 rounded-full bg-gray-200 cursor-pointer drop-shadow-lg`}
-                      title={
-                        state.addCargo
-                          ? "Salvar"
-                          : state.edtCargo
-                          ? "Atualizar"
-                          : "Excluir"
-                      }
-                      type="submit"
-                      form={
-                        state.addCargo
-                          ? "addCargoForm"
-                          : state.edtCargo
-                          ? "edtCargoForm"
-                          : "delCargoForm"
-                      }
-                    >
-                      <RiSaveLine />
-                    </button>
-                  ) : null}
-
-                  <button
-                    className={`p-1 rounded-full bg-red-600 cursor-pointer drop-shadow-lg text-[1.2em] 
+                <button
+                  className={`p-1 rounded-full bg-green-600 cursor-pointer drop-shadow-lg text-[1.2em] 
                   ${state.addCargo ? "hidden" : ""} ${
-                      state.edtCargo ? "hidden" : ""
-                    } ${state.delCargo ? "bg-red-600" : ""}`}
-                    title={`${state.delCargo ? "Voltar" : "Excluir"}`}
-                    onClick={() => handleClick("delCargo")}
-                  >
-                    {state.delCargo ? (
-                      <LuArrowRightFromLine />
-                    ) : (
-                      <HiOutlineTrash />
-                    )}
-                  </button>
+                    state.delCargo ? "hidden" : ""
+                  } ${state.edtCargo ? "bg-red-600" : ""}`}
+                  title={`${state.edtCargo ? "Voltar" : "Alterar"}`}
+                  onClick={() => handleClick("edtCargo")}
+                >
+                  {state.edtCargo ? (
+                    <LuArrowRightFromLine />
+                  ) : (
+                    <HiOutlineDocumentDuplicate />
+                  )}
+                </button>
 
-                  <button
-                    className={`p-1 rounded-full bg-green-600 cursor-pointer drop-shadow-lg text-[1.2em] 
-                  ${state.addCargo ? "hidden" : ""} ${
-                      state.delCargo ? "hidden" : ""
-                    } ${state.edtCargo ? "bg-red-600" : ""}`}
-                    title={`${state.edtCargo ? "Voltar" : "Alterar"}`}
-                    onClick={() => handleClick("edtCargo")}
-                  >
-                    {state.edtCargo ? (
-                      <LuArrowRightFromLine />
-                    ) : (
-                      <HiOutlineDocumentDuplicate />
-                    )}
-                  </button>
-
-                  <button
-                    className={`p-1 rounded-full bg-gray-300 cursor-pointer drop-shadow-lg text-[1.2em] 
+                <button
+                  className={`p-1 rounded-full bg-gray-300 cursor-pointer drop-shadow-lg text-[1.2em] 
                   ${state.delCargo ? "hidden" : ""} ${
-                      state.edtCargo ? "hidden" : ""
-                    } ${state.addCargo ? "bg-red-600" : ""}`}
-                    title={`${state.addCargo ? "Voltar" : "Adicionar"}`}
-                    onClick={() => handleClick("addCargo")}
-                  >
-                    {state.addCargo ? (
-                      <LuArrowRightFromLine />
-                    ) : (
-                      <HiOutlinePlusSm />
-                    )}
-                  </button>
-                </nav>
-              </div>
-
-              <H3 className="text-[0.9em]">
-                <P>Nome</P>
-                <P>Salario</P>
-                <P>Quantidade</P>
-              </H3>
-            </Dir>
-            <Div>
-              {cargo.map((cargo) => {
-                return (
-                  <H3 key={cargo.id} className="text-[0.9em] border-b-2 border-gray-400">
-                    <P>{cargo.nomeCargo}</P>
-                    <P>
-                      {Number(cargo.salarioCargo).toLocaleString("pt-BR", {
-                        style: "currency",
-                        currency: "BRL",
-                      })}
-                    </P>
-                    <P>{cargo.quantidadeCargo}</P>
-                  </H3>
-                );
-              })}
-            </Div>
-          </Article>
-
-          <Article className="max-h-[20em]">
-            <Dir>
-              <H1>Transporte</H1>
-              <H3 className="text-[0.9em]">
-                <P>Nome/Cargo</P>
-                <P>Salario</P>
-                <P>Quantidade</P>
-              </H3>
-            </Dir>
-            <Div>Planejar oque vai fazer aq</Div>
-
-            <Dir>
-              <H1>Alimentação</H1>
-              <H3 className="text-[0.9em]">
-                <P>Nome/Cargo</P>
-                <P>Salario</P>
-                <P>Quantidade</P>
-              </H3>
-            </Dir>
-            <Div>Planejar oque vai fazer aq</Div>
-          </Article>
-        </Section>
-
-        <section className="flex flex-row gap-3 w-auto overflow-auto ">
-          <Article>
-            <Dir>
-              <div className="flex flex-row justify-between items-center py-1">
-                <H1 className="flex-auto">
-                  {state.addKinay ? (
-                    <form
-                      id="addKinayForm"
-                      onSubmit={sendKinay}
-                      className="grid grid-cols-4 gap-3 pr-2"
-                    >
-                      <Input
-                        type="number"
-                        name="numeroKinay"
-                        placeholder="Numero"
-                        onChange={valorInput}
-                        value={data.numeroKinay}
-                        className="col-span-1 "
-                      />
-
-                      <Input
-                        type="text"
-                        name="descricaoKinay"
-                        onChange={valorInput}
-                        placeholder="Descrição"
-                        value={data.descricaoKinay}
-                        className="col-span-2"
-                      />
-
-                      <Input
-                        type="number"
-                        name="porcentagemKinay"
-                        placeholder="Porcentagem EX: 0.0"
-                        onChange={valorInput}
-                        value={data.porcentagemKinay}
-                        className="col-span-1"
-                      />
-                    </form>
-                  ) : state.delKinay ? (
-                    <form onSubmit={DelKinay} id="delkinayForm">
-                      <Input
-                        type="text"
-                        list="deltkinay"
-                        name="descricaoKinay"
-                        placeholder="Selecione o kinay"
-                        onChange={valorInput}
-                        value={data.descricaoKinay}
-                      />
-
-                      <datalist id="deltkinay">
-                        {kinays.map((kinay) => (
-                          <option
-                            key={kinay.id}
-                            value={`${kinay.id} - ${kinay.numeroKinay} - ${kinay.descricaoKinay}`}
-                          />
-                        ))}
-                      </datalist>
-                    </form>
+                    state.edtCargo ? "hidden" : ""
+                  } ${state.addCargo ? "bg-red-600" : ""}`}
+                  title={`${state.addCargo ? "Voltar" : "Adicionar"}`}
+                  onClick={() => handleClick("addCargo")}
+                >
+                  {state.addCargo ? (
+                    <LuArrowRightFromLine />
                   ) : (
-                    <p>Kinay</p>
+                    <HiOutlinePlusSm />
                   )}
-                </H1>
+                </button>
+              </nav>
+            </div>
 
-                <nav className="flex flex-col md:flex-row  gap-2 justify-end text-[1rem]">
-                  {state.addKinay || state.delKinay ? (
-                    <button
-                      className={`flex-1 p-1 rounded-full bg-gray-200 cursor-pointer drop-shadow-lg`}
-                      title={state.addKinay ? "Salvar" : "Excluir"}
-                      type="submit"
-                      form={state.addKinay ? "addKinayForm" : "delkinayForm"}
-                    >
-                      <RiSaveLine />
-                    </button>
-                  ) : null}
+            <H3 className="text-[0.9em]">
+              <P>Nome</P>
+              <P>Salario</P>
+              <P>Quantidade</P>
+            </H3>
+          </Dir>
+          <Div>
+            {cargo.map((cargo) => {
+              return (
+                <H3
+                  key={cargo.id}
+                  className="text-[0.9em] border-b-2 border-gray-400"
+                >
+                  <P>{cargo.nomeCargo}</P>
+                  <P>
+                    {Number(cargo.salarioCargo).toLocaleString("pt-BR", {
+                      style: "currency",
+                      currency: "BRL",
+                    })}
+                  </P>
+                  <P>{cargo.quantidadeCargo}</P>
+                </H3>
+              );
+            })}
+          </Div>
+        </Article>
 
+        <Article className="col-span-1 row-span-1">
+          <Dir>
+            <H1>Transporte</H1>
+            <H3 className="text-[0.9em]">
+              <P>Nome/Cargo</P>
+              <P>Salario</P>
+              <P>Quantidade</P>
+            </H3>
+          </Dir>
+          <Div>Planejar oque vai fazer aq</Div>
+
+          <Dir className="mt-3">
+            <H1>Alimentação</H1>
+            <H3 className="text-[0.9em]">
+              <P>Nome/Cargo</P>
+              <P>Salario</P>
+              <P>Quantidade</P>
+            </H3>
+          </Dir>
+          <Div>Planejar oque vai fazer aq</Div>
+        </Article>
+
+        <Article className="col-span-2 row-span-1 ">
+          <Dir>
+            <div className="flex flex-row justify-between items-center py-1">
+              <H1 className="flex-auto">
+                {state.addKinay ? (
+                  <form
+                    id="addKinayForm"
+                    onSubmit={sendKinay}
+                    className="grid grid-cols-4 gap-3 pr-2"
+                  >
+                    <Input
+                      type="number"
+                      name="numeroKinay"
+                      placeholder="Numero"
+                      onChange={valorInput}
+                      value={data.numeroKinay}
+                      className="col-span-1 "
+                    />
+
+                    <Input
+                      type="text"
+                      name="descricaoKinay"
+                      onChange={valorInput}
+                      placeholder="Descrição"
+                      value={data.descricaoKinay}
+                      className="col-span-2"
+                    />
+
+                    <Input
+                      type="number"
+                      name="porcentagemKinay"
+                      placeholder="Porcentagem EX: 0.0"
+                      onChange={valorInput}
+                      value={data.porcentagemKinay}
+                      className="col-span-1"
+                    />
+                  </form>
+                ) : state.delKinay ? (
+                  <form onSubmit={DelKinay} id="delkinayForm">
+                    <Input
+                      type="text"
+                      list="deltkinay"
+                      name="descricaoKinay"
+                      placeholder="Selecione o kinay"
+                      onChange={valorInput}
+                      value={data.descricaoKinay}
+                    />
+
+                    <datalist id="deltkinay">
+                      {kinays.map((kinay) => (
+                        <option
+                          key={kinay.id}
+                          value={`${kinay.id} - ${kinay.numeroKinay} - ${kinay.descricaoKinay}`}
+                        />
+                      ))}
+                    </datalist>
+                  </form>
+                ) : (
+                  <p>Kinay</p>
+                )}
+              </H1>
+
+              <nav className="flex flex-col md:flex-row  gap-2 justify-end text-[1rem]">
+                {state.addKinay || state.delKinay ? (
                   <button
-                    className={`p-1 rounded-full bg-red-600 cursor-pointer drop-shadow-lg text-[1.2em] 
+                    className={`flex-1 p-1 rounded-full bg-gray-200 cursor-pointer drop-shadow-lg`}
+                    title={state.addKinay ? "Salvar" : "Excluir"}
+                    type="submit"
+                    form={state.addKinay ? "addKinayForm" : "delkinayForm"}
+                  >
+                    <RiSaveLine />
+                  </button>
+                ) : null}
+
+                <button
+                  className={`p-1 rounded-full bg-red-600 cursor-pointer drop-shadow-lg text-[1.2em] 
                   ${state.addKinay ? "hidden" : ""} ${
-                      state.delKinay ? "bg-red-600" : ""
-                    }`}
-                    title={`${state.delKinay ? "Voltar" : "Excluir"}`}
-                    onClick={() => handleClick("delKinay")}
-                  >
-                    {state.delKinay ? (
-                      <LuArrowRightFromLine />
-                    ) : (
-                      <HiOutlineTrash />
-                    )}
-                  </button>
-
-                  <button
-                    className={`p-1 rounded-full bg-gray-300 cursor-pointer drop-shadow-lg text-[1.2em] 
-                  ${state.delKinay ? "hidden" : ""} ${
-                      state.addKinay ? "bg-red-600" : ""
-                    }`}
-                    title={`${state.addKinay ? "Voltar" : "Adicionar"}`}
-                    onClick={() => handleClick("addKinay")}
-                  >
-                    {state.addKinay ? (
-                      <LuArrowRightFromLine />
-                    ) : (
-                      <HiOutlinePlusSm />
-                    )}
-                  </button>
-                </nav>
-              </div>
-
-              <H5 className="grid grid-cols-5 gap-3 text-[0.9em]">
-                <P className="col-span-1">Numero</P>
-                <P className="col-span-3">Descrição</P>
-                <P className="col-span-1">Porcentagem</P>
-              </H5>
-            </Dir>
-            <Div className="h-auto">
-              {kinays.map((kinay) => {
-                return (
-                  <H5
-                    key={kinay.id}
-                    className="grid grid-cols-5 gap-3 text-[0.9em] border-b-2 border-gray-400"
-                  >
-                    <P className="col-span-1 flex justify-center items-center">
-                      {kinay.numeroKinay}
-                    </P>
-                    <P className="col-span-3">{kinay.descricaoKinay}</P>
-                    <P className="col-span-1">
-                      {kinay.porcentagemKinay * 100}%
-                    </P>
-                  </H5>
-                );
-              })}
-            </Div>
-          </Article>
-
-          <Article className="max-w-[22vw]">
-            <Dir>
-              <div className="flex flex-row justify-between items-center py-1">
-                <H1 className="flex-auto">
-                  {state.addImposto ? (
-                    <form
-                      id="addImpostoForm"
-                      onSubmit={sendImposto}
-                      className="grid grid-cols-2 gap-3 pr-2"
-                    >
-                      <Input
-                        type="text"
-                        name="siglaImposto"
-                        placeholder="Ex: INSS"
-                        onChange={valorInput}
-                        value={data.siglaImposto}
-                        className="col-span-1"
-                      />
-
-                      <Input
-                        type="number"
-                        name="porcentagemImposto"
-                        placeholder="Ex: 0.0"
-                        onChange={valorInput}
-                        value={data.porcentagemImposto}
-                        className="col-span-1"
-                      />
-                    </form>
-                  ) : state.delImposto ? (
-                    <form onSubmit={delImposto} id="delImpostoForm" >
-                      <Input
-                        type="text"
-                        list="deltImposto"
-                        name="siglaImposto"
-                        placeholder="Selecione"
-                        className="max-w-[14vw]"
-                        onChange={valorInput}
-                        value={data.siglaImposto}
-                      />
-
-                      <datalist id="deltImposto">
-                        {impostos.map((impt) => (
-                          <option
-                            key={impt.id}
-                            value={`${impt.id} - ${impt.siglaImposto} - ${impt.porcentagemImposto * 100}%`}
-                          />
-                        ))}
-                      </datalist>
-                    </form>
+                    state.delKinay ? "bg-red-600" : ""
+                  }`}
+                  title={`${state.delKinay ? "Voltar" : "Excluir"}`}
+                  onClick={() => handleClick("delKinay")}
+                >
+                  {state.delKinay ? (
+                    <LuArrowRightFromLine />
                   ) : (
-                    <p>Impostos</p>
+                    <HiOutlineTrash />
                   )}
-                </H1>
+                </button>
 
-                <nav className="flex flex-col md:flex-row  gap-2 justify-end text-[1rem]">
-                  {state.addImposto || state.delImposto ? (
-                    <button
-                      className={`flex-1 p-1 rounded-full bg-gray-200 cursor-pointer drop-shadow-lg`}
-                      title={state.addImposto ? "Salvar" : "Excluir"}
-                      type="submit"
-                      form={state.addImposto ? "addImpostoForm" : "delImpostoForm"}
-                    >
-                      <RiSaveLine />
-                    </button>
-                  ) : null}
+                <button
+                  className={`p-1 rounded-full bg-gray-300 cursor-pointer drop-shadow-lg text-[1.2em] 
+                  ${state.delKinay ? "hidden" : ""} ${
+                    state.addKinay ? "bg-red-600" : ""
+                  }`}
+                  title={`${state.addKinay ? "Voltar" : "Adicionar"}`}
+                  onClick={() => handleClick("addKinay")}
+                >
+                  {state.addKinay ? (
+                    <LuArrowRightFromLine />
+                  ) : (
+                    <HiOutlinePlusSm />
+                  )}
+                </button>
+              </nav>
+            </div>
 
+            <H5 className="grid grid-cols-5 gap-3 text-[0.9em]">
+              <P className="col-span-1">Numero</P>
+              <P className="col-span-3">Descrição</P>
+              <P className="col-span-1">Porcentagem</P>
+            </H5>
+          </Dir>
+          <Div>
+            {kinays.map((kinay) => {
+              return (
+                <H5
+                  key={kinay.id}
+                  className="grid grid-cols-5 gap-3 text-[0.9em] border-b-2 border-gray-400"
+                >
+                  <P className="col-span-1 flex justify-center items-center">
+                    {kinay.numeroKinay}
+                  </P>
+                  <P className="col-span-3">{kinay.descricaoKinay}</P>
+                  <P className="col-span-1">{kinay.porcentagemKinay * 100}%</P>
+                </H5>
+              );
+            })}
+          </Div>
+        </Article>
+
+        <Article className="col-span-1  row-span-1">
+          <Dir>
+            <div className="flex flex-row justify-between items-center py-1">
+              <H1 className="flex-auto">
+                {state.addImposto ? (
+                  <form
+                    id="addImpostoForm"
+                    onSubmit={sendImposto}
+                    className="grid grid-cols-2 gap-3 pr-2"
+                  >
+                    <Input
+                      type="text"
+                      name="siglaImposto"
+                      placeholder="Ex: INSS"
+                      onChange={valorInput}
+                      value={data.siglaImposto}
+                      className="col-span-1"
+                    />
+
+                    <Input
+                      type="number"
+                      name="porcentagemImposto"
+                      placeholder="Ex: 0.0"
+                      onChange={valorInput}
+                      value={data.porcentagemImposto}
+                      className="col-span-1"
+                    />
+                  </form>
+                ) : state.delImposto ? (
+                  <form onSubmit={delImposto} id="delImpostoForm">
+                    <Input
+                      type="text"
+                      list="deltImposto"
+                      name="siglaImposto"
+                      placeholder="Selecione"
+                      className="max-w-[14vw]"
+                      onChange={valorInput}
+                      value={data.siglaImposto}
+                    />
+
+                    <datalist id="deltImposto">
+                      {impostos.map((impt) => (
+                        <option
+                          key={impt.id}
+                          value={`${impt.id} - ${impt.siglaImposto} - ${
+                            impt.porcentagemImposto * 100
+                          }%`}
+                        />
+                      ))}
+                    </datalist>
+                  </form>
+                ) : (
+                  <p>Impostos</p>
+                )}
+              </H1>
+
+              <nav className="flex flex-col md:flex-row  gap-2 justify-end text-[1rem]">
+                {state.addImposto || state.delImposto ? (
                   <button
-                    className={`p-1 rounded-full bg-red-600 cursor-pointer drop-shadow-lg text-[1.2em] 
+                    className={`flex-1 p-1 rounded-full bg-gray-200 cursor-pointer drop-shadow-lg`}
+                    title={state.addImposto ? "Salvar" : "Excluir"}
+                    type="submit"
+                    form={
+                      state.addImposto ? "addImpostoForm" : "delImpostoForm"
+                    }
+                  >
+                    <RiSaveLine />
+                  </button>
+                ) : null}
+
+                <button
+                  className={`p-1 rounded-full bg-red-600 cursor-pointer drop-shadow-lg text-[1.2em] 
                   ${state.addImposto ? "hidden" : ""} ${
-                      state.delImposto ? "bg-red-600" : ""
-                    }`}
-                    title={`${state.delImposto ? "Voltar" : "Excluir"}`}
-                    onClick={() => handleClick("delImposto")}
-                  >
-                    {state.delImposto ? (
-                      <LuArrowRightFromLine />
-                    ) : (
-                      <HiOutlineTrash />
-                    )}
-                  </button>
+                    state.delImposto ? "bg-red-600" : ""
+                  }`}
+                  title={`${state.delImposto ? "Voltar" : "Excluir"}`}
+                  onClick={() => handleClick("delImposto")}
+                >
+                  {state.delImposto ? (
+                    <LuArrowRightFromLine />
+                  ) : (
+                    <HiOutlineTrash />
+                  )}
+                </button>
 
-                  <button
-                    className={`p-1 rounded-full bg-gray-300 cursor-pointer drop-shadow-lg text-[1.2em] 
+                <button
+                  className={`p-1 rounded-full bg-gray-300 cursor-pointer drop-shadow-lg text-[1.2em] 
                   ${state.delImposto ? "hidden" : ""} ${
-                      state.addImposto ? "bg-red-600" : ""
-                    }`}
-                    title={`${state.addImposto ? "Voltar" : "Adicionar"}`}
-                    onClick={() => handleClick("addImposto")}
-                  >
-                    {state.addImposto ? (
-                      <LuArrowRightFromLine />
-                    ) : (
-                      <HiOutlinePlusSm />
-                    )}
-                  </button>
-                </nav>
-              </div>
+                    state.addImposto ? "bg-red-600" : ""
+                  }`}
+                  title={`${state.addImposto ? "Voltar" : "Adicionar"}`}
+                  onClick={() => handleClick("addImposto")}
+                >
+                  {state.addImposto ? (
+                    <LuArrowRightFromLine />
+                  ) : (
+                    <HiOutlinePlusSm />
+                  )}
+                </button>
+              </nav>
+            </div>
 
-              <H2 className="grid grid-cols-2 gap-3 text-[0.9em]">
-                <P className="col-span-1">Sigla</P>
-                <P className="col-span-1">Porcentagem</P>
-              </H2>
-            </Dir>
-            <Div className="h-auto">
-              {impostos.map((impt) => {
-                return (
-                  <H2
-                    key={impt.id}
-                    className="grid grid-cols-2 gap-3 text-[0.9em] border-b-2 border-gray-400"
-                  >
-                    <P className="col-span-1">{impt.siglaImposto}</P>
-                    <P className="col-span-1">
-                      {impt.porcentagemImposto * 100}%
-                    </P>
-                  </H2>
-                );
-              })}
-            </Div>
-          </Article>
-        </section>
+            <H2 className="grid grid-cols-2 gap-3 text-[0.9em]">
+              <P className="col-span-1">Sigla</P>
+              <P className="col-span-1">Porcentagem</P>
+            </H2>
+          </Dir>
+          <Div>
+            {impostos.map((impt) => {
+              return (
+                <H2
+                  key={impt.id}
+                  className="grid grid-cols-2 gap-3 text-[0.9em] border-b-2 border-gray-400"
+                >
+                  <P className="col-span-1">{impt.siglaImposto}</P>
+                  <P className="col-span-1">{impt.porcentagemImposto * 100}%</P>
+                </H2>
+              );
+            })}
+          </Div>
+        </Article>
       </Footer>
     </div>
   );

@@ -2,8 +2,6 @@ import styled from "styled-components";
 import { useGlobalContext } from "../../../global/Global";
 
 const Div = styled.div`
-  height: 100%;
-  width: 100%;
   margin-bottom: 2em;
   display: flex;
   flex-wrap: wrap;
@@ -273,6 +271,7 @@ export const MtrPedidos = ({ empresaId }) => {
           </Article>
         </>
       ) : null}
+
       <div className="w-full px-3 pb-3 absolute bottom-0 left-0">
         <table className="w-full bg-orange-600 drop-shadow-2xl rounded-2xl ">
           <thead className="grid grid-cols-4 justify-center items-center w-full rounded-b-lg drop-shadow-2xl text-lg py-1">

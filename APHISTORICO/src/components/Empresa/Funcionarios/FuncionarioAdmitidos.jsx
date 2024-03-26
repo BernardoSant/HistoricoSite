@@ -15,7 +15,6 @@ const Div = styled.div`
   padding-top: 1em;
   display: flex;
   flex-wrap: wrap;
-  max-width: 70em;
   justify-content: start;
   align-content: start;
   flex-direction: row;

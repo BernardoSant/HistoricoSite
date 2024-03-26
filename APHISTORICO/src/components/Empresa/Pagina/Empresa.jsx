@@ -45,6 +45,7 @@ const Div = styled.div`
   border-bottom-right-radius: 1em;
   border-bottom-left-radius: 1em;
   border-top-right-radius: 1em;
+  padding-top: 1em;
   padding-bottom: 1em;
   padding-left:1em;
   padding-right:1em;
@@ -362,7 +363,7 @@ export const Empresa = () => {
             </nav>
           </Div>
         </Nav>
-        <Div className="w-full flex flex-col justify-center items-center rounded-[1em] p-[1em] relative">
+        <Div className="w-full h-full relative rounded-[1em]">
           {state.addContrato && <TabelaAddContrato />}
 
           {state.resumoMensal && <ResumoEmpresa />}
