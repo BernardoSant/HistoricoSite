@@ -41,13 +41,6 @@ router.delete('/:idFuncionario', async (req, res) => {
       where: { idFuncionario: idFuncionario }
     });
 
-    if (numDestroyed === 0) {
-      return res.status(404).json({
-        error: true,
-        message: 'Ferias não encontrado',
-      });
-    }
-
     return res.json({
       success: true,
       message: `Ferias excluído com sucesso. ${numDestroyed} registro(s) excluído(s).`,

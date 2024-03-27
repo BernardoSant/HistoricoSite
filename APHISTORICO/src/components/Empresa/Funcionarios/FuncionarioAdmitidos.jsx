@@ -5,6 +5,7 @@ import { useState, useEffect } from "react";
 import axios from "axios";
 import { toast } from "react-toastify";
 import { AiOutlineRight, AiOutlineLeft } from "react-icons/ai";
+import { LoaderClin } from "../../Loaders/LoaderClin";
 
 const Div = styled.div`
   height: 100%;
@@ -31,6 +32,7 @@ const Article = styled.article`
   overflow-y: auto;
   position: relative;
   padding-right: 4px;
+  padding-bottom: 3em;
 
   &::-webkit-scrollbar {
     width: 5px;
@@ -88,6 +90,7 @@ const Button = styled.button`
 
 export const MostruarioFuncAdmitido = () => {
   const { ip, funcionario, empresa, ferias } = useGlobalContext();
+  const [carregando, setCarregando] = useState(false);
 
   const FuncionariosAdmitidos = funcionario.filter(
     (funcionario) => funcionario.statuFucionario === "Admitido"
@@ -131,6 +134,7 @@ export const MostruarioFuncAdmitido = () => {
     funcaoFuncionario: "",
     horasTFucionario: "",
     CadastroEmprFuncionario: "",
+    diasFaltas: "",
   });
 
   const valorInput = (e) => {
@@ -235,6 +239,11 @@ export const MostruarioFuncAdmitido = () => {
       .put(ip + "/funcionario/" + funcionarioSelecionado.id, data, headers)
       .then((response) => {
         toast.success(response.data.message);
+        setFuncionarioEditar(null);
+        setCarregando(true);
+        setTimeout(() => {
+          setCarregando(false);
+        }, 3500);
       })
       .catch((err) => {
         toast.info(err.response.data.message);
@@ -312,7 +321,6 @@ export const MostruarioFuncAdmitido = () => {
       },
     };
 
-    axios;
     axios
       .put(
         ip + "/funcionario/" + funcionarioSelecionado.id,
@@ -347,10 +355,47 @@ export const MostruarioFuncAdmitido = () => {
       )
       .then((response) => {
         toast.success("Funcionário demitido com sucesso!");
+        handleClick("Alerta");
+        setFuncionarioSelecionado(null);
+        setCarregando(true);
+        setTimeout(() => {
+          setCarregando(false);
+        }, 3500);
       })
       .catch((err) => {
         toast.info(err.response.data.message);
       });
+  };
+
+  const AddFalta = (idFuncionario, valor, diasFaltas) => {
+    if (valor === 1) {
+      var TotalFaltas = diasFaltas + 1;
+      const headers = {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      };
+
+      axios.put(
+        ip + "/funcionario/" + idFuncionario,
+        { diasFaltas: TotalFaltas },
+        headers
+      );
+    } else if (valor === 2) {
+      var TotalFaltas = diasFaltas - 1;
+      const headers = {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      };
+
+      axios.put(
+        ip + "/funcionario/" + idFuncionario,
+        { diasFaltas: TotalFaltas },
+        headers
+      );
+      console.log("uai")
+    }
   };
 
   const [feriasPaga, setFeriasPaga] = useState({
@@ -380,6 +425,7 @@ export const MostruarioFuncAdmitido = () => {
     AddFerias: false,
     TipoFerias: false,
     AddExames: false,
+    Alerta: false,
   });
 
   const handleClick = (key) => {
@@ -416,7 +462,34 @@ export const MostruarioFuncAdmitido = () => {
 
   return (
     <Div>
-      {funcionarioEditar ? (
+      {state.Alerta && (
+        <p className="absolute top-0 right-0 bg-[#7a7a7a67] w-full h-full z-20 flex justify-center items-center">
+          <div className="w-2/4 h-1/3 bg-slate-100 rounded-[1em] shadow-lg border-4 border-orange-400 flex flex-col justify-center items-center relative">
+            <h1 className="text-[1.5vw] font-semibold">ALERTA!</h1>
+            <h2 className="text-[1.1vw]">
+              Você tem certeza que deseja Demitir este funcionario?
+            </h2>
+            <dir className="absolute bottom-0 right-0 p-5 px-6 flex gap-7">
+              <botton
+                className="bg-gray-400 drop-shadow-lg px-4 py-1 rounded-[1em] text-[0.9vw] font-semibold cursor-pointer"
+                onClick={() => handleClick("Alerta")}
+              >
+                Cancelar
+              </botton>
+              <botton
+                className="bg-red-500 drop-shadow-lg px-4 py-1 rounded-[1em] text-[0.9vw] font-semibold cursor-pointer"
+                onClick={demitirFuncionario}
+              >
+                Salvar
+              </botton>
+            </dir>
+          </div>
+        </p>
+      )}
+
+      {carregando ? (
+        <LoaderClin></LoaderClin>
+      ) : funcionarioEditar ? (
         <>
           <div className="flex w-full justify-end">
             <Button
@@ -670,7 +743,7 @@ export const MostruarioFuncAdmitido = () => {
                       </Button>
 
                       <Button
-                        onClick={demitirFuncionario}
+                        onClick={() => handleClick("Alerta")}
                         className="bg-red-500 z-10"
                       >
                         Demitir
@@ -922,11 +995,12 @@ export const MostruarioFuncAdmitido = () => {
               </th>
             </thead>
 
-            <thead className="grid grid-cols-6 justify-center items-center w-full rounded-b-lg drop-shadow-2xl text-lg pb-1 ">
+            <thead className="grid grid-cols-11 justify-center items-center w-full rounded-b-lg drop-shadow-2xl text-lg pb-1 text-center">
+              <th className="col-span-1">Faltas</th>
               <th className="col-span-2">Nome</th>
-              <th className="col-span-2">Cargo</th>
-              <th className="col-span-1">Salario</th>
-              <th className="col-span-1">Situação</th>
+              <th className="col-span-4">Cargo</th>
+              <th className="col-span-2">Salario</th>
+              <th className="col-span-2">Situação</th>
             </thead>
           </Header>
           <Article>
@@ -1000,16 +1074,34 @@ export const MostruarioFuncAdmitido = () => {
                       <BiCategory />
                     </span>
                   </thead>
-                  <thead className="grid grid-cols-6 justify-center items-center shadow-inner bg-gray-200 rounded-2xl p-2 my-2">
+
+                  <thead className="grid grid-cols-11 justify-center items-center shadow-inner bg-gray-200 rounded-2xl p-2 my-2">
+                    <th className="col-span-1 flex justify-center items-center gap-1">
+                      <button
+                        className="w-5 h-5 rounded-full bg-slate-300 flex justify-center items-center cursor-pointer"
+                        onClick={() => {AddFalta(func.id, 1, func.diasFaltas)}}
+                      >
+                        <p>+</p>
+                      </button>
+                      <th className="w-10 h-10 rounded-full  bg-slate-300 flex justify-center items-center cursor-pointer">
+                        {func.diasFaltas}
+                      </th>
+                      <button
+                        className="w-5 h-5 rounded-full bg-slate-300 flex justify-center items-center cursor-pointer"
+                        onClick={() => {AddFalta(func.id, 2, func.diasFaltas)}}
+                      >
+                        <p>-</p>
+                      </button>
+                    </th>
                     <th className="col-span-2">{nameWithInitials}</th>
-                    <th className="col-span-2">{func.funcaoFuncionario}</th>
-                    <th className="col-span-1">
+                    <th className="col-span-4">{func.funcaoFuncionario}</th>
+                    <th className="col-span-2">
                       {Number(func.salarioFucionario).toLocaleString("pt-BR", {
                         style: "currency",
                         currency: "BRL",
                       })}
                     </th>
-                    <th className="col-span-1 ">
+                    <th className="col-span-2 ">
                       {diasRestantesFerias !== null &&
                       diasRestantesFerias <= 30 &&
                       diasRestantesFerias >= 0 ? (
@@ -1055,6 +1147,27 @@ export const MostruarioFuncAdmitido = () => {
           </Article>
         </>
       )}
+
+      <div className="w-full px-3 pb-3 absolute bottom-0 left-0">
+        <table className="w-full bg-orange-600 drop-shadow-2xl rounded-2xl mb-1 sticky">
+          <thead className="grid grid-cols-4 justify-center items-center w-full rounded-b-lg drop-shadow-2xl text-lg py-1">
+            <th className="col-span-1 text-end">Valor Recebido:</th>
+            <th className="col-span-1 text-start px-3">
+              {Number().toLocaleString("pt-BR", {
+                style: "currency",
+                currency: "BRL",
+              })}
+            </th>
+            <th className="col-span-1 text-end">A Receber:</th>
+            <th className="col-span-1 text-start px-3">
+              {Number().toLocaleString("pt-BR", {
+                style: "currency",
+                currency: "BRL",
+              })}
+            </th>
+          </thead>
+        </table>
+      </div>
     </Div>
   );
 };

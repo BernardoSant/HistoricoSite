@@ -75,6 +75,9 @@ module.exports = {
       salarioFucionario: {
         type: Sequelize.FLOAT
       },
+      diasFaltas: {
+        type: Sequelize.INTEGER
+      },
       funcaoFuncionario: {
         type: Sequelize.STRING
       },

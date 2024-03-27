@@ -5,6 +5,7 @@ import { useState, useEffect } from "react";
 import axios from "axios";
 import { toast } from "react-toastify";
 import { AiOutlineRight, AiOutlineLeft } from "react-icons/ai";
+import { LoaderClin } from "../../Loaders/LoaderClin";
 
 const Div = styled.div`
   height: 100%;
@@ -88,6 +89,7 @@ const Button = styled.button`
 
 export const MostruarioFuncDemitido = () => {
   const { ip, funcionario } = useGlobalContext();
+  const [carregando, setCarregando] = useState(false);
 
   const FuncionariosDemitidos = funcionario.filter(
     (funcionario) => funcionario.statuFucionario === "Demitido"
@@ -132,6 +134,7 @@ export const MostruarioFuncDemitido = () => {
 
   const [data, setData] = useState({
     DataAdmicaoFucionarioDE: "",
+    DataExameFucionarioDE: "",
     nameFucionario: "",
     cpfFucionario: "",
     rgFucionario: "",
@@ -190,6 +193,7 @@ export const MostruarioFuncDemitido = () => {
         {
           statuFucionario: "Admitido",
           dataAdmicaoFucionario: data.DataAdmicaoFucionarioDE,
+          dataExames: data.DataExameFucionarioDE,
           feriasPaga: 0,
           dataFeriasFucionario: dataFormatada,
         },
@@ -197,6 +201,11 @@ export const MostruarioFuncDemitido = () => {
       )
       .then((response) => {
         toast.success("Funcionário Admitido com sucesso!");
+        setCarregando(true);
+        setTimeout(() => {
+          setCarregando(false);
+        }, 3500);
+        setFuncionarioSelecionado(null);
       })
       .catch((err) => {
         toast.info(err.response.data.message);
@@ -207,7 +216,9 @@ export const MostruarioFuncDemitido = () => {
 
   return (
     <Div>
-      {funcionarioSelecionado ? (
+      {carregando ? (
+        <LoaderClin></LoaderClin>
+      ):funcionarioSelecionado ? (
         <>
           <section className="pb-3 flex w-full justify-end relative gap-2">
             <article className="w-full  flex flex-col relative items-end">
@@ -254,6 +265,16 @@ export const MostruarioFuncDemitido = () => {
                           name="DataAdmicaoFucionarioDE"
                           onChange={valorInput}
                           value={data.DataAdmicaoFucionarioDE}
+                          className="w-auto flex justify-center"
+                        ></Input>
+                        <H1 className="col-span-1 flex justify-center items-center">
+                          Exame:
+                        </H1>
+                        <Input
+                          type="date"
+                          name="DataExameFucionarioDE"
+                          onChange={valorInput}
+                          value={data.DataExameFucionarioDE}
                           className="w-auto flex justify-center"
                         ></Input>
                       </form>
@@ -383,8 +404,8 @@ export const MostruarioFuncDemitido = () => {
               let nameWithInitials = getInitials(func.nameFucionario);
 
               return (
-                <>
-                  <thead className="w-auto flex justify-end ml-2">
+                <div key={func.id}>
+                  <thead className="w-auto flex justify-end ml-2" >
                     <span
                       className="absolute h-6 w-6 rounded-full bg-gray-400 flex justify-center items-center cursor-pointer "
                       onClick={() => {
@@ -405,7 +426,7 @@ export const MostruarioFuncDemitido = () => {
                     </th>
                     <th className="col-span-1">{dataFormatada}</th>
                   </thead>
-                </>
+                </div>
               );
             })}
           </Article>

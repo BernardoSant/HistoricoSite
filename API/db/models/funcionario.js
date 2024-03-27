@@ -36,6 +36,7 @@ module.exports = (sequelize, DataTypes) => {
     feriasPaga: DataTypes.INTEGER,
     pisFucionario: DataTypes.STRING,
     salarioFucionario: DataTypes.FLOAT,
+    diasFaltas: DataTypes.INTEGER,
     funcaoFuncionario: DataTypes.STRING,
     horasTFucionario: DataTypes.STRING,
     CadastroEmprFuncionario: DataTypes.STRING
