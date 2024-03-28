@@ -179,6 +179,10 @@ export const Outros = () => {
       });
     }
   };
+  const valorInput2 = (e) => {
+    let valor = e.target.value;
+    setData({ ...data, [e.target.name]: valor });
+  };
 
   const sendCargo = async (e) => {
     e.preventDefault();
@@ -523,7 +527,7 @@ export const Outros = () => {
                       type="number"
                       name="salarioCargo"
                       placeholder="Atualizar Salario "
-                      onChange={valorInput}
+                      onChange={valorInput2}
                       value={data.salarioCargo}
                     />
                   </form>

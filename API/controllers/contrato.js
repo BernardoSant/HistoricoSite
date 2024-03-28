@@ -1,54 +1,76 @@
 const express = require("express");
 const db = require("../db/models");
+const { io } = require("../app.js");
 const router = express.Router();
 
-router.post("/", async (req, res) => {
+const dataTypes = [
+  {
+    type: "contrato",
+    dbType: db.Contrato,
+    msg: "Contrato",
+  },
+];
+
+dataTypes.forEach(({ type, dbType, msg }) => {
+  router.post("/", async (req, res) => {
     var data = req.body;
 
-    await db.Contrato.create(data).then((dataContrato) => {
-        return res.json({
-            error: false,
-            message: "Contrato cadastrado com sucesso!",   
-            data: dataContrato   
-        });
-    }).catch(() => {
-        return res.json({
-            error: false,
-            message: "Erro: Contrato não cadastrado com sucesso!"
-        });
-    }); 
-})
+    try {
+      const dataDB = await dbType.create(data);
 
-router.get("/", async (req, res) => {
-    await db.Contrato.findAll().then((dataContrato) => {
-        return res.json({
-            error: false,
-            data: dataContrato        });
-    }).catch(() => {
-        return res.status(500).json({
-            error: true,
-            message: "Erro: Não foi possível buscar os Contratos!"
-        });
-    });
-});
+      const allData = await dbType.findAll();
+      io.emit(`${type} data`, allData);
+      return res.json({
+        error: false,
+        message: `${msg} cadastrado com sucesso(a)!`,
+        data: dataDB,
+      });
+    } catch (error) {
+      return res.json({
+        error: false,
+        message: `ERRO: ${msg} não cadastrado(a)!`,
+      });
+    }
+  });
 
-router.put("/:numeroCT", async (req, res) => {
+  router.get("/", async (req, res) => {
+    try {
+      const dataDB = await dbType.findAll();
+      const allData = await dbType.findAll();
+      io.emit(`${type} data`, allData);
+      return res.json({
+        error: false,
+        data: dataDB,
+      });
+    } catch (error) {
+      return res.status(500).json({
+        error: true,
+        message: `ERRO: ${msg} não encontrado(a)!`,
+      });
+    }
+  });
+
+  router.put("/:numeroCT", async (req, res) => {
     const { numeroCT } = req.params;
     const data = req.body;
 
-    await db.Contrato.update(data, {
-        where: { numeroCT: numeroCT }
-    }).then(() => {
-        return res.json({
-            error: false,
-            message: "Contrato atualizado com sucesso!"
-        });
-    }).catch(() => {
-        return res.json({
-            error: true,
-            message: "Erro: Não foi possível atualizar o Contrato!"
-        });
-    });
+    try {
+       await dbType.update(data, {
+        where: { numeroCT: numeroCT },
+      });
+      const allData = await dbType.findAll();
+      io.emit(`${type} data`, allData);
+      return res.json({
+        error: false,
+        message: `${msg} atualizado com sucesso!!`,
+      });
+    } catch (error) {
+      return res.status(500).json({
+        error: true,
+        message: `ERRO: Não foi possível atualizar o ${msg}!`,
+      });
+    }
+  });
 });
 
 module.exports = router;

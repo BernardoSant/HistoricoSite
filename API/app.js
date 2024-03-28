@@ -1,49 +1,117 @@
-const express = require("express");
-const cors = require('cors')
-const app = express();
+let ipServer = "http://localhost:2523";
+let ipSite = "http://localhost:5173";
 
-app.use(express.json())
+const express = require("express");
+const socketIo = require("socket.io");
+const cors = require("cors");
+const app = express();
+const server = require("http").createServer(app);
+const io = socketIo(server, { cors: { origin: ipSite } });
+exports.io = io;
+
+const PORT = 2523;
+
+const axios = require("axios");
+
+app.use(express.json());
 
 app.use((req, res, next) => {
-    // Qualquer endereço pode fazer requisição
-    res.header("Access-Control-Allow-Origin", "*");
-    // Tipos de método que a API aceita
-    res.header("Access-Control-Allow-Methods", "GET, PUT, POST, DELETE");
-    // Permitir o envio de dados para API
-    res.header("Access-Control-Allow-Headers", "Content-Type");
-    // Executar o cors
-    app.use(cors());
-    // Quando não houver erro deve continuar o processamento
-    next();
+  // Qualquer endereço pode fazer requisição
+  res.header("Access-Control-Allow-Origin", "*");
+  // Tipos de método que a API aceita
+  res.header("Access-Control-Allow-Methods", "GET, PUT, POST, DELETE");
+  // Permitir o envio de dados para API
+  res.header("Access-Control-Allow-Headers", "Content-Type");
+  // Executar o cors
+  app.use(cors());
+  // Quando não houver erro deve continuar o processamento
+  next();
 });
 
-const empresa = require("./controllers/empresa");
-app.use("/empresa", empresa)
+const dataTypes = [
+  "cargo",
+  "empresa",
+  "nota",
+  "funcionario",
+  "pedido",
+  "kinay",
+  "impostos",
+  "ferias",
+  "contrato",
+];
 
-const imposto = require("./controllers/impostos");
-app.use("/impostos", imposto)
+io.on("connection", (socket) => {
+  console.log(`Cliente conectado ${socket.id}`);
 
-const funcionario = require("./controllers/funcionario");
-app.use("/funcionario", funcionario)
+  socket.on(`fetch cargo`, async () => {
+    const response = await axios.get(`${ipServer}/cargo`);
+    const data = response.data.data;
 
-const kinay = require("./controllers/kinay");
-app.use("/kinay", kinay)
+    socket.emit(`cargo data`, data);
+  });
+  
+  socket.on(`fetch empresa`, async () => {
+    const response = await axios.get(`${ipServer}/empresa`);
+    const data = response.data.data;
 
-const nota = require("./controllers/nota");
-app.use("/nota", nota)
+    socket.emit(`empresa data`, data);
+  });
 
-const pedido = require("./controllers/pedido");
-app.use("/pedido", pedido)
+  socket.on(`fetch nota`, async () => {
+    const response = await axios.get(`${ipServer}/nota`);
+    const data = response.data.data;
 
-const contrato = require("./controllers/contrato");
-app.use("/contrato", contrato)
+    socket.emit(`nota data`, data);
+  });
 
-const cargo = require("./controllers/cargo");
-app.use("/cargo", cargo)
+  socket.on(`fetch funcionario`, async () => {
+    const response = await axios.get(`${ipServer}/funcionario`);
+    const data = response.data.data;
 
-const ferias = require("./controllers/ferias");
-app.use("/ferias", ferias)
+    socket.emit(`funcionario data`, data);
+  });
 
-app.listen(2523, () =>{
-    console.log("Servidor iniciado na porta 2604")
+  socket.on(`fetch pedido`, async () => {
+    const response = await axios.get(`${ipServer}/pedido`);
+    const data = response.data.data;
+
+    socket.emit(`pedido data`, data);
+  });
+
+  socket.on(`fetch kinay`, async () => {
+    const response = await axios.get(`${ipServer}/kinay`);
+    const data = response.data.data;
+
+    socket.emit(`kinay data`, data);
+  });
+
+  socket.on(`fetch impostos`, async () => {
+    const response = await axios.get(`${ipServer}/impostos`);
+    const data = response.data.data;
+
+    socket.emit(`impostos data`, data);
+  });
+
+  socket.on(`fetch ferias`, async () => {
+    const response = await axios.get(`${ipServer}/ferias`);
+    const data = response.data.data;
+
+    socket.emit(`ferias data`, data);
+  });
+
+  socket.on(`fetch contrato`, async () => {
+    const response = await axios.get(`${ipServer}/contrato`);
+    const data = response.data.data;
+
+    socket.emit(`contrato data`, data);
+  });
+});
+
+dataTypes.forEach((type) => {
+  const controller = require(`./controllers/${type}`);
+  app.use(`/${type}`, controller);
+});
+
+server.listen(PORT, () => {
+  console.log("Servidor iniciado...");
 });

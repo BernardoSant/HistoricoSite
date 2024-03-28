@@ -134,7 +134,7 @@ export const MostruarioFuncAdmitido = () => {
     funcaoFuncionario: "",
     horasTFucionario: "",
     CadastroEmprFuncionario: "",
-    diasFaltas: "",
+    diasFaltas: 0,
   });
 
   const valorInput = (e) => {
@@ -381,7 +381,7 @@ export const MostruarioFuncAdmitido = () => {
         { diasFaltas: TotalFaltas },
         headers
       );
-    } else if (valor === 2) {
+    } else if (valor === 2 && diasFaltas != 0) {
       var TotalFaltas = diasFaltas - 1;
       const headers = {
         headers: {
@@ -394,7 +394,6 @@ export const MostruarioFuncAdmitido = () => {
         { diasFaltas: TotalFaltas },
         headers
       );
-      console.log("uai")
     }
   };
 

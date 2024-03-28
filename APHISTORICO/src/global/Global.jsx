@@ -1,59 +1,54 @@
 import { createContext, useContext, useState, useEffect } from "react";
+import io from "socket.io-client";
 import axios from "axios";
+
+let ip = "http://localhost:2523";
+let socket;
 
 const GlobalContext = createContext();
 
 export const useGlobalContext = () => useContext(GlobalContext);
 
-// Atualiza o banco
-const useFetchData = (url, setData, interval) => {
-  useEffect(() => {
-    const fetchData = () => {
-      axios
-        .get(url)
-        .then((response) => {
-          setData(response.data.data);
-        })
-        .catch((err) => {
-          console.error(err);
-        });
-    };
-
-    fetchData();
-    const intervalId = setInterval(fetchData, interval);
-    return () => clearInterval(intervalId);
-  }, [url, setData, interval]);
-};
-
 const AppContext = ({ children }) => {
-  let ip = "http://192.168.15.2:2523";
-  const [empresa, setEmpresa] = useState([]);
-  useFetchData(ip + "/empresa", setEmpresa, 30 * 1000);
-
-  const [nota, setNota] = useState([]);
-  useFetchData(ip + "/nota", setNota, 30 * 1000);
-
-  const [funcionario, setFuncionario] = useState([]);
-  useFetchData(ip + "/funcionario", setFuncionario, 30 * 1000);
-
-  const [pedido, setPedido] = useState([]);
-  useFetchData(ip + "/pedido", setPedido, 30 * 1000);
-
-  const [kinays, setKinay] = useState([]);
-  useFetchData(ip + "/kinay", setKinay, 30 * 1000);
-
-  const [impostos, setImpostos] = useState([]);
-  useFetchData(ip + "/impostos", setImpostos, 30 * 1000);
-
-  const [contrato, setContrato] = useState([]);
-  useFetchData(ip + "/contrato", setContrato, 10 * 1000);
-  
   const [cargo, setCargo] = useState([]);
-  useFetchData(ip + "/cargo", setCargo, 10 * 1000);
-
+  const [empresa, setEmpresa] = useState([]);
+  const [nota, setNota] = useState([]);
+  const [funcionario, setFuncionario] = useState([]);
+  const [pedido, setPedido] = useState([]);
+  const [kinays, setKinay] = useState([]);
+  const [impostos, setImpostos] = useState([]);
+  const [contrato, setContrato] = useState([]);
   const [ferias, setFerias] = useState([]);
-  useFetchData(ip + "/ferias", setFerias, 60 * 1000);
 
+  useEffect(() => {
+    (async () => {
+      socket = await io.connect(ip);
+      
+      const dataTypes = [
+        { type: "cargo", setData: setCargo },
+        { type: "empresa", setData: setEmpresa },
+        { type: "nota", setData: setNota },
+        { type: "funcionario", setData: setFuncionario },
+        { type: "pedido", setData: setPedido },
+        { type: "kinay", setData: setKinay },
+        { type: "impostos", setData: setImpostos },
+        { type: "ferias", setData: setFerias },
+        { type: "contrato", setData: setContrato },
+      ];
+
+      dataTypes.forEach(({type, setData}) => {
+        socket.emit(`fetch ${type}`)
+        const handleData = (data) => {
+          setData(data);
+        };
+        socket.on(`${type} data`, handleData);
+        return () => {
+          socket.off(`${type} data`, handleData);
+        };
+      });
+    })();
+  }, []);
+  
   return (
     <GlobalContext.Provider
       value={{
