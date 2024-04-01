@@ -830,7 +830,7 @@ export const Outros = () => {
                     />
 
                     <Input
-                      type="number"
+                      type="text"
                       name="porcentagemImposto"
                       placeholder="Ex: 0.0"
                       onChange={valorInput}

@@ -377,14 +377,26 @@ export const MostruarioFuncAdmitido = () => {
   };
 
   const AddFalta = (idFuncionario, valor, diasFaltas) => {
-    if (valor === 1) {
-      var TotalFaltas = diasFaltas + 1;
-      const headers = {
+    const headers = {
         headers: {
           "Content-Type": "application/json",
         },
       };
 
+    const hoje = new Date();
+    const diaAtual = hoje.getDate();
+
+    if(diaAtual === 2/*Trocar para 1*/){
+      var TotalFaltas = 0;
+      axios.put(
+        ip + "/funcionario/" + idFuncionario,
+        { diasFaltas: TotalFaltas },
+        headers
+      );
+    }
+
+    if (valor === 1) {
+      var TotalFaltas = diasFaltas + 1;
       axios.put(
         ip + "/funcionario/" + idFuncionario,
         { diasFaltas: TotalFaltas },
@@ -392,12 +404,6 @@ export const MostruarioFuncAdmitido = () => {
       );
     } else if (valor === 2 && diasFaltas != 0) {
       var TotalFaltas = diasFaltas - 1;
-      const headers = {
-        headers: {
-          "Content-Type": "application/json",
-        },
-      };
-
       axios.put(
         ip + "/funcionario/" + idFuncionario,
         { diasFaltas: TotalFaltas },
@@ -468,40 +474,44 @@ export const MostruarioFuncAdmitido = () => {
     });
   };
 
-  const impostoINSS = impostos.find(
-    (imposto) => imposto.siglaImposto.toLowerCase() === "inss"
+  const impostoSalarioINSS = impostos.find(
+    (imposto) => imposto.siglaImposto.toLowerCase() === "salarioinss"
   );
 
-  const totalSalario = () => {
-    let valorTotalSalario = 0;
-    let adiantamentoSalario = 0;
-    let valorSalario = 0;
+  let impostoSalario = 0;
+  if (!impostoSalarioINSS) {
+    impostoSalario = 0;
+    toast.info("Imposto salarioINSS não encontrado, crie na pagina (OUTROS)!");
+  } else {
+    impostoSalario = impostoSalarioINSS.porcentagemImposto;
+  }
 
-    FuncionariosAdmitidos.forEach((funcionario) => {
-        const salarioTotal = funcionario.salarioFucionario;
-        const faltas = funcionario.diasFaltas;
-        const salarioDia = salarioTotal / 30;
-        const salarioMes = salarioDia * 30;
-        const diaPFalta = salarioDia * faltas;
-        const Imposto = 7.79 / 100; // 0.42857
+  const valorTotalSalario = FuncionariosAdmitidos.reduce((total, func) => {
+    const salarioTotal = func.salarioFucionario;
+    const salarioDia = salarioTotal / 30;
+    const salarioMes = salarioDia * 30;
+    const salarioMesImposto = salarioMes - salarioMes * impostoSalario;
+    const descontoPorFalta = salarioDia * func.diasFaltas;
 
-        valorTotalSalario += (salarioMes - (salarioMes * Imposto)) - diaPFalta;
+    return total + salarioMesImposto - descontoPorFalta;
+  }, 0);
 
-        adiantamentoSalario = salarioTotal - ((salarioTotal * 0.40964) + salarioMes * Imposto);
+  const adiantamentoSalario = FuncionariosAdmitidos.reduce((total, func) => {
+    const salarioTotal = func.salarioFucionario;
+    const salarioDia = salarioTotal / 30;
+    const salarioMes = salarioDia * 30;
+    const adiantamento = salarioMes * 0.4;
 
-        valorSalario = valorTotalSalario - adiantamentoSalario;
+    return total + adiantamento;
+  }, 0);
 
-        const progression = adiantamentoSalario / (salarioTotal * Imposto);
+  const valorSalario = FuncionariosAdmitidos.reduce((total, func) => {
+    const salarioTotal = func.salarioFucionario;
+    const salarioDia = salarioTotal / 30;
+    const salarioMes = salarioDia * 30;
 
-        const adjustedValue = valorSalario * progression;
-
-        valorTotalSalario += adjustedValue;
-    });
-
-    return { valorTotalSalario, adiantamentoSalario, valorSalario };
-};
-  const { valorTotalSalario, adiantamentoSalario, valorSalario } =
-    totalSalario();
+    return valorTotalSalario - adiantamentoSalario;
+  }, 0);
 
   return (
     <Div>
@@ -1006,12 +1016,14 @@ export const MostruarioFuncAdmitido = () => {
               </th>
             </thead>
 
-            <thead className="grid grid-cols-11 justify-center items-center w-full rounded-b-lg drop-shadow-2xl text-lg pb-1 text-center">
-              <th className="col-span-1">Faltas</th>
-              <th className="col-span-2">Nome</th>
-              <th className="col-span-4">Cargo</th>
+            <thead className="grid grid-cols-[1fr_1fr_1fr_1fr_1fr_1fr_1fr_1fr_1fr_1fr_1fr_1fr_1fr_1fr_1fr_1fr] justify-center items-center w-full rounded-b-lg drop-shadow-2xl pb-1 text-center text-[1.4vw] xl:text-[0.95vw]">
+              <th className="col-span-2">Faltas</th>
+              <th className="col-span-3">Nome</th>
+              <th className="col-span-2">Cargo</th>
+              <th className="col-span-2">Adiantamento</th>
               <th className="col-span-2">Salario</th>
-              <th className="col-span-2">Situação</th>
+              <th className="col-span-2">Salario.Liq</th>
+              <th className="col-span-3">Situação</th>
             </thead>
           </Header>
           <Article>
@@ -1073,8 +1085,33 @@ export const MostruarioFuncAdmitido = () => {
                 return inicioFerias <= hoje && hoje <= finalFerias;
               });
 
+              const salarioTotal = func.salarioFucionario;
+              const salarioDia = salarioTotal / 30;
+              const salarioMes = salarioDia * 30;
+              const salarioMesImposto =
+                salarioMes - salarioMes * impostoSalario;
+              const descontoPorFalta = salarioDia * func.diasFaltas;
+
+              var restoSalario = 0;
+
+              var salarioFunc = salarioMesImposto - descontoPorFalta;
+              var adiantamento = salarioMes * 0.4;
+              var salarioLiquidoFunc = salarioFunc - adiantamento;
+              restoSalario = salarioLiquidoFunc;
+
+              if (salarioLiquidoFunc < 0 && restoSalario < 0) {
+                salarioLiquidoFunc = 0;
+                adiantamento = salarioMes * 0.4 + restoSalario;
+              } else {
+                salarioLiquidoFunc = salarioFunc - adiantamento;
+              }
+
+              if (adiantamento < 0) {
+                adiantamento = 0;
+              }
+
               return (
-                <div className="text-[1.1vw] xl:text-[0.6vw]">
+                <div className="text-[1.1vw] xl:text-[0.9vw]">
                   <thead className="w-auto flex justify-end ml-2">
                     <span
                       className="absolute h-6 w-6 rounded-full bg-gray-400 flex justify-center items-center cursor-pointer drop-shadow-lg"
@@ -1086,8 +1123,8 @@ export const MostruarioFuncAdmitido = () => {
                     </span>
                   </thead>
 
-                  <thead className="grid grid-cols-11 justify-center items-center shadow-inner bg-gray-200 rounded-2xl p-2 my-2">
-                    <th className="col-span-1 flex justify-center items-center gap-1">
+                  <thead className="grid grid-cols-[1fr_1fr_1fr_1fr_1fr_1fr_1fr_1fr_1fr_1fr_1fr_1fr_1fr_1fr_1fr_1fr] gap-3 justify-center items-center shadow-inner bg-gray-200 rounded-2xl p-2 my-2">
+                    <th className="col-span-2 flex justify-center items-center gap-1">
                       <button
                         className="w-5 h-5 rounded-[50em] bg-slate-300 flex justify-center items-center cursor-pointer"
                         onClick={() => {
@@ -1108,15 +1145,32 @@ export const MostruarioFuncAdmitido = () => {
                         <p>-</p>
                       </button>
                     </th>
-                    <th className="col-span-2">{nameWithInitials}</th>
-                    <th className="col-span-4">{func.funcaoFuncionario}</th>
+
+                    <th className="col-span-3">{nameWithInitials}</th>
+                    <th className="col-span-2">{func.funcaoFuncionario}</th>
+
                     <th className="col-span-2">
-                      {Number(func.salarioFucionario).toLocaleString("pt-BR", {
+                      {Number(adiantamento).toLocaleString("pt-BR", {
                         style: "currency",
                         currency: "BRL",
                       })}
                     </th>
-                    <th className="col-span-2 ">
+
+                    <th className="col-span-2">
+                      {Number(salarioLiquidoFunc).toLocaleString("pt-BR", {
+                        style: "currency",
+                        currency: "BRL",
+                      })}
+                    </th>
+
+                    <th className="col-span-2">
+                      {Number(salarioFunc).toLocaleString("pt-BR", {
+                        style: "currency",
+                        currency: "BRL",
+                      })}
+                    </th>
+
+                    <th className="col-span-3 ">
                       {diasRestantesFerias !== null &&
                       diasRestantesFerias <= 30 &&
                       diasRestantesFerias >= 0 ? (
@@ -1166,20 +1220,20 @@ export const MostruarioFuncAdmitido = () => {
       {funcionarioSelecionado || funcionarioEditar || carregando ? null : (
         <div className="w-full px-3 pb-3 absolute bottom-0 left-0 ">
           <table className="w-full bg-orange-600 drop-shadow-2xl rounded-2xl mb-1 sticky">
-            <thead className="grid grid-cols-4 justify-center items-center w-full rounded-b-lg drop-shadow-2xl text-lg py-1">
-              <th className="col-span-1 text-end text-[1.1vw] xl:text-[0.6vw]">
-                Total Salario Mês:
+            <thead className="grid grid-cols-6 justify-center items-center w-full rounded-b-lg drop-shadow-2xl text-lg py-1">
+              <th className="col-span-1 text-end text-[1.3vw] xl:text-[0.8vw]">
+                Salario Total do Mês:
               </th>
-              <th className="col-span-1 text-start px-3 text-[1.1vw] xl:text-[0.6vw]">
+              <th className="col-span-1 text-start px-3 text-[1.3vw] xl:text-[0.8vw]">
                 {Number(valorTotalSalario.toFixed(2)).toLocaleString("pt-BR", {
                   style: "currency",
                   currency: "BRL",
                 })}
               </th>
-              <th className="col-span-1 text-end text-[1.1vw] xl:text-[0.6vw]">
-                Adiantamento:
+              <th className="col-span-1 text-end text-[1.3vw] xl:text-[0.8vw]">
+                Adiantamento Total:
               </th>
-              <th className="col-span-1 text-start px-3 text-[1.1vw] xl:text-[0.6vw]">
+              <th className="col-span-1 text-start px-3 text-[1.3vw] xl:text-[0.8vw]">
                 {Number(adiantamentoSalario.toFixed(2)).toLocaleString(
                   "pt-BR",
                   {
@@ -1188,10 +1242,10 @@ export const MostruarioFuncAdmitido = () => {
                   }
                 )}
               </th>
-              <th className="col-span-1 text-end text-[1.1vw] xl:text-[0.6vw]">
-                Salario:
+              <th className="col-span-1 text-end text-[1.3vw] xl:text-[0.8vw]">
+                Salario Final Total:
               </th>
-              <th className="col-span-1 text-start px-3 text-[1.1vw] xl:text-[0.6vw]">
+              <th className="col-span-1 text-start px-3 text-[1.3vw] xl:text-[0.8vw]">
                 {Number(valorSalario.toFixed(2)).toLocaleString("pt-BR", {
                   style: "currency",
                   currency: "BRL",

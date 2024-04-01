@@ -10,6 +10,9 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@fortawesome/fontawesome-free": "^6.5.1",
+    "@fortawesome/free-solid-svg-icons": "^6.5.1",
+    "@fortawesome/react-fontawesome": "^0.2.0",
     "axios": "^1.6.6",
     "children": "^0.2.3",
     "date-fns": "^3.3.1",
@@ -23,6 +26,7 @@
     "react-router": "^6.21.3",
     "react-router-dom": "^6.21.3",
     "react-scripts": "^5.0.1",
+    "react-select": "^5.8.0",
     "react-to-pdf": "^1.0.1",
     "react-toastify": "^10.0.4",
     "socket.io-client": "^4.7.5",
