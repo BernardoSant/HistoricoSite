@@ -47,9 +47,13 @@ const Article = styled.article`
 const H1 = styled.h1`
   font-weight: 600;
   margin-top: 5px;
+  font-size: 1.1vw;
+  @media (min-width: 1640px) {
+    font-size: 0.7vw;
+  }
 `;
 
-const H2 = styled.h1`
+const H2 = styled(H1)`
   font-weight: 500;
   margin-top: 5px;
   background-color: #d1d5db7d;
@@ -80,6 +84,10 @@ const Button = styled.button`
   padding-left: 20px;
   padding-right: 20px;
   font-weight: 600;
+  font-size: 1.1vw;
+  @media (min-width: 1280px) {
+    font-size: 0.6vw;
+  }
   border-radius: 9999px;
   --tw-drop-shadow: drop-shadow(0 10px 8px rgb(0 0 0 / 0.04))
     drop-shadow(0 4px 3px rgb(0 0 0 / 0.1));
@@ -89,7 +97,8 @@ const Button = styled.button`
 `;
 
 export const MostruarioFuncAdmitido = () => {
-  const { ip, funcionario, empresa, ferias } = useGlobalContext();
+  const { ip, funcionario, empresa, ferias, cargo, impostos } =
+    useGlobalContext();
   const [carregando, setCarregando] = useState(false);
 
   const FuncionariosAdmitidos = funcionario.filter(
@@ -459,6 +468,41 @@ export const MostruarioFuncAdmitido = () => {
     });
   };
 
+  const impostoINSS = impostos.find(
+    (imposto) => imposto.siglaImposto.toLowerCase() === "inss"
+  );
+
+  const totalSalario = () => {
+    let valorTotalSalario = 0;
+    let adiantamentoSalario = 0;
+    let valorSalario = 0;
+
+    FuncionariosAdmitidos.forEach((funcionario) => {
+        const salarioTotal = funcionario.salarioFucionario;
+        const faltas = funcionario.diasFaltas;
+        const salarioDia = salarioTotal / 30;
+        const salarioMes = salarioDia * 30;
+        const diaPFalta = salarioDia * faltas;
+        const Imposto = 7.79 / 100; // 0.42857
+
+        valorTotalSalario += (salarioMes - (salarioMes * Imposto)) - diaPFalta;
+
+        adiantamentoSalario = salarioTotal - ((salarioTotal * 0.40964) + salarioMes * Imposto);
+
+        valorSalario = valorTotalSalario - adiantamentoSalario;
+
+        const progression = adiantamentoSalario / (salarioTotal * Imposto);
+
+        const adjustedValue = valorSalario * progression;
+
+        valorTotalSalario += adjustedValue;
+    });
+
+    return { valorTotalSalario, adiantamentoSalario, valorSalario };
+};
+  const { valorTotalSalario, adiantamentoSalario, valorSalario } =
+    totalSalario();
+
   return (
     <Div>
       {state.Alerta && (
@@ -505,7 +549,6 @@ export const MostruarioFuncAdmitido = () => {
             <h3 className="text-3xl mb-5 font-semibold col-span-6 -ml-3">
               Identificação
             </h3>
-
             <p className="col-span-1 row-span-4 flex justify-center items-center">
               <img
                 className="w-30 h-32 drop-shadow-lg"
@@ -513,11 +556,9 @@ export const MostruarioFuncAdmitido = () => {
                 alt=""
               />
             </p>
-
             <H1 className="col-span-3">Nome</H1>
             <H1 className="col-span-1">Idade</H1>
             <H1 className="col-span-1">Data Nasc.</H1>
-
             <Input
               className="col-span-3"
               type="text"
@@ -527,12 +568,10 @@ export const MostruarioFuncAdmitido = () => {
             />
             <H2>{idade}</H2>
             <H2>{dataFormatadaNasc}</H2>
-
             <H1 className="col-span-1">Gênero</H1>
             <H1 className="col-span-1">CPF</H1>
             <H1 className="col-span-2">RG</H1>
             <H1 className="col-span-1">Estado Civil</H1>
-
             <H2>{data.generoFucionario}</H2>
             <Input
               maxLength="14"
@@ -542,7 +581,6 @@ export const MostruarioFuncAdmitido = () => {
               name="cpfFucionario"
               value={data.cpfFucionario}
             />
-
             <Input
               maxLength="12"
               className="col-span-2"
@@ -551,7 +589,6 @@ export const MostruarioFuncAdmitido = () => {
               name="rgFucionario"
               value={data.rgFucionario}
             />
-
             <select
               id="estadoCivilFucionario"
               name="estadoCivilFucionario"
@@ -563,19 +600,14 @@ export const MostruarioFuncAdmitido = () => {
               <option value="Casado">Casado</option>
               <option value="Solteiro">Solteiro</option>
             </select>
-
             <p className="mt-3 col-span-6"></p>
-
             <H1 className="col-span-3">Pai</H1>
             <H1 className="col-span-3">Mãe</H1>
-
             <H2 className="col-span-3">{data.paiFucionario}</H2>
             <H2 className="col-span-3">{data.maeFucionario}</H2>
-
             <H1 className="col-span-2">Lougradouro</H1>
             <H1 className="col-span-3">Bairro</H1>
             <H1 className="col-span-1">Número</H1>
-
             <Input
               className="col-span-2"
               type="text"
@@ -583,7 +615,6 @@ export const MostruarioFuncAdmitido = () => {
               name="ruaFucionario"
               value={data.ruaFucionario}
             />
-
             <Input
               className="col-span-3"
               type="text"
@@ -591,7 +622,6 @@ export const MostruarioFuncAdmitido = () => {
               name="bairroFucionario"
               value={data.bairroFucionario}
             />
-
             <Input
               className="col-span-1"
               type="number"
@@ -599,10 +629,8 @@ export const MostruarioFuncAdmitido = () => {
               name="numFucionario"
               value={data.numFucionario}
             />
-
             <H1 className="col-span-1">Cidade</H1>
             <H1 className="col-span-5">Estado</H1>
-
             <Input
               className="col-span-1"
               type="text"
@@ -610,7 +638,6 @@ export const MostruarioFuncAdmitido = () => {
               name="municipioFucionario"
               value={data.municipioFucionario}
             />
-
             <Input
               className="col-span-1"
               type="text"
@@ -618,14 +645,11 @@ export const MostruarioFuncAdmitido = () => {
               name="municipioFucionario"
               value={data.municipioFucionario}
             />
-
             <h3 className="text-3xl my-4 font-semibold col-span-5 -ml-3">
               Documentos
             </h3>
-
             <H1 className="col-span-2">CTPS</H1>
             <H1 className="col-span-4">PIS</H1>
-
             <Input
               maxLength="14"
               className="col-span-2"
@@ -634,7 +658,6 @@ export const MostruarioFuncAdmitido = () => {
               name="ctpsFucionario"
               value={data.ctpsFucionario}
             />
-
             <Input
               maxLength="14"
               className="col-span-2"
@@ -644,12 +667,10 @@ export const MostruarioFuncAdmitido = () => {
               value={data.pisFucionario}
             />
             <p className=" col-span-2"></p>
-
             <H1 className="col-span-2">Função</H1>
             <H1 className="col-span-2">Salario</H1>
             <H1 className="col-span-1">Horas trabalhada</H1>
             <H1 className="col-span-1">Data Admição</H1>
-
             <select
               id="funcaoFuncionario"
               name="funcaoFuncionario"
@@ -658,15 +679,9 @@ export const MostruarioFuncAdmitido = () => {
               className="col-span-2 border-2 border-gray-300 rounded-md  py-[0.2em]"
             >
               <option></option>
-              <option value="Pedreiro">Pedreiro</option>
-              <option value="Pintor">Pintor</option>
-              <option value="Ajudante">Ajudante</option>
-              <option value="Encarregado">Encarregado</option>
-              <option value="Soldador">Soldador</option>
-              <option value="Meio OFF.Pedreiro">Meio OFF.Pedreiro</option>
-              <option value="Meio OFF.Pintor">Meio OFF.Pintor</option>
-              <option value="Engenheiro">Engenheiro</option>
-              <option value="Tecnico Segurança">Técnico Segurança</option>
+              {cargo.map((crg) => (
+                <option value={crg.nomeCargo}>{crg.nomeCargo}</option>
+              ))}
             </select>
 
             <Input
@@ -684,11 +699,9 @@ export const MostruarioFuncAdmitido = () => {
               value={data.horasTFucionario}
             />
             <H2 className="col-span-1">{data.dataAdmicaoFucionario}</H2>
-
             <H1 className="col-span-1">Data Ferias</H1>
             <H1 className="col-span-1">Quant Ferias</H1>
             <H1 className="col-span-4">Cadastro em Empresa</H1>
-
             <H2 className="col-span-1">{dataFormatadaFerias}</H2>
             <H2 className="col-span-1">{feriass}</H2>
             <select
@@ -705,7 +718,6 @@ export const MostruarioFuncAdmitido = () => {
                 </option>
               ))}
             </select>
-
             <button
               type="submit"
               className="col-span-6 mt-4 bg-orange-400 py-2 px-7 rounded-lg border-2 border-orange-500 font-semibold hover:text-white hover:scale-95 duration-500 mb-3"
@@ -715,7 +727,7 @@ export const MostruarioFuncAdmitido = () => {
           </form>
         </>
       ) : funcionarioSelecionado ? (
-        <>
+        <div className="w-full ">
           <section className="flex w-full justify-end relative gap-2">
             <article className="w-full  flex flex-col relative items-end">
               <dir
@@ -752,7 +764,7 @@ export const MostruarioFuncAdmitido = () => {
 
                   <button
                     onClick={() => handleClick("Menu")}
-                    className={`bg-gray-400 text-2xl w-auto p-1 flex justify-center items-center rounded-full drop-shadow-lg ${
+                    className={`bg-gray-400 text-[1.2vw] w-auto p-1 flex justify-center items-center rounded-full drop-shadow-lg ${
                       state.Menu ? "mt-0 " : "mt-2"
                     }`}
                   >
@@ -984,7 +996,7 @@ export const MostruarioFuncAdmitido = () => {
             <H2 className="col-span-1">{feriass}</H2>
             <H2 className="col-span-4">{data.CadastroEmprFuncionario}</H2>
           </div>
-        </>
+        </div>
       ) : (
         <>
           <Header className="w-full bg-orange-500 drop-shadow-2xl rounded-2xl">
@@ -1062,7 +1074,7 @@ export const MostruarioFuncAdmitido = () => {
               });
 
               return (
-                <>
+                <div className="text-[1.1vw] xl:text-[0.6vw]">
                   <thead className="w-auto flex justify-end ml-2">
                     <span
                       className="absolute h-6 w-6 rounded-full bg-gray-400 flex justify-center items-center cursor-pointer drop-shadow-lg"
@@ -1077,17 +1089,21 @@ export const MostruarioFuncAdmitido = () => {
                   <thead className="grid grid-cols-11 justify-center items-center shadow-inner bg-gray-200 rounded-2xl p-2 my-2">
                     <th className="col-span-1 flex justify-center items-center gap-1">
                       <button
-                        className="w-5 h-5 rounded-full bg-slate-300 flex justify-center items-center cursor-pointer"
-                        onClick={() => {AddFalta(func.id, 1, func.diasFaltas)}}
+                        className="w-5 h-5 rounded-[50em] bg-slate-300 flex justify-center items-center cursor-pointer"
+                        onClick={() => {
+                          AddFalta(func.id, 1, func.diasFaltas);
+                        }}
                       >
                         <p>+</p>
                       </button>
-                      <th className="w-10 h-10 rounded-full  bg-slate-300 flex justify-center items-center cursor-pointer">
+                      <th className="w-10 h-10 rounded-[50em]  bg-slate-300 flex justify-center items-center cursor-pointer">
                         {func.diasFaltas}
                       </th>
                       <button
-                        className="w-5 h-5 rounded-full bg-slate-300 flex justify-center items-center cursor-pointer"
-                        onClick={() => {AddFalta(func.id, 2, func.diasFaltas)}}
+                        className="w-5 h-5 rounded-[50em] bg-slate-300 flex justify-center items-center cursor-pointer"
+                        onClick={() => {
+                          AddFalta(func.id, 2, func.diasFaltas);
+                        }}
                       >
                         <p>-</p>
                       </button>
@@ -1108,13 +1124,13 @@ export const MostruarioFuncAdmitido = () => {
                           {diasRestantesFerias} dias para férias!
                         </p>
                       ) : feriass > 0 ? (
-                        <p className="bg-yellow-600 p-1 px-2 rounded-[9999px]">
+                        <p className="bg-red-500 p-1 px-2 rounded-[9999px]">
                           Ferias Atrasada!
                         </p>
                       ) : diasRestantesExames !== null &&
                         diasRestantesExames <= 30 &&
                         diasRestantesExames >= 0 ? (
-                        <p className="bg-red-500 p-1 px-2 rounded-[9999px]">
+                        <p className="bg-yellow-500 p-1 px-2 rounded-[9999px]">
                           {diasRestantesExames} dias para os Exames!
                         </p>
                       ) : diasRestantesExames < 0 ? (
@@ -1140,33 +1156,51 @@ export const MostruarioFuncAdmitido = () => {
                       )}
                     </th>
                   </thead>
-                </>
+                </div>
               );
             })}
           </Article>
         </>
       )}
 
-      <div className="w-full px-3 pb-3 absolute bottom-0 left-0">
-        <table className="w-full bg-orange-600 drop-shadow-2xl rounded-2xl mb-1 sticky">
-          <thead className="grid grid-cols-4 justify-center items-center w-full rounded-b-lg drop-shadow-2xl text-lg py-1">
-            <th className="col-span-1 text-end">Valor Recebido:</th>
-            <th className="col-span-1 text-start px-3">
-              {Number().toLocaleString("pt-BR", {
-                style: "currency",
-                currency: "BRL",
-              })}
-            </th>
-            <th className="col-span-1 text-end">A Receber:</th>
-            <th className="col-span-1 text-start px-3">
-              {Number().toLocaleString("pt-BR", {
-                style: "currency",
-                currency: "BRL",
-              })}
-            </th>
-          </thead>
-        </table>
-      </div>
+      {funcionarioSelecionado || funcionarioEditar || carregando ? null : (
+        <div className="w-full px-3 pb-3 absolute bottom-0 left-0 ">
+          <table className="w-full bg-orange-600 drop-shadow-2xl rounded-2xl mb-1 sticky">
+            <thead className="grid grid-cols-4 justify-center items-center w-full rounded-b-lg drop-shadow-2xl text-lg py-1">
+              <th className="col-span-1 text-end text-[1.1vw] xl:text-[0.6vw]">
+                Total Salario Mês:
+              </th>
+              <th className="col-span-1 text-start px-3 text-[1.1vw] xl:text-[0.6vw]">
+                {Number(valorTotalSalario.toFixed(2)).toLocaleString("pt-BR", {
+                  style: "currency",
+                  currency: "BRL",
+                })}
+              </th>
+              <th className="col-span-1 text-end text-[1.1vw] xl:text-[0.6vw]">
+                Adiantamento:
+              </th>
+              <th className="col-span-1 text-start px-3 text-[1.1vw] xl:text-[0.6vw]">
+                {Number(adiantamentoSalario.toFixed(2)).toLocaleString(
+                  "pt-BR",
+                  {
+                    style: "currency",
+                    currency: "BRL",
+                  }
+                )}
+              </th>
+              <th className="col-span-1 text-end text-[1.1vw] xl:text-[0.6vw]">
+                Salario:
+              </th>
+              <th className="col-span-1 text-start px-3 text-[1.1vw] xl:text-[0.6vw]">
+                {Number(valorSalario.toFixed(2)).toLocaleString("pt-BR", {
+                  style: "currency",
+                  currency: "BRL",
+                })}
+              </th>
+            </thead>
+          </table>
+        </div>
+      )}
     </Div>
   );
 };

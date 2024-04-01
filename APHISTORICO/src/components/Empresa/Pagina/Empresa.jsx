@@ -206,7 +206,7 @@ export const Empresa = () => {
     <>
       <Header>
         <Nav>
-          <Div className="overflow-auto max-w-[13em] min-w-[13em]">
+          <Div className="overflow-auto max-w-[20em] min-w-[13em]">
             <nav className="flex flex-col justify-center ">
               <Button
                 TipoButton={1}

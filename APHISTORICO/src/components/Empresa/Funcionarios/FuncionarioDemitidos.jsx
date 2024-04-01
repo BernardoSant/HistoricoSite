@@ -46,9 +46,13 @@ const Article = styled.article`
 const H1 = styled.h1`
   font-weight: 600;
   margin-top: 5px;
+  font-size: 1.1vw;
+  @media (min-width: 1640px) {
+    font-size: 0.7vw; 
+  }
 `;
 
-const H2 = styled.h1`
+const H2 = styled(H1)`
   font-weight: 500;
   margin-top: 5px;
   background-color: #d1d5db7d;
