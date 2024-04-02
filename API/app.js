@@ -38,6 +38,7 @@ const dataTypes = [
   "impostos",
   "ferias",
   "contrato",
+  "conta",
 ];
 
 io.on("connection", (socket) => {
@@ -104,6 +105,13 @@ io.on("connection", (socket) => {
     const data = response.data.data;
 
     socket.emit(`contrato data`, data);
+  });
+
+  socket.on(`fetch conta`, async () => {
+    const response = await axios.get(`${ipServer}/conta`);
+    const data = response.data.data;
+
+    socket.emit(`conta data`, data);
   });
 });
 
