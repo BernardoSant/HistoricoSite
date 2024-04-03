@@ -4,7 +4,7 @@ import { Empresa } from "../components/Empresa/Pagina/Empresa";
 import { Casa } from "../components/Casa/Pagina/Casa";
 import { Dashboard } from "../components/Dashboard/Pagina/Dashboard";
 import { useState } from "react";
-import { TabelaConta } from "../Inicio/Conta";
+import { TabelaConta } from "../Conta/Conta";
 
 const Nav = styled.nav`
   height: auto;

@@ -35,7 +35,6 @@ const Section = styled.section`
   display: flex;
   gap: 7px;
   flex-direction: column;
-  flex-wrap: wrap;
   flex: 1 1 0%;
 `;
 
@@ -377,7 +376,7 @@ export const ResumoEmpresa = () => {
             </H3>
           </Dir>
 
-          <Div className="max-h-[18em]">
+          <Div className="">
             {notasRecebidas.map((nota) => {
               return (
                 <H3
@@ -407,7 +406,7 @@ export const ResumoEmpresa = () => {
             </H3>
           </Dir>
 
-          <Div className="max-h-[18em]">
+          <Div className="">
             {notasReceberFiltradas.map((nota) => (
               <H3
                 key={nota.id}
@@ -462,7 +461,7 @@ export const ResumoEmpresa = () => {
             </H5>
           </Dir>
 
-          <Div className=" min-w-[27em]">
+          <Div className=" min-w-[27em] min-h-[10em] ">
             {pedidosAtualizados.map((pedido) => {
               const empresaEncontrada = empresa.find(
                 (empresas) => empresas.id === pedido.empresaPDD
@@ -569,7 +568,7 @@ export const ResumoEmpresa = () => {
                 </div>
               </H1>
             </Dir>
-            <Div className="min-h-[11em] max-h-[11em]">
+            <Div className="">
               <Chart
                 chartType="PieChart"
                 width="100%"

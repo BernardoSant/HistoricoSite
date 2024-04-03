@@ -17,6 +17,7 @@ module.exports = (sequelize, DataTypes) => {
     descricaoConta: DataTypes.STRING,
     tipoConta: DataTypes.STRING,
     estadoConta: DataTypes.STRING,
+    frequenciaConta: DataTypes.BOOLEAN,
     parcelasConta: DataTypes.INTEGER,
     dataInicioConta: DataTypes.DATEONLY,
     valorConta: DataTypes.FLOAT

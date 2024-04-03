@@ -10,7 +10,7 @@ const BlockConta = styled.div`
   position: absolute;
   display: flex;
   flex-direction: column;
-  height: 100%;
+  height: auto;
   width: 13.05em;
   margin-left: 3.25em;
   z-index: 30;
@@ -35,6 +35,7 @@ const H1Conta = styled.div`
   @media (min-width: 1640px) {
     font-size: 0.8vw;
   }
+  flex: none;
 `;
 
 const PConta = styled.div`
@@ -67,6 +68,7 @@ export const TabelaConta = () => {
     parcelasConta: 0,
     dataInicioConta: "",
     valorConta: "",
+    frequenciaConta: 0,
   });
 
   const valorInput = (e) => {
@@ -74,8 +76,11 @@ export const TabelaConta = () => {
     setData({ ...data, [e.target.name]: valor });
   };
 
-  const handleChange = (selectedOption) => {
-    const valor = selectedOption.value;
+  const [selectedOption, setSelectedOption] = useState(null);
+
+  const handleChange = (option) => {
+    setSelectedOption(option);
+    const valor = option.value;
     setData({ ...data, tipoConta: valor });
   };
 
@@ -101,6 +106,7 @@ export const TabelaConta = () => {
     axios
       .post(ip + "/conta", data, headers)
       .then((response) => {
+        setSelectedOption(null);
         setData({
           descricaoConta: "",
           tipoConta: "ads",
@@ -108,6 +114,7 @@ export const TabelaConta = () => {
           parcelasConta: 0,
           dataInicioConta: "",
           valorConta: "",
+          frequenciaConta: 0,
         });
         toast.success(response.data.message);
       })
@@ -135,6 +142,14 @@ export const TabelaConta = () => {
         TipodeConta: false,
       }),
     }));
+  };
+
+  const handleFrequenciaConta = () => {
+    setData((data) =>
+      data.frequenciaConta === 0
+        ? { ...data, frequenciaConta: 1 }
+        : { ...data, frequenciaConta: 0 }
+    );
   };
 
   const options = [
@@ -172,22 +187,6 @@ export const TabelaConta = () => {
     }),
   };
 
-  const contasEmpresasParcelada = conta.filter(
-    (cont) => cont.tipoConta === "Empresa" && cont.estadoConta === "Parcelada"
-  );
-
-  const contasCasaParcelada = conta.filter(
-    (cont) => cont.tipoConta === "Casa" && cont.estadoConta === "Parcelada"
-  );
-
-  const contasEmpresasRecorrente = conta.filter(
-    (cont) => cont.tipoConta === "Empresa" && cont.estadoConta === "Recorrente"
-  );
-
-  const contasCasaRecorrente = conta.filter(
-    (cont) => cont.tipoConta === "Casa" && cont.estadoConta === "Recorrente"
-  );
-
   return (
     <BlockConta>
       <h1 className="flex-none text-center text-[1.1vw] xl:[1.2vw] font-semibold">
@@ -217,32 +216,54 @@ export const TabelaConta = () => {
 
             <Select
               styles={customStyles}
-              defaultValue={data.tipoConta}
+              isClearable
+              value={selectedOption}
               onChange={handleChange}
               name="tipoConta"
               options={options}
             />
           </PConta>
         </form>
-        <PConta className="justify-center items-start">
-          <H1Conta className="text-[0.8vw] xl:[1.2vw] font-semibold">
-            Parcelada:
-          </H1Conta>
-          <label className="relative inline-flex items-center cursor-pointer my-2 ml-2">
-            <input
-              type="checkbox"
-              onClick={() => handleTipoConta("TipodeConta")}
-              className="sr-only peer"
-            />
-            <div
-              className="text-sm group peer ring-0 bg-orange-600 
+
+        <div className="flex justify-around">
+          <div className="flex flex-col justify-center items-center">
+            <H1Conta className="text-[0.8vw] xl:[1.2vw] font-semibold flex justify-around w-full">
+              <p>Parcelada:</p>
+            </H1Conta>
+            <div>
+              <label className="relative inline-flex items-center cursor-pointer my-2 w-full justify-center">
+                <input
+                  type="checkbox"
+                  onClick={() => handleTipoConta("TipodeConta")}
+                  className="sr-only peer"
+                />
+                <div
+                  className="text-sm group peer ring-0 bg-orange-600  
                       rounded-full outline-none duration-300 after:duration-300 w-12 h-6  shadow-md 
                       peer-focus:outline-none   after:rounded-full after:absolute after:bg-gray-50 after:outline-none after:h-5
                       after:w-5 after:top-0.5 after:left-0.5 after:-rotate-180 after:flex after:justify-center after:items-center peer-checked:after:translate-x-6 
                       peer-hover:after:scale-95 peer-checked:after:rotate-0 peer-checked:bg-green-500 "
-            ></div>
-          </label>
-        </PConta>
+                ></div>
+              </label>
+            </div>
+          </div>
+
+          {!state.TipodeConta && (
+            <div className="flex flex-col justify-center items-center ">
+              <H1Conta className="text-[0.8vw] xl:[1.2vw] font-semibold flex justify-around w-full">
+                <p>Frequente:</p>
+              </H1Conta>
+
+              <div className="pt-3">
+                <input
+                  type="checkbox"
+                  className="ui-checkbox "
+                  onClick={() => handleFrequenciaConta()}
+                />
+              </div>
+            </div>
+          )}
+        </div>
 
         {!state.TipodeConta ? (
           <form id="contaRecorrente" onSubmit={sendConta}>
@@ -319,108 +340,6 @@ export const TabelaConta = () => {
           form={state.TipodeConta ? "contaParcelada" : "contaRecorrente"}
           className="bg-green-600 rounded-[1em] p-2 mt-3 font-semibold hover:bg-green-500 hover:scale-95"
         />
-      </div>
-
-      <div className="flex-1 flex flex-col justify-end">
-        <div className="h-[19vw] w-full">
-          {state.TodasConta && (
-            <div className="bg-[#c2c2c2] flex flex-col justify-center items-center rounded-[1em] pb-2 px-2 h-full w-full">
-              <h1 className=" text-[0.9vw] xl:[1.2vw] font-semibold pt-2">
-                Todas as Contas
-              </h1>
-
-              <div className="overflow-auto h-full w-full px-2">
-                {contasCasaRecorrente.map((conta) => (
-                  <div
-                    key={conta.id}
-                    className="flex flex-row justify-between w-full gap-1"
-                  >
-                    <h1 className="text-[0.8vw] xl:[1.2vw] font-semibold">
-                      {conta.descricaoConta}
-                    </h1>
-                    <h1 className="text-[0.8vw] xl:[1.2vw] font-semibold">
-                      {conta.valorConta}
-                    </h1>
-                  </div>
-                ))}
-
-                {contasCasaParcelada.map((conta) => (
-                  <div
-                    key={conta.id}
-                    className="flex flex-row justify-between w-full gap-1"
-                  >
-                    <h1 className="text-[0.8vw] xl:[1.2vw] font-semibold">
-                      {conta.descricaoConta}
-                    </h1>
-                    <h1 className="text-[0.8vw] xl:[1.2vw] font-semibold">
-                      {conta.valorConta}
-                    </h1>
-                  </div>
-                ))}
-
-                {contasEmpresasParcelada.map((conta) => (
-                  <div
-                    key={conta.id}
-                    className="flex flex-row justify-between w-full gap-1"
-                  >
-                    <h1 className="text-[0.8vw] xl:[1.2vw] font-semibold">
-                      {conta.descricaoConta}
-                    </h1>
-                    <h1 className="text-[0.8vw] xl:[1.2vw] font-semibold">
-                      {conta.valorConta}
-                    </h1>
-                  </div>
-                ))}
-                {contasEmpresasParcelada.map((conta) => (
-                  <div
-                    key={conta.id}
-                    className="flex flex-row justify-between w-full gap-1"
-                  >
-                    <h1 className="text-[0.8vw] xl:[1.2vw] font-semibold">
-                      {conta.descricaoConta}
-                    </h1>
-                    <h1 className="text-[0.8vw] xl:[1.2vw] font-semibold">
-                      {conta.valorConta}
-                    </h1>
-                  </div>
-                ))}
-                {contasEmpresasParcelada.map((conta) => (
-                  <div
-                    key={conta.id}
-                    className="flex flex-row justify-between w-full gap-1"
-                  >
-                    <h1 className="text-[0.8vw] xl:[1.2vw] font-semibold">
-                      {conta.descricaoConta}
-                    </h1>
-                    <h1 className="text-[0.8vw] xl:[1.2vw] font-semibold">
-                      {conta.valorConta}
-                    </h1>
-                  </div>
-                ))}
-                {contasEmpresasRecorrente.map((conta) => (
-                  <div
-                    key={conta.id}
-                    className="flex flex-row justify-between w-full gap-1"
-                  >
-                    <h1 className="text-[0.8vw] xl:[1.2vw] font-semibold">
-                      {conta.descricaoConta}
-                    </h1>
-                    <h1 className="text-[0.8vw] xl:[1.2vw] font-semibold">
-                      {conta.valorConta}
-                    </h1>
-                  </div>
-                ))}
-              </div>
-            </div>
-          )}
-        </div>
-
-        <button
-          className={`bg-[#c2c2c2] hover:bg-[#acacac] rounded-[1em] mt-2 py-[2px] font-semibold flex justify-center items-center `}
-          onClick={() => handleTipoConta("TodasConta")}
-        >
-          <p>{state.TodasConta ? <BsCaretDownFill /> : <BsCaretUpFill />}</p>
-        </button>
       </div>
     </BlockConta>
   );

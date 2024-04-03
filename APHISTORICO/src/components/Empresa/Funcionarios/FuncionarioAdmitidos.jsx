@@ -376,24 +376,34 @@ export const MostruarioFuncAdmitido = () => {
       });
   };
 
+  const hoje = new Date();
+  const diaAtual = hoje.getDate();
+
+  useEffect(() => {
+    const headers = {
+      headers: {
+        "Content-Type": "application/json",
+      },
+    };
+
+    if (diaAtual === 1 ) {
+      var TotalFaltas = 0;
+      funcionario.forEach((funcionario) => {
+        axios.put(
+          ip + "/funcionario/" + funcionario.id,
+          { diasFaltas: TotalFaltas },
+          headers
+        );
+      });
+    }
+  }, [diaAtual]);
+
   const AddFalta = (idFuncionario, valor, diasFaltas) => {
     const headers = {
-        headers: {
-          "Content-Type": "application/json",
-        },
-      };
-
-    const hoje = new Date();
-    const diaAtual = hoje.getDate();
-
-    if(diaAtual === 2/*Trocar para 1*/){
-      var TotalFaltas = 0;
-      axios.put(
-        ip + "/funcionario/" + idFuncionario,
-        { diasFaltas: TotalFaltas },
-        headers
-      );
-    }
+      headers: {
+        "Content-Type": "application/json",
+      },
+    };
 
     if (valor === 1) {
       var TotalFaltas = diasFaltas + 1;

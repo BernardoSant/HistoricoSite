@@ -287,7 +287,7 @@ export const Empresa = () => {
                   ></Button>
                 </Tabela>
               )}
-
+{/*
               <Button
                 TipoButton={1}
                 Titulo={"Gastos & Ganhos"}
@@ -303,7 +303,7 @@ export const Empresa = () => {
                   <Button TipoButton={2} Titulo={"Adcionar Gastos"}></Button>
                 </Tabela>
               )}
-
+*/}
               <Button
                 TipoButton={1}
                 Titulo={"Funcionarios"}

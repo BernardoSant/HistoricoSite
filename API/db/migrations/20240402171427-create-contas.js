@@ -18,6 +18,9 @@ module.exports = {
       estadoConta: {
         type: Sequelize.STRING
       },
+      frequenciaConta: {
+        type: Sequelize.BOOLEAN
+      },
       parcelasConta: {
         type: Sequelize.INTEGER
       },
