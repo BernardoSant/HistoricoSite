@@ -1,5 +1,5 @@
 import styled from "styled-components";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Select from "react-select";
 import axios from "axios";
 import { toast } from "react-toastify";
@@ -85,6 +85,8 @@ export const AlertConta = () => {
   const FiltEmpresaParcel = ContasEmpresa.filter(
     (cont) => cont.estadoConta === "Parcelada"
   );
+
+ 
 
   FiltCasaParcel.sort((a, b) => new Date(a.dataNF) - new Date(b.dataNF));
 

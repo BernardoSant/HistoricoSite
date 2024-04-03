@@ -1187,10 +1187,6 @@ export const MostruarioFuncAdmitido = () => {
                         <p className="bg-yellow-500 p-1 px-2 rounded-[9999px]">
                           {diasRestantesFerias} dias para férias!
                         </p>
-                      ) : feriass > 0 ? (
-                        <p className="bg-red-500 p-1 px-2 rounded-[9999px]">
-                          Ferias Atrasada!
-                        </p>
                       ) : diasRestantesExames !== null &&
                         diasRestantesExames <= 30 &&
                         diasRestantesExames >= 0 ? (

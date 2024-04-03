@@ -92,6 +92,7 @@ export const TabelaAddFuncionario = () => {
     funcaoFuncionario: "",
     horasTFucionario: "",
     CadastroEmprFuncionario: "",
+    diasFaltas: 0,
   });
 
   // Receber os dados dos campos do formulário
@@ -180,6 +181,7 @@ export const TabelaAddFuncionario = () => {
           funcaoFuncionario: "",
           horasTFucionario: "",
           CadastroEmprFuncionario: "",
+          diasFaltas: 0,
         });
       })
       .catch((err) => {
