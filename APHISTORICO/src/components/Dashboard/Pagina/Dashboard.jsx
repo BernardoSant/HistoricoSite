@@ -1,4 +1,5 @@
 import styled from "styled-components";
+import { AlertConta } from "../../../Conta/AlertConta";
 
 const Header = styled.header`
   height: 100%;
@@ -60,12 +61,7 @@ export const Dashboard = () => {
     <>
       <Header>
         <Div className="w-full flex flex-col justify-center items-center">
-          <img
-            className="w-96"
-            src="https://lh3.googleusercontent.com/pw/AP1GczMtirH7-4068vJ5XM3dp6u5Y2mqSfHsw7VxC6TaHNjXS3HRg_5e5jtTr1iF9AUMND1dftdlaD7iMPQfptmZbig9f9nw5_0udPffkIAHZSkoqBM0sEoNc54E2csxdAmVzUxsrHFtZMzH8TQ4D1IA9t6vLXqrDzCyOsnz__gSXropyxdpa0fVozXuJn1XSnIwXbk5V8lne8rurZjXCFwwHLZBuwj2lfjwF9TD73NOCnJyaK9rZE4rb7kRk9cGF_hw6B0w3me07c9--B10tUPxwBT7MmYxY0MzXq1GLiOi_b9gHi-DyKi_wcelFyzA0zoEsnfQKIIVhzjmseAfIHcP9OQyj_-YhRxMlXH0EnsBdiYPZy7s6wfS5exKNlDtL41r9IftSG3Nt_j5vIPgwzuxa5SFIm1ylkazzwfy4BGND5gg1T32sLO7jY1Ws8jmAHrvLf_8sZ5dXokTH8swnOSrYMHW-iCPrRZFsfH80kiPpDzIFi09aLn5s_E7Q3FYUWZHH-gB2lhQdj0VsnMw_V2NbN5faPt2Z6F2Fl8HOhmJiuoHhzziXzW5KcEaO2AGXwEdlMmQ9h1my9HnGTFO0mtTt7nazAql6gu_XclcEqW9m2VgRKb2naf1_e7awIlEAoE3PE1pPRhlgr13yKW7Nbv1JMLgMoOpaqCke-NMM4wIJIgSSWISV6UAp6LhuKrdiurADS8NqcGdleqwio2dP6KA3jKIzmHEcGn7MOX9U7aCjknbb0if7sjVXBZyhx8B74l70x5c7okp_cFU-HipYMSdkHoHRSU0zr_Bkg6gzYCGid8R8YDzF3ayDJ9xYc8ZNf1B47MXbobGr1aw7RWI2S8r22YnPTtL_LMSukcy3DIudGPqNGRe9kq04CyV_IY60383qEOKsa-8r8fzUchdEnfbiItj=w904-h270-s-no-gm?authuser=0"
-            alt=""
-          />
-         <div className="text-3xl font-bold">Estamos trabalhando nesse Serviço.</div>
+          <AlertConta></AlertConta>
         </Div>
       </Header>
     </>

@@ -12,7 +12,7 @@ const BlockConta = styled.div`
   flex-direction: column;
   height: auto;
   width: 13.05em;
-  margin-left: 3.25em;
+  margin-left: 3.5em;
   z-index: 30;
   border-top-right-radius: 1em;
   border-bottom-left-radius: 1em;
@@ -59,7 +59,7 @@ const InputConta = styled.input`
 `;
 
 export const TabelaConta = () => {
-  const { ip, conta } = useGlobalContext();
+  const { ip } = useGlobalContext();
 
   const [data, setData] = useState({
     descricaoConta: "",

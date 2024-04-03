@@ -34,15 +34,14 @@ const Div = styled.div`
   font-size: 1.3em;
   display: flex;
   flex-direction: column;
-  padding-top: 5px;
-  padding-left: 5px;
-  padding-bottom: 5px;
+
 `;
 
 const Div2 = styled.div`
   text-align: center;
   padding: 10px;
   font-size: 1.3em;
+  transition: 200ms;
 `;
 
 
@@ -80,8 +79,8 @@ export const Inicio = () => {
             <Div2
               className={`${
                 state.Inicio &&
-                "bg-[#fffafa] rounded-bl-[0.8em] rounded-tl-[0.8em]"
-              } cursor-pointer`}
+                "bg-[#fffafa] rounded-bl-[0.8em] rounded-tl-[0.8em] my-1 ml-1"
+              } cursor-pointer ${!state.Inicio && "hover:bg-[#fffafa] hover:rounded-full my-1 mx-1"}`}
               onClick={() => handleClick("Inicio")}
             >
               <BsList />
@@ -90,8 +89,8 @@ export const Inicio = () => {
             <Div2
               className={`${
                 state.Empresa &&
-                "bg-[#fffafa] rounded-bl-[0.8em] rounded-tl-[0.8em]"
-              } cursor-pointer`}
+                "bg-[#fffafa] rounded-bl-[0.8em] rounded-tl-[0.8em] my-1 ml-1"
+              } cursor-pointer ${!state.Empresa && "hover:bg-[#fffafa] hover:rounded-full my-1 mx-1"}`}
               onClick={() => handleClick("Empresa")}
             >
               <BsBuildings />
@@ -100,8 +99,8 @@ export const Inicio = () => {
             <Div2
               className={`${
                 state.Casa &&
-                "bg-[#fffafa] rounded-bl-[0.8em] rounded-tl-[0.8em]"
-              } cursor-pointer`}
+                "bg-[#fffafa] rounded-bl-[0.8em] rounded-tl-[0.8em] my-1 ml-1"
+              } cursor-pointer ${!state.Casa && "hover:bg-[#fffafa] hover:rounded-full my-1 mx-1"} `}
               onClick={() => handleClick("Casa")}
             >
               <BsHouse />
@@ -110,8 +109,8 @@ export const Inicio = () => {
             <Div2
               className={`${
                 state.Conta &&
-                "bg-[#d6d6d6] rounded-bl-[0.8em] rounded-tl-[0.8em] mt-1"
-              } cursor-pointer`}
+                "bg-[#d6d6d6] rounded-bl-[0.8em] rounded-tl-[0.8em] my-1 ml-1"
+              } cursor-pointer ${!state.Conta && "hover:bg-[#fffafa] hover:rounded-full my-1 mx-1"}`}
               onClick={() => handleClick2("Conta")}
             >
               <BsPlus />

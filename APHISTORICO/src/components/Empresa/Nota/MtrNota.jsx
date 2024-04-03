@@ -109,9 +109,8 @@ export const MostruarioNota = ({ empresaId }) => {
       const anoAtual = dataAtual.getFullYear();
 
       setAno(anoAtual);
-    }, 600000); // Atualiza a cada minuto
+    }, 600000); 
 
-    // Limpa o intervalo quando o componente é desmontado
     return () => clearInterval(intervalId);
   }, []);
 
