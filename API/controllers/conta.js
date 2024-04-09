@@ -6,7 +6,7 @@ const router = express.Router();
 const dataTypes = [
   {
     type: "conta",
-    dbType: db.Contas,
+    dbType: db.Conta,
     msg: "Conta",
   },
 ];

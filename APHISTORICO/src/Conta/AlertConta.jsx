@@ -69,21 +69,21 @@ export const AlertConta = () => {
   const ContasCasa = conta.filter((cont) => cont.tipoConta === "Casa");
 
   const FiltCasa = ContasCasa.filter(
-    (cont) => cont.estadoConta === "Recorrente"
+    (cont) => cont.Conta === "Recorrente"
   );
   const FiltCasaRecor = FiltCasa.filter((cont) => cont.frequenciaConta === 1);
   const FiltCasaParcel = ContasCasa.filter(
-    (cont) => cont.estadoConta === "Parcelada"
+    (cont) => cont.Conta === "Parcelada"
   );
 
   const FiltEmpresa = ContasEmpresa.filter(
-    (cont) => cont.estadoConta === "Recorrente"
+    (cont) => cont.Conta === "Recorrente"
   );
   const FiltEmpresaRecor = FiltEmpresa.filter(
     (cont) => cont.frequenciaConta === 1
   );
   const FiltEmpresaParcel = ContasEmpresa.filter(
-    (cont) => cont.estadoConta === "Parcelada"
+    (cont) => cont.Conta === "Parcelada"
   );
 
  

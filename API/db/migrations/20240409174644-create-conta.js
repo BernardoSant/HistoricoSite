@@ -2,7 +2,7 @@
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up(queryInterface, Sequelize) {
-    await queryInterface.createTable('Contas', {
+    await queryInterface.createTable('Conta', {
       id: {
         allowNull: false,
         autoIncrement: true,
@@ -15,7 +15,7 @@ module.exports = {
       tipoConta: {
         type: Sequelize.STRING
       },
-      estadoConta: {
+      Conta: {
         type: Sequelize.STRING
       },
       frequenciaConta: {
@@ -24,8 +24,17 @@ module.exports = {
       parcelasConta: {
         type: Sequelize.INTEGER
       },
-      dataInicioConta: {
+      parcelasPagasConta: {
+        type: Sequelize.INTEGER
+      },
+      dataInConta: {
         type: Sequelize.DATEONLY
+      },
+      dataFnConta: {
+        type: Sequelize.DATEONLY
+      },
+      valorParcelaConta: {
+        type: Sequelize.FLOAT
       },
       valorConta: {
         type: Sequelize.FLOAT
@@ -41,6 +50,6 @@ module.exports = {
     });
   },
   async down(queryInterface, Sequelize) {
-    await queryInterface.dropTable('Contas');
+    await queryInterface.dropTable('Conta');
   }
 };

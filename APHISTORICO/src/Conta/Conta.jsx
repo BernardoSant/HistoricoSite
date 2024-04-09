@@ -64,11 +64,15 @@ export const TabelaConta = () => {
   const [data, setData] = useState({
     descricaoConta: "",
     tipoConta: "",
-    estadoConta: "Recorrente",
-    parcelasConta: 0,
-    dataInicioConta: "",
-    valorConta: "",
+    Conta: "Recorrente",
     frequenciaConta: 0,
+    parcelasConta: undefined,
+    parcelasPagasConta: undefined,
+    dataInConta: "",
+    dataFnConta: undefined,
+    valorParcelaConta: undefined,
+    valorConta: "",
+    valorContaInput: "",
   });
 
   const valorInput = (e) => {
@@ -76,6 +80,27 @@ export const TabelaConta = () => {
     setData({ ...data, [e.target.name]: valor });
   };
 
+  const valorInputConta = (e) => {
+    let valor = e.target.value;
+    setData({ ...data, [e.target.name]: valor, valorConta: valor });
+  };
+
+  const valorInputContaParcelada = (e) => {
+    const hoje = new Date();
+    let valor = e.target.value;
+    let valorTotal = data.valorParcelaConta * valor;
+    let DataIn = new Date(data.dataInConta);
+    DataIn.setMonth(DataIn.getMonth() + Number(valor));
+    let DataFinal = DataIn.toISOString().slice(0, 10);
+    setData({
+      ...data,
+      [e.target.name]: valor,
+      valorConta: valorTotal,
+      dataFnConta: DataFinal,
+      parcelasPagasConta: 0,
+    });
+  };
+  console.log(data);
   const [selectedOption, setSelectedOption] = useState(null);
 
   const handleChange = (option) => {
@@ -95,9 +120,8 @@ export const TabelaConta = () => {
 
     if (
       data.descricaoConta === "" ||
-      data.dataInicioConta === "" ||
-      data.tipoConta === "" ||
-      data.valorConta === ""
+      data.dataInConta === "" ||
+      data.tipoConta === ""
     ) {
       toast.error("Por favor, preencha todos os campos obrigatórios");
       return;
@@ -109,12 +133,16 @@ export const TabelaConta = () => {
         setSelectedOption(null);
         setData({
           descricaoConta: "",
-          tipoConta: "ads",
-          estadoConta: "",
-          parcelasConta: 0,
-          dataInicioConta: "",
-          valorConta: "",
+          tipoConta: "",
+          Conta: "Parcelada",
           frequenciaConta: 0,
+          parcelasConta: "",
+          parcelasPagasConta: "",
+          dataInConta: "",
+          dataFnConta: "",
+          valorParcelaConta: "",
+          valorConta: "",
+          valorContaInput: "",
         });
         toast.success(response.data.message);
       })
@@ -130,9 +158,21 @@ export const TabelaConta = () => {
 
   const handleTipoConta = (key) => {
     setData((data) =>
-      data.estadoConta === "Recorrente"
-        ? { ...data, estadoConta: "Parcelada" }
-        : { ...data, estadoConta: "Recorrente" }
+      data.Conta === "Recorrente"
+        ? { ...data, Conta: "Parcelada", frequenciaConta: 0 }
+        : {
+            descricaoConta: "",
+            tipoConta: "",
+            Conta: "Recorrente",
+            frequenciaConta: 0,
+            parcelasConta: undefined,
+            parcelasPagasConta: undefined,
+            dataInConta: "",
+            dataFnConta: undefined,
+            valorParcelaConta: undefined,
+            valorConta: "",
+            valorContaInput: "",
+          }
     );
 
     setState((prevState) => ({
@@ -273,9 +313,9 @@ export const TabelaConta = () => {
               </H1Conta>
               <InputConta
                 type="date"
-                value={data.dataInicioConta}
+                value={data.dataInConta}
                 onChange={valorInput}
-                name="dataInicioConta"
+                name="dataInConta"
                 className="rounded-[1em] p-1 px-3"
               />
             </PConta>
@@ -286,9 +326,9 @@ export const TabelaConta = () => {
               </H1Conta>
               <InputConta
                 type="text"
-                value={data.valorConta}
-                onChange={valorInput}
-                name="valorConta"
+                value={data.valorContaInput}
+                onChange={valorInputConta}
+                name="valorContaInput"
                 className="rounded-[1em] p-1 px-3"
               />
             </PConta>
@@ -301,9 +341,9 @@ export const TabelaConta = () => {
               </H1Conta>
               <InputConta
                 type="date"
-                value={data.dataInicioConta}
+                value={data.dataInConta}
                 onChange={valorInput}
-                name="dataInicioConta"
+                name="dataInConta"
                 className="rounded-[1em] p-1 px-3"
               />
             </PConta>
@@ -314,9 +354,9 @@ export const TabelaConta = () => {
               </H1Conta>
               <InputConta
                 type="text"
-                value={data.valorConta}
+                value={data.valorParcelaConta}
                 onChange={valorInput}
-                name="valorConta"
+                name="valorParcelaConta"
                 className="rounded-[1em] p-1 px-3"
               />
             </PConta>
@@ -328,7 +368,7 @@ export const TabelaConta = () => {
               <InputConta
                 type="number"
                 value={data.parcelasConta}
-                onChange={valorInput}
+                onChange={valorInputContaParcelada}
                 name="parcelasConta"
                 className="rounded-[1em] p-1 px-3"
               />
