@@ -55,7 +55,7 @@ dataTypes.forEach(({ type, dbType, msg }) => {
     const data = req.body;
 
     try {
-      await db.Cargo.update(data, {
+      await dbType.update(data, {
         where: { id: id },
       });
       const allData = await dbType.findAll();
@@ -75,7 +75,7 @@ dataTypes.forEach(({ type, dbType, msg }) => {
   router.delete("/:id", async (req, res) => {
     try {
       const cargoId = req.params.id;
-      const cargo = await db.Cargo.findByPk(cargoId);
+      const cargo = await dbType.findByPk(cargoId);
 
       if (!cargo) {
         return res.status(404).json({
@@ -85,7 +85,7 @@ dataTypes.forEach(({ type, dbType, msg }) => {
       }
 
       await cargo.destroy();
-      const allData = await db.Cargo.findAll();
+      const allData = await dbType.findAll();
       io.emit("cargo data", allData);
 
       return res.json({

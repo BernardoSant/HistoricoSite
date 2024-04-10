@@ -75,6 +75,7 @@ const Button = styled.button`
 
 export const TabelaAddContrato = () => {
   const {ip, empresa } = useGlobalContext();
+  const empresasContrato = empresa.filter((ct) => ct.situacaoEmpresa === "Contrato");
 
   const [data, setData] = useState({
     numeroCT: "",
@@ -167,7 +168,7 @@ export const TabelaAddContrato = () => {
             className="col-span-2 border-2 border-gray-300 rounded-[5px] px-2 py-[0.2em]"
           >
             <option></option>
-            {empresa.map((empresa) => (
+            {empresasContrato.map((empresa) => (
               <option key={empresa.id} value={empresa.id}>
                 {empresa.nameEmpresa}
               </option>

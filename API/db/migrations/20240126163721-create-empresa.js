@@ -42,9 +42,6 @@ module.exports = {
       responsavelEmpresa: {
         type: Sequelize.STRING
       },
-      cadastroEmpresa: {
-        type: Sequelize.DATEONLY
-      },
       situacaoEmpresa: {
         type: Sequelize.STRING
       },

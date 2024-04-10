@@ -213,6 +213,7 @@ export const MostruarioNota = ({ empresaId }) => {
       .put(ip + "/nota/" + notaSelecionada.id, data, headers)
       .then((response) => {
         toast.success(response.data.message);
+        setNotaSelecionada(null);
         setData({
           valorPrcentagemAntNF: "",
           situacaoNF: "",
@@ -238,7 +239,7 @@ export const MostruarioNota = ({ empresaId }) => {
   );
 
   const contratoAtualizado = ContratoAtivo.map((ctt) => {
-    if (somaNotas[ctt.numeroCT]) {
+    if (somaNotas[ctt.numeroCT] !== ctt.ValorRecebidoCT) {
       const cttAtualizado = {
         ...ctt,
         ValorRecebidoCT: somaNotas[ctt.numeroCT],

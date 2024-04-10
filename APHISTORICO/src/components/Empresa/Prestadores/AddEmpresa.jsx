@@ -73,7 +73,6 @@ export const TabelaAdicionarEmpresa = () => {
     cidadeEmpresa: "",
     cnpjEmpresa: "",
     responsavelEmpresa: "",
-    cadastroEmpresa: "",
     situacaoEmpresa: "",
   });
 
@@ -105,7 +104,6 @@ export const TabelaAdicionarEmpresa = () => {
     if (
       data.cepEmpresa === "" ||
       data.cnpjEmpresa === "" ||
-      data.cadastroEmpresa === "" ||
       data.nameEmpresa === ""
     ) {
       toast.error("Por favor, preencha todos os campos obrigatórios.");
@@ -128,7 +126,6 @@ export const TabelaAdicionarEmpresa = () => {
           cidadeEmpresa: "",
           cnpjEmpresa: "",
           responsavelEmpresa: "",
-          cadastroEmpresa: "",
           situacaoEmpresa: "",
         });
       })
@@ -250,15 +247,7 @@ export const TabelaAdicionarEmpresa = () => {
             className="col-span-2"
           />
 
-          <H1 className="col-span-1">Data de Contrato</H1>
-          <H1 className="col-span-3">Situação*</H1>
-          <Input
-            type="date"
-            name="cadastroEmpresa"
-            onChange={valorInput}
-            value={data.cadastroEmpresa}
-            className="col-span-1"
-          />
+          <H1 className="col-span-4">Situação*</H1>
 
           <select
             id="situacaoEmpresa"

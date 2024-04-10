@@ -165,36 +165,6 @@ export const ResumoEmpresa = () => {
     return acc;
   }, {});
 
-  const contratoAtualizado = ContratoAtivo.map((ctt) => {
-    if (somaNotas[ctt.numeroCT]) {
-      const cttAtualizado = {
-        ...ctt,
-        ValorRecebidoCT: somaNotas[ctt.numeroCT],
-      };
-
-      const headers = {
-        headers: {
-          "Content-Type": "application/json",
-        },
-      };
-
-      axios
-        .put(
-          ip + `/contrato/${ctt.numeroCT}`,
-          { ValorRecebidoCT: somaNotas[ctt.numeroCT] },
-          headers
-        )
-        .then((response) => {})
-        .catch((err) => {
-          toast.error(err.response.data.message);
-        });
-
-      return cttAtualizado;
-    }
-
-    return ctt;
-  });
-
   const pedidosAtualizados = pedidosFiltrados.map((pedido) => {
     if (somaNotas[pedido.numeroPDD]) {
       const pedidoAtualizado = {
@@ -508,7 +478,7 @@ export const ResumoEmpresa = () => {
 
           <Article className="min-h-[6vh]">
             <Div>
-              {contratoAtualizado.map((ctt) => {
+              {ContratoAtivo.map((ctt) => {
                 const empresaEncontrada = empresa.find(
                   (empresas) => empresas.id === ctt.empresaCT
                 );
