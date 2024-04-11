@@ -12,6 +12,7 @@ import { TabelaAddContrato } from "../Contrato/addContrato";
 import { MtrPedidos } from "../Pedidos/MtrPedidos";
 import { useGlobalContext } from "../../../global/Global";
 import { Outros } from "../Outros/Outros";
+import { MdClose } from "react-icons/md";
 
 const Nav = styled.nav`
   height: 100%;
@@ -28,16 +29,18 @@ const Header = styled.header`
 `;
 
 const Tabela = styled.div`
-  background-color: #f97316;
+  background-color: #fb923c;
   border-bottom-left-radius: 20px;
   border-bottom-right-radius: 20px;
   display: flex;
   flex-direction: column;
 `;
 const TabelaSecund = styled.div`
-  background-color: #fb923c;
+  background-color: #fed7aa;
   display: flex;
   flex-direction: column;
+  border-bottom-right-radius: 0.5em;
+  border-bottom-left-radius: 0.5em;
 `;
 
 const Div = styled.div`
@@ -79,6 +82,7 @@ const Button = ({
   TipoButton,
   Titulo,
   onClick,
+  onTerceiro,
   onSecundario,
   onPrimario,
   onFinal,
@@ -90,12 +94,10 @@ const Button = ({
           onClick={onClick}
           className={`mt-2 hover:bg-orange-500 hover:text-gray-200 ${
             onPrimario
-              ? "bg-orange-600 rounded-b-none drop-shadow-xl underline"
+              ? "bg-orange-500 rounded-b-none underline"
               : "bg-[#fffafa]"
           } ${
-            onFinal
-              ? "bg-orange-600 drop-shadow-xl underline text-gray-200"
-              : ""
+            onFinal ? "bg-orange-500 underline text-gray-200" : ""
           }  rounded-[20px]  `}
         >
           {Titulo}
@@ -105,19 +107,37 @@ const Button = ({
       {TipoButton === 2 && (
         <Botao
           onClick={onClick}
-          className={`${
-            onSecundario ? "text-gray-200 bg-orange-400 mt-1" : "text-black"
+          className={`
+          ${
+            onTerceiro
+              ? " bg-orange-300 mt-1 rounded-t-[0.5em] flex justify-between items-center"
+              : "text-black"
+          } ${
+            onSecundario
+              ? " bg-orange-300 mt-1 flex justify-between items-center"
+              : "text-black"
           } ${
             onFinal ? "text-gray-200 bg-orange-400 mt-1 rounded-b-[20px]" : ""
-          } hover:text-gray-200 w-full`}
+          } ${
+            !onSecundario && !onFinal && !onTerceiro
+              ? "hover:text-gray-300"
+              : ""
+          }  w-full `}
         >
           {Titulo}
         </Botao>
       )}
 
       {TipoButton === 3 && (
-        <Botao onClick={onClick} className={`hover:text-gray-200`}>
-          {Titulo}
+        <Botao
+          onClick={onClick}
+          className={`hover:underline ${
+            onSecundario
+              ? " bg-orange-100 mt-1 flex justify-between items-center"
+              : "text-black"
+          }`}
+        >
+          {Titulo} {onSecundario && <MdClose />}
         </Botao>
       )}
     </>
@@ -126,25 +146,6 @@ const Button = ({
 
 export const Empresa = () => {
   const { empresa } = useGlobalContext();
-  const [empregadorState, setEmpregadorState] = useState({});
-  const [empresaSelecionada, setEmpresaSelecionada] = useState(null);
-
-  const handleClickEmpregador = (id) => {
-    // Primeiro, crie um novo objeto onde todas as chaves são definidas como false
-    const novoEstado = Object.keys(empregadorState).reduce((obj, key) => {
-      obj[key] = false;
-      return obj;
-    }, {});
-
-    // Em seguida, defina o estado do empregador clicado como true
-    novoEstado[id] = true;
-    novoEstado[id] = !empregadorState[id];
-
-    // Finalmente, atualize o estado
-    setEmpregadorState(novoEstado);
-    setEmpresaSelecionada(id);
-  };
-
   const [state, setState] = useState({
     Prestadores: false,
     funcionarios: false,
@@ -160,11 +161,6 @@ export const Empresa = () => {
     addNotaF: false,
     addPedido: false,
     addContrato: false,
-    alimentacao: false,
-    cargos: false,
-    ferramentas: false,
-    uniformes: false,
-    visualizar: false,
 
     //Botões Terciarios
     verNota: false,
@@ -173,8 +169,45 @@ export const Empresa = () => {
     verFunciAdmitido: false,
     verFunciDemitido: false,
   });
+  const [empregadorState, setEmpregadorState] = useState({});
+  const [empresaSelecionada, setEmpresaSelecionada] = useState(null);
 
-  const handleClick = (key) => {
+  const ButtomPrimarioEmpregador = (id) => {
+    // Primeiro, crie um novo objeto onde todas as chaves são definidas como false
+    const novoEstado = Object.keys(empregadorState).reduce((obj, key) => {
+      obj[key] = false;
+      setState((prevState) => ({
+        ...prevState,
+        [key]: !prevState[key],
+        ...(key !== "verPedidos" && { verPedidos: false }),
+        ...(key !== "verContrato" && { verContrato: false }),
+      }));
+      return obj;
+    }, {});
+
+    // Em seguida, defina o estado do empregador clicado como true
+    novoEstado[id] = true;
+    novoEstado[id] = !empregadorState[id];
+
+    // Finalmente, atualize o estado
+    setEmpregadorState(novoEstado);
+    setEmpresaSelecionada(id);
+  };
+
+  const ButtomPrimario = (key) => {
+    setState((prevState) => ({
+      ...prevState,
+      [key]: !prevState[key],
+      ...(key !== "Prestadores" && { Prestadores: false }),
+      ...(key !== "funcionarios" && { funcionarios: false }),
+      ...(key !== "gasto" && { gasto: false }),
+      ...(key !== "transporte" && { transporte: false }),
+      ...(key !== "outros" && { outros: false }),
+      ...(key !== "empregador" && { empregador: false }),
+    }));
+  };
+
+  const ButtomSecundario = (key) => {
     setState((prevState) => ({
       ...prevState,
       [key]: !prevState[key],
@@ -191,8 +224,29 @@ export const Empresa = () => {
       ...(key !== "verFunciAdmitido" && { verFunciAdmitido: false }),
       ...(key !== "verFunciDemitido" && { verFunciDemitido: false }),
       ...(key !== "alimentacao" && { alimentacao: false }),
-      ...(key !== "cargos" && { cargos: false }),
-      ...(key !== "ferramentas" && { ferramentas: false }),
+      ...(key !== "uniformes" && { uniformes: false }),
+      ...(key !== "visualizar" && { visualizar: false }),
+      ...(key !== "outros" && { outros: false, icon: false }),
+    }));
+  };
+
+  const ButtomTerciario = (key) => {
+    setState((prevState) => ({
+      ...prevState,
+      [key]: !prevState[key],
+      ...(key !== "resumoMensal" && { resumoMensal: false }),
+      ...(key !== "empregadorState" && { empregadorState: false }),
+      ...(key !== "addEmpresa" && { addEmpresa: false }),
+      ...(key !== "addFuncionarios" && { addFuncionarios: false }),
+      ...(key !== "addNotaF" && { addNotaF: false }),
+      ...(key !== "addPedido" && { addPedido: false }),
+      ...(key !== "addContrato" && { addContrato: false }),
+      ...(key !== "verNota" && { verNota: false }),
+      ...(key !== "verPedidos" && { verPedidos: false }),
+      ...(key !== "verContrato" && { verContrato: false }),
+      ...(key !== "verFunciAdmitido" && { verFunciAdmitido: false }),
+      ...(key !== "verFunciDemitido" && { verFunciDemitido: false }),
+      ...(key !== "alimentacao" && { alimentacao: false }),
       ...(key !== "uniformes" && { uniformes: false }),
       ...(key !== "visualizar" && { visualizar: false }),
       ...(key !== "outros" && { outros: false, icon: false }),
@@ -208,14 +262,17 @@ export const Empresa = () => {
         <Nav>
           <Div className="overflow-auto max-w-[20em] min-w-[13em]">
             <nav className="flex flex-col justify-center ">
-              <div className="w-full text-center bg-orange-500 rounded-full py-1 font-bold text-xl">Empresa</div>
+              <div className="w-full text-center bg-orange-400 rounded-full py-1 font-bold text-xl">
+                Empresa
+              </div>
 
               <Button
                 TipoButton={1}
                 Titulo={"Prestadores"}
                 onPrimario={state.Prestadores}
-                onClick={() => handleClick("Prestadores")}
+                onClick={() => ButtomPrimario("Prestadores")}
               ></Button>
+
               {state.Prestadores && (
                 <Tabela>
                   {empresa.map((empresa) => (
@@ -223,26 +280,26 @@ export const Empresa = () => {
                       <Button
                         TipoButton={2}
                         Titulo={empresa.siglaEmpresa}
-                        onSecundario={empregadorState[empresa.id]}
-                        onClick={() => handleClickEmpregador(empresa.id)}
+                        onTerceiro={empregadorState[empresa.id]}
+                        onClick={() => ButtomPrimarioEmpregador(empresa.id)}
                       ></Button>
                       {empregadorState[empresa.id] && (
                         <TabelaSecund>
                           <Button TipoButton={3} Titulo={"Serviços"}></Button>
 
                           <Button
-                            TipoButton={2}
+                            TipoButton={3}
                             Titulo={"Notas Fiscais"}
                             onSecundario={state.verNota}
-                            onClick={() => handleClick("verNota")}
+                            onClick={() => ButtomTerciario("verNota")}
                           ></Button>
 
                           {empresa.situacaoEmpresa === "Contrato" ? null : (
                             <Button
-                              TipoButton={2}
+                              TipoButton={3}
                               Titulo={"Pedidos"}
                               onSecundario={state.verPedidos}
-                              onClick={() => handleClick("verPedidos")}
+                              onClick={() => ButtomTerciario("verPedidos")}
                             ></Button>
                           )}
 
@@ -258,34 +315,34 @@ export const Empresa = () => {
                     TipoButton={2}
                     Titulo={"Resumo Mensal"}
                     onSecundario={state.resumoMensal}
-                    onClick={() => handleClick("resumoMensal")}
+                    onClick={() => ButtomSecundario("resumoMensal")}
                   ></Button>
                   <Button
                     TipoButton={2}
                     Titulo={"Adcionar Pedido"}
                     onSecundario={state.addPedido}
-                    onClick={() => handleClick("addPedido")}
+                    onClick={() => ButtomSecundario("addPedido")}
                   ></Button>
 
                   <Button
                     TipoButton={2}
                     Titulo={"Adcionar Contrato"}
                     onSecundario={state.addContrato}
-                    onClick={() => handleClick("addContrato")}
+                    onClick={() => ButtomSecundario("addContrato")}
                   ></Button>
 
                   <Button
                     TipoButton={2}
                     Titulo={"Adicionar NF"}
                     onSecundario={state.addNotaF}
-                    onClick={() => handleClick("addNotaF")}
+                    onClick={() => ButtomSecundario("addNotaF")}
                   ></Button>
 
                   <Button
                     TipoButton={2}
                     Titulo={"Adcionar Empresa"}
                     onFinal={state.addEmpresa}
-                    onClick={() => handleClick("addEmpresa")}
+                    onClick={() => ButtomSecundario("addEmpresa")}
                   ></Button>
                 </Tabela>
               )}
@@ -294,7 +351,7 @@ export const Empresa = () => {
                 TipoButton={1}
                 Titulo={"Gastos & Ganhos"}
                 onPrimario={state.gasto}
-                onClick={() => handleClick("gasto")}
+                onClick={() => ButtomPrimario("gasto")}
               ></Button>
               {state.gasto && (
                 <Tabela>
@@ -310,7 +367,7 @@ export const Empresa = () => {
                 TipoButton={1}
                 Titulo={"Funcionarios"}
                 onPrimario={state.funcionarios}
-                onClick={() => handleClick("funcionarios")}
+                onClick={() => ButtomPrimario("funcionarios")}
               ></Button>
               {state.funcionarios && (
                 <Tabela>
@@ -318,19 +375,19 @@ export const Empresa = () => {
                     TipoButton={2}
                     Titulo={"Admitidos"}
                     onSecundario={state.verFunciAdmitido}
-                    onClick={() => handleClick("verFunciAdmitido")}
+                    onClick={() => ButtomSecundario("verFunciAdmitido")}
                   ></Button>
                   <Button
                     TipoButton={2}
                     Titulo={"Demitidos"}
                     onSecundario={state.verFunciDemitido}
-                    onClick={() => handleClick("verFunciDemitido")}
+                    onClick={() => ButtomSecundario("verFunciDemitido")}
                   ></Button>
                   <Button
                     TipoButton={2}
                     Titulo={"Adcionar Funcionario"}
                     onFinal={state.addFuncionarios}
-                    onClick={() => handleClick("addFuncionarios")}
+                    onClick={() => ButtomSecundario("addFuncionarios")}
                   ></Button>
                 </Tabela>
               )}
@@ -339,7 +396,7 @@ export const Empresa = () => {
                 TipoButton={1}
                 Titulo={"Transportes"}
                 onPrimario={state.transporte}
-                onClick={() => handleClick("transporte")}
+                onClick={() => ButtomPrimario("transporte")}
               ></Button>
               {state.transporte && (
                 <Tabela>
@@ -360,7 +417,10 @@ export const Empresa = () => {
                 Titulo={"Outros"}
                 onFinal={state.outros}
                 className="rounded-1em"
-                onClick={() => handleClick("outros")}
+                onClick={() => {
+                  ButtomPrimario("outros");
+                  ButtomSecundario("outros");
+                }}
               ></Button>
             </nav>
           </Div>
