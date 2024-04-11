@@ -61,7 +61,6 @@ export const Dashboard = () => {
     <>
       <Header>
         <Div className="w-full flex flex-col justify-center items-center">
-          <AlertConta></AlertConta>
         </Div>
       </Header>
     </>

@@ -386,7 +386,7 @@ export const MostruarioFuncAdmitido = () => {
       },
     };
 
-    if (diaAtual === 1 ) {
+    if (diaAtual === 1) {
       var TotalFaltas = 0;
       funcionario.forEach((funcionario) => {
         axios.put(
@@ -510,18 +510,54 @@ export const MostruarioFuncAdmitido = () => {
     const salarioTotal = func.salarioFucionario;
     const salarioDia = salarioTotal / 30;
     const salarioMes = salarioDia * 30;
-    const adiantamento = salarioMes * 0.4;
+    const procentagemAdiantamento = 0.4;
+    const adiantamento = salarioMes * procentagemAdiantamento; // 0.4 E IGUAL A PORCENTAGEM DE ADIANTAMENTO
 
     return total + adiantamento;
   }, 0);
 
-  const valorSalario = FuncionariosAdmitidos.reduce((total, func) => {
+  const impostoSalarioFGTS = impostos.find(
+    (imposto) => imposto.siglaImposto.toLowerCase() === "fgts"
+  );
+
+  let impostoFGTS = 0;
+  if (!impostoSalarioFGTS) {
+    impostoFGTS = 0;
+    toast.info("Imposto FGTS não encontrado, crie na pagina (OUTROS)!");
+  } else {
+    impostoFGTS = impostoSalarioFGTS.porcentagemImposto;
+  }
+
+  const fgtsSalario = FuncionariosAdmitidos.reduce((total, func) => {
     const salarioTotal = func.salarioFucionario;
     const salarioDia = salarioTotal / 30;
     const salarioMes = salarioDia * 30;
+    const descontoPorFalta = salarioDia * func.diasFaltas;
+    const salarioFunc = salarioMes - descontoPorFalta;
+    const inssSobSalario = salarioFunc * impostoFGTS;
 
+    return total + inssSobSalario;
+  }, 0);
+
+  const valorSalario = FuncionariosAdmitidos.reduce((total, func) => {
     return valorTotalSalario - adiantamentoSalario;
   }, 0);
+
+  function renderInfo(title, value) {
+    return (
+      <div>
+        <h1 className="col-span-1 text-center text-[1.3vw] xl:text-[0.8vw] font-bold">
+          {title}:
+        </h1>
+        <h1 className="col-span-1 text-center px-3 text-[1.3vw] xl:text-[0.8vw] ">
+          {Number(value.toFixed(2)).toLocaleString("pt-BR", {
+            style: "currency",
+            currency: "BRL",
+          })}
+        </h1>
+      </div>
+    );
+  }
 
   return (
     <Div>
@@ -1224,41 +1260,15 @@ export const MostruarioFuncAdmitido = () => {
       )}
 
       {funcionarioSelecionado || funcionarioEditar || carregando ? null : (
-        <div className="w-full px-3 pb-3 absolute bottom-0 left-0 ">
-          <table className="w-full bg-orange-600 drop-shadow-2xl rounded-2xl mb-1 sticky">
-            <thead className="grid grid-cols-6 justify-center items-center w-full rounded-b-lg drop-shadow-2xl text-lg py-1">
-              <th className="col-span-1 text-end text-[1.3vw] xl:text-[0.8vw]">
-                Salario Total do Mês:
-              </th>
-              <th className="col-span-1 text-start px-3 text-[1.3vw] xl:text-[0.8vw]">
-                {Number(valorTotalSalario.toFixed(2)).toLocaleString("pt-BR", {
-                  style: "currency",
-                  currency: "BRL",
-                })}
-              </th>
-              <th className="col-span-1 text-end text-[1.3vw] xl:text-[0.8vw]">
-                Adiantamento Total:
-              </th>
-              <th className="col-span-1 text-start px-3 text-[1.3vw] xl:text-[0.8vw]">
-                {Number(adiantamentoSalario.toFixed(2)).toLocaleString(
-                  "pt-BR",
-                  {
-                    style: "currency",
-                    currency: "BRL",
-                  }
-                )}
-              </th>
-              <th className="col-span-1 text-end text-[1.3vw] xl:text-[0.8vw]">
-                Salario Final Total:
-              </th>
-              <th className="col-span-1 text-start px-3 text-[1.3vw] xl:text-[0.8vw]">
-                {Number(valorSalario.toFixed(2)).toLocaleString("pt-BR", {
-                  style: "currency",
-                  currency: "BRL",
-                })}
-              </th>
-            </thead>
-          </table>
+        <div className="w-full px-3 pb-3 absolute bottom-0 left-0">
+          <div className="w-full bg-orange-600 drop-shadow-2xl rounded-2xl mb-1 sticky">
+            <div className="grid grid-cols-4 justify-center items-center w-full rounded-b-lg drop-shadow-2xl text-lg py-1">
+              {renderInfo("Total FGTS", fgtsSalario)}
+              {renderInfo("Salario Total do Mês", valorTotalSalario)}
+              {renderInfo("Adiantamento Total", adiantamentoSalario)}
+              {renderInfo("Salario Final Total", valorSalario)}
+            </div>
+          </div>
         </div>
       )}
     </Div>
