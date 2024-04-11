@@ -28,7 +28,6 @@ const Select = styled.select`
   width: 100%;
   border: 2px solid #d1d5db;
   border-radius: 4px;
-  max-width: 40em;
   padding-left: 8px;
   padding: 4px;
 `;
@@ -130,7 +129,7 @@ export const TabelaAddContrato = () => {
       <Header>Adcionar Contrato</Header>
 
       <Form onSubmit={sendContrato}>
-        <div className="grid grid-cols-4 grid-rows-1 items-start gap-x-4 ">
+        <div className="grid grid-cols-4 grid-rows-1 items-start gap-x-4 w-full">
           <H1 className="col-span-1">Numero*</H1>
           <H1 className="col-span-3">Nome do Contrato</H1>
 

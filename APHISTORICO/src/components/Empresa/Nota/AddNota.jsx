@@ -7,7 +7,6 @@ import { useGlobalContext } from "../../../global/Global";
 const Form = styled.form`
   height: 100%;
   width: 100%;
-
   gap: 3em;
   display: flex;
   flex-wrap: wrap;
@@ -25,8 +24,6 @@ const Select = styled.select`
   width: 100%;
   border: 2px solid #d1d5db;
   border-radius: 4px;
-  max-width: 40em;
-
 `;
 
 const Input = styled.input`
@@ -69,7 +66,8 @@ const Button = styled.button`
   }
 `;
 export const TabelaAddNota = () => {
-  const {ip, empresa, kinays, impostos, pedido, contrato } = useGlobalContext();
+  const { ip, empresa, kinays, impostos, pedido, contrato } =
+    useGlobalContext();
 
   const [data, setData] = useState({
     numeroPedidoNF: "",
@@ -176,7 +174,7 @@ export const TabelaAddNota = () => {
     const idEmpresa = data.idEmpresa === pedido.empresaPDD;
     return idEmpresa;
   });
-  
+
   const ContratoEmpresa = contrato.filter((contrato) => {
     const isEmpresaCorrespondente = contrato.empresaCT === data.idEmpresa;
 
@@ -205,7 +203,7 @@ export const TabelaAddNota = () => {
     }
 
     axios
-      .post(ip +"/nota", data, headers)
+      .post(ip + "/nota", data, headers)
       .then((response) => {
         toast.success(response.data.message);
         setData({
@@ -241,8 +239,8 @@ export const TabelaAddNota = () => {
       <Form onSubmit={sendNF}>
         <Header>Adcionar Nota Fiscal</Header>
 
-        <nav>
-          <div className=" grid grid-cols-4 gap-x-2">
+        <nav className="w-full">
+          <div className=" grid grid-cols-4 gap-x-2 w-full">
             <H1 className="col-span-4">Numero Nota*</H1>
 
             <Input

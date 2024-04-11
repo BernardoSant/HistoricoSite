@@ -1,7 +1,6 @@
 import styled from "styled-components";
 import { BsBuildings, BsHouse, BsList, BsPlus } from "react-icons/bs";
 import { Empresa } from "../components/Empresa/Pagina/Empresa";
-import { Casa } from "../components/Casa/Pagina/Casa";
 import { Dashboard } from "../components/Dashboard/Pagina/Dashboard";
 import { useState } from "react";
 import { TabelaConta } from "../Conta/Conta";
@@ -34,7 +33,6 @@ const Div = styled.div`
   font-size: 1.3em;
   display: flex;
   flex-direction: column;
-
 `;
 
 const Div2 = styled.div`
@@ -44,9 +42,7 @@ const Div2 = styled.div`
   transition: 200ms;
 `;
 
-
 export const Inicio = () => {
-
   const [state, setState] = useState({
     Inicio: true,
     Empresa: false,
@@ -80,7 +76,10 @@ export const Inicio = () => {
               className={`${
                 state.Inicio &&
                 "bg-[#fffafa] rounded-bl-[0.8em] rounded-tl-[0.8em] my-1 ml-1"
-              } cursor-pointer ${!state.Inicio && "hover:bg-[#fffafa] hover:rounded-full my-1 mx-1"}`}
+              } cursor-pointer ${
+                !state.Inicio &&
+                "hover:bg-[#fffafa] hover:rounded-full my-1 mx-1"
+              }`}
               onClick={() => handleClick("Inicio")}
             >
               <BsList />
@@ -90,12 +89,15 @@ export const Inicio = () => {
               className={`${
                 state.Empresa &&
                 "bg-[#fffafa] rounded-bl-[0.8em] rounded-tl-[0.8em] my-1 ml-1"
-              } cursor-pointer ${!state.Empresa && "hover:bg-[#fffafa] hover:rounded-full my-1 mx-1"}`}
+              } cursor-pointer ${
+                !state.Empresa &&
+                "hover:bg-[#fffafa] hover:rounded-full my-1 mx-1"
+              }`}
               onClick={() => handleClick("Empresa")}
             >
               <BsBuildings />
             </Div2>
-
+            {/*
             <Div2
               className={`${
                 state.Casa &&
@@ -105,12 +107,15 @@ export const Inicio = () => {
             >
               <BsHouse />
             </Div2>
-
+*/}
             <Div2
               className={`${
                 state.Conta &&
                 "bg-[#d6d6d6] rounded-bl-[0.8em] rounded-tl-[0.8em] my-1 ml-1"
-              } cursor-pointer ${!state.Conta && "hover:bg-[#fffafa] hover:rounded-full my-1 mx-1"}`}
+              } cursor-pointer ${
+                !state.Conta &&
+                "hover:bg-[#fffafa] hover:rounded-full my-1 mx-1"
+              }`}
               onClick={() => handleClick2("Conta")}
             >
               <BsPlus />
@@ -121,7 +126,6 @@ export const Inicio = () => {
 
         {state.Inicio && <Dashboard />}
         {state.Empresa && <Empresa />}
-        {state.Casa && <Casa />}
       </Header>
     </>
   );

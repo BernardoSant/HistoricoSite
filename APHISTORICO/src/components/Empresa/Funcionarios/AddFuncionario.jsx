@@ -194,7 +194,7 @@ export const TabelaAddFuncionario = () => {
       <Form onSubmit={sendFuncionario}>
         <Header>Adcionar Funcionario</Header>
 
-        <nav className="flex flex-col justify-center ">
+        <nav className="flex flex-col justify-center w-full">
           <div className=" grid grid-cols-5 gap-x-2">
             <H1 className="col-span-3">Nome*</H1>
             <H1 className="col-span-1">Data Nascimento*</H1>

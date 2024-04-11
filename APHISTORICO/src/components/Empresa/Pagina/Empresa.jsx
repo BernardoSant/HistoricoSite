@@ -47,15 +47,15 @@ const Div = styled.div`
   border-top-right-radius: 1em;
   padding-top: 1em;
   padding-bottom: 1em;
-  padding-left:1em;
-  padding-right:1em;
+  padding-left: 1em;
+  padding-right: 1em;
   font-size: medium;
   display: flex;
   flex-direction: column;
   gap: 0.5em;
   overflow-x: auto;
   z-index: 10;
-  
+
   &::-webkit-scrollbar {
     width: 5px;
   }
@@ -146,7 +146,7 @@ export const Empresa = () => {
   };
 
   const [state, setState] = useState({
-    empresa: false,
+    Prestadores: false,
     funcionarios: false,
     gasto: false,
     transporte: false,
@@ -208,13 +208,15 @@ export const Empresa = () => {
         <Nav>
           <Div className="overflow-auto max-w-[20em] min-w-[13em]">
             <nav className="flex flex-col justify-center ">
+              <div className="w-full text-center bg-orange-500 rounded-full py-1 font-bold text-xl">Empresa</div>
+
               <Button
                 TipoButton={1}
-                Titulo={"Empresas"}
-                onPrimario={state.empresa}
-                onClick={() => handleClick("empresa")}
+                Titulo={"Prestadores"}
+                onPrimario={state.Prestadores}
+                onClick={() => handleClick("Prestadores")}
               ></Button>
-              {state.empresa && (
+              {state.Prestadores && (
                 <Tabela>
                   {empresa.map((empresa) => (
                     <div key={empresa.id}>
@@ -287,7 +289,7 @@ export const Empresa = () => {
                   ></Button>
                 </Tabela>
               )}
-{/*
+              {/*
               <Button
                 TipoButton={1}
                 Titulo={"Gastos & Ganhos"}

@@ -139,7 +139,7 @@ export const TabelaAdicionarEmpresa = () => {
       <Form onSubmit={sendEmpresa}>
         <Header>Adcionar Empresa</Header>
 
-        <section className="grid grid-cols-4 gap-x-2">
+        <section className="grid grid-cols-4 gap-x-2 w-full">
           <H1 className="col-span-3">Nome*</H1>
 
           <H1 className="col-span-1">Sigla*</H1>

@@ -28,7 +28,6 @@ const Select = styled.select`
   width: 100%;
   border: 2px solid #d1d5db;
   border-radius: 4px;
-  max-width: 40em;
   padding-left: 8px;
   padding: 4px;
 `;
@@ -74,9 +73,7 @@ const Button = styled.button`
 `;
 
 export const TabelaAddPedido = () => {
-  const {ip, empresa } = useGlobalContext();
-
-  const filtroEmpresa = empresa.filter;
+  const { ip, empresa } = useGlobalContext();
 
   const [data, setData] = useState({
     numeroPDD: "",
@@ -133,7 +130,7 @@ export const TabelaAddPedido = () => {
       <Header>Adcionar Pedido</Header>
 
       <Form onSubmit={sendPedido}>
-        <div className="grid grid-cols-4 grid-rows-1 items-start gap-x-4 ">
+        <div className="grid grid-cols-4 grid-rows-1 items-start gap-x-4 w-full">
           <H1 className="col-span-1">Numero*</H1>
           <H1 className="col-span-1">Valor Total</H1>
           <H1 className="col-span-2">Nome Breve</H1>
