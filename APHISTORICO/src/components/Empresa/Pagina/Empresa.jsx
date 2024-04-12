@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { MdOutlineHomeWork } from "react-icons/md";
 import styled from "styled-components";
 import { TabelaAdicionarEmpresa } from "../Prestadores/AddEmpresa";
 import { MostruarioNota } from "../Nota/MtrNota";
@@ -117,7 +118,9 @@ const Button = ({
               ? " bg-orange-300 mt-1 flex justify-between items-center"
               : "text-black"
           } ${
-            onFinal ? "text-gray-200 bg-orange-400 mt-1 rounded-b-[20px]" : ""
+            onFinal
+              ? "bg-orange-300 mt-1 flex justify-between items-center rounded-b-[20px]"
+              : ""
           } ${
             !onSecundario && !onFinal && !onTerceiro
               ? "hover:text-gray-300"
@@ -135,9 +138,13 @@ const Button = ({
             onSecundario
               ? " bg-orange-100 mt-1 flex justify-between items-center"
               : "text-black"
+          } ${
+            onFinal
+              ? "bg-orange-100 mt-1 flex justify-between items-center rounded-b-[0.5em]"
+              : ""
           }`}
         >
-          {Titulo} {onSecundario && <MdClose />}
+          {Titulo} {onSecundario || onFinal ? <MdClose /> : null}
         </Botao>
       )}
     </>
@@ -153,6 +160,7 @@ export const Empresa = () => {
     transporte: false,
     outros: false,
     empregador: false,
+    Dashboard: true,
 
     //Botões Secundarios
     resumoMensal: false,
@@ -202,15 +210,15 @@ export const Empresa = () => {
       ...(key !== "funcionarios" && { funcionarios: false }),
       ...(key !== "gasto" && { gasto: false }),
       ...(key !== "transporte" && { transporte: false }),
-      ...(key !== "outros" && { outros: false }),
       ...(key !== "empregador" && { empregador: false }),
+      ...(!key && { Dashboard: true }),
     }));
   };
 
   const ButtomSecundario = (key) => {
     setState((prevState) => ({
       ...prevState,
-      [key]: !prevState[key],
+      [key]: true,
       ...(key !== "resumoMensal" && { resumoMensal: false }),
       ...(key !== "empregadorState" && { empregadorState: false }),
       ...(key !== "addEmpresa" && { addEmpresa: false }),
@@ -226,14 +234,15 @@ export const Empresa = () => {
       ...(key !== "alimentacao" && { alimentacao: false }),
       ...(key !== "uniformes" && { uniformes: false }),
       ...(key !== "visualizar" && { visualizar: false }),
-      ...(key !== "outros" && { outros: false, icon: false }),
+      ...(key !== "outros" && { outros: false }),
+      ...(key !== "Dashboard" && { Dashboard: false }),
     }));
   };
 
   const ButtomTerciario = (key) => {
     setState((prevState) => ({
       ...prevState,
-      [key]: !prevState[key],
+      [key]: true,
       ...(key !== "resumoMensal" && { resumoMensal: false }),
       ...(key !== "empregadorState" && { empregadorState: false }),
       ...(key !== "addEmpresa" && { addEmpresa: false }),
@@ -249,7 +258,8 @@ export const Empresa = () => {
       ...(key !== "alimentacao" && { alimentacao: false }),
       ...(key !== "uniformes" && { uniformes: false }),
       ...(key !== "visualizar" && { visualizar: false }),
-      ...(key !== "outros" && { outros: false, icon: false }),
+      ...(key !== "outros" && { outros: false }),
+      ...(key !== "Dashboard" && { Dashboard: false }),
     }));
   };
   // ordernar por tamanho de digito
@@ -262,9 +272,19 @@ export const Empresa = () => {
         <Nav>
           <Div className="overflow-auto max-w-[20em] min-w-[13em]">
             <nav className="flex flex-col justify-center ">
-              <div className="w-full text-center bg-orange-400 rounded-full py-1 font-bold text-xl">
+              <div className="relative w-full text-center bg-orange-400 rounded-full py-1 font-bold text-xl">
+                <p className="absolute left-0 top-0 ml-4 h-full flex justify-center items-center">
+                  <MdOutlineHomeWork />
+                </p>
                 Empresa
               </div>
+
+              <Button
+                TipoButton={1}
+                Titulo={"Dashboard"}
+                onFinal={state.Dashboard}
+                onClick={() => ButtomSecundario("Dashboard")}
+              ></Button>
 
               <Button
                 TipoButton={1}
@@ -285,8 +305,6 @@ export const Empresa = () => {
                       ></Button>
                       {empregadorState[empresa.id] && (
                         <TabelaSecund>
-                          <Button TipoButton={3} Titulo={"Serviços"}></Button>
-
                           <Button
                             TipoButton={3}
                             Titulo={"Notas Fiscais"}
@@ -294,18 +312,36 @@ export const Empresa = () => {
                             onClick={() => ButtomTerciario("verNota")}
                           ></Button>
 
-                          {empresa.situacaoEmpresa === "Contrato" ? null : (
+                          {empresa.situacaoEmpresa === "Contrato" ? (
                             <Button
                               TipoButton={3}
-                              Titulo={"Pedidos"}
-                              onSecundario={state.verPedidos}
-                              onClick={() => ButtomTerciario("verPedidos")}
+                              Titulo={"Adcionar Contrato"}
+                              onSecundario={state.addContrato}
+                              onClick={() => ButtomSecundario("addContrato")}
                             ></Button>
+                          ) : (
+                            <>
+                              <Button
+                                TipoButton={3}
+                                Titulo={"Pedidos"}
+                                onSecundario={state.verPedidos}
+                                onClick={() => ButtomTerciario("verPedidos")}
+                              ></Button>
+
+                              <Button
+                                TipoButton={3}
+                                Titulo={"Adcionar Pedido"}
+                                onSecundario={state.addPedido}
+                                onClick={() => ButtomSecundario("addPedido")}
+                              ></Button>
+                            </>
                           )}
 
                           <Button
                             TipoButton={3}
-                            Titulo={"Funcionario Cadastrado"}
+                            Titulo={"Adicionar NF"}
+                            onFinal={state.addNotaF}
+                            onClick={() => ButtomSecundario("addNotaF")}
                           ></Button>
                         </TabelaSecund>
                       )}
@@ -316,26 +352,6 @@ export const Empresa = () => {
                     Titulo={"Resumo Mensal"}
                     onSecundario={state.resumoMensal}
                     onClick={() => ButtomSecundario("resumoMensal")}
-                  ></Button>
-                  <Button
-                    TipoButton={2}
-                    Titulo={"Adcionar Pedido"}
-                    onSecundario={state.addPedido}
-                    onClick={() => ButtomSecundario("addPedido")}
-                  ></Button>
-
-                  <Button
-                    TipoButton={2}
-                    Titulo={"Adcionar Contrato"}
-                    onSecundario={state.addContrato}
-                    onClick={() => ButtomSecundario("addContrato")}
-                  ></Button>
-
-                  <Button
-                    TipoButton={2}
-                    Titulo={"Adicionar NF"}
-                    onSecundario={state.addNotaF}
-                    onClick={() => ButtomSecundario("addNotaF")}
                   ></Button>
 
                   <Button
@@ -418,7 +434,6 @@ export const Empresa = () => {
                 onFinal={state.outros}
                 className="rounded-1em"
                 onClick={() => {
-                  ButtomPrimario("outros");
                   ButtomSecundario("outros");
                 }}
               ></Button>
@@ -426,6 +441,8 @@ export const Empresa = () => {
           </Div>
         </Nav>
         <Div className="w-full h-full relative rounded-[1em]">
+          {state.Dashboard && <ResumoEmpresa />}
+
           {state.addContrato && <TabelaAddContrato />}
 
           {state.resumoMensal && <ResumoEmpresa />}

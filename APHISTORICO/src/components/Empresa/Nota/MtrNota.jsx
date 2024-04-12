@@ -1,6 +1,9 @@
 import styled from "styled-components";
 import { useGlobalContext } from "../../../global/Global";
 import { BiCategory } from "react-icons/bi";
+import { RiSaveLine } from "react-icons/ri";
+import { AiOutlineClose } from "react-icons/ai";
+import { TiCancel } from "react-icons/ti";
 import { useState, useEffect } from "react";
 import axios from "axios";
 import { toast } from "react-toastify";
@@ -18,8 +21,8 @@ const Div = styled.div`
 const Article = styled.article`
   width: 100%;
   max-height: 20em;
+  margin-top: 4px;
   overflow: auto;
-  border-radius: 1em;
   overflow-y: auto;
   position: relative;
 
@@ -48,7 +51,12 @@ const Header = styled.header`
   padding-right: 1em;
 `;
 
-const Th = styled.th``;
+const Th = styled.div`
+  font-weight: 600;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+`;
 
 const Input = styled.input`
   width: 100%;
@@ -74,6 +82,12 @@ const H1 = styled.h1`
 const H2 = styled.h1`
   font-weight: 500;
   margin-top: 5px;
+  background-color: #d1d5db7d;
+  padding-left: 7px;
+  padding-right: 7px;
+  padding-top: 2px;
+  padding-bottom: 2px;
+  border-radius: 4px;
 `;
 
 const H4 = styled.h1`
@@ -109,7 +123,7 @@ export const MostruarioNota = ({ empresaId }) => {
       const anoAtual = dataAtual.getFullYear();
 
       setAno(anoAtual);
-    }, 600000); 
+    }, 600000);
 
     return () => clearInterval(intervalId);
   }, []);
@@ -268,6 +282,72 @@ export const MostruarioNota = ({ empresaId }) => {
     return ctt;
   });
 
+  const [stateContrato, setStateContrat] = useState({
+    contratoAtualizado: false,
+    AlertaContrato: false,
+  });
+
+  const ButtomContrato = (key) => {
+    setStateContrat((prevState) => ({
+      ...prevState,
+      [key]: !prevState[key],
+    }));
+  };
+
+  const [dataContrato, setDataContrato] = useState({
+    ValorCT: "",
+    DataCT: "",
+  });
+
+  const InputContrato = (e) => {
+    var Valor = e.target.value;
+    setDataContrato({ ...dataContrato, [e.target.name]: Valor });
+  };
+
+  const sendContrato = (NumeroContrato) => {
+    var ValorContrato = dataContrato.ValorCT;
+    var DataContrato = dataContrato.DataCT;
+
+    const headers = {
+      headers: {
+        "Content-Type": "application/json",
+      },
+    };
+
+    axios
+      .put(
+        ip + "/contrato/" + NumeroContrato,
+        { ValorCT: ValorContrato, dataCT: DataContrato },
+        headers
+      )
+      .then((response) => {
+        setDataContrato({
+          ValorCT: "",
+          DataCT: "",
+        });
+        toast.success(response.data.message);
+        ButtomContrato("contratoAtualizado");
+      });
+  };
+
+  const deletContrato = (NumeroContrato) => {
+    const headers = {
+      headers: {
+        "Content-Type": "application/json",
+      },
+    };
+
+    axios
+      .put(
+        ip + "/contrato/" + NumeroContrato,
+        { situacaoCT: "Inativo" },
+        headers
+      )
+      .then((response) => {
+        toast.success(response.data.message);
+      });
+  };
+
   return (
     <>
       <Div>
@@ -281,8 +361,9 @@ export const MostruarioNota = ({ empresaId }) => {
                 Voltar
               </h1>
             </button>
+
             <form onSubmit={updateNota}>
-              <div className=" grid grid-cols-4 gap-x-2">
+              <div className=" grid grid-cols-4 gap-x-2  w-full">
                 <H1 className="col-span-1">Numero Nota</H1>
                 <H1 className="col-span-3">Numero Pedido</H1>
                 <H2 className="col-span-1">
@@ -408,7 +489,7 @@ export const MostruarioNota = ({ empresaId }) => {
               </h1>
             </button>
 
-            <div className=" grid grid-cols-4 gap-x-2">
+            <div className="grid grid-cols-4 gap-x-2 w-full">
               <H1 className="col-span-1">Numero Nota</H1>
               <H1 className="col-span-3">Numero Pedido</H1>
               <H2 className="col-span-1">
@@ -502,38 +583,114 @@ export const MostruarioNota = ({ empresaId }) => {
             </Header>
             {contratoAtualizado.length > 0 ? (
               <>
-                <table className="w-full bg-orange-500 drop-shadow-2xl rounded-2xl mb-1 ">
-                  <thead className="flex justify-between items-center px-4">
+                <div className="w-full bg-orange-500 drop-shadow-2xl rounded-2xl mb-1 ">
+                  <div className="flex justify-between items-center px-4">
                     <Th className="text-start text-2xl pt-1">Contrato</Th>
-                  </thead>
-                  <thead className="grid grid-cols-5 justify-center items-center w-full rounded-b-lg drop-shadow-2xl text-lg pb-1">
+                  </div>
+                  <div className="grid grid-cols-5 justify-center items-center w-full rounded-b-lg drop-shadow-2xl text-lg pb-1">
                     <Th className="col-span-1">N° Contrato</Th>
                     <Th className="col-span-1">Situação</Th>
                     <Th className="col-span-1">Valor</Th>
                     <Th className="col-span-1">Recebido</Th>
                     <Th className="col-span-1">Data</Th>
-                  </thead>
-                </table>
+                  </div>
+                </div>
 
                 <Article className="min-h-[6vh]">
                   <Div>
                     {contratoAtualizado.map((ctt) => {
+                      let data = new Date(ctt.dataCT);
+                      data.setDate(data.getDate() + 1);
+                      let opcoes = {
+                        day: "2-digit",
+                        month: "2-digit",
+                        year: "numeric",
+                      };
+                      let dataFormatada = data.toLocaleDateString(
+                        "pt-BR",
+                        opcoes
+                      );
                       return (
                         <div key={ctt.id} className="w-full">
-                          <thead
+                          <div className="relative w-auto flex justify-end ml-2">
+                            {stateContrato.contratoAtualizado ? (
+                              <span
+                                className="absolute h-6 w-6 mt-7 rounded-full bg-gray-400 flex justify-center items-center cursor-pointer "
+                                onClick={() => {
+                                  sendContrato(ctt.numeroCT);
+                                }}
+                              >
+                                <RiSaveLine />
+                              </span>
+                            ) : null}
+
+                            {!stateContrato.contratoAtualizado && (
+                              <span
+                                className="absolute h-6 w-6 mt-10 rounded-full bg-red-500 flex justify-center items-center cursor-pointer "
+                                onClick={() => {
+                                  deletContrato(ctt.numeroCT);
+                                }}
+                              >
+                                <TiCancel />
+                              </span>
+                            )}
+
+                            {ctt.situacaoCT === "Ativo" ? (
+                              <span
+                                className={`absolute h-6 w-6 rounded-full  flex justify-center items-center cursor-pointer ${
+                                  stateContrato.contratoAtualizado
+                                    ? "bg-red-500"
+                                    : "bg-orange-500"
+                                }`}
+                                onClick={() =>
+                                  ButtomContrato("contratoAtualizado")
+                                }
+                              >
+                                {stateContrato.contratoAtualizado ? (
+                                  <AiOutlineClose />
+                                ) : (
+                                  <BiCategory />
+                                )}
+                              </span>
+                            ) : null}
+                          </div>
+                          <div
                             key={nota.id}
                             className="grid grid-cols-5 justify-center items-center shadow-inner bg-gray-200 rounded-2xl p-2 my-2"
                           >
                             <Th className="col-span-1">{ctt.numeroCT}</Th>
 
-                            <Th className="col-span-1">{ctt.situacaoCT}</Th>
-
-                            <Th className="col-span-1">
-                              {Number(ctt.ValorCT).toLocaleString("pt-BR", {
-                                style: "currency",
-                                currency: "BRL",
-                              })}
+                            <Th className="col-span-1 flex">
+                              <p
+                                className={`px-5 rounded-[1em] ${
+                                  ctt.situacaoCT === "Ativo"
+                                    ? "bg-green-500"
+                                    : "bg-red-500"
+                                }`}
+                              >
+                                {ctt.situacaoCT}
+                              </p>
                             </Th>
+
+                            {stateContrato.contratoAtualizado ? (
+                              <div className="flex gap-4 justify-center items-center">
+                                <input
+                                  className="border-2 border-gray-500 rounded-[1em] text-center p-[3px]"
+                                  type="text"
+                                  placeholder="10000.00"
+                                  onChange={InputContrato}
+                                  name="ValorCT"
+                                  value={dataContrato.ValorCT}
+                                />
+                              </div>
+                            ) : (
+                              <Th className="col-span-1 p-[5px]">
+                                {Number(ctt.ValorCT).toLocaleString("pt-BR", {
+                                  style: "currency",
+                                  currency: "BRL",
+                                })}
+                              </Th>
+                            )}
 
                             <Th className="col-span-1">
                               {Number(ctt.ValorRecebidoCT).toLocaleString(
@@ -545,8 +702,20 @@ export const MostruarioNota = ({ empresaId }) => {
                               )}
                             </Th>
 
-                            <Th className="col-span-1">{ctt.dataCT}</Th>
-                          </thead>
+                            {stateContrato.contratoAtualizado ? (
+                              <div className="flex justify-center items-center">
+                                <input
+                                  className="border-2 w-32 border-gray-500 rounded-[1em] text-center p-[3px]"
+                                  type="date"
+                                  onChange={InputContrato}
+                                  name="DataCT"
+                                  value={dataContrato.DataCT}
+                                />
+                              </div>
+                            ) : (
+                              <Th className="col-span-1">{dataFormatada}</Th>
+                            )}
+                          </div>
                         </div>
                       );
                     })}
@@ -557,12 +726,12 @@ export const MostruarioNota = ({ empresaId }) => {
 
             {notasDaEmpresaAnalise.length > 0 ? (
               <>
-                <table className="w-full bg-orange-500 drop-shadow-2xl rounded-2xl mb-1 ">
-                  <thead className="flex justify-between items-center px-4">
+                <div className="w-full bg-orange-500 drop-shadow-2xl rounded-2xl mb-1 ">
+                  <div className="flex justify-between items-center px-4">
                     <Th className="text-start text-2xl pt-1">
                       Notas em Analise
                     </Th>
-                    <nav className="bg-orange-600 px-3 rounded-full shadow-inner">
+                    <nav className="bg-orange-600 px-3 rounded-full shadow-inner flex">
                       <Th className="text-lg text-end pr-2">
                         Valor a Receber:{" "}
                       </Th>
@@ -573,22 +742,33 @@ export const MostruarioNota = ({ empresaId }) => {
                         )}
                       </Th>
                     </nav>
-                  </thead>
-                  <thead className="grid grid-cols-7 justify-center items-center w-full rounded-b-lg drop-shadow-2xl text-lg pb-1">
+                  </div>
+                  <div className="grid grid-cols-7 justify-center items-center w-full rounded-b-lg drop-shadow-2xl text-lg pb-1">
                     <Th className="col-span-1">N° Pedido</Th>
                     <Th className="col-span-1">N° Nota</Th>
                     <Th className="col-span-2">Situação</Th>
                     <Th className="col-span-1">A Receber</Th>
                     <Th className="col-span-1">Recebido</Th>
                     <Th className="col-span-1">Data</Th>
-                  </thead>
-                </table>
+                  </div>
+                </div>
 
                 <Article>
                   {notasDaEmpresaAnalise.map((nota) => {
+                    let data = new Date(nota.dataNF);
+                    data.setDate(data.getDate() + 1);
+                    let opcoes = {
+                      day: "2-digit",
+                      month: "2-digit",
+                      year: "numeric",
+                    };
+                    let dataFormatada = data.toLocaleDateString(
+                      "pt-BR",
+                      opcoes
+                    );
                     return (
                       <div key={nota.id}>
-                        <thead className="relative w-auto flex justify-end ml-2">
+                        <div className="relative w-auto flex justify-end ml-2">
                           <span
                             className="absolute h-6 w-6 rounded-full bg-orange-500 flex justify-center items-center cursor-pointer "
                             onClick={() => {
@@ -597,8 +777,8 @@ export const MostruarioNota = ({ empresaId }) => {
                           >
                             <BiCategory />
                           </span>
-                        </thead>
-                        <thead
+                        </div>
+                        <div
                           key={nota.id}
                           className="grid grid-cols-7 justify-center items-center shadow-inner bg-gray-200 rounded-2xl p-2 my-2"
                         >
@@ -622,8 +802,8 @@ export const MostruarioNota = ({ empresaId }) => {
                               { style: "currency", currency: "BRL" }
                             )}
                           </Th>
-                          <Th className="col-span-1">{nota.dataNF}</Th>
-                        </thead>
+                          <Th className="col-span-1">{dataFormatada}</Th>
+                        </div>
                       </div>
                     );
                   })}
@@ -633,12 +813,12 @@ export const MostruarioNota = ({ empresaId }) => {
 
             {notasDaEmpresaRecebida.length > 0 ? (
               <>
-                <table className="w-full bg-orange-500 drop-shadow-2xl rounded-2xl ">
-                  <thead className="flex justify-between items-center px-4">
+                <div className="w-full bg-orange-500 drop-shadow-2xl rounded-2xl ">
+                  <div className="flex justify-between items-center px-4">
                     <Th className="text-start text-2xl pt-1">
                       Notas Recebidas
                     </Th>
-                    <nav className="bg-orange-600 px-3 rounded-full shadow-inner">
+                    <nav className="bg-orange-600 px-3 rounded-full shadow-inner flex">
                       <Th className="text-lg text-end pr-2">
                         Valor Recebido:{" "}
                       </Th>
@@ -649,23 +829,35 @@ export const MostruarioNota = ({ empresaId }) => {
                         )}
                       </Th>
                     </nav>
-                  </thead>
+                  </div>
 
-                  <thead className="grid grid-cols-7 justify-center items-center w-full rounded-b-lg drop-shadow-2xl text-lg pb-1">
+                  <div className="grid grid-cols-7 justify-center items-center w-full rounded-b-lg drop-shadow-2xl text-lg pb-1">
                     <Th className="col-span-1">N° Pedido</Th>
                     <Th className="col-span-1">N° Nota</Th>
                     <Th className="col-span-2">Situação</Th>
                     <Th className="col-span-1">A Receber</Th>
                     <Th className="col-span-1">Recebido</Th>
                     <Th className="col-span-1">Data</Th>
-                  </thead>
-                </table>
+                  </div>
+                </div>
 
-                <Article className="w-full max-h-[20em] overflow-auto mt-2 rounded-[1em]">
+                <Article>
                   {notasDaEmpresaRecebida.map((nota) => {
+                    let data = new Date(nota.dataNF);
+                    data.setDate(data.getDate() + 1);
+                    let opcoes = {
+                      day: "2-digit",
+                      month: "2-digit",
+                      year: "numeric",
+                    };
+                    let dataFormatada = data.toLocaleDateString(
+                      "pt-BR",
+                      opcoes
+                    );
+
                     return (
                       <>
-                        <thead className="relative w-auto flex justify-end ml-2">
+                        <div className="relative w-auto flex justify-end ml-2">
                           <span
                             className="absolute h-6 w-6 rounded-full bg-gray-400 flex justify-center items-center cursor-pointer "
                             onClick={() => {
@@ -674,8 +866,8 @@ export const MostruarioNota = ({ empresaId }) => {
                           >
                             <BiCategory />
                           </span>
-                        </thead>
-                        <thead
+                        </div>
+                        <div
                           key={nota.id}
                           className="w-full grid grid-cols-7 justify-center items-center shadow-inner bg-gray-200 rounded-2xl p-2 my-2"
                         >
@@ -699,8 +891,8 @@ export const MostruarioNota = ({ empresaId }) => {
                               { style: "currency", currency: "BRL" }
                             )}
                           </Th>
-                          <Th className="col-span-1">{nota.dataNF}</Th>
-                        </thead>
+                          <Th className="col-span-1">{dataFormatada}</Th>
+                        </div>
                       </>
                     );
                   })}
@@ -710,12 +902,12 @@ export const MostruarioNota = ({ empresaId }) => {
 
             {notasDaEmpresaAntecipada.length > 0 ? (
               <>
-                <table className="w-full bg-orange-500 drop-shadow-2xl rounded-2xl">
-                  <thead className="flex justify-between items-center px-4">
+                <div className="w-full bg-orange-500 drop-shadow-2xl rounded-2xl">
+                  <div className="flex justify-between items-center px-4">
                     <Th className="text-start text-2xl pt-1">
                       Notas Antecipadas
                     </Th>
-                    <nav className="bg-orange-600 px-3 rounded-full shadow-inner">
+                    <nav className="bg-orange-600 px-3 rounded-full shadow-inner flex">
                       <Th className="text-lg text-end pr-2">
                         Valor Recebido:{" "}
                       </Th>
@@ -726,23 +918,34 @@ export const MostruarioNota = ({ empresaId }) => {
                         )}
                       </Th>
                     </nav>
-                  </thead>
+                  </div>
 
-                  <thead className="grid grid-cols-7 justify-center items-center w-full rounded-b-lg drop-shadow-2xl text-lg pb-1">
+                  <div className="grid grid-cols-7 justify-center items-center w-full rounded-b-lg drop-shadow-2xl text-lg pb-1">
                     <Th className="col-span-1">N° Pedido</Th>
                     <Th className="col-span-1">N° Nota</Th>
                     <Th className="col-span-2">Situação</Th>
                     <Th className="col-span-1">A Receber</Th>
                     <Th className="col-span-1">Recebido</Th>
                     <Th className="col-span-1">Data</Th>
-                  </thead>
-                </table>
+                  </div>
+                </div>
 
                 <Article>
                   {notasDaEmpresaAntecipada.map((nota) => {
+                    let data = new Date(nota.dataNF);
+                    data.setDate(data.getDate() + 1);
+                    let opcoes = {
+                      day: "2-digit",
+                      month: "2-digit",
+                      year: "numeric",
+                    };
+                    let dataFormatada = data.toLocaleDateString(
+                      "pt-BR",
+                      opcoes
+                    );
                     return (
                       <>
-                        <thead className="relative w-auto flex justify-end ml-2">
+                        <div className="relative w-auto flex justify-end ml-2">
                           <span
                             className="absolute h-6 w-6 rounded-full bg-gray-400 flex justify-center items-center cursor-pointer "
                             onClick={() => {
@@ -751,8 +954,8 @@ export const MostruarioNota = ({ empresaId }) => {
                           >
                             <BiCategory />
                           </span>
-                        </thead>
-                        <thead
+                        </div>
+                        <div
                           key={nota.id}
                           className="grid grid-cols-7 justify-center items-center shadow-inner bg-gray-200 rounded-2xl p-2 my-2"
                         >
@@ -776,8 +979,8 @@ export const MostruarioNota = ({ empresaId }) => {
                               { style: "currency", currency: "BRL" }
                             )}
                           </Th>
-                          <Th className="col-span-1">{nota.dataNF}</Th>
-                        </thead>
+                          <Th className="col-span-1">{dataFormatada}</Th>
+                        </div>
                       </>
                     );
                   })}
@@ -786,26 +989,31 @@ export const MostruarioNota = ({ empresaId }) => {
             ) : null}
 
             <div className="w-full px-3 pb-3 absolute bottom-0 left-0">
-              <table className="w-full bg-orange-600 drop-shadow-2xl rounded-2xl mb-1 sticky">
-                <thead className="grid grid-cols-4 justify-center items-center w-full rounded-b-lg drop-shadow-2xl text-lg py-1">
-                  <Th className="col-span-1 text-end">Valor Recebido:</Th>
-                  <Th className="col-span-1 text-start px-3">
-                    {Number(valorTotal).toLocaleString("pt-BR", {
-                      style: "currency",
-                      currency: "BRL",
-                    })}
-                  </Th>
-                  <Th className="col-span-1 text-end">A Receber:</Th>
-                  <Th className="col-span-1 text-start px-3">
-                    {Number(valorTotalNotasAnalise).toLocaleString("pt-BR", {
-                      style: "currency",
-                      currency: "BRL",
-                    })}
-                  </Th>
-                </thead>
-              </table>
+              <div className="w-full bg-orange-600 drop-shadow-2xl rounded-2xl mb-1 sticky">
+                <div className="flex justify-around items-center w-full rounded-b-lg drop-shadow-2xl text-lg py-1">
+                  <dir>
+                    <Th className="text-end">Valor Recebido:</Th>
+                    <dir className="text-start px-3">
+                      {Number(valorTotal).toLocaleString("pt-BR", {
+                        style: "currency",
+                        currency: "BRL",
+                      })}
+                    </dir>
+                  </dir>
+
+                  <dir>
+                    <Th className="text-end">A Receber:</Th>
+                    <dir className="text-start px-3">
+                      {Number(valorTotalNotasAnalise).toLocaleString("pt-BR", {
+                        style: "currency",
+                        currency: "BRL",
+                      })}
+                    </dir>
+                  </dir>
+                </div>
+              </div>
             </div>
-            <table className="w-full"></table>
+            <div className="w-full"></div>
           </>
         )}
       </Div>

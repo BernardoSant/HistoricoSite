@@ -55,7 +55,7 @@ dataTypes.forEach(({ type, dbType, msg }) => {
     const data = req.body;
 
     try {
-       await dbType.update(data, {
+      await dbType.update(data, {
         where: { numeroCT: numeroCT },
       });
       const allData = await dbType.findAll();

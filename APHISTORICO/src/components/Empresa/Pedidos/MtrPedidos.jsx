@@ -89,7 +89,7 @@ export const MtrPedidos = ({ empresaId }) => {
 
   return (
     <Div>
-      <Header className="w-full h-auto flex justify-center items-start text-3xl mb-5">
+      <Header >
         Pedidos da {siglaEmpresa}
       </Header>
       {pedidosDaEmpresaAndamento.length > 0 ? (

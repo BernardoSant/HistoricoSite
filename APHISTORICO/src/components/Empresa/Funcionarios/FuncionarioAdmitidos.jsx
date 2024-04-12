@@ -566,20 +566,20 @@ export const MostruarioFuncAdmitido = () => {
           <div className="w-2/4 h-1/3 bg-slate-100 rounded-[1em] shadow-lg border-4 border-orange-400 flex flex-col justify-center items-center relative">
             <h1 className="text-[1.5vw] font-semibold">ALERTA!</h1>
             <h2 className="text-[1.1vw]">
-              Você tem certeza que deseja Demitir este funcionario?
+              Você tem certeza que deseja Demitir este funcionario(a)?
             </h2>
-            <dir className="absolute bottom-0 right-0 p-5 px-6 flex gap-7">
+            <dir className="absolute bottom-0 right-0 p-5 px-6 flex gap-3">
               <botton
-                className="bg-gray-400 drop-shadow-lg px-4 py-1 rounded-[1em] text-[0.9vw] font-semibold cursor-pointer"
+                className="bg-slate-300 drop-shadow-sm px-4 py-1 rounded-[0.5em] text-[0.9vw] font-semibold cursor-pointer"
                 onClick={() => handleClick("Alerta")}
               >
-                Cancelar
+                NÃO
               </botton>
               <botton
-                className="bg-red-500 drop-shadow-lg px-4 py-1 rounded-[1em] text-[0.9vw] font-semibold cursor-pointer"
+                className="bg-orange-500 drop-shadow-sm px-4 py-1 rounded-[0.5em] text-[0.9vw] font-semibold cursor-pointer"
                 onClick={demitirFuncionario}
               >
-                Salvar
+                SIM
               </botton>
             </dir>
           </div>

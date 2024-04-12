@@ -7,7 +7,7 @@ import { useGlobalContext } from "../../../global/Global";
 const Form = styled.form`
   height: 100%;
   width: 100%;
-  gap: 3em;
+  gap: 1em;
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
