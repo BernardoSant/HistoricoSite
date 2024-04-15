@@ -53,20 +53,23 @@ dataTypes.forEach(({ type, dbType, msg }) => {
   router.put("/:numeroPDD", async (req, res) => {
     const { numeroPDD } = req.params;
     const data = req.body;
-
-    await dbType.update(data, {
-        where: { numeroPDD: numeroPDD }
-    }).then(() => {
-        return res.json({
-            error: false,
-            message: `${msg} atualizado com sucesso!`
-        });
-    }).catch(() => {
-        return res.json({
-            error: true,
-            message: `Erro: Não foi possível atualizar o ${msg}!`
-        });
-    });
+    
+    try {
+      await dbType.update(data, {
+        where: { numeroPDD: numeroPDD },
+      });
+      const allData = await dbType.findAll();
+      io.emit(`${type} data`, allData);
+      return res.json({
+        error: false,
+        message: `${msg} atualizado com sucesso!!`,
+      });
+    } catch (error) {
+      return res.status(500).json({
+        error: true,
+        message: `ERRO: Não foi possível atualizar o ${msg}!`,
+      });
+    }
   });
 
   router.delete("/:numeroPDD", async (req, res) => {

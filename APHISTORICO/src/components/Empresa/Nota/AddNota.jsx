@@ -66,7 +66,7 @@ const Button = styled.button`
   }
 `;
 export const TabelaAddNota = () => {
-  const { ip, empresa, kinays, impostos, pedido, contrato } =
+  const { ip, empresa, kinays, impostos, pedido, contrato, nota } =
     useGlobalContext();
 
   const [data, setData] = useState({
@@ -152,7 +152,7 @@ export const TabelaAddNota = () => {
 
       setData({ ...data, ImpostoNF: porcentagemImposto });
     } else if (name === "situacaoNF" && value === "Antecipada") {
-      const calculorAntercipa = data.valorReceberNF * 0.02;
+      const calculorAntercipa = Number(data.valorReceberNF) * 0.02;
       const valorRecebido = data.valorReceberNF - calculorAntercipa;
 
       setData({
@@ -166,12 +166,21 @@ export const TabelaAddNota = () => {
         valorRecebidoNF: data.valorReceberNF,
         situacaoNF: "Recebida",
       });
+    } else if (name === "situacaoNF" && value === "Em Análise") {
+      setData({
+        ...data,
+        valorRecebidoNF: 0,
+        situacaoNF: "Em Análise",
+      });
     } else {
       setData({ ...data, [name]: value });
     }
   };
+
   const filtroPedido = pedido.filter((pedido) => {
-    const idEmpresa = data.idEmpresa === pedido.empresaPDD;
+    const idEmpresa =
+      data.idEmpresa === pedido.empresaPDD &&
+      pedido.situacaoPDD !== "Finalizada";
     return idEmpresa;
   });
 
@@ -183,6 +192,20 @@ export const TabelaAddNota = () => {
 
     return isEmpresaCorrespondente && isContratada;
   });
+
+  const atualizarPedido = pedido.find((pedido) => {
+    const idPedido = pedido.numeroPDD === data.numeroPedidoNF;
+    return idPedido;
+  });
+
+  const somaValores = nota.reduce((acc, nota) => {
+    if (acc[nota.numeroPedidoNF]) {
+      acc[nota.numeroPedidoNF] += nota.valorNF;
+    } else {
+      acc[nota.numeroPedidoNF] = nota.valorNF;
+    }
+    return acc;
+  }, {});
 
   const sendNF = async (e) => {
     e.preventDefault();
@@ -202,36 +225,134 @@ export const TabelaAddNota = () => {
       return;
     }
 
-    axios
-      .post(ip + "/nota", data, headers)
-      .then((response) => {
-        toast.success(response.data.message);
-        setData({
-          numeroPedidoNF: "",
-          numeroNotaNF: "",
-          idEmpresa: 0,
-          nomeEmpresaNF: "",
-          cnpjEmpresaNF: "",
-          retidoNF: "",
-          numeroKinayNF: "",
-          KinayNF: "",
-          porcentagemKinayNF: 0,
-          descricaoServNF: "",
-          ImpostoNF: "",
-          totalImpostoNF: "",
-          valorNF: "",
-          valorImpostoNF: "",
-          valorReceberNF: "",
-          valorRecebidoNF: null,
-          situacaoNF: "",
-          prazoPagamentoNF: "",
-          dataNF: "",
-          observacaoNF: "",
+    let situacao;
+    if (somaValores[data.numeroPedidoNF] + Number(data.valorNF) === atualizarPedido.valorPDD) {
+      situacao = "Finalizada";
+    } else if (Number(data.valorNF) > 0) {
+      situacao = "Andamento";
+    } else {
+      situacao = "Criada";
+    }
+
+    if (data.situacaoNF === "Recebida" && ContratoEmpresa <= 0) {
+      const novoValor =
+        Number(data.valorReceberNF) + atualizarPedido.valorRecebidoPDD;
+
+      axios.put(
+        ip + `/pedido/` + atualizarPedido.numeroPDD,
+        {
+          situacaoPDD: situacao,
+          valorRecebidoPDD: novoValor,
+        },
+        headers
+      );
+
+      axios
+        .post(ip + "/nota", data, headers)
+        .then((response) => {
+          toast.success(response.data.message);
+          setData({
+            numeroPedidoNF: "",
+            numeroNotaNF: "",
+            idEmpresa: 0,
+            nomeEmpresaNF: "",
+            cnpjEmpresaNF: "",
+            retidoNF: "",
+            numeroKinayNF: "",
+            KinayNF: "",
+            porcentagemKinayNF: 0,
+            descricaoServNF: "",
+            ImpostoNF: "",
+            totalImpostoNF: "",
+            valorNF: "",
+            valorImpostoNF: "",
+            valorReceberNF: "",
+            valorRecebidoNF: null,
+            situacaoNF: "",
+            prazoPagamentoNF: "",
+            dataNF: "",
+            observacaoNF: "",
+          });
+        })
+        .catch((err) => {
+          toast.info(err.response.data.message);
         });
-      })
-      .catch((err) => {
-        toast.info(err.response.data.message);
-      });
+    } else if (data.situacaoNF === "Antecipada" && ContratoEmpresa <= 0) {
+      const calculorAntercipa =
+        data.valorReceberNF - data.valorReceberNF * 0.02;
+      const novoValor = calculorAntercipa + atualizarPedido.valorRecebidoPDD;
+
+      axios.put(
+        ip + `/pedido/` + atualizarPedido.numeroPDD,
+        {
+          situacaoPDD: situacao,
+          valorRecebidoPDD: novoValor,
+        },
+        headers
+      );
+
+      axios
+        .post(ip + "/nota", { ...data, valorRecebidoNF: novoValor }, headers)
+        .then((response) => {
+          toast.success(response.data.message);
+          setData({
+            numeroPedidoNF: "",
+            numeroNotaNF: "",
+            idEmpresa: 0,
+            nomeEmpresaNF: "",
+            cnpjEmpresaNF: "",
+            retidoNF: "",
+            numeroKinayNF: "",
+            KinayNF: "",
+            porcentagemKinayNF: 0,
+            descricaoServNF: "",
+            ImpostoNF: "",
+            totalImpostoNF: "",
+            valorNF: "",
+            valorImpostoNF: "",
+            valorReceberNF: "",
+            valorRecebidoNF: null,
+            situacaoNF: "",
+            prazoPagamentoNF: "",
+            dataNF: "",
+            observacaoNF: "",
+          });
+        })
+        .catch((err) => {
+          toast.info(err.response.data.message);
+        });
+    } else {
+      axios
+        .post(ip + "/nota", data, headers)
+        .then((response) => {
+          toast.success(response.data.message);
+          setData({
+            numeroPedidoNF: "",
+            numeroNotaNF: "",
+            idEmpresa: 0,
+            nomeEmpresaNF: "",
+            cnpjEmpresaNF: "",
+            retidoNF: "",
+            numeroKinayNF: "",
+            KinayNF: "",
+            porcentagemKinayNF: 0,
+            descricaoServNF: "",
+            ImpostoNF: "",
+            totalImpostoNF: "",
+            valorNF: "",
+            valorImpostoNF: "",
+            valorReceberNF: "",
+            valorRecebidoNF: null,
+            situacaoNF: "",
+            prazoPagamentoNF: "",
+            dataNF: "",
+            observacaoNF: "",
+          });
+        })
+        .catch((err) => {
+          toast.info(err.response.data.message);
+        });
+    }
   };
 
   return (

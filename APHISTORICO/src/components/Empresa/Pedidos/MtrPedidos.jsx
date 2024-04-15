@@ -34,6 +34,7 @@ const Article = styled.article`
 const Header = styled.header`
   width: 100%;
   border-radius: 20px;
+  margin-bottom: 10px;
   background: #f97316;
   box-shadow: inset 5px -5px 10px #9f4a0e, inset -5px 5px 10px #ff9c1e;
   font-weight: 600;
@@ -46,7 +47,10 @@ const Header = styled.header`
   padding-right: 1em;
 `;
 
-const Th = styled.th``;
+const Th = styled.div`
+  font-weight: 600;
+  text-align: center;
+`;
 
 export const MtrPedidos = ({ empresaId }) => {
   const { empresa, pedido } = useGlobalContext();
@@ -89,15 +93,13 @@ export const MtrPedidos = ({ empresaId }) => {
 
   return (
     <Div>
-      <Header >
-        Pedidos da {siglaEmpresa}
-      </Header>
+      <Header>Pedidos da {siglaEmpresa}</Header>
       {pedidosDaEmpresaAndamento.length > 0 ? (
         <>
-          <table className="w-full bg-orange-500 drop-shadow-2xl rounded-2xl ">
-            <thead className="flex justify-between items-center px-4">
+          <div className="w-full bg-orange-500 drop-shadow-2xl rounded-2xl ">
+            <div className="flex justify-between items-center px-4">
               <Th className="text-start text-2xl pt-1">Pedidos em Andamento</Th>
-              <nav className="bg-orange-600 px-3 rounded-full shadow-inner">
+              <nav className="bg-orange-600 px-3 rounded-full shadow-inner flex">
                 <Th className="text-lg text-end pr-2">Valor Recebido: </Th>
                 <Th className="text-lg text-start">
                   {Number(valorTotalPedidosAndamento).toLocaleString("pt-BR", {
@@ -106,22 +108,22 @@ export const MtrPedidos = ({ empresaId }) => {
                   })}
                 </Th>
               </nav>
-            </thead>
+            </div>
 
-            <thead className="grid grid-cols-7 justify-center items-center w-full rounded-b-lg drop-shadow-2xl text-lg pb-1">
+            <div className="grid grid-cols-7 justify-center items-center w-full rounded-b-lg drop-shadow-2xl text-lg pb-1">
               <Th className="col-span-1">N° Pedido</Th>
               <Th className="col-span-1">Situação</Th>
               <Th className="col-span-3">Descrição</Th>
               <Th className="col-span-1">A Receber</Th>
               <Th className="col-span-1">Recebido</Th>
-            </thead>
-          </table>
+            </div>
+          </div>
 
           <Article className="w-full overflow-auto mt-2 rounded-[1em]">
             {pedidosDaEmpresaAndamento.map((pedido) => {
               return (
                 <>
-                  <thead
+                  <div
                     key={pedido.id}
                     className="w-full grid grid-cols-7 justify-center items-center shadow-inner bg-gray-200 rounded-2xl p-2 my-2"
                   >
@@ -144,7 +146,7 @@ export const MtrPedidos = ({ empresaId }) => {
                         currency: "BRL",
                       })}
                     </Th>
-                  </thead>
+                  </div>
                 </>
               );
             })}
@@ -154,10 +156,10 @@ export const MtrPedidos = ({ empresaId }) => {
 
       {pedidosDaEmpresaFinalizada.length > 0 ? (
         <>
-          <table className="w-full bg-orange-500 drop-shadow-2xl rounded-2xl ">
-            <thead className="flex justify-between items-center px-4">
+          <div className="w-full bg-orange-500 drop-shadow-2xl rounded-2xl ">
+            <div className="flex justify-between items-center px-4">
               <Th className="text-start text-2xl pt-1">Pedidos Finalizados</Th>
-              <nav className="bg-orange-600 px-3 rounded-full shadow-inner">
+              <nav className="bg-orange-600 px-3 rounded-full shadow-inner flex">
                 <Th className="text-lg text-end pr-2">Valor Recebido: </Th>
                 <Th className="text-lg text-start">
                   {Number(valorTotalPedidosFinalizada).toLocaleString("pt-BR", {
@@ -166,22 +168,22 @@ export const MtrPedidos = ({ empresaId }) => {
                   })}
                 </Th>
               </nav>
-            </thead>
+            </div>
 
-            <thead className="grid grid-cols-7 justify-center items-center w-full rounded-b-lg drop-shadow-2xl text-lg pb-1">
+            <div className="grid grid-cols-7 justify-center items-center w-full rounded-b-lg drop-shadow-2xl text-lg pb-1">
               <Th className="col-span-1">N° Pedido</Th>
               <Th className="col-span-1">Situação</Th>
               <Th className="col-span-3">Descrição</Th>
               <Th className="col-span-1">A Receber</Th>
               <Th className="col-span-1">Recebido</Th>
-            </thead>
-          </table>
+            </div>
+          </div>
 
           <Article className="w-full overflow-auto mt-2 rounded-[1em]">
             {pedidosDaEmpresaFinalizada.map((pedido) => {
               return (
                 <>
-                  <thead
+                  <div
                     key={pedido.id}
                     className="w-full grid grid-cols-7 justify-center items-center shadow-inner bg-gray-200 rounded-2xl p-2 my-2"
                   >
@@ -204,7 +206,7 @@ export const MtrPedidos = ({ empresaId }) => {
                         currency: "BRL",
                       })}
                     </Th>
-                  </thead>
+                  </div>
                 </>
               );
             })}
@@ -214,10 +216,10 @@ export const MtrPedidos = ({ empresaId }) => {
 
       {pedidosDaEmpresaCriada.length > 0 ? (
         <>
-          <table className="w-full bg-orange-500 drop-shadow-2xl rounded-2xl ">
-            <thead className="flex justify-between items-center px-4">
+          <div className="w-full bg-orange-500 drop-shadow-2xl rounded-2xl ">
+            <div className="flex justify-between items-center px-4">
               <Th className="text-start text-2xl pt-1">Pedidos Criados</Th>
-              <nav className="bg-orange-600 px-3 rounded-full shadow-inner">
+              <nav className="bg-orange-600 px-3 rounded-full shadow-inner flex">
                 <Th className="text-lg text-end pr-2">Valor Receber: </Th>
                 <Th className="text-lg text-start">
                   {Number(valorTotalPedidosCriada).toLocaleString("pt-BR", {
@@ -226,22 +228,22 @@ export const MtrPedidos = ({ empresaId }) => {
                   })}
                 </Th>
               </nav>
-            </thead>
+            </div>
 
-            <thead className="grid grid-cols-7 justify-center items-center w-full rounded-b-lg drop-shadow-2xl text-lg pb-1">
+            <div className="grid grid-cols-7 justify-center items-center w-full rounded-b-lg drop-shadow-2xl text-lg pb-1">
               <Th className="col-span-1">N° Pedido</Th>
               <Th className="col-span-1">Situação</Th>
               <Th className="col-span-3">Descrição</Th>
               <Th className="col-span-1">A Receber</Th>
               <Th className="col-span-1">Recebido</Th>
-            </thead>
-          </table>
+            </div>
+          </div>
 
           <Article className="w-full overflow-auto mt-2 rounded-[1em]">
             {pedidosDaEmpresaCriada.map((pedido) => {
               return (
                 <>
-                  <thead
+                  <div
                     key={pedido.id}
                     className="w-full grid grid-cols-7 justify-center items-center shadow-inner bg-gray-200 rounded-2xl p-2 my-2"
                   >
@@ -264,7 +266,7 @@ export const MtrPedidos = ({ empresaId }) => {
                         currency: "BRL",
                       })}
                     </Th>
-                  </thead>
+                  </div>
                 </>
               );
             })}
@@ -273,24 +275,28 @@ export const MtrPedidos = ({ empresaId }) => {
       ) : null}
 
       <div className="w-full px-3 pb-3 absolute bottom-0 left-0">
-        <table className="w-full bg-orange-600 drop-shadow-2xl rounded-2xl ">
-          <thead className="grid grid-cols-4 justify-center items-center w-full rounded-b-lg drop-shadow-2xl text-lg py-1">
-            <Th className="col-span-1 text-end">Valor Recebido:</Th>
-            <Th className="col-span-1 text-start px-3">
-              {Number(valorTotal).toLocaleString("pt-BR", {
-                style: "currency",
-                currency: "BRL",
-              })}
-            </Th>
-            <Th className="col-span-1 text-end">A Receber:</Th>
-            <Th className="col-span-1 text-start px-3">
-              {Number(valorTotalPedidosCriada).toLocaleString("pt-BR", {
-                style: "currency",
-                currency: "BRL",
-              })}
-            </Th>
-          </thead>
-        </table>
+        <div className="w-full bg-orange-600 drop-shadow-2xl rounded-2xl ">
+          <div className="flex justify-around items-center w-full rounded-b-lg drop-shadow-2xl text-lg py-1">
+            <dir>
+              <Th className="text-end">Valor Recebido:</Th>
+              <dir className="text-start px-3">
+                {Number(valorTotal).toLocaleString("pt-BR", {
+                  style: "currency",
+                  currency: "BRL",
+                })}
+              </dir>
+            </dir>
+            <dir>
+              <Th className="text-end">A Receber:</Th>
+              <dir className="text-start px-3">
+                {Number(valorTotalPedidosCriada).toLocaleString("pt-BR", {
+                  style: "currency",
+                  currency: "BRL",
+                })}
+              </dir>
+            </dir>
+          </div>
+        </div>
       </div>
     </Div>
   );

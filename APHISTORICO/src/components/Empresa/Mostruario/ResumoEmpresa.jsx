@@ -23,7 +23,6 @@ const Header = styled.header`
   justify-content: center;
   padding: 8px;
   width: 100%;
-
   border-radius: 1em;
   background: #f97316;
   box-shadow: inset 5px -5px 10px #9f4a0e, inset -5px 5px 10px #ff9c1e;
@@ -122,7 +121,7 @@ const P = styled.p`
 `;
 
 export const ResumoEmpresa = () => {
-  const {ip, empresa, nota, pedido, contrato } = useGlobalContext();
+  const { ip, empresa, nota, pedido, contrato, setPedido } = useGlobalContext();
   const [data, setData] = useState("");
 
   const dataAtual = new Date();
@@ -164,51 +163,6 @@ export const ResumoEmpresa = () => {
     }
     return acc;
   }, {});
-
-  const pedidosAtualizados = pedidosFiltrados.map((pedido) => {
-    if (somaNotas[pedido.numeroPDD]) {
-      const pedidoAtualizado = {
-        ...pedido,
-        valorRecebidoPDD: somaNotas[pedido.numeroPDD],
-      };
-
-      let status;
-      if (somaNotas[pedido.numeroPDD] > pedido.valorPDD / 1.3) {
-        status = "Finalizada";
-      } else if (pedido.valorPDD > 0) {
-        status = "Andamento";
-      } else {
-        status = "";
-      }
-
-      const headers = {
-        headers: {
-          "Content-Type": "application/json",
-        },
-      };
-
-      axios
-        .put(
-          ip +`/pedido/${pedido.numeroPDD}`,
-          {
-            valorRecebidoPDD: somaNotas[pedido.numeroPDD],
-            situacaoPDD: status,
-          },
-          headers
-        )
-        .then((response) => {})
-        .catch((err) => {
-          toast.error(
-            "Erro ao atualizar valor recebido:",
-            err.response.data.message
-          );
-        });
-
-      return pedidoAtualizado;
-    }
-
-    return pedido;
-  });
 
   pedido.sort((a, b) => new Date(a.dataPDD) - new Date(b.dataPDD));
 
@@ -432,7 +386,7 @@ export const ResumoEmpresa = () => {
           </Dir>
 
           <Div className=" min-w-[27em] min-h-[10em] ">
-            {pedidosAtualizados.map((pedido) => {
+            {pedidosFiltrados.map((pedido) => {
               const empresaEncontrada = empresa.find(
                 (empresas) => empresas.id === pedido.empresaPDD
               );
@@ -521,7 +475,6 @@ export const ResumoEmpresa = () => {
                 );
               })}
             </Div>
-
           </Article>
           <Article>
             <Dir>

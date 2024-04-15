@@ -73,7 +73,7 @@ const Button = styled.button`
 `;
 
 export const TabelaAddPedido = () => {
-  const { ip, empresa } = useGlobalContext();
+  const { ip, empresa, pedido } = useGlobalContext();
 
   const [data, setData] = useState({
     numeroPDD: "",
@@ -137,11 +137,21 @@ export const TabelaAddPedido = () => {
 
           <Input
             type="number"
+            list="numeroPDD"
             name="numeroPDD"
             onChange={valorInput}
             value={data.numeroPDD}
             className="col-span-1 "
           />
+
+          <datalist id="numeroPDD">
+            <option value="Pedidos Existentes">Não duplicar o pedido</option>
+            {pedido.map((pdd) => (
+              <option key={pdd.id} value={pdd.numeroPDD} readOnly>
+                {pdd.nomePDD}.
+              </option>
+            ))}
+          </datalist>
 
           <Input
             type="text"

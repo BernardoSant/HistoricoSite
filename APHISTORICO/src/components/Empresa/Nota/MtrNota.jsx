@@ -102,7 +102,7 @@ const P = styled.p`
 `;
 
 export const MostruarioNota = ({ empresaId }) => {
-  const { ip, nota, empresa, contrato } = useGlobalContext();
+  const { ip, nota, empresa, contrato, pedido } = useGlobalContext();
 
   const handleDataChange = (event) => {
     setData(event.target.value);
@@ -214,30 +214,12 @@ export const MostruarioNota = ({ empresaId }) => {
     }
   }, [notaSelecionadaCompleta]);
 
-  const updateNota = async (e) => {
-    e.preventDefault();
-
-    const headers = {
-      headers: {
-        "Content-Type": "application/json",
-      },
-    };
-
-    axios
-      .put(ip + "/nota/" + notaSelecionada.id, data, headers)
-      .then((response) => {
-        toast.success(response.data.message);
-        setNotaSelecionada(null);
-        setData({
-          valorPrcentagemAntNF: "",
-          situacaoNF: "",
-          valorRecebidoNF: "",
-        });
-      })
-      .catch((err) => {
-        toast.info(err.response.data.message);
-      });
-  };
+  const atualizarPedido = pedido.find((pedido) => {
+    const idPedido =
+      notaSelecionada !== null &&
+      notaSelecionada.numeroPedidoNF === pedido.numeroPDD;
+    return idPedido;
+  });
 
   const somaNotas = nota.reduce((acc, nota) => {
     if (acc[nota.numeroPedidoNF]) {
@@ -286,6 +268,46 @@ export const MostruarioNota = ({ empresaId }) => {
     contratoAtualizado: false,
     AlertaContrato: false,
   });
+
+  const updateNota = async (e) => {
+    e.preventDefault();
+
+    const headers = {
+      headers: {
+        "Content-Type": "application/json",
+      },
+    };
+
+    if (contratoAtualizado.length <= 0) {
+      const novoValor =
+        atualizarPedido !== undefined
+          ? Number(data.valorRecebidoNF) + atualizarPedido.valorRecebidoPDD
+          : 0;
+
+      axios.put(
+        ip + `/pedido/` + atualizarPedido.numeroPDD,
+        {
+          valorRecebidoPDD: novoValor,
+        },
+        headers
+      );
+    }
+
+    axios
+      .put(ip + "/nota/" + notaSelecionada.id, data, headers)
+      .then((response) => {
+        toast.success(response.data.message);
+        setNotaSelecionada(null);
+        setData({
+          valorPrcentagemAntNF: "",
+          situacaoNF: "",
+          valorRecebidoNF: "",
+        });
+      })
+      .catch((err) => {
+        toast.info(err.response.data.message);
+      });
+  };
 
   const ButtomContrato = (key) => {
     setStateContrat((prevState) => ({
