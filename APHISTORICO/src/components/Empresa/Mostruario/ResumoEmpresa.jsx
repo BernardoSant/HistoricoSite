@@ -300,7 +300,7 @@ export const ResumoEmpresa = () => {
             </H3>
           </Dir>
 
-          <Div className="">
+          <Div className="max-h-[20em]">
             {notasRecebidas.map((nota) => {
               return (
                 <H3
@@ -334,7 +334,7 @@ export const ResumoEmpresa = () => {
             {notasReceberFiltradas.map((nota) => (
               <H3
                 key={nota.id}
-                className="cursor-pointer border-b-2 border-gray-400 text-[1.5vh] mx-[1em]"
+                className="cursor-pointer border-b-2 border-gray-400 text-[1.5vh] mx-[1em] "
               >
                 <P>{nota.numeroPedidoNF}</P>
                 <P>{String(nota.numeroNotaNF).padStart(5, "0")}</P>
