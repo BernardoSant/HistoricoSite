@@ -17,6 +17,7 @@
     "children": "^0.2.3",
     "date-fns": "^3.3.1",
     "link": "^2.1.0",
+    "props": "^0.3.0",
     "react": "^18.2.0",
     "react-burger-menu": "^3.0.9",
     "react-dom": "^18.2.0",

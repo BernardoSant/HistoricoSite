@@ -467,7 +467,7 @@ export const Outros = () => {
   };
 
   return (
-    <div className="h-[92%] w-full  ">
+    <div className="h-full w-full flex flex-col ">
       <Header>
         <h1 className=" w-full text-center text-3xl flex justify-center items-center font-bold">
           Outros

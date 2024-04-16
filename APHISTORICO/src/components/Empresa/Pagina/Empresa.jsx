@@ -8,6 +8,7 @@ import { TabelaAddPedido } from "../Pedidos/AddPedido";
 import { TabelaAddFuncionario } from "../Funcionarios/AddFuncionario";
 import { MostruarioFuncAdmitido } from "../Funcionarios/FuncionarioAdmitidos";
 import { MostruarioFuncDemitido } from "../Funcionarios/FuncionarioDemitidos";
+import { AddTransporte } from "../Transporte/AddTransporte";
 import { ResumoEmpresa } from "../Mostruario/ResumoEmpresa";
 import { TabelaAddContrato } from "../Contrato/addContrato";
 import { MtrPedidos } from "../Pedidos/MtrPedidos";
@@ -112,11 +113,11 @@ const Button = ({
           ${
             onTerceiro
               ? " bg-orange-300 mt-1 rounded-t-[0.5em] flex justify-between items-center"
-              : "text-black"
+              : "text-[#432007]"
           } ${
             onSecundario
               ? " bg-orange-300 mt-1 flex justify-between items-center"
-              : "text-black"
+              : "text-[#432007]"
           } ${
             onFinal
               ? "bg-orange-300 mt-1 flex justify-between items-center rounded-b-[20px]"
@@ -137,7 +138,7 @@ const Button = ({
           className={`hover:underline ${
             onSecundario
               ? " bg-orange-100 mt-1 flex justify-between items-center"
-              : "text-black"
+              : "text-[#432007]"
           } ${
             onFinal
               ? "bg-orange-100 mt-1 flex justify-between items-center rounded-b-[0.5em]"
@@ -169,6 +170,7 @@ export const Empresa = () => {
     addNotaF: false,
     addPedido: false,
     addContrato: false,
+    addTransporte: false,
 
     //Botões Terciarios
     verNota: false,
@@ -229,6 +231,7 @@ export const Empresa = () => {
       ...(key !== "verNota" && { verNota: false }),
       ...(key !== "verPedidos" && { verPedidos: false }),
       ...(key !== "verContrato" && { verContrato: false }),
+      ...(key !== "addTransporte" && { addTransporte: false }),
       ...(key !== "verFunciAdmitido" && { verFunciAdmitido: false }),
       ...(key !== "verFunciDemitido" && { verFunciDemitido: false }),
       ...(key !== "alimentacao" && { alimentacao: false }),
@@ -250,6 +253,7 @@ export const Empresa = () => {
       ...(key !== "addNotaF" && { addNotaF: false }),
       ...(key !== "addPedido" && { addPedido: false }),
       ...(key !== "addContrato" && { addContrato: false }),
+      ...(key !== "addTransporte" && { addTransporte: false }),
       ...(key !== "verNota" && { verNota: false }),
       ...(key !== "verPedidos" && { verPedidos: false }),
       ...(key !== "verContrato" && { verContrato: false }),
@@ -272,7 +276,7 @@ export const Empresa = () => {
         <Nav>
           <Div className="overflow-auto max-w-[20em] min-w-[13em]">
             <nav className="flex flex-col justify-center ">
-              <div className="relative w-full text-center bg-orange-400 rounded-full py-1 font-bold text-xl">
+              <div className="relative w-full text-center bg-orange-600 rounded-full py-1 font-bold text-xl">
                 <p className="absolute left-0 top-0 ml-4 h-full flex justify-center items-center">
                   <MdOutlineHomeWork />
                 </p>
@@ -413,6 +417,7 @@ export const Empresa = () => {
                 Titulo={"Transportes"}
                 onPrimario={state.transporte}
                 onClick={() => ButtomPrimario("transporte")}
+                
               ></Button>
               {state.transporte && (
                 <Tabela>
@@ -420,6 +425,8 @@ export const Empresa = () => {
                   <Button
                     TipoButton={2}
                     Titulo={"Adcionar Transporte"}
+                    onSecundario={state.addTransporte}
+                    onClick={() => ButtomSecundario("addTransporte")}
                   ></Button>
                   <Button
                     TipoButton={2}
@@ -440,7 +447,8 @@ export const Empresa = () => {
             </nav>
           </Div>
         </Nav>
-        <Div className="w-full h-full relative rounded-[1em]">
+        <Div className="w-full h-full relative rounded-[1em] flex justify-center items-center">
+          {state.addTransporte && <AddTransporte></AddTransporte>}
           {state.Dashboard && <ResumoEmpresa />}
 
           {state.addContrato && <TabelaAddContrato />}
