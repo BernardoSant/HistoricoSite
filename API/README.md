@@ -67,4 +67,4 @@ Permitir requisição externa
 ### npm install cors
 
 
-
+  npx sequelize-cli model:generate --name Transporte --attributes nomeTransporte:string,placaTransporte:string,renavamTransporte:string,anoTransporte:integer,modeloTransporte:string,capacidadeTransporte:integer,kmRodadoTransporte:float,kmPorLitroTransporte:float,kmPorDiaTransporte:floar,tanqueTransporte:integer

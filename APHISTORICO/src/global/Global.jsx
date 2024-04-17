@@ -20,11 +20,12 @@ const AppContext = ({ children }) => {
   const [contrato, setContrato] = useState([]);
   const [ferias, setFerias] = useState([]);
   const [conta, setConta] = useState([]);
+  const [transporte, setTransporte] = useState([]);
 
   useEffect(() => {
     (async () => {
       socket = await io.connect(ip);
-      
+
       const dataTypes = [
         { type: "cargo", setData: setCargo },
         { type: "empresa", setData: setEmpresa },
@@ -36,10 +37,11 @@ const AppContext = ({ children }) => {
         { type: "ferias", setData: setFerias },
         { type: "contrato", setData: setContrato },
         { type: "conta", setData: setConta },
+        { type: "transporte", setData: setTransporte },
       ];
 
-      dataTypes.forEach(({type, setData}) => {
-        socket.emit(`fetch ${type}`)
+      dataTypes.forEach(({ type, setData }) => {
+        socket.emit(`fetch ${type}`);
         const handleData = (data) => {
           setData(data);
         };
@@ -50,7 +52,7 @@ const AppContext = ({ children }) => {
       });
     })();
   }, []);
-  
+
   return (
     <GlobalContext.Provider
       value={{

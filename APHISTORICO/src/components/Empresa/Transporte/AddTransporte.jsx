@@ -67,6 +67,7 @@ const Button = styled.button`
 `;
 
 export const AddTransporte = () => {
+  const { ip } = useGlobalContext();
   const [deveCalcular, setDeveCalcular] = useState(true);
 
   const [data, setData] = useState({
@@ -109,7 +110,7 @@ export const AddTransporte = () => {
     if (
       calculo.Dias === "" ||
       calculo.kmFinal === "" ||
-      calculo.kmicial === "" ||
+      calculo.kmInicial === "" ||
       calculo.totalAbastecido === ""
     ) {
       toast.error("Preencha todos os campos para calcular!");
@@ -125,10 +126,54 @@ export const AddTransporte = () => {
     setDeveCalcular(false);
   };
 
+  const addTransporte = async (e) => {
+    e.preventDefault();
+  
+    const headers = {
+      headers: {
+        "Content-Type": "application/json",
+      },
+    };
+
+    if (data.nomeTransporte === "" || data.placaTransporte === "" || data.modeloTransporte === "" || data.anoTransporte === "") {
+      toast.error("Por favor, preencha todos os campos obrigatórios.");
+      return;
+    }
+
+    axios
+      .post(ip + "/transporte", data, headers)
+      .then((response) => {
+        toast.success(response.data.message);
+        setData({
+          nomeTransporte: "",
+          placaTransporte: "",
+          renavamTransporte: "",
+          anoTransporte: "",
+          modeloTransporte: "",
+          capacidadeTransporte: "",
+          kmRodadoTransporte: "",
+          kmPorLitroTransporte: "",
+          kmPorDiaTransporte: "",
+          tanqueTransporte: "",
+        });
+
+        setCalculo({
+          kmInicial: "",
+          kmFinal: "",
+          Dias: "",
+          totalAbastecido: "",
+        });
+        setDeveCalcular(true  );
+      })
+      .catch((err) => {
+        toast.info(err.response.data.message);
+      });
+  }
+
   return (
     <>
       <Header>Adicionar Transporte</Header>
-      <Form id="addTransporte">
+      <Form id="addTransporte" onSubmit={addTransporte}>
         <TelaGrid>
           <h1 className="col-span-5 text-2xl font-bold px-2 mt-2">
             Caracteristicas do Veiculo
