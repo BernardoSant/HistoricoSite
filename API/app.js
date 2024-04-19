@@ -40,6 +40,7 @@ const dataTypes = [
   "contrato",
   "conta",
   "transporte",
+  "salario",
 ];
 
 io.on("connection", (socket) => {
@@ -120,6 +121,13 @@ io.on("connection", (socket) => {
     const data = response.data.data;
 
     socket.emit(`transporte data`, data);
+  });
+
+  socket.on(`fetch salario`, async () => {
+    const response = await axios.get(`${ipServer}/salario`);
+    const data = response.data.data;
+
+    socket.emit(`salario data`, data);
   });
 });
 

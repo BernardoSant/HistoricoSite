@@ -7,6 +7,7 @@ import { TabelaAddNota } from "../Nota/AddNota";
 import { TabelaAddPedido } from "../Pedidos/AddPedido";
 import { TabelaAddFuncionario } from "../Funcionarios/AddFuncionario";
 import { MostruarioFuncAdmitido } from "../Funcionarios/FuncionarioAdmitidos";
+import { MtrTransporte } from "../Transporte/MtrTransporte";
 import { MostruarioFuncDemitido } from "../Funcionarios/FuncionarioDemitidos";
 import { AddTransporte } from "../Transporte/AddTransporte";
 import { ResumoEmpresa } from "../Mostruario/ResumoEmpresa";
@@ -178,6 +179,7 @@ export const Empresa = () => {
     verContrato: false,
     verFunciAdmitido: false,
     verFunciDemitido: false,
+    verTransporte: false,
   });
   const [empregadorState, setEmpregadorState] = useState({});
   const [empresaSelecionada, setEmpresaSelecionada] = useState(null);
@@ -239,6 +241,7 @@ export const Empresa = () => {
       ...(key !== "visualizar" && { visualizar: false }),
       ...(key !== "outros" && { outros: false }),
       ...(key !== "Dashboard" && { Dashboard: false }),
+      ...(key !== "verTransporte" && { verTransporte: false }),
     }));
   };
 
@@ -264,6 +267,7 @@ export const Empresa = () => {
       ...(key !== "visualizar" && { visualizar: false }),
       ...(key !== "outros" && { outros: false }),
       ...(key !== "Dashboard" && { Dashboard: false }),
+      ...(key !== "verTransporte" && { verTransporte: false }),
     }));
   };
   // ordernar por tamanho de digito
@@ -417,11 +421,15 @@ export const Empresa = () => {
                 Titulo={"Transportes"}
                 onPrimario={state.transporte}
                 onClick={() => ButtomPrimario("transporte")}
-                
               ></Button>
               {state.transporte && (
                 <Tabela>
-                  <Button TipoButton={2} Titulo={"Ver Todos"}></Button>
+                  <Button
+                    TipoButton={2}
+                    Titulo={"Ver Todos"}
+                    onSecundario={state.verTransporte}
+                    onClick={() => ButtomSecundario("verTransporte")}
+                  ></Button>
                   <Button
                     TipoButton={2}
                     Titulo={"Adcionar Transporte"}
@@ -449,6 +457,7 @@ export const Empresa = () => {
         </Nav>
         <Div className="w-full h-full relative rounded-[1em] flex justify-center items-center">
           {state.addTransporte && <AddTransporte></AddTransporte>}
+
           {state.Dashboard && <ResumoEmpresa />}
 
           {state.addContrato && <TabelaAddContrato />}
@@ -460,6 +469,8 @@ export const Empresa = () => {
           {state.addPedido && <TabelaAddPedido />}
 
           {state.verNota && <MostruarioNota empresaId={empresaSelecionada} />}
+
+          {state.verTransporte && <MtrTransporte />}
 
           {state.verPedidos && <MtrPedidos empresaId={empresaSelecionada} />}
 

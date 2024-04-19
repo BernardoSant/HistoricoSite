@@ -376,28 +376,6 @@ export const MostruarioFuncAdmitido = () => {
       });
   };
 
-  const hoje = new Date();
-  const diaAtual = hoje.getDate();
-
-  useEffect(() => {
-    const headers = {
-      headers: {
-        "Content-Type": "application/json",
-      },
-    };
-
-    if (diaAtual === 1) {
-      var TotalFaltas = 0;
-      funcionario.forEach((funcionario) => {
-        axios.put(
-          ip + "/funcionario/" + funcionario.id,
-          { diasFaltas: TotalFaltas },
-          headers
-        );
-      });
-    }
-  }, [diaAtual]);
-
   const AddFalta = (idFuncionario, valor, diasFaltas) => {
     const headers = {
       headers: {
@@ -558,6 +536,46 @@ export const MostruarioFuncAdmitido = () => {
       </div>
     );
   }
+
+  const hoje = new Date(); 
+  const diaAtual = hoje.getDate();
+  const mesAtual = hoje.getMonth() + 1;
+  const anoAtual = hoje.getFullYear();
+
+  useEffect(() => {
+    const headers = {
+      headers: {
+        "Content-Type": "application/json",
+      },
+    };
+
+    const ultimoMesExecutado = localStorage.getItem("ultimoMesExecutado");
+    const mesExecutado = Number(ultimoMesExecutado);
+    if (diaAtual === 1 && mesAtual !== mesExecutado) {
+      axios.post(
+        ip + "/salario",
+        {
+          totalFgtsSalario: fgtsSalario,
+          totalSalarioMes: valorTotalSalario,
+          adiantamentoSalario: adiantamentoSalario,
+          salarioFinal: valorSalario,
+          dataSalario: hoje,
+        },
+        headers
+      );
+
+      var TotalFaltas = 0;
+      funcionario.forEach((funcionario) => {
+        axios.put(
+          ip + "/funcionario/" + funcionario.id,
+          { diasFaltas: TotalFaltas },
+          headers
+        );
+      });
+
+      localStorage.setItem("ultimoMesExecutado", mesAtual);
+    }
+  }, [diaAtual, mesAtual, anoAtual]);
 
   return (
     <Div>

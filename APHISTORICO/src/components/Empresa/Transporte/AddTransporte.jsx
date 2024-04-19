@@ -128,14 +128,19 @@ export const AddTransporte = () => {
 
   const addTransporte = async (e) => {
     e.preventDefault();
-  
+
     const headers = {
       headers: {
         "Content-Type": "application/json",
       },
     };
 
-    if (data.nomeTransporte === "" || data.placaTransporte === "" || data.modeloTransporte === "" || data.anoTransporte === "") {
+    if (
+      data.nomeTransporte === "" ||
+      data.placaTransporte === "" ||
+      data.modeloTransporte === "" ||
+      data.anoTransporte === ""
+    ) {
       toast.error("Por favor, preencha todos os campos obrigatórios.");
       return;
     }
@@ -163,12 +168,12 @@ export const AddTransporte = () => {
           Dias: "",
           totalAbastecido: "",
         });
-        setDeveCalcular(true  );
+        setDeveCalcular(true);
       })
       .catch((err) => {
         toast.info(err.response.data.message);
       });
-  }
+  };
 
   return (
     <>
@@ -224,12 +229,27 @@ export const AddTransporte = () => {
           <div className="col-span-1">
             <H1>Modelo:</H1>
             <Input
+              list="Modelos"
               type="text"
               onChange={valorTransporteInput}
               value={data.modeloTransporte}
               name="modeloTransporte"
             ></Input>
           </div>
+
+          <datalist id="Modelos">
+            <option value="Hatch"></option>
+            <option value="Sedã"></option>
+            <option value="SUV"></option>
+            <option value="Picapes"></option>
+            <option value="Crossover"></option>
+            <option value="Perua"></option>
+            <option value="Minivan"></option>
+            <option value="Furgão"></option>
+            <option value=""></option>
+            <option value=""></option>
+            <option value=""></option>
+          </datalist>
 
           <div className="col-span-1">
             <H1>Capacidade:</H1>
@@ -245,7 +265,7 @@ export const AddTransporte = () => {
 
         {deveCalcular ? (
           <div className="h-auto bg-orange-200 my-5 rounded-[0.8em] flex drop-shadow-md ">
-            <p className="bg-orange-600 h-full w-3 rounded-tl-[0.8em] rounded-bl-[0.8em]"></p>
+            <p className="bg-orange-500 h-full w-3 rounded-tl-[0.8em] rounded-bl-[0.8em]"></p>
             <h1 className="flex gap-x-5 flex-col font-bold w-full p-2 pb-3 drop-shadow-md">
               <p className="flex justify-between text-2xl pr-3 pl-5 items-center text-orange-900">
                 <h1>Calcular Kilometragem</h1>
@@ -302,7 +322,7 @@ export const AddTransporte = () => {
                 <div className="col-span-1 flex justify-center items-center relative">
                   <button
                     onClick={calcularKilometragem}
-                    className="py-2 px-6 rounded-[0.5em] bg-orange-600 absolute bottom-0 right-0"
+                    className="py-2 px-6 rounded-[0.5em] bg-orange-500 absolute bottom-0 right-0"
                   >
                     Calcular
                   </button>

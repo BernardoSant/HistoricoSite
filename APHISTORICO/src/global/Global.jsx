@@ -21,6 +21,7 @@ const AppContext = ({ children }) => {
   const [ferias, setFerias] = useState([]);
   const [conta, setConta] = useState([]);
   const [transporte, setTransporte] = useState([]);
+  const [salario, setSalario] = useState([]);
 
   useEffect(() => {
     (async () => {
@@ -38,6 +39,7 @@ const AppContext = ({ children }) => {
         { type: "contrato", setData: setContrato },
         { type: "conta", setData: setConta },
         { type: "transporte", setData: setTransporte },
+        { type: "salario", setData: setSalario },
       ];
 
       dataTypes.forEach(({ type, setData }) => {
@@ -77,6 +79,7 @@ const AppContext = ({ children }) => {
         setFerias,
         conta,
         setConta,
+        transporte,
       }}
     >
       {children}
