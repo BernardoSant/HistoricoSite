@@ -79,6 +79,23 @@ const BlockSeparacao = styled.div`
 
 export const MtrTransporte = () => {
   const hoje = new Date();
+  let meses = [
+    "Janeiro",
+    "Fevereiro",
+    "Março",
+    "Abril",
+    "Maio",
+    "Junho",
+    "Julho",
+    "Agosto",
+    "Setembro",
+    "Outubro",
+    "Novembro",
+    "Dezembro",
+  ];
+  let nomeDoMes = meses[hoje.getMonth()];
+  console.log(nomeDoMes);
+
   const dia = hoje.getDate();
   const mes = hoje.getMonth() + 1;
   const ano = hoje.getFullYear();
@@ -100,7 +117,12 @@ export const MtrTransporte = () => {
 
   const valorInput = (e) => {
     let valor = e.target.value;
-    setData({ ...data, [e.target.name]: valor, idTransporte:transporteSelecionado, dataCadastro: dataFormatada });
+    setData({
+      ...data,
+      [e.target.name]: valor,
+      idTransporte: transporteSelecionado,
+      dataCadastro: dataFormatada,
+    });
   };
 
   const sendKilometragem = (e) => {
@@ -113,20 +135,23 @@ export const MtrTransporte = () => {
     };
 
     axios
-    .post(ip + "/abastecimento", data, headers)
-    .then((response) => {
-      toast.success(response.data.message);
-      setData({
-        idTransporte: "",
-        vlrGasolina: "",
-        totalAbastecido: "",
-        diasAbastecido: "",
-        kmRodadoAbastecido: "",
+      .post(ip + "/abastecimento", data, headers)
+      .then((response) => {
+        toast.success(response.data.message);
+        setData({
+          idTransporte: "",
+          vlrGasolina: "",
+          totalAbastecido: "",
+          diasAbastecido: "",
+          kmRodadoAbastecido: "",
+        });
+        axios.put(ip + "/transporte/" + transporteSelecionado, {
+          kmRodadoTransporte: data.kmRodadoAbastecido,
+        });
+      })
+      .catch((err) => {
+        toast.info(err.response.data.message);
       });
-    })
-    .catch((err) => {
-      toast.info(err.response.data.message);
-    });
   };
 
   const [state, setState] = useState({});
@@ -160,6 +185,8 @@ export const MtrTransporte = () => {
       <Header>Transportes</Header>
       <Article>
         {transporte.map((trans) => {
+          const Hoje = new Date();
+
           var placaTransporte = trans.placaTransporte;
           var str = placaTransporte.toString();
           var placa = str.slice(0, 3) + "-" + str.slice(3);
@@ -178,6 +205,44 @@ export const MtrTransporte = () => {
 
           var totalAbastecido =
             (Kmdia * diasRodado) / trans.kmPorLitroTransporte;
+
+          const AbastecimentoMenAnterior = abastecimento.filter((abast) => {
+            const isCurrentTransport = abast.idTransporte === trans.id;
+            const abastDate = new Date(abast.dataCadastro);
+
+            // Verifica se o abastecimento ocorreu neste mês
+            const isThisMonth =
+              abastDate.getMonth() === Hoje.getMonth() - 1 &&
+              abastDate.getFullYear() === Hoje.getFullYear();
+
+            return isCurrentTransport && isThisMonth;
+          });
+
+          const AbastecimentoMen = abastecimento.filter((abast) => {
+            const isCurrentTransport = abast.idTransporte === trans.id;
+            const abastDate = new Date(abast.dataCadastro);
+
+            // Verifica se o abastecimento ocorreu neste mês
+            const isThisMonth =
+              abastDate.getMonth() === Hoje.getMonth() &&
+              abastDate.getFullYear() === Hoje.getFullYear();
+
+            return isCurrentTransport && isThisMonth;
+          });
+
+          const RelatorioMesAnterior = AbastecimentoMenAnterior.reduce(
+            (total, abast) => total + abast.kmRodadoAbastecido,
+            0
+          );
+
+          const RelatorioMes = AbastecimentoMen.reduce(
+            (total, abast) => total + abast.kmRodadoAbastecido,
+            0
+          );
+
+          const diferencaKm = RelatorioMes - RelatorioMesAnterior;
+
+          //Resumo Mensal
 
           return (
             <div
@@ -242,18 +307,6 @@ export const MtrTransporte = () => {
                       <Topico>Km/L:</Topico>
                       <Descricao>
                         {Number(trans.kmPorLitroTransporte)
-                          .toFixed(2)
-                          .toLocaleString("pt-BR")}
-                        Km
-                      </Descricao>
-                    </BlockSeparacao>
-                  </BlockAgupado>
-
-                  <BlockAgupado>
-                    <BlockSeparacao>
-                      <Topico>Km/Dia:</Topico>
-                      <Descricao>
-                        {Number(trans.kmPorDiaTransporte)
                           .toFixed(2)
                           .toLocaleString("pt-BR")}
                         Km
@@ -423,10 +476,197 @@ export const MtrTransporte = () => {
                   </p>
                 </div>
 
-                <div className=" bg-orange-300 h-full rounded-[0.6em] p-2 px-3 relative">
-                  <Titulo className="flex-initial w-full xl:w-auto">
-                    Resumo Mensal:
-                  </Titulo>
+                <div className=" bg-orange-300 h-full rounded-[0.6em] p-2 px-3 flex flex-col gap-2">
+                  <div className="flex justify-between flex-wrap">
+                    <Titulo className="flex-initial w-auto">
+                      Resumo Mensal:
+                    </Titulo>
+                    <div className="mr-6 bg-slate-100 text-center flex justify-center items-center px-5 rounded-[0.6em] border-2 border-orange-500 font-semibold">
+                      {AbastecimentoMen.length === 1 ? (
+                        <>{meses[hoje.getMonth()]}</>
+                      ) : (
+                        <>{meses[hoje.getMonth() - 1]}</>
+                      )}
+                    </div>
+                  </div>
+                  {AbastecimentoMen.length === 1 ? (
+                    <>
+                      {AbastecimentoMen.map((abast) => {
+                        var KmDiario = diferencaKm / abast.diasAbastecido;
+                        var KmPorLitroD = diferencaKm / abast.totalAbastecido;
+                        var valorMes =
+                          abast.vlrGasolina * abast.totalAbastecido;
+                        return (
+                          <div
+                            key={abast.id}
+                            className="p-1 rounded-[0.6em] flex-wrap shadow-inner h-full flex justify-around items-center gap-3 duration-500 bg-slate-100"
+                          >
+                            <div>
+                              <div className="flex items-center gap-2">
+                                <Topico>Km:</Topico>
+                                <Descricao>
+                                  {Number(
+                                    abast.kmRodadoAbastecido
+                                  ).toLocaleString("pt-BR")}
+                                  Km
+                                </Descricao>
+                              </div>
+
+                              <div className="flex items-center gap-2">
+                                <Topico>Km/L:</Topico>
+                                <Descricao>
+                                  {Number(KmPorLitroD)
+                                    .toFixed(2)
+                                    .toLocaleString("pt-BR")}
+                                  Km
+                                </Descricao>
+                              </div>
+
+                              <div className="flex items-center gap-2">
+                                <Topico>Km/Dia:</Topico>
+                                <Descricao>
+                                  {Number(KmDiario)
+                                    .toFixed(2)
+                                    .toLocaleString("pt-BR")}
+                                  Km
+                                </Descricao>
+                              </div>
+
+                              <div className="flex items-center gap-2">
+                                <Topico>Km/Dia:</Topico>
+                                <Descricao>
+                                  {Number(diferencaKm)
+                                    .toFixed(2)
+                                    .toLocaleString("pt-BR")}
+                                  Km
+                                </Descricao>
+                              </div>
+                            </div>
+
+                            <div>
+                              <div className="flex items-center gap-2">
+                                <Topico>Dias:</Topico>
+                                <Descricao>{abast.diasAbastecido}</Descricao>
+                              </div>
+
+                              <div className="flex items-center gap-2">
+                                <Topico>Total Abastecido:</Topico>
+                                <Descricao>{abast.totalAbastecido}L</Descricao>
+                              </div>
+
+                              <div className="flex items-center gap-2">
+                                <Topico>Valor Gasolina:</Topico>
+                                <Descricao>
+                                  {Number(abast.vlrGasolina).toLocaleString(
+                                    "pt-BR",
+                                    {
+                                      style: "currency",
+                                      currency: "BRL",
+                                    }
+                                  )}
+                                </Descricao>
+                              </div>
+
+                              <div className="flex items-center gap-2">
+                                <Topico>Gasto Mês:</Topico>
+                                <Descricao>
+                                  {Number(valorMes).toLocaleString("pt-BR", {
+                                    style: "currency",
+                                    currency: "BRL",
+                                  })}
+                                </Descricao>
+                              </div>
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </>
+                  ) : (
+                    <>
+                      {AbastecimentoMenAnterior.map((abast) => {
+                        var diferencaKmAnt =
+                          Number(trans.kmRodadoTransporte) -
+                          abast.kmRodadoAbastecido;
+                        var KmDiario = diferencaKmAnt / abast.diasAbastecido;
+                        var KmPorLitroD =
+                          diferencaKmAnt / abast.totalAbastecido;
+                        var valorMes =
+                          abast.vlrGasolina * abast.totalAbastecido;
+                        return (
+                          <div
+                            key={abast.id}
+                            className="p-1 rounded-[0.6em] flex-wrap shadow-inner h-full flex justify-around items-center gap-3 duration-500 bg-slate-100"
+                          >
+                            <div>
+                              <div className="flex items-center gap-2">
+                                <Topico>Km:</Topico>
+                                <Descricao>
+                                  {Number(
+                                    abast.kmRodadoAbastecido
+                                  ).toLocaleString("pt-BR")}
+                                  Km
+                                </Descricao>
+                              </div>
+                              <div className="flex items-center gap-2">
+                                <Topico>Km/L:</Topico>
+                                <Descricao>
+                                  {Number(KmPorLitroD)
+                                    .toFixed(2)
+                                    .toLocaleString("pt-BR")}
+                                  Km
+                                </Descricao>
+                              </div>
+
+                              <div className="flex items-center gap-2">
+                                <Topico>Km/Dia:</Topico>
+                                <Descricao>
+                                  {Number(KmDiario)
+                                    .toFixed(2)
+                                    .toLocaleString("pt-BR")}
+                                  Km
+                                </Descricao>
+                              </div>
+                            </div>
+
+                            <div>
+                              <div className="flex items-center gap-2">
+                                <Topico>Dias:</Topico>
+                                <Descricao>{abast.diasAbastecido}</Descricao>
+                              </div>
+
+                              <div className="flex items-center gap-2">
+                                <Topico>Total Abastecido:</Topico>
+                                <Descricao>{abast.totalAbastecido}L</Descricao>
+                              </div>
+
+                              <div className="flex items-center gap-2">
+                                <Topico>Valor Gasolina:</Topico>
+                                <Descricao>
+                                  {Number(abast.vlrGasolina).toLocaleString(
+                                    "pt-BR",
+                                    {
+                                      style: "currency",
+                                      currency: "BRL",
+                                    }
+                                  )}
+                                </Descricao>
+                              </div>
+
+                              <div className="flex items-center gap-2">
+                                <Topico>Gasto Mês:</Topico>
+                                <Descricao>
+                                  {Number(valorMes).toLocaleString("pt-BR", {
+                                    style: "currency",
+                                    currency: "BRL",
+                                  })}
+                                </Descricao>
+                              </div>
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </>
+                  )}
                 </div>
               </div>
             </div>

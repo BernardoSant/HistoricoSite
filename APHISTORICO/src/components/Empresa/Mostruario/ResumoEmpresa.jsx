@@ -139,9 +139,7 @@ export const ResumoEmpresa = () => {
 
       setMes(mesAtual);
       setAno(anoAtual);
-    }, 600000); // Atualiza a cada minuto
-
-    // Limpa o intervalo quando o componente é desmontado
+    }, 6000000); // Atualiza a cada minuto
     return () => clearInterval(intervalId);
   }, []);
 
@@ -154,15 +152,6 @@ export const ResumoEmpresa = () => {
   });
 
   const ContratoAtivo = contrato.filter((ctt) => ctt.situacaoCT === "Ativo");
-
-  const somaNotas = nota.reduce((acc, nota) => {
-    if (acc[nota.numeroPedidoNF]) {
-      acc[nota.numeroPedidoNF] += nota.valorRecebidoNF;
-    } else {
-      acc[nota.numeroPedidoNF] = nota.valorRecebidoNF;
-    }
-    return acc;
-  }, {});
 
   pedido.sort((a, b) => new Date(a.dataPDD) - new Date(b.dataPDD));
 
@@ -330,7 +319,7 @@ export const ResumoEmpresa = () => {
             </H3>
           </Dir>
 
-          <Div className="">
+          <Div>
             {notasReceberFiltradas.map((nota) => (
               <H3
                 key={nota.id}
