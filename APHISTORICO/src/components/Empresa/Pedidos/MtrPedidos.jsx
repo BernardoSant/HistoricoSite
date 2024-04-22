@@ -2,6 +2,7 @@ import styled from "styled-components";
 import { useGlobalContext } from "../../../global/Global";
 
 const Div = styled.div`
+  height: 100%;
   margin-bottom: 2em;
   display: flex;
   flex-wrap: wrap;

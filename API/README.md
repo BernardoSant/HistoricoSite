@@ -67,4 +67,4 @@ Permitir requisição externa
 ### npm install cors
 
 
-  npx sequelize-cli model:generate --name SalarioMensal --attributes totalFgtsSalario:float,totalSalarioMes:float,adiantamentoSalario:float,salarioFinal:float,dataSalario:dateonly
+  npx sequelize-cli model:generate --name Abastecimento --attributes vlrGasolina:float,totalAbastecido:float,diasAbastecido:integer,kmRodadoAbastecido:float,dataCadastro:dateonly
