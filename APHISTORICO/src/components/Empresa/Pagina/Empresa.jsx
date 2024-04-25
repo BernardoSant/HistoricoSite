@@ -9,6 +9,7 @@ import { TabelaAddFuncionario } from "../Funcionarios/AddFuncionario";
 import { MostruarioFuncAdmitido } from "../Funcionarios/FuncionarioAdmitidos";
 import { MtrTransporte } from "../Transporte/MtrTransporte";
 import { MostruarioFuncDemitido } from "../Funcionarios/FuncionarioDemitidos";
+import { AddManutencao } from "../Transporte/AddManutencao";
 import { AddTransporte } from "../Transporte/AddTransporte";
 import { ResumoEmpresa } from "../Mostruario/ResumoEmpresa";
 import { TabelaAddContrato } from "../Contrato/addContrato";
@@ -172,6 +173,7 @@ export const Empresa = () => {
     addPedido: false,
     addContrato: false,
     addTransporte: false,
+    addManutencao: false,
 
     //Botões Terciarios
     verNota: false,
@@ -242,6 +244,7 @@ export const Empresa = () => {
       ...(key !== "outros" && { outros: false }),
       ...(key !== "Dashboard" && { Dashboard: false }),
       ...(key !== "verTransporte" && { verTransporte: false }),
+      ...(key !== "addManutencao" && { addManutencao: false }),
     }));
   };
 
@@ -268,6 +271,7 @@ export const Empresa = () => {
       ...(key !== "outros" && { outros: false }),
       ...(key !== "Dashboard" && { Dashboard: false }),
       ...(key !== "verTransporte" && { verTransporte: false }),
+      ...(key !== "addManutencao" && { addManutencao: false }),
     }));
   };
   // ordernar por tamanho de digito
@@ -438,6 +442,8 @@ export const Empresa = () => {
                   ></Button>
                   <Button
                     TipoButton={2}
+                    onFinal={state.addManutencao}
+                    onClick={() => ButtomSecundario("addManutencao")}
                     Titulo={"Adcionar Manutenção"}
                   ></Button>
                 </Tabela>
@@ -456,6 +462,8 @@ export const Empresa = () => {
           </Div>
         </Nav>
         <Div className="w-full h-full relative rounded-[1em] flex justify-center items-center">
+
+          {state.addManutencao && <AddManutencao />}
           {state.addTransporte && <AddTransporte></AddTransporte>}
 
           {state.Dashboard && <ResumoEmpresa />}

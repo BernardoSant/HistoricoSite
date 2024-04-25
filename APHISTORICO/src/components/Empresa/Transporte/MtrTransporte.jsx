@@ -4,6 +4,9 @@ import { useState, useEffect } from "react";
 import { HiOutlinePlusSm } from "react-icons/hi";
 import axios from "axios";
 import { toast } from "react-toastify";
+import { BsChevronCompactDown } from "react-icons/bs";
+import { LuArrowRightFromLine } from "react-icons/lu";
+import { HiOutlineDocumentDuplicate } from "react-icons/hi";
 
 const Div = styled.div`
   height: 100%;
@@ -70,10 +73,33 @@ const BlockAgupado = styled.div`
   flex-direction: column;
   gap: 0em;
 `;
+
 const BlockSeparacao = styled.div`
   display: flex;
   align-items: center;
   width: 100%;
+  gap: 0.5em;
+`;
+
+const BlockManutencao = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+
+  @media (min-width: 1300px) {
+    flex-direction: row;
+  }
+  
+`;
+
+const SectionMantencao = styled.div`
+  border-radius: 0.4em;
+  padding: 6px;
+`;
+
+const DescricaoMantencao = styled.div`
+  display: flex;
+  flex-direction: row;
   gap: 0.5em;
 `;
 
@@ -94,7 +120,6 @@ export const MtrTransporte = () => {
     "Dezembro",
   ];
   let nomeDoMes = meses[hoje.getMonth()];
-  console.log(nomeDoMes);
 
   const dia = hoje.getDate();
   const mes = hoje.getMonth() + 1;
@@ -102,9 +127,6 @@ export const MtrTransporte = () => {
   let dataFormatada = `${ano}-${mes}-${dia}`;
 
   const { transporte, ip, abastecimento } = useGlobalContext();
-
-  const [transporteState, setTransporteState] = useState({});
-  const [transporteSelecionado, setTransporteSelecionado] = useState({});
 
   const [data, setData] = useState({
     idTransporte: "",
@@ -150,11 +172,16 @@ export const MtrTransporte = () => {
         });
       })
       .catch((err) => {
-        toast.info(err.response.data.message);
+        toast.error(err.response.data.message);
       });
   };
 
-  const [state, setState] = useState({});
+  const [state, setState] = useState({
+    addManutencao: false,
+  });
+  const [transporteState, setTransporteState] = useState({});
+  const [manutencaoState, setManutencaoState] = useState({});
+  const [transporteSelecionado, setTransporteSelecionado] = useState({});
 
   const ButtomPrimario = (id) => {
     const novoEstado = Object.keys(transporteState).reduce((obj, key) => {
@@ -180,6 +207,29 @@ export const MtrTransporte = () => {
     setTransporteSelecionado(id);
   };
 
+  const ButtomManutencao = (id) => {
+    const novoEstado = Object.keys(manutencaoState).reduce((obj, key) => {
+      obj[key] = false;
+      setState((prevState) => ({
+        ...prevState,
+        [key]: !prevState[key],
+      }));
+      return obj;
+    }, {});
+
+    novoEstado[id] = true;
+    novoEstado[id] = !manutencaoState[id];
+    setManutencaoState(novoEstado);
+    setTransporteSelecionado(id);
+  };
+
+  const Buttom = (key) => {
+    setState((prevState) => ({
+      ...prevState,
+      [key]: !prevState[key],
+      ...(key !== "addManutencao" && { addManutencao: false }),
+    }));
+  };
   return (
     <Div>
       <Header>Transportes</Header>
@@ -247,7 +297,7 @@ export const MtrTransporte = () => {
           return (
             <div
               key={trans.id}
-              className="flex flex-col md:grid md:grid-cols-[0.3fr_1fr] gap-3 gap-y-3 shadow-inner bg-gray-200 rounded-[1em] p-3"
+              className="flex flex-col xl:grid xl:grid-cols-[0.3fr_1fr] gap-3 gap-y-3 shadow-inner bg-gray-200 rounded-[1em] p-3"
             >
               <div className=" bg-orange-400 rounded-[0.6em] p-2 px-3">
                 <Titulo>Caracteristicas</Titulo>
@@ -668,6 +718,70 @@ export const MtrTransporte = () => {
                     </>
                   )}
                 </div>
+              </div>
+
+              {manutencaoState[trans.id] ? (
+                <div className="flex flex-col col-span-2 bg-white shadow-inner rounded-[0.6em] p-2 gap-2 xl:max-h-[10em] max-h-[23em] overflow-auto">
+                  <div className="flex justify-between px-2 items-center">
+                    <h1 className="text-2xl font-semibold">Manutenções</h1>
+                    <div className="flex gap-2">
+                      {state.addManutencao && (
+                        <button
+                          className={`bg-green-500 p-2 rounded-[0.6em] font-semibold  hover:scale-95 hover:bg-green-400`}
+                          onClick={<></>}
+                        >
+                          <HiOutlineDocumentDuplicate />
+                        </button>
+                      )}
+
+                      <button
+                        className={`bg-orange-500 p-2 rounded-[0.6em] font-semibold  hover:scale-95 hover:bg-orange-400 ${
+                          state.addManutencao && "bg-red-500 hover:bg-red-400"
+                        } `}
+                        onClick={() => Buttom("addManutencao")}
+                      >
+                        {state.addManutencao ? (
+                          <LuArrowRightFromLine />
+                        ) : (
+                          <HiOutlinePlusSm />
+                        )}
+                      </button>
+                    </div>
+                  </div>
+                  {state.addManutencao ? (
+                    <>asxa</>
+                  ) : (
+                    <BlockManutencao>
+                      <SectionMantencao className="bg-slate-100 flex-1 shadow-inner">
+                        Lorem Ipsum is simply dummy text of the printing and
+                        typesetting industry. Lorem Ipsum has been the
+                        industry's standard dummy text ever since the 1500s,
+                        when an unknown printer took a galley of type and
+                        scrambled it to make a type specimen book.
+                      </SectionMantencao>
+
+                      <SectionMantencao className=" bg-slate-300 flex justify-around xl:flex-col flex-wrap min-w-[15em] shadow-inner">
+                        <DescricaoMantencao>
+                          <div className="font-bold">Data Manutenção:</div>
+                          <div>22/22/2222</div>
+                        </DescricaoMantencao>
+                        <DescricaoMantencao>
+                          <div className="font-bold ">Valor Total:</div>
+                          <div>hjshjka</div>
+                        </DescricaoMantencao>
+                      </SectionMantencao>
+                    </BlockManutencao>
+                  )}
+                </div>
+              ) : null}
+
+              <div
+                className={`col-span-2 flex justify-center items-center text-lg ${
+                  manutencaoState[trans.id] ? "rotate-180" : " hover:mt-2"
+                } duration-500`}
+                onClick={() => ButtomManutencao(trans.id)}
+              >
+                <BsChevronCompactDown />
               </div>
             </div>
           );

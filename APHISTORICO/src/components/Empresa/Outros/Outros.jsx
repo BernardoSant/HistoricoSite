@@ -4,11 +4,11 @@ import axios from "axios";
 import { Chart } from "react-google-charts";
 import { useGlobalContext } from "../../../global/Global";
 import { toast } from "react-toastify";
-import {
-  HiOutlinePlusSm,
-  HiOutlineDocumentDuplicate,
-  HiOutlineTrash,
-} from "react-icons/hi";
+  import {
+    HiOutlinePlusSm,
+    HiOutlineDocumentDuplicate,
+    HiOutlineTrash,
+  } from "react-icons/hi";
 import { RiSaveLine } from "react-icons/ri";
 import { LuArrowRightFromLine } from "react-icons/lu";
 
