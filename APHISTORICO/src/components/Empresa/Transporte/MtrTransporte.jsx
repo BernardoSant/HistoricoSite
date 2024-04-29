@@ -7,6 +7,7 @@ import { toast } from "react-toastify";
 import { BsChevronCompactDown } from "react-icons/bs";
 import { LuArrowRightFromLine } from "react-icons/lu";
 import { HiOutlineDocumentDuplicate } from "react-icons/hi";
+import { dateFormat } from "../../../functions/dateFormat";
 
 const Div = styled.div`
   height: 100%;
@@ -85,11 +86,27 @@ const BlockManutencao = styled.div`
   display: flex;
   flex-direction: column;
   gap: 8px;
+  max-height: 12em;
+  overflow-y: auto;
+
+  &::-webkit-scrollbar {
+    width: 5px;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: #575757;
+    border-radius: 1em;
+  }
+`;
+
+const Block = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
 
   @media (min-width: 1300px) {
     flex-direction: row;
   }
-  
 `;
 
 const SectionMantencao = styled.div`
@@ -119,14 +136,13 @@ export const MtrTransporte = () => {
     "Novembro",
     "Dezembro",
   ];
-  let nomeDoMes = meses[hoje.getMonth()];
 
   const dia = hoje.getDate();
   const mes = hoje.getMonth() + 1;
   const ano = hoje.getFullYear();
   let dataFormatada = `${ano}-${mes}-${dia}`;
 
-  const { transporte, ip, abastecimento } = useGlobalContext();
+  const { transporte, ip, abastecimento, manutencao } = useGlobalContext();
 
   const [data, setData] = useState({
     idTransporte: "",
@@ -137,6 +153,13 @@ export const MtrTransporte = () => {
     dataCadastro: "",
   });
 
+  const [dataManutencao, setDataManutencao] = useState({
+    idTransport: "",
+    descricaoManutencao: "",
+    dataManutencao: "",
+    valorManutencao: "",
+  });
+
   const valorInput = (e) => {
     let valor = e.target.value;
     setData({
@@ -145,6 +168,39 @@ export const MtrTransporte = () => {
       idTransporte: transporteSelecionado,
       dataCadastro: dataFormatada,
     });
+  };
+
+  const valorInputManutencao = (e) => {
+    let valor = e.target.value;
+    setDataManutencao({
+      ...dataManutencao,
+      [e.target.name]: valor,
+      idTransport: transporteSelecionado,
+    });
+  };
+
+  const sendManutencao = (e) => {
+    e.preventDefault();
+
+    const headers = {
+      headers: {
+        "Content-Type": "application/json",
+      },
+    };
+
+    axios
+      .post(ip + "/manutencao", dataManutencao, headers)
+      .then((response) => {
+        toast.success(response.data.message);
+        setDataManutencao({
+          descricaoManutencao: "",
+          dataManutencao: "",
+          valorManutencao: "",
+        });
+      })
+      .catch((err) => {
+        toast.error(err.response.data.message);
+      });
   };
 
   const sendKilometragem = (e) => {
@@ -161,7 +217,6 @@ export const MtrTransporte = () => {
       .then((response) => {
         toast.success(response.data.message);
         setData({
-          idTransporte: "",
           vlrGasolina: "",
           totalAbastecido: "",
           diasAbastecido: "",
@@ -205,6 +260,7 @@ export const MtrTransporte = () => {
 
     setTransporteState(novoEstado);
     setTransporteSelecionado(id);
+    setManutencaoState({});
   };
 
   const ButtomManutencao = (id) => {
@@ -221,6 +277,7 @@ export const MtrTransporte = () => {
     novoEstado[id] = !manutencaoState[id];
     setManutencaoState(novoEstado);
     setTransporteSelecionado(id);
+    setTransporteState({});
   };
 
   const Buttom = (key) => {
@@ -230,6 +287,7 @@ export const MtrTransporte = () => {
       ...(key !== "addManutencao" && { addManutencao: false }),
     }));
   };
+
   return (
     <Div>
       <Header>Transportes</Header>
@@ -292,12 +350,20 @@ export const MtrTransporte = () => {
 
           const diferencaKm = RelatorioMes - RelatorioMesAnterior;
 
-          //Resumo Mensal
+          //Manutenção
+          const mantTransorte = manutencao.filter(
+            (manut) => manut.idTransport === trans.id
+          );
+
+          const valorManutencaoTotal = mantTransorte.reduce(
+            (total, manut) => total + manut.valorManutencao,
+            0
+          );
 
           return (
             <div
               key={trans.id}
-              className="flex flex-col xl:grid xl:grid-cols-[0.3fr_1fr] gap-3 gap-y-3 shadow-inner bg-gray-200 rounded-[1em] p-3"
+              className="flex flex-col lg:grid lg:grid-cols-[0.3fr_1fr] gap-3 gap-y-3 shadow-inner bg-gray-200 rounded-[1em] p-3"
             >
               <div className=" bg-orange-400 rounded-[0.6em] p-2 px-3">
                 <Titulo>Caracteristicas</Titulo>
@@ -583,7 +649,7 @@ export const MtrTransporte = () => {
                               </div>
 
                               <div className="flex items-center gap-2">
-                                <Topico>Km/Dia:</Topico>
+                                <Topico>Diferença:</Topico>
                                 <Descricao>
                                   {Number(diferencaKm)
                                     .toFixed(2)
@@ -721,17 +787,36 @@ export const MtrTransporte = () => {
               </div>
 
               {manutencaoState[trans.id] ? (
-                <div className="flex flex-col col-span-2 bg-white shadow-inner rounded-[0.6em] p-2 gap-2 xl:max-h-[10em] max-h-[23em] overflow-auto">
-                  <div className="flex justify-between px-2 items-center">
+                <div className="flex flex-col col-span-2 bg-white shadow-inner rounded-[0.6em] p-2 gap-2  max-h-[23em] overflow-auto">
+                  <div className="flex justify-between px-2 items-center flex-wrap">
                     <h1 className="text-2xl font-semibold">Manutenções</h1>
-                    <div className="flex gap-2">
-                      {state.addManutencao && (
+                    <div className="flex gap-2 justify-between w-full md:justify-normal md:w-auto">
+                      {state.addManutencao ? (
                         <button
                           className={`bg-green-500 p-2 rounded-[0.6em] font-semibold  hover:scale-95 hover:bg-green-400`}
-                          onClick={<></>}
+                          onClick={sendManutencao}
                         >
                           <HiOutlineDocumentDuplicate />
                         </button>
+                      ) : (
+                        <>
+                          <h1 className="P-2 bg-orange-600 flex justify-center items-center px-4 rounded-[0.6em] font-semibold ">
+                            {valorManutencaoTotal === 0 ? (
+                              "Sem Manutenções"
+                            ) : (
+                              <div>
+                                Valor Total:{" "}
+                                {Number(valorManutencaoTotal).toLocaleString(
+                                  "pt-BR",
+                                  {
+                                    style: "currency",
+                                    currency: "BRL",
+                                  }
+                                )}
+                              </div>
+                            )}
+                          </h1>
+                        </>
                       )}
 
                       <button
@@ -749,27 +834,68 @@ export const MtrTransporte = () => {
                     </div>
                   </div>
                   {state.addManutencao ? (
-                    <>asxa</>
+                    <div className="flex gap-3 flex-wrap">
+                      <textarea
+                        placeholder="Descrição da Manutenção..."
+                        name="descricaoManutencao"
+                        value={dataManutencao.descricaoManutencao}
+                        onChange={valorInputManutencao}
+                        className="bg-gray-100 flex-1  rounded-[0.6em] p-2 border-2 border-gray-400"
+                      ></textarea>
+                      <div className="bg-slate-200 p-2 rounded-[0.6em] w-full lg:w-auto shadow-inner">
+                        <div className="">
+                          <Topico>Data:</Topico>
+                          <Input
+                            type="date"
+                            value={dataManutencao.dataManutencao}
+                            name="dataManutencao"
+                            onChange={valorInputManutencao}
+                          />
+                        </div>
+                        <div className="">
+                          <Topico>Valor:</Topico>
+                          <Input
+                            type="number"
+                            value={dataManutencao.valorManutencao}
+                            name="valorManutencao"
+                            onChange={valorInputManutencao}
+                          />
+                        </div>
+                      </div>
+                    </div>
                   ) : (
                     <BlockManutencao>
-                      <SectionMantencao className="bg-slate-100 flex-1 shadow-inner">
-                        Lorem Ipsum is simply dummy text of the printing and
-                        typesetting industry. Lorem Ipsum has been the
-                        industry's standard dummy text ever since the 1500s,
-                        when an unknown printer took a galley of type and
-                        scrambled it to make a type specimen book.
-                      </SectionMantencao>
+                      {mantTransorte.map((manuTrans) => {
+                        return (
+                          <Block>
+                            <SectionMantencao className="bg-slate-200 flex-1 shadow-inner">
+                              {manuTrans.descricaoManutencao}
+                            </SectionMantencao>
 
-                      <SectionMantencao className=" bg-slate-300 flex justify-around xl:flex-col flex-wrap min-w-[15em] shadow-inner">
-                        <DescricaoMantencao>
-                          <div className="font-bold">Data Manutenção:</div>
-                          <div>22/22/2222</div>
-                        </DescricaoMantencao>
-                        <DescricaoMantencao>
-                          <div className="font-bold ">Valor Total:</div>
-                          <div>hjshjka</div>
-                        </DescricaoMantencao>
-                      </SectionMantencao>
+                            <SectionMantencao className=" bg-slate-300 flex justify-around xl:flex-col flex-wrap min-w-[15em] shadow-inner">
+                              <DescricaoMantencao>
+                                <div className="font-bold">
+                                  Data Manutenção:
+                                </div>
+                                <div>
+                                  {dateFormat(manuTrans.dataManutencao)}
+                                </div>
+                              </DescricaoMantencao>
+                              <DescricaoMantencao>
+                                <div className="font-bold ">Valor Total:</div>
+                                <div>
+                                  {Number(
+                                    manuTrans.valorManutencao
+                                  ).toLocaleString("pt-BR", {
+                                    style: "currency",
+                                    currency: "BRL",
+                                  })}
+                                </div>
+                              </DescricaoMantencao>
+                            </SectionMantencao>
+                          </Block>
+                        );
+                      })}
                     </BlockManutencao>
                   )}
                 </div>

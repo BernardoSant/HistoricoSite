@@ -4,13 +4,14 @@ import axios from "axios";
 import { Chart } from "react-google-charts";
 import { useGlobalContext } from "../../../global/Global";
 import { toast } from "react-toastify";
-  import {
-    HiOutlinePlusSm,
-    HiOutlineDocumentDuplicate,
-    HiOutlineTrash,
-  } from "react-icons/hi";
+import {
+  HiOutlinePlusSm,
+  HiOutlineDocumentDuplicate,
+  HiOutlineTrash,
+} from "react-icons/hi";
 import { RiSaveLine } from "react-icons/ri";
 import { LuArrowRightFromLine } from "react-icons/lu";
+import { NumericFormat } from "react-number-format";
 
 const Footer = styled.footer`
   height: 100%;
@@ -33,9 +34,8 @@ const Header = styled.header`
   box-shadow: inset 5px -5px 10px #9f4a0e, inset -5px 5px 10px #ff9c1e;
 `;
 
-
 const Article = styled.div`
-height: auto;
+  height: auto;
   display: flex;
   flex-direction: column;
 `;
@@ -56,7 +56,7 @@ const Dir = styled.div`
 `;
 
 const Div = styled.div`
-height: 100%;
+  height: 100%;
   display: inline-block;
   flex-direction: column;
   padding-left: 1em;
@@ -140,10 +140,11 @@ export const Outros = () => {
     porcentagemImposto: "",
   });
 
+  // handleChange
   const valorInput = (e) => {
-    let valor = e.target.value;
-    let name = e.target.name;
-    setData({ ...data, [e.target.name]: valor });
+    const { name, value} = e.target;
+
+    setData({ ...data, [name]: value });
 
     if ((name === "nomeCargo" && state.delCargo) || state.edtCargo) {
       const parts = valor.split(" - ");
@@ -492,12 +493,28 @@ export const Outros = () => {
                       onChange={valorInput}
                       value={data.nomeCargo}
                     />
-                    <Input
+                    {/* <Input
                       type="number"
                       name="salarioCargo"
                       placeholder="Salario EX: 00.00"
                       onChange={valorInput}
                       value={data.salarioCargo}
+                    /> */}
+                    <NumericFormat
+                      placeholder="Salario"
+                      style={{ outline: "none", padding: "2px" }}
+                      // value=""
+                      // onChange={(e) => console.log(e)}
+                      onValueChange={(e) => {
+                        setData({
+                          ...data,
+                          salarioCargo: e.floatValue
+                        })
+                      }}
+                      thousandSeparator="."
+                      decimalScale={2}
+                      fixedDecimalScale
+                      decimalSeparator=","
                     />
                   </form>
                 ) : state.edtCargo ? (

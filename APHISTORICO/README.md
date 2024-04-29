@@ -21,4 +21,4 @@ Para criar uma tabela pelo sequelize
   ou
   npx nodemon app.js
 
-  npx sequelize-cli model:generate --name Contrato --attributes numeroCT:float,ValorCT:float,nomeCT:string,empresaCT:string,idempresaCT:INTEGER,dataCT:dateonly 
+  npx sequelize-cli model:generate --name Manutencao --attributes idTransport:integer,descricaoManutencao:string,dataManutencao:dateonly,valorManutencao:decimal
