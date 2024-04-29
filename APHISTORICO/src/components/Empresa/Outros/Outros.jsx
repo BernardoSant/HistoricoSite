@@ -60,7 +60,7 @@ const Div = styled.div`
   flex-direction: column;
   padding-left: 1em;
   padding-right: 1em;
-  padding-top: 20px;
+  padding-top: 10px;
   padding-bottom: 5px;
   background-color: #d8d6d679;
   overflow-x: auto;
@@ -84,36 +84,27 @@ const H1 = styled.h1`
   font-weight: 700;
 `;
 
-const H2 = styled.h2`
+const H2 = styled(H1)`
+  margin-top: 5px;
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-template-columns: 0.1fr repeat(2, minmax(0, 1fr));
   text-align: center;
   font-weight: 600;
 `;
 
-const H3 = styled.h3`
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  text-align: center;
-  font-weight: 600;
+const H3 = styled(H2)`
+  grid-template-columns: 0.1fr 1fr 1fr 1fr;
 `;
 
-const H4 = styled.h3`
-  display: grid;
-  grid-template-columns: repeat(5, minmax(0, 1fr));
-  text-align: center;
-  font-weight: 600;
-`;
-
-const H5 = styled.h3`
-  display: grid;
-  grid-template-columns: repeat(5, minmax(0, 1fr));
-  text-align: center;
-  font-weight: 600;
+const H5 = styled(H2)`
+  grid-template-columns: 0.1fr repeat(5, minmax(0, 1fr));
 `;
 
 const P = styled.p`
   text-align: center;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
   width: 100%;
 `;
 
@@ -136,8 +127,30 @@ const Input = styled.input`
 export const Outros = () => {
   const { ip, cargo, kinays, impostos } = useGlobalContext();
 
+  const [itenState, setItenState] = useState({});
+  const [itenSelecionado, setItenSelecionada] = useState(null);
+
+  const handleSelect = (id) => {
+    // Primeiro, crie um novo objeto onde todas as chaves são definidas como false
+    const novoEstado = Object.keys(itenState).reduce((obj, key) => {
+      obj[key] = false;
+      setState((prevState) => ({
+        ...prevState,
+        [key]: !prevState[key],
+      }));
+      return obj;
+    }, {});
+
+    // Em seguida, defina o estado do empregador clicado como true
+    novoEstado[id] = true;
+    novoEstado[id] = !itenState[id];
+
+    // Finalmente, atualize o estado
+    setItenState(novoEstado);
+    setItenSelecionada(id);
+  };
+
   const [data, setData] = useState({
-    idCargo: "",
     nomeCargo: "",
     salarioCargo: null,
     quantidadeCargo: "0",
@@ -187,10 +200,6 @@ export const Outros = () => {
       });
     }
   };
-  const valorInput2 = (e) => {
-    let valor = e.target.value;
-    setData({ ...data, [e.target.name]: valor });
-  };
 
   const sendCargo = async (e) => {
     e.preventDefault();
@@ -233,24 +242,24 @@ export const Outros = () => {
       },
     };
 
-    if (data.nomeCargo === "" || data.salarioCargo === "") {
+    if (itenSelecionado === null || data.salarioCargo === "") {
       toast.error("Por favor, preencha todos os campos obrigatórios.");
       return;
     }
 
     axios
-      .put(ip + "/cargo/" + data.idCargo, data, headers)
+      .put(
+        ip + "/cargo/" + itenSelecionado,
+        { salarioCargo: data.salarioCargo },
+        headers
+      )
       .then((response) => {
         setData({
-          idCargo: "",
-          nomeCargo: "",
           salarioCargo: "",
-          quantidadeCargo: "0",
-          numeroKinay: "",
-          descricaoKinay: "",
-          porcentagemKinay: "",
         });
         toast.success(response.data.message);
+        setItenSelecionada(null);
+        setItenState({});
       })
       .catch((err) => {
         toast.info(err.response.data.message);
@@ -266,24 +275,17 @@ export const Outros = () => {
       },
     };
 
-    if (data.nomeCargo === "") {
+    if (itenSelecionado === null) {
       toast.error("Por favor, preencha todos os campos obrigatórios.");
       return;
     }
 
     axios
-      .delete(ip + "/cargo/" + data.idCargo, headers)
+      .delete(ip + "/cargo/" + itenSelecionado, headers)
       .then((response) => {
         toast.success(response.data.message);
-        setData({
-          idCargo: "",
-          nomeCargo: "",
-          salarioCargo: "",
-          quantidadeCargo: "0",
-          numeroKinay: "",
-          descricaoKinay: "",
-          porcentagemKinay: "",
-        });
+        setItenSelecionada(null);
+        setItenState({});
       })
       .catch((err) => {
         toast.info(err.response.data.message);
@@ -316,9 +318,6 @@ export const Outros = () => {
       .then((response) => {
         toast.success(response.data.message);
         setData({
-          nomeCargo: "",
-          salarioCargo: "",
-          quantidadeCargo: "0",
           numeroKinay: "",
           descricaoKinay: "",
           porcentagemKinay: "",
@@ -329,7 +328,40 @@ export const Outros = () => {
       });
   };
 
-  console.log(data.nomeCargo)
+  console.log(data);
+
+  const EdtKinay = async (e) => {
+    e.preventDefault();
+
+    const headers = {
+      headers: {
+        "Content-Type": "application/json",
+      },
+    };
+
+    if (itenSelecionado === null || data.porcentagemKinay === "") {
+      toast.error("Por favor, preencha todos os campos obrigatórios.");
+      return;
+    }
+
+    axios
+      .put(
+        ip + "/kinay/" + itenSelecionado,
+        { porcentagemKinay: data.porcentagemKinay / 100 },
+        headers
+      )
+      .then((response) => {
+        setData({
+          porcentagemKinay: "",
+        });
+        toast.success(response.data.message);
+        setItenSelecionada(null);
+        setItenState({});
+      })
+      .catch((err) => {
+        toast.info(err.response.data.message);
+      });
+  };
 
   const DelKinay = async (e) => {
     e.preventDefault();
@@ -340,24 +372,17 @@ export const Outros = () => {
       },
     };
 
-    if (data.descricaoKinay === "") {
-      toast.error("Por favor, preencha todos os campos obrigatórios.");
+    if (itenSelecionado === null) {
+      toast.error("Selecione um Cnae para Excluir");
       return;
     }
 
     axios
-      .delete(ip + "/kinay/" + data.idKinay, headers)
+      .delete(ip + "/kinay/" + itenSelecionado, headers)
       .then((response) => {
-        setData({
-          idKinay: "",
-          nomeCargo: "",
-          salarioCargo: "",
-          quantidadeCargo: "0",
-          numeroKinay: "",
-          descricaoKinay: "",
-          porcentagemKinay: "",
-        });
         toast.success(response.data.message);
+        setItenSelecionada(null);
+        setItenState({});
       })
       .catch((err) => {
         toast.info(err.response.data.message);
@@ -396,6 +421,39 @@ export const Outros = () => {
       });
   };
 
+  const edtImposto = async (e) => {
+    e.preventDefault();
+
+    const headers = {
+      headers: {
+        "Content-Type": "application/json",
+      },
+    };
+
+    if (itenSelecionado === null || data.porcentagemImposto === "") {
+      toast.error("Por favor, preencha todos os campos obrigatórios.");
+      return;
+    }
+
+    axios
+      .put(
+        ip + "/impostos/" + itenSelecionado,
+        { porcentagemImposto: data.porcentagemImposto / 100 },
+        headers
+      )
+      .then((response) => {
+        setData({
+          porcentagemImposto: "",
+        });
+        toast.success(response.data.message);
+        setItenSelecionada(null);
+        setItenState({});
+      })
+      .catch((err) => {
+        toast.info(err.response.data.message);
+      });
+  };
+
   const delImposto = async (e) => {
     e.preventDefault();
 
@@ -405,20 +463,17 @@ export const Outros = () => {
       },
     };
 
-    if (data.siglaImposto === "") {
-      toast.error("Por favor, preencha todos os campos obrigatórios.");
+    if (itenSelecionado === "") {
+      toast.error("Por favor, Selecione um imposto para excluir");
       return;
     }
 
     axios
-      .delete(ip + "/impostos/" + data.idImposto, headers)
+      .delete(ip + "/impostos/" + itenSelecionado, headers)
       .then((response) => {
-        setData({
-          idImposto: "",
-          siglaImposto: "",
-          porcentagemImposto: "",
-        });
         toast.success(response.data.message);
+        setItenSelecionada(null);
+        setItenState({});
       })
       .catch((err) => {
         toast.info(err.response.data.message);
@@ -431,8 +486,10 @@ export const Outros = () => {
     delCargo: false,
     addKinay: false,
     delKinay: false,
+    edtKinay: false,
     addImposto: false,
     delImposto: false,
+    edtImposto: false,
   });
 
   const handleClick = (key) => {
@@ -463,6 +520,9 @@ export const Outros = () => {
         delImposto: false,
       }),
     }));
+
+    setItenSelecionada(null);
+    setItenState({});
 
     setData({
       nomeCargo: "",
@@ -519,34 +579,20 @@ export const Outros = () => {
                     />
                   </form>
                 ) : state.edtCargo ? (
-                  <form
-                    id="edtCargoForm"
-                    onSubmit={EdtCargo}
-                    className="grid grid-cols-2 gap-3 pr-2"
-                  >
-                    <Input
-                      type="text"
-                      list="deltCargo"
-                      name="nomeCargo"
-                      placeholder="Selecione o cargo"
-                      onChange={valorInput}
-                      value={data.nomeCargo}
-                    />
-                    <datalist id="deltCargo">
-                      {cargo.map((cargo) => (
-                        <option
-                          key={cargo.id}
-                          value={`${cargo.id} - ${cargo.nomeCargo}`}
-                        />
-                      ))}
-                    </datalist>
-
-                    <Input
-                      type="number"
-                      name="salarioCargo"
-                      placeholder="Atualizar Salario "
-                      onChange={valorInput2}
-                      value={data.salarioCargo}
+                  <form id="edtCargoForm" onSubmit={EdtCargo} className="pr-2">
+                    <InputDinheiro
+                      placeholder="Salario"
+                      value={data.salarioCargo || ""}
+                      onValueChange={(e) => {
+                        setData({
+                          ...data,
+                          salarioCargo: e.floatValue,
+                        });
+                      }}
+                      thousandSeparator="."
+                      decimalScale={2}
+                      fixedDecimalScale
+                      decimalSeparator=","
                     />
                   </form>
                 ) : state.delCargo ? (
@@ -555,23 +601,7 @@ export const Outros = () => {
                     id="delCargoForm"
                     className="grid grid-cols-2 gap-3 pr-2"
                   >
-                    <Input
-                      type="text"
-                      list="deltCargo"
-                      name="nomeCargo"
-                      className="col-span-2"
-                      placeholder="Selecione o cargo"
-                      onChange={valorInput}
-                      value={data.nomeCargo}
-                    />
-                    <datalist id="deltCargo">
-                      {cargo.map((cargo) => (
-                        <option
-                          key={cargo.id}
-                          value={`${cargo.id} - ${cargo.nomeCargo}`}
-                        />
-                      ))}
-                    </datalist>
+                    <>Selecione o Cargo</>
                   </form>
                 ) : (
                   <p>Cargo</p>
@@ -650,6 +680,7 @@ export const Outros = () => {
             </div>
 
             <H3 className="text-[0.9em]">
+              <P></P>
               <P>Nome</P>
               <P>Salario</P>
               <P>Quantidade</P>
@@ -660,8 +691,20 @@ export const Outros = () => {
               return (
                 <H3
                   key={cargo.id}
-                  className="text-[0.9em] border-b-2 border-gray-400"
+                  onClick={() => handleSelect(cargo.id)}
+                  className={`text-[0.9em] bg-slate-300 rounded-[1em] ${
+                    state.delCargo || state.edtCargo ? "cursor-pointer" : ""
+                  } `}
                 >
+                  <P className="relative flex justify-center items-center">
+                    {state.edtCargo || state.delCargo ? (
+                      <div className="absolute bg-white h-[1em] w-[1em] rounded-full flex justify-center items-center">
+                        {itenState[cargo.id] && (
+                          <div className="bg-green-500 w-[0.7em] h-[0.7em] rounded-full"></div>
+                        )}
+                      </div>
+                    ) : null}
+                  </P>
                   <P>{cargo.nomeCargo}</P>
                   <P>
                     {Number(cargo.salarioCargo).toLocaleString("pt-BR", {
@@ -680,6 +723,7 @@ export const Outros = () => {
           <Dir>
             <H1>Transporte</H1>
             <H3 className="text-[0.9em]">
+              <P></P>
               <P>Nome/Cargo</P>
               <P>Salario</P>
               <P>Quantidade</P>
@@ -690,6 +734,7 @@ export const Outros = () => {
           <Dir className="mt-3">
             <H1>Alimentação</H1>
             <H3 className="text-[0.9em]">
+              <P></P>
               <P>Nome/Cargo</P>
               <P>Salario</P>
               <P>Quantidade</P>
@@ -737,36 +782,48 @@ export const Outros = () => {
                   </form>
                 ) : state.delKinay ? (
                   <form onSubmit={DelKinay} id="delkinayForm">
-                    <Input
-                      type="text"
-                      list="deltkinay"
-                      name="descricaoKinay"
-                      placeholder="Selecione o kinay"
-                      onChange={valorInput}
-                      value={data.descricaoKinay}
+                    <>Selecione um Cnae</>
+                  </form>
+                ) : state.edtKinay ? (
+                  <form
+                    id="edtKinayForm"
+                    onSubmit={EdtKinay}
+                    className="pr-2"
+                  >
+                    <InputDinheiro
+                      placeholder="Porcentagem"
+                      value={data.porcentagemKinay || ""}
+                      onValueChange={(e) => {
+                        setData({
+                          ...data,
+                          porcentagemKinay: e.floatValue,
+                        });
+                      }}
+                      decimalScale={2}
+                      fixedDecimalScale
+                      decimalSeparator=","
                     />
-
-                    <datalist id="deltkinay">
-                      {kinays.map((kinay) => (
-                        <option
-                          key={kinay.id}
-                          value={`${kinay.id} - ${kinay.numeroKinay} - ${kinay.descricaoKinay}`}
-                        />
-                      ))}
-                    </datalist>
                   </form>
                 ) : (
-                  <p>Kinay</p>
+                  <p>Cnae</p>
                 )}
               </H1>
 
               <nav className="flex flex-col md:flex-row  gap-2 justify-end text-[1rem]">
-                {state.addKinay || state.delKinay ? (
+                {state.addKinay || state.delKinay || state.edtKinay ? (
                   <button
                     className={`flex-1 p-1 rounded-full bg-gray-200 cursor-pointer drop-shadow-lg`}
-                    title={state.addKinay ? "Salvar" : "Excluir"}
+                    title={
+                      state.addKinay || state.edtKinay ? "Salvar" : "Excluir"
+                    }
                     type="submit"
-                    form={state.addKinay ? "addKinayForm" : "delkinayForm"}
+                    form={
+                      state.addKinay
+                        ? "addKinayForm"
+                        : state.delKinay
+                        ? "delkinayForm"
+                        : "edtKinayForm"
+                    }
                   >
                     <RiSaveLine />
                   </button>
@@ -774,7 +831,7 @@ export const Outros = () => {
 
                 <button
                   className={`p-1 rounded-full bg-red-600 cursor-pointer drop-shadow-lg text-[1.2em] 
-                  ${state.addKinay ? "hidden" : ""} ${
+                  ${state.addKinay || state.edtKinay ? "hidden" : ""} ${
                     state.delKinay ? "bg-red-600" : ""
                   }`}
                   title={`${state.delKinay ? "Voltar" : "Excluir"}`}
@@ -788,8 +845,23 @@ export const Outros = () => {
                 </button>
 
                 <button
+                  className={`p-1 rounded-full bg-green-600 cursor-pointer drop-shadow-lg text-[1.2em] 
+                  ${state.addKinay ? "hidden" : ""} ${
+                    state.delKinay ? "hidden" : ""
+                  } ${state.edtKinay ? "bg-red-600" : ""}`}
+                  title={`${state.edtKinay ? "Voltar" : "Alterar"}`}
+                  onClick={() => handleClick("edtKinay")}
+                >
+                  {state.edtKinay ? (
+                    <LuArrowRightFromLine />
+                  ) : (
+                    <HiOutlineDocumentDuplicate />
+                  )}
+                </button>
+
+                <button
                   className={`p-1 rounded-full bg-gray-300 cursor-pointer drop-shadow-lg text-[1.2em] 
-                  ${state.delKinay ? "hidden" : ""} ${
+                  ${state.delKinay || state.edtKinay ? "hidden" : ""} ${
                     state.addKinay ? "bg-red-600" : ""
                   }`}
                   title={`${state.addKinay ? "Voltar" : "Adicionar"}`}
@@ -804,7 +876,8 @@ export const Outros = () => {
               </nav>
             </div>
 
-            <H5 className="grid grid-cols-5 gap-3 text-[0.9em]">
+            <H5 className=" text-[0.9em]">
+              <P></P>
               <P className="col-span-1">Numero</P>
               <P className="col-span-3">Descrição</P>
               <P className="col-span-1">Porcentagem</P>
@@ -815,12 +888,29 @@ export const Outros = () => {
               return (
                 <H5
                   key={kinay.id}
-                  className="grid grid-cols-5 gap-3 text-[0.9em] border-b-2 border-gray-400"
+                  onClick={() => handleSelect(kinay.id)}
+                  className={`text-[0.9em] bg-slate-300 rounded-[1em] ${
+                    state.delKinay || state.edtKinay ? "cursor-pointer" : ""
+                  } `}
                 >
+                  <P className="relative flex justify-center items-center ml-1">
+                    {state.edtKinay || state.delKinay ? (
+                      <div className="absolute bg-white h-[1em] w-[1em] rounded-full flex justify-center items-center">
+                        {itenState[kinay.id] && (
+                          <div className="bg-green-500 w-[0.7em] h-[0.7em] rounded-full"></div>
+                        )}
+                      </div>
+                    ) : null}
+                  </P>
                   <P className="col-span-1 flex justify-center items-center">
                     {kinay.numeroKinay}
                   </P>
-                  <P className="col-span-3">{kinay.descricaoKinay}</P>
+                  <P
+                    className="col-span-3 cursor-pointer"
+                    title={kinay.descricaoKinay}
+                  >
+                    {kinay.descricaoKinay}
+                  </P>
                   <P className="col-span-1">{kinay.porcentagemKinay * 100}%</P>
                 </H5>
               );
@@ -858,26 +948,27 @@ export const Outros = () => {
                   </form>
                 ) : state.delImposto ? (
                   <form onSubmit={delImposto} id="delImpostoForm">
-                    <Input
-                      type="text"
-                      list="deltImposto"
-                      name="siglaImposto"
-                      placeholder="Selecione"
-                      className="max-w-[14vw]"
-                      onChange={valorInput}
-                      value={data.siglaImposto}
+                    <>Selecione um Imposto</>
+                  </form>
+                ) : state.edtImposto ? (
+                  <form
+                    id="edtImpostoForm"
+                    onSubmit={edtImposto}
+                    className="pr-2"
+                  >
+                    <InputDinheiro
+                      placeholder="Porcentagem"
+                      value={data.porcentagemImposto || ""}
+                      onValueChange={(e) => {
+                        setData({
+                          ...data,
+                          porcentagemImposto: e.floatValue,
+                        });
+                      }}
+                      decimalScale={2}
+                      fixedDecimalScale
+                      decimalSeparator=","
                     />
-
-                    <datalist id="deltImposto">
-                      {impostos.map((impt) => (
-                        <option
-                          key={impt.id}
-                          value={`${impt.id} - ${impt.siglaImposto} - ${
-                            impt.porcentagemImposto * 100
-                          }%`}
-                        />
-                      ))}
-                    </datalist>
                   </form>
                 ) : (
                   <p>Impostos</p>
@@ -885,13 +976,13 @@ export const Outros = () => {
               </H1>
 
               <nav className="flex flex-col md:flex-row  gap-2 justify-end text-[1rem]">
-                {state.addImposto || state.delImposto ? (
+                {state.addImposto || state.delImposto || state.edtImposto ? (
                   <button
                     className={`flex-1 p-1 rounded-full bg-gray-200 cursor-pointer drop-shadow-lg`}
-                    title={state.addImposto ? "Salvar" : "Excluir"}
+                    title={state.addImposto || state.edtImposto ? "Salvar" : "Excluir"}
                     type="submit"
                     form={
-                      state.addImposto ? "addImpostoForm" : "delImpostoForm"
+                      state.addImposto ? "addImpostoForm" : state.edtImposto ? "edtImpostoForm" : "delImpostoForm"
                     }
                   >
                     <RiSaveLine />
@@ -900,7 +991,7 @@ export const Outros = () => {
 
                 <button
                   className={`p-1 rounded-full bg-red-600 cursor-pointer drop-shadow-lg text-[1.2em] 
-                  ${state.addImposto ? "hidden" : ""} ${
+                  ${state.addImposto || state.edtImposto ? "hidden" : ""} ${
                     state.delImposto ? "bg-red-600" : ""
                   }`}
                   title={`${state.delImposto ? "Voltar" : "Excluir"}`}
@@ -914,8 +1005,23 @@ export const Outros = () => {
                 </button>
 
                 <button
+                  className={`p-1 rounded-full bg-green-600 cursor-pointer drop-shadow-lg text-[1.2em] 
+                  ${state.addImposto ? "hidden" : ""} ${
+                    state.delImposto ? "hidden" : ""
+                  } ${state.edtImposto ? "bg-red-600" : ""}`}
+                  title={`${state.edtImposto ? "Voltar" : "Alterar"}`}
+                  onClick={() => handleClick("edtImposto")}
+                >
+                  {state.edtImposto ? (
+                    <LuArrowRightFromLine />
+                  ) : (
+                    <HiOutlineDocumentDuplicate />
+                  )}
+                </button>
+
+                <button
                   className={`p-1 rounded-full bg-gray-300 cursor-pointer drop-shadow-lg text-[1.2em] 
-                  ${state.delImposto ? "hidden" : ""} ${
+                  ${state.delImposto || state.edtImposto ? "hidden" : ""} ${
                     state.addImposto ? "bg-red-600" : ""
                   }`}
                   title={`${state.addImposto ? "Voltar" : "Adicionar"}`}
@@ -930,7 +1036,8 @@ export const Outros = () => {
               </nav>
             </div>
 
-            <H2 className="grid grid-cols-2 gap-3 text-[0.9em]">
+            <H2 className="text-[0.9em]">
+              <P></P>
               <P className="col-span-1">Sigla</P>
               <P className="col-span-1">Porcentagem</P>
             </H2>
@@ -940,8 +1047,20 @@ export const Outros = () => {
               return (
                 <H2
                   key={impt.id}
-                  className="grid grid-cols-2 gap-3 text-[0.9em] border-b-2 border-gray-400"
+                  onClick={() => handleSelect(impt.id)}
+                  className={`text-[0.9em] bg-slate-300 rounded-[1em] ${
+                    state.delImposto || state.edtImposto ? "cursor-pointer" : ""
+                  } `}
                 >
+                  <P className="relative flex justify-center items-center ml-1">
+                    {state.edtImposto || state.delImposto ? (
+                      <div className="absolute bg-white h-[1em] w-[1em] rounded-full flex justify-center items-center">
+                        {itenState[impt.id] && (
+                          <div className="bg-green-500 w-[0.7em] h-[0.7em] rounded-full"></div>
+                        )}
+                      </div>
+                    ) : null}
+                  </P>
                   <P className="col-span-1">{impt.siglaImposto}</P>
                   <P className="col-span-1">{impt.porcentagemImposto * 100}%</P>
                 </H2>

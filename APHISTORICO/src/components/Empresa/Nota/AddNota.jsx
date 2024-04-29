@@ -3,6 +3,7 @@ import { useState } from "react";
 import axios from "axios";
 import { toast } from "react-toastify";
 import { useGlobalContext } from "../../../global/Global";
+import { NumericFormat } from "react-number-format";
 
 const Form = styled.form`
   height: 100%;
@@ -27,6 +28,13 @@ const Select = styled.select`
 `;
 
 const Input = styled.input`
+  width: 100%;
+  border: 2px solid #d1d5db;
+  border-radius: 4px;
+  padding-left: 8px;
+`;
+
+const InputDinheiro = styled(NumericFormat)`
   width: 100%;
   border: 2px solid #d1d5db;
   border-radius: 4px;
@@ -226,7 +234,10 @@ export const TabelaAddNota = () => {
     }
 
     let situacao;
-    if (somaValores[data.numeroPedidoNF] + Number(data.valorNF) === atualizarPedido.valorPDD) {
+    if (
+      somaValores[data.numeroPedidoNF] + Number(data.valorNF) ===
+      atualizarPedido.valorPDD
+    ) {
       situacao = "Finalizada";
     } else if (Number(data.valorNF) > 0) {
       situacao = "Andamento";
@@ -538,13 +549,21 @@ export const TabelaAddNota = () => {
             <H1 className="col-span-1">Valor Imposto</H1>
             <H1 className="col-span-2">Valor á Receber</H1>
 
-            <Input
+            <InputDinheiro
               type="text"
               placeholder="1000.00"
-              name="valorNF"
-              onChange={valorInput}
               onBlur={calcularImposto}
-              value={data.valorNF}
+              value={data.valorNF || ""}
+              onValueChange={(e) => {
+                setData({
+                  ...data,
+                  valorNF: e.floatValue,
+                });
+              }}
+              thousandSeparator="."
+              decimalScale={2}
+              fixedDecimalScale
+              decimalSeparator=","
             />
 
             <Input

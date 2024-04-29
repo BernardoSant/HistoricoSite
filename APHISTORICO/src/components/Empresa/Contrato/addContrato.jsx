@@ -3,6 +3,7 @@ import { useState } from "react";
 import axios from "axios";
 import { toast } from "react-toastify";
 import { useGlobalContext } from "../../../global/Global";
+import { NumericFormat } from "react-number-format";
 
 const Form = styled.form`
   height: 100%;
@@ -33,6 +34,13 @@ const Select = styled.select`
 `;
 
 const Input = styled.input`
+  width: 100%;
+  border: 2px solid #d1d5db;
+  border-radius: 4px;
+  padding-left: 8px;
+`;
+
+const InputDinheiro = styled(NumericFormat)`
   width: 100%;
   border: 2px solid #d1d5db;
   border-radius: 4px;
@@ -151,12 +159,20 @@ export const TabelaAddContrato = () => {
           <H1 className="col-span-2">Valor Total</H1>
           <H1 className="col-span-2">Empresa Prestadora</H1>
 
-          <Input
+          <InputDinheiro
             type="text"
-            name="ValorCT"
-            onChange={valorInput}
-            value={data.ValorCT}
+            value={data.ValorCT || ""}
             className="col-span-2 "
+            onValueChange={(e) => {
+              setData({
+                ...data,
+                ValorCT: e.floatValue,
+              });
+            }}
+            thousandSeparator="."
+            decimalScale={2}
+            fixedDecimalScale
+            decimalSeparator=","
           />
 
           <Select

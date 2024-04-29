@@ -7,6 +7,7 @@ import { TiCancel } from "react-icons/ti";
 import { useState, useEffect } from "react";
 import axios from "axios";
 import { toast } from "react-toastify";
+import { NumericFormat } from "react-number-format";
 
 const Div = styled.div`
   height: 100%;
@@ -696,13 +697,21 @@ export const MostruarioNota = ({ empresaId }) => {
 
                             {stateContrato.contratoAtualizado ? (
                               <div className="flex gap-4 justify-center items-center">
-                                <input
+                                <NumericFormat
                                   className="border-2 border-gray-500 rounded-[1em] text-center p-[3px]"
                                   type="text"
                                   placeholder="10000.00"
-                                  onChange={InputContrato}
-                                  name="ValorCT"
-                                  value={dataContrato.ValorCT}
+                                  value={dataContrato.ValorCT || ""}
+                                  onValueChange={(e) => {
+                                    setDataContrato({
+                                      ...dataContrato,
+                                      ValorCT: e.floatValue,
+                                    });
+                                  }}
+                                  thousandSeparator="."
+                                  decimalScale={2}
+                                  fixedDecimalScale
+                                  decimalSeparator=","
                                 />
                               </div>
                             ) : (

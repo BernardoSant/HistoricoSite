@@ -3,6 +3,7 @@ import { useState } from "react";
 import axios from "axios";
 import { toast } from "react-toastify";
 import { useGlobalContext } from "../../../global/Global";
+import { NumericFormat } from "react-number-format";
 
 const Form = styled.form`
   height: 100%;
@@ -33,6 +34,13 @@ const Select = styled.select`
 `;
 
 const Input = styled.input`
+  width: 100%;
+  border: 2px solid #d1d5db;
+  border-radius: 4px;
+  padding-left: 8px;
+`;
+
+const InputValor = styled(NumericFormat)`
   width: 100%;
   border: 2px solid #d1d5db;
   border-radius: 4px;
@@ -74,10 +82,11 @@ const Button = styled.button`
 
 export const TabelaAddPedido = () => {
   const { ip, empresa, pedido } = useGlobalContext();
+  const EmpresaFiltrada = empresa.filter((e) => e.situacaoEmpresa !== "Contrato");
 
   const [data, setData] = useState({
     numeroPDD: "",
-    valorPDD: "",
+    valorPDD: null,
     valorRecebidoPDD: 0,
     nomePDD: "",
     descricaoServPDD: "",
@@ -111,7 +120,7 @@ export const TabelaAddPedido = () => {
         toast.success(response.data.message);
         setData({
           numeroPDD: "",
-          valorPDD: "",
+          valorPDD: null,
           valorRecebidoPDD: 0,
           nomePDD: "",
           descricaoServPDD: "",
@@ -153,12 +162,20 @@ export const TabelaAddPedido = () => {
             ))}
           </datalist>
 
-          <Input
+          <InputValor
             type="text"
-            name="valorPDD"
-            onChange={valorInput}
-            value={data.valorPDD}
+            value={data.valorPDD || ""}
             className="col-span-1 "
+            onValueChange={(e) => {
+              setData({
+                ...data,
+                valorPDD: e.floatValue,
+              });
+            }}
+            thousandSeparator="."
+            decimalScale={2}
+            fixedDecimalScale
+            decimalSeparator=","
           />
 
           <Input
@@ -190,7 +207,7 @@ export const TabelaAddPedido = () => {
             className="col-span-2 border-2 border-gray-300 rounded-[5px] px-2 py-[0.2em]"
           >
             <option></option>
-            {empresa.map((empresa) => (
+            {EmpresaFiltrada.map((empresa) => (
               <option key={empresa.id} value={empresa.id}>
                 {empresa.nameEmpresa}
               </option>

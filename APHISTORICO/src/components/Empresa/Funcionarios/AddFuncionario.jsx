@@ -3,6 +3,7 @@ import { useState } from "react";
 import axios from "axios";
 import { toast } from "react-toastify";
 import { useGlobalContext } from "../../../global/Global";
+import { NumericFormat } from "react-number-format";
 
 const Form = styled.form`
   height: 100%;
@@ -30,6 +31,15 @@ const Input = styled.input`
   border-radius: 4px;
   padding-left: 8px;
 `;
+
+const InputDinheiro = styled(NumericFormat)`
+  width: 100%;
+  border: 2px solid #d1d5db;
+  border-radius: 4px;
+  padding-left: 8px;
+`;
+
+
 const Header = styled.header`
   width: 100%;
   border-radius: 20px;
@@ -88,7 +98,7 @@ export const TabelaAddFuncionario = () => {
     dataFeriasFucionario: "",
     feriasPaga: 0,
     pisFucionario: "",
-    salarioFucionario: "",
+    salarioFucionario: null,
     funcaoFuncionario: "",
     horasTFucionario: "",
     CadastroEmprFuncionario: "",
@@ -177,7 +187,7 @@ export const TabelaAddFuncionario = () => {
           dataFeriasFucionario: "",
           feriasPaga: 0,
           pisFucionario: "",
-          salarioFucionario: "",
+          salarioFucionario: null,
           funcaoFuncionario: "",
           horasTFucionario: "",
           CadastroEmprFuncionario: "",
@@ -392,13 +402,22 @@ export const TabelaAddFuncionario = () => {
               className="col-span-1"
             />
 
-            <Input
+            <InputDinheiro
               type="text"
-              name="salarioFucionario"
-              onChange={valorInput}
-              value={data.salarioFucionario}
+              value={data.salarioFucionario || ""}
               className="col-span-1"
+              onValueChange={(e) => {
+                setData({
+                  ...data,
+                  salarioFucionario: e.floatValue,
+                });
+              }}
+              thousandSeparator="."
+            decimalScale={2}
+            fixedDecimalScale
+            decimalSeparator=","
             />
+        
             <p className="col-span-2"></p>
           </div>
 

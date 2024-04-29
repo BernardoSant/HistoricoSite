@@ -6,6 +6,7 @@ import axios from "axios";
 import { toast } from "react-toastify";
 import { AiOutlineRight, AiOutlineLeft } from "react-icons/ai";
 import { LoaderClin } from "../../Loaders/LoaderClin";
+import { NumericFormat } from "react-number-format";
 
 const Div = styled.div`
   height: 100%;
@@ -65,6 +66,13 @@ const H2 = styled(H1)`
 `;
 
 const Input = styled.input`
+  width: 100%;
+  border: 2px solid #d1d5db;
+  border-radius: 4px;
+  max-width: 40em;
+  padding-left: 8px;
+`;
+const InputDinheiro = styled(NumericFormat)`
   width: 100%;
   border: 2px solid #d1d5db;
   border-radius: 4px;
@@ -139,7 +147,7 @@ export const MostruarioFuncAdmitido = () => {
     dataExamesNew: "",
     dataFeriasFucionario: "",
     pisFucionario: "",
-    salarioFucionario: "",
+    salarioFucionario: null,
     funcaoFuncionario: "",
     horasTFucionario: "",
     CadastroEmprFuncionario: "",
@@ -178,6 +186,10 @@ export const MostruarioFuncAdmitido = () => {
   useEffect(() => {
     if (funcionarioSelecionado) {
       setData((prevData) => ({ ...prevData, ...funcionarioSelecionado }));
+      setDataFerias({
+        ...dataFerias,
+        idFuncionario: funcionarioSelecionado.id,
+      });
     }
   }, [funcionarioSelecionado]);
 
@@ -260,7 +272,7 @@ export const MostruarioFuncAdmitido = () => {
   };
 
   const [dataFerias, setDataFerias] = useState({
-    idFuncionario: "",
+    idFuncionario: null,
     situacaoFerias: "Ferias Vendida",
     dataInicioFerias: null,
     dataFinalizacaoFerias: null,
@@ -286,7 +298,6 @@ export const MostruarioFuncAdmitido = () => {
     } else {
       setDataFerias({
         ...dataFerias,
-        idFuncionario: funcionarioSelecionado.id,
         [e.target.name]: valor,
       });
     }
@@ -303,7 +314,7 @@ export const MostruarioFuncAdmitido = () => {
       .post(ip + "/ferias", dataFerias, headers)
       .then((response) => {
         setDataFerias({
-          idFuncionario: "",
+          idFuncionario: funcionarioSelecionado.id,
           situacaoFerias: "Ferias Vendida",
           dataInicioFerias: null,
           dataFinalizacaoFerias: null,
@@ -414,7 +425,7 @@ export const MostruarioFuncAdmitido = () => {
     }));
 
     setDataFerias({
-      idFuncionario: "",
+      idFuncionario: funcionarioSelecionado.id,
       situacaoFerias: "Ferias Vendida",
       dataInicioFerias: null,
       dataFinalizacaoFerias: null,
@@ -454,7 +465,7 @@ export const MostruarioFuncAdmitido = () => {
     }));
 
     setDataFerias({
-      idFuncionario: "",
+      idFuncionario: funcionarioSelecionado.id,
       situacaoFerias: "Ferias Vendida",
       dataInicioFerias: null,
       dataFinalizacaoFerias: null,
@@ -537,7 +548,7 @@ export const MostruarioFuncAdmitido = () => {
     );
   }
 
-  const hoje = new Date(); 
+  const hoje = new Date();
   const diaAtual = hoje.getDate();
   const mesAtual = hoje.getMonth() + 1;
   const anoAtual = hoje.getFullYear();
@@ -758,12 +769,20 @@ export const MostruarioFuncAdmitido = () => {
               ))}
             </select>
 
-            <Input
+            <InputDinheiro
               className="col-span-2"
               type="text"
-              onChange={valorInput}
-              name="salarioFucionario"
-              value={data.salarioFucionario}
+              onValueChange={(e) => {
+                setData({
+                  ...data,
+                  salarioFucionario: e.floatValue,
+                });
+              }}
+              thousandSeparator="."
+              decimalScale={2}
+              fixedDecimalScale
+              decimalSeparator=","
+              value={data.salarioFucionario || ""}
             />
             <Input
               className="col-span-1"
@@ -857,13 +876,21 @@ export const MostruarioFuncAdmitido = () => {
                           <H1 className="col-span-1 flex justify-center items-center">
                             Valor:
                           </H1>
-                          <input
+                          <InputDinheiro
                             className="rounded-[1.5em] text-center col-span-4 shadow-inner px-2"
-                            type="number"
+                            type="text"
                             placeholder="1000.00"
-                            onChange={valorInputFerias}
-                            name="valorFerias"
-                            value={dataFerias.valorFerias}
+                            value={dataFerias.valorFerias || ""}
+                            onValueChange={(e) => {
+                              setDataFerias({
+                                ...dataFerias,
+                                valorFerias: e.floatValue,
+                              });
+                            }}
+                            thousandSeparator="."
+                            decimalScale={2}
+                            fixedDecimalScale
+                            decimalSeparator=","
                           />
                         </form>
                       </>
@@ -902,14 +929,14 @@ export const MostruarioFuncAdmitido = () => {
                       Vender Ferias
                     </H1>
 
-                    <label class="relative inline-flex items-center cursor-pointer my-2">
+                    <label className="relative inline-flex items-center cursor-pointer my-2">
                       <input
                         type="checkbox"
                         onClick={() => handleFerias("FeriasPaga")}
-                        class="sr-only peer"
+                        className="sr-only peer"
                       />
                       <div
-                        class="text-sm group peer ring-0 bg-gradient-to-tr from-red-300 to-red-500  
+                        className="text-sm group peer ring-0 bg-gradient-to-tr from-red-300 to-red-500  
                       rounded-full outline-none duration-300 after:duration-300 w-12 h-6  shadow-md peer-checked:bg-green-500  
                       peer-focus:outline-none   after:rounded-full after:absolute after:bg-gray-50 after:outline-none after:h-5
                       after:w-5 after:top-0.5 after:left-0.5 after:-rotate-180 after:flex after:justify-center after:items-center peer-checked:after:translate-x-6 

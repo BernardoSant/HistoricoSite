@@ -433,7 +433,7 @@ export const Empresa = () => {
                   <Button
                     TipoButton={2}
                     Titulo={"Adcionar Transporte"}
-                    onSecundario={state.addTransporte}
+                    onFinal={state.addTransporte}
                     onClick={() => ButtomSecundario("addTransporte")}
                   ></Button>
                 </Tabela>

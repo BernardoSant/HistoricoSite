@@ -50,6 +50,28 @@ dataTypes.forEach(({ type, dbType, msg }) => {
     }
   });
 
+  router.put("/:id", async (req, res) => {
+    const { id } = req.params;
+    const data = req.body;
+
+    try {
+      await dbType.update(data, {
+        where: { id: id },
+      });
+      const allData = await dbType.findAll();
+      io.emit(`${type} data`, allData);
+      return res.json({
+        error: false,
+        message: `${msg} atualizado com sucesso!!`,
+      });
+    } catch (error) {
+      return res.status(500).json({
+        error: true,
+        message: `ERRO: Não foi possível atualizar o ${msg}!`,
+      });
+    }
+  });
+
   router.delete("/:id", async (req, res) => {
     try {
       const id = req.params.id;
