@@ -1,7 +1,6 @@
 import styled from "styled-components";
 import { useState, useEffect } from "react";
 import axios from "axios";
-import { Chart } from "react-google-charts";
 import { useGlobalContext } from "../../../global/Global";
 import { toast } from "react-toastify";
 import {
@@ -118,6 +117,14 @@ const P = styled.p`
   width: 100%;
 `;
 
+const InputDinheiro = styled(NumericFormat)`
+  font-size: 0.9em;
+  border: 2px solid #5a5a5a;
+  background-color: #dfdddd;
+  border-radius: 10px;
+  padding-left: 8px;
+`;
+
 const Input = styled.input`
   font-size: 0.9em;
   border: 2px solid #5a5a5a;
@@ -130,8 +137,9 @@ export const Outros = () => {
   const { ip, cargo, kinays, impostos } = useGlobalContext();
 
   const [data, setData] = useState({
+    idCargo: "",
     nomeCargo: "",
-    salarioCargo: "",
+    salarioCargo: null,
     quantidadeCargo: "0",
     numeroKinay: "",
     descricaoKinay: "",
@@ -142,22 +150,21 @@ export const Outros = () => {
 
   // handleChange
   const valorInput = (e) => {
-    const { name, value} = e.target;
+    const value = e.target.value;
 
-    setData({ ...data, [name]: value });
+    setData({ ...data, [e.target.name]: value });
 
-    if ((name === "nomeCargo" && state.delCargo) || state.edtCargo) {
+    if (e.target.name === "nomeCargo") {
       const parts = valor.split(" - ");
-      const idCargo = parts[0];
+      const idCargos = parts[0];
       const NomeCargo = parts[1];
-
       setData({
         ...data,
-        idCargo: idCargo,
+        idCargo: idCargos,
         nomeCargo: NomeCargo,
       });
     }
-    if (name === "descricaoKinay" && state.delKinay) {
+    if (e.target.name === "descricaoKinay" && state.delKinay) {
       const parts = valor.split(" - ");
       const idKinay = parts[0];
       const descricaosKinay = parts[2];
@@ -168,7 +175,7 @@ export const Outros = () => {
         descricaoKinay: descricaosKinay,
       });
     }
-    if (name === "siglaImposto" && state.delImposto) {
+    if (e.target.name === "siglaImposto" && state.delImposto) {
       const parts = valor.split(" - ");
       const idImposto = parts[0];
       const siglaImposto = parts[1];
@@ -205,7 +212,7 @@ export const Outros = () => {
         toast.success(response.data.message);
         setData({
           nomeCargo: "",
-          salarioCargo: "",
+          salarioCargo: null,
           quantidadeCargo: "0",
           numeroKinay: "",
           descricaoKinay: "",
@@ -321,6 +328,8 @@ export const Outros = () => {
         toast.info(err.response.data.message);
       });
   };
+
+  console.log(data.nomeCargo)
 
   const DelKinay = async (e) => {
     e.preventDefault();
@@ -493,23 +502,15 @@ export const Outros = () => {
                       onChange={valorInput}
                       value={data.nomeCargo}
                     />
-                    {/* <Input
-                      type="number"
-                      name="salarioCargo"
-                      placeholder="Salario EX: 00.00"
-                      onChange={valorInput}
-                      value={data.salarioCargo}
-                    /> */}
-                    <NumericFormat
+
+                    <InputDinheiro
                       placeholder="Salario"
-                      style={{ outline: "none", padding: "2px" }}
-                      // value=""
-                      // onChange={(e) => console.log(e)}
+                      value={data.salarioCargo || ""}
                       onValueChange={(e) => {
                         setData({
                           ...data,
-                          salarioCargo: e.floatValue
-                        })
+                          salarioCargo: e.floatValue,
+                        });
                       }}
                       thousandSeparator="."
                       decimalScale={2}
