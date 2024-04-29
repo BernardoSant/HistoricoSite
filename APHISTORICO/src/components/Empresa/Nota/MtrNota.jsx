@@ -8,6 +8,7 @@ import { useState, useEffect } from "react";
 import axios from "axios";
 import { toast } from "react-toastify";
 import { NumericFormat } from "react-number-format";
+import { dateFormat } from "../../../functions/dateFormat";
 
 const Div = styled.div`
   height: 100%;
@@ -744,7 +745,7 @@ export const MostruarioNota = ({ empresaId }) => {
                                 />
                               </div>
                             ) : (
-                              <Th className="col-span-1">{dataFormatada}</Th>
+                              <Th className="col-span-1">{dateFormat(ctt.dataCT)}</Th>
                             )}
                           </div>
                         </div>
@@ -833,7 +834,7 @@ export const MostruarioNota = ({ empresaId }) => {
                               { style: "currency", currency: "BRL" }
                             )}
                           </Th>
-                          <Th className="col-span-1">{dataFormatada}</Th>
+                          <Th className="col-span-1">{dateFormat(nota.dataNF)}</Th>
                         </div>
                       </div>
                     );
@@ -874,17 +875,6 @@ export const MostruarioNota = ({ empresaId }) => {
 
                 <Article>
                   {notasDaEmpresaRecebida.map((nota) => {
-                    let data = new Date(nota.dataNF);
-                    data.setDate(data.getDate() + 1);
-                    let opcoes = {
-                      day: "2-digit",
-                      month: "2-digit",
-                      year: "numeric",
-                    };
-                    let dataFormatada = data.toLocaleDateString(
-                      "pt-BR",
-                      opcoes
-                    );
 
                     return (
                       <>
@@ -922,7 +912,7 @@ export const MostruarioNota = ({ empresaId }) => {
                               { style: "currency", currency: "BRL" }
                             )}
                           </Th>
-                          <Th className="col-span-1">{dataFormatada}</Th>
+                          <Th className="col-span-1">{dateFormat(nota.dataNF)}</Th>
                         </div>
                       </>
                     );
@@ -963,17 +953,6 @@ export const MostruarioNota = ({ empresaId }) => {
 
                 <Article>
                   {notasDaEmpresaAntecipada.map((nota) => {
-                    let data = new Date(nota.dataNF);
-                    data.setDate(data.getDate() + 1);
-                    let opcoes = {
-                      day: "2-digit",
-                      month: "2-digit",
-                      year: "numeric",
-                    };
-                    let dataFormatada = data.toLocaleDateString(
-                      "pt-BR",
-                      opcoes
-                    );
                     return (
                       <>
                         <div className="relative w-auto flex justify-end ml-2">
@@ -1010,7 +989,7 @@ export const MostruarioNota = ({ empresaId }) => {
                               { style: "currency", currency: "BRL" }
                             )}
                           </Th>
-                          <Th className="col-span-1">{dataFormatada}</Th>
+                          <Th className="col-span-1">{dateFormat(nota.dataNF)}</Th>
                         </div>
                       </>
                     );

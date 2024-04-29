@@ -6,6 +6,8 @@ import axios from "axios";
 import { toast } from "react-toastify";
 import { AiOutlineRight, AiOutlineLeft } from "react-icons/ai";
 import { LoaderClin } from "../../Loaders/LoaderClin";
+import { dateFormat } from "../../../functions/dateFormat";
+
 
 const Div = styled.div`
   height: 100%;
@@ -376,7 +378,7 @@ export const MostruarioFuncDemitido = () => {
 
             <H1 className="col-span-2">Data Demição</H1>
             <H1 className="col-span-3">Cadastro em Empresa</H1>
-            <H2 className="col-span-2">{data.dataAdmicaoFucionario}</H2>
+            <H2 className="col-span-2">{dateFormat(data.dataAdmicaoFucionario)}</H2>
             <H2 className="col-span-3">{data.CadastroEmprFuncionario}</H2>
           </div>
         </>

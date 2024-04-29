@@ -7,6 +7,7 @@ import { toast } from "react-toastify";
 import { AiOutlineRight, AiOutlineLeft } from "react-icons/ai";
 import { LoaderClin } from "../../Loaders/LoaderClin";
 import { NumericFormat } from "react-number-format";
+import { dateFormat } from "../../../functions/dateFormat";
 
 const Div = styled.div`
   height: 100%;
@@ -243,7 +244,7 @@ export const MostruarioFuncAdmitido = () => {
     var feriass = Qferias - FuncionarioFerias.length;
     var dataFormatadaAdmicao = dataAdimicao.toLocaleDateString("pt-BR", opcoes);
     var dataFormatadaFerias = dataFerias.toLocaleDateString("pt-BR", opcoes);
-    var dataFormatadaNasc = dataNasc.toLocaleDateString("pt-BR", opcoes);
+    var dataFormatadaNasc = dateFormat(dataNasc);
     var dataFormatadaExames = dataExames.toLocaleDateString("pt-BR", opcoes);
   }
 

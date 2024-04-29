@@ -66,6 +66,7 @@ const Div = styled.div`
   overflow-x: auto;
   border-bottom-right-radius: 1em;
   border-bottom-left-radius: 1em;
+  max-height: 22em;
 
   &::-webkit-scrollbar {
     width: 5px;
