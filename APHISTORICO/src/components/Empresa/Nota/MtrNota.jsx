@@ -51,6 +51,7 @@ const Header = styled.header`
   padding: 5px;
   padding-left: 1em;
   padding-right: 1em;
+  margin-top: 5px;
 `;
 
 const Th = styled.div`
@@ -998,8 +999,8 @@ export const MostruarioNota = ({ empresaId }) => {
               </>
             ) : null}
 
-            <div className="w-full px-3 pb-3 absolute bottom-0 left-0">
-              <div className="w-full bg-orange-600 drop-shadow-2xl rounded-2xl mb-1 sticky">
+            <div className="w-full px-3 pb-3 sticky mt-5 bottom-0 left-0">
+              <div className="w-full bg-orange-400 drop-shadow-2xl rounded-2xl mb-1 sticky">
                 <div className="flex justify-around items-center w-full rounded-b-lg drop-shadow-2xl text-lg py-1">
                   <dir>
                     <Th className="text-end">Valor Recebido:</Th>

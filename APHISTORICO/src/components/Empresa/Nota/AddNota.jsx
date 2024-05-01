@@ -446,6 +446,7 @@ export const TabelaAddNota = () => {
                     {filtroPedido.map((pedido) => (
                       <option
                         key={pedido.id}
+                        title={pedido.nomePDD}
                         value={`${pedido.numeroPDD} - ${pedido.nomePDD}`}
                       ></option>
                     ))}

@@ -46,11 +46,15 @@ const Header = styled.header`
   padding: 5px;
   padding-left: 1em;
   padding-right: 1em;
+  margin-top: 10px;
 `;
 
 const Th = styled.div`
   font-weight: 600;
   text-align: center;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 `;
 
 export const MtrPedidos = ({ empresaId }) => {
@@ -275,8 +279,8 @@ export const MtrPedidos = ({ empresaId }) => {
         </>
       ) : null}
 
-      <div className="w-full px-3 pb-3 absolute bottom-0 left-0">
-        <div className="w-full bg-orange-600 drop-shadow-2xl rounded-2xl ">
+      <div className="w-full px-3 pb-3 sticky mt-5 bottom-0 left-0">
+        <div className="w-full bg-orange-400 drop-shadow-2xl rounded-2xl ">
           <div className="flex justify-around items-center w-full rounded-b-lg drop-shadow-2xl text-lg py-1">
             <dir>
               <Th className="text-end">Valor Recebido:</Th>

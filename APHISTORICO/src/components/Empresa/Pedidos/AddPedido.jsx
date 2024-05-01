@@ -57,7 +57,7 @@ const Header = styled.header`
   display: flex;
   justify-content: center;
   padding: 5px;
-`;
+  `;
 
 const Button = styled.button`
   width: auto;
@@ -82,7 +82,9 @@ const Button = styled.button`
 
 export const TabelaAddPedido = () => {
   const { ip, empresa, pedido } = useGlobalContext();
-  const EmpresaFiltrada = empresa.filter((e) => e.situacaoEmpresa !== "Contrato");
+  const EmpresaFiltrada = empresa.filter(
+    (e) => e.situacaoEmpresa !== "Contrato"
+  );
 
   const [data, setData] = useState({
     numeroPDD: "",

@@ -328,9 +328,7 @@ export const Outros = () => {
         toast.info(err.response.data.message);
       });
   };
-
-  console.log(data);
-
+  
   const EdtKinay = async (e) => {
     e.preventDefault();
 
@@ -786,11 +784,7 @@ export const Outros = () => {
                     <>Selecione um Cnae</>
                   </form>
                 ) : state.edtKinay ? (
-                  <form
-                    id="edtKinayForm"
-                    onSubmit={EdtKinay}
-                    className="pr-2"
-                  >
+                  <form id="edtKinayForm" onSubmit={EdtKinay} className="pr-2">
                     <InputDinheiro
                       placeholder="Porcentagem"
                       value={data.porcentagemKinay || ""}
@@ -980,10 +974,18 @@ export const Outros = () => {
                 {state.addImposto || state.delImposto || state.edtImposto ? (
                   <button
                     className={`flex-1 p-1 rounded-full bg-gray-200 cursor-pointer drop-shadow-lg`}
-                    title={state.addImposto || state.edtImposto ? "Salvar" : "Excluir"}
+                    title={
+                      state.addImposto || state.edtImposto
+                        ? "Salvar"
+                        : "Excluir"
+                    }
                     type="submit"
                     form={
-                      state.addImposto ? "addImpostoForm" : state.edtImposto ? "edtImpostoForm" : "delImpostoForm"
+                      state.addImposto
+                        ? "addImpostoForm"
+                        : state.edtImposto
+                        ? "edtImpostoForm"
+                        : "delImpostoForm"
                     }
                   >
                     <RiSaveLine />
