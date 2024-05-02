@@ -12,26 +12,19 @@ import { dateFormat } from "../../../functions/dateFormat";
 const Div = styled.div`
   height: 100%;
   width: 100%;
-  padding-left: 1em;
-  padding-right: 1em;
-  padding-bottom: 1em;
-  padding-top: 1em;
   display: flex;
-  flex-wrap: wrap;
-  justify-content: start;
-  align-content: start;
-  flex-direction: row;
+  flex-direction: column;
+  overflow: auto;
 `;
 
 const Article = styled.article`
   width: 100%;
-  height: 100vh;
-  max-height: 65vh;
+  height: 100%;
   overflow: auto;
   margin-top: 4px;
   margin-bottom: 8px;
   border-radius: 1em;
-  overflow-y: auto;
+  overflow: auto;
   position: relative;
   padding-right: 4px;
   padding-bottom: 3em;
@@ -1323,7 +1316,7 @@ export const MostruarioFuncAdmitido = () => {
       )}
 
       {funcionarioSelecionado || funcionarioEditar || carregando ? null : (
-        <div className="w-full px-3 pb-3 absolute bottom-0 left-0">
+        <div className="w-full ">
           <div className="w-full bg-orange-600 drop-shadow-2xl rounded-2xl mb-1 sticky">
             <div className="grid grid-cols-4 justify-center items-center w-full rounded-b-lg drop-shadow-2xl text-lg py-1">
               {renderInfo("Total FGTS", fgtsSalario)}

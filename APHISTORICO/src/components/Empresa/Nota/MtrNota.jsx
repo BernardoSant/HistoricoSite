@@ -93,15 +93,20 @@ const H2 = styled.h1`
   border-radius: 4px;
 `;
 
-const H4 = styled.h1`
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  text-align: center;
-  font-weight: 600;
-`;
-const P = styled.p`
-  text-align: center;
+const Section = styled.div`
   width: 100%;
+  max-height: 100%;
+  overflow: auto;
+  padding-right: 2px;
+
+  &::-webkit-scrollbar {
+    width: 5px;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: #858585;
+    border-radius: 1em;
+  }
 `;
 
 export const MostruarioNota = ({ empresaId }) => {
@@ -374,147 +379,20 @@ export const MostruarioNota = ({ empresaId }) => {
   };
 
   return (
-    <>
-      <Div>
-        {notaSelecionada ? (
-          <>
-            <button
-              onClick={() => setNotaSelecionada(null)}
-              className="w-full flex justify-end"
-            >
-              <h1 className="bg-red-600 w-auto font-bold p-1 px-3 rounded-full">
-                Voltar
-              </h1>
-            </button>
+    <div className="w-full flex flex-col overflow-auto h-full">
+      {notaSelecionada ? (
+        <>
+          <button
+            onClick={() => setNotaSelecionada(null)}
+            className="w-full flex justify-end"
+          >
+            <h1 className="bg-red-600 w-auto font-bold p-1 px-3 rounded-full">
+              Voltar
+            </h1>
+          </button>
 
-            <form onSubmit={updateNota}>
-              <div className=" grid grid-cols-4 gap-x-2  w-full">
-                <H1 className="col-span-1">Numero Nota</H1>
-                <H1 className="col-span-3">Numero Pedido</H1>
-                <H2 className="col-span-1">
-                  {String(data.numeroNotaNF).padStart(8, "0")}
-                </H2>
-                <H2 className="col-span-3">
-                  {String(data.numeroPedidoNF).padStart(8, "0")}
-                </H2>
-
-                <H1 className="col-span-2">Nome da Empresa</H1>
-                <H1 className="col-span-2">CNPJ</H1>
-                <H2 className="col-span-2">{data.nomeEmpresaNF}</H2>
-                <H2 className="col-span-2">{data.cnpjEmpresaNF}</H2>
-
-                <H1 className="col-span-4">Local Retido</H1>
-                <H2 className="col-span-4">{data.retidoNF}</H2>
-
-                <H1 className="col-span-1">Numero(CNAE)</H1>
-                <H1 className="col-span-3">Atividade (CNAE)</H1>
-
-                <H2>{data.numeroKinayNF}</H2>
-                <H2 className="col-span-3">{data.KinayNF}</H2>
-
-                <H1 className="col-span-1">Porcentagem(CNAE)</H1>
-                <H1 className="col-span-3">Imposto</H1>
-                <H2 className="col-span-1">{data.porcentagemKinayNF}</H2>
-                <H2 className="col-span-3">{data.ImpostoNF}</H2>
-
-                <H1 className="col-span-1">Valor Total</H1>
-                <H1 className="col-span-1">Valor Imposto</H1>
-                <H1 className="col-span-2">Valor á Receber</H1>
-                <H2>
-                  {Number(data.valorNF).toLocaleString("pt-BR", {
-                    style: "currency",
-                    currency: "BRL",
-                  })}
-                </H2>
-                <H2>
-                  {Number(data.valorImpostoNF).toLocaleString("pt-BR", {
-                    style: "currency",
-                    currency: "BRL",
-                  })}
-                </H2>
-                <H2>
-                  {Number(data.valorReceberNF).toLocaleString("pt-BR", {
-                    style: "currency",
-                    currency: "BRL",
-                  })}
-                </H2>
-
-                <H1 className="col-span-4">Descrição do Serviço</H1>
-                <H2 className="col-span-4">{data.descricaoServNF}</H2>
-
-                <H1 className="col-span-1">Situação</H1>
-                {data.situacaoNF === "Antecipada" && (
-                  <H1 className="col-span-1">Porcentagem</H1>
-                )}
-
-                <H1
-                  className={`${
-                    data.situacaoNF === "Antecipada"
-                      ? "col-span-2"
-                      : "col-span-3"
-                  } `}
-                >
-                  Valor Recebido
-                </H1>
-
-                <Select
-                  name="situacaoNF"
-                  onChange={valorInput}
-                  value={data.situacaoNF}
-                >
-                  <option></option>
-                  <option value="Recebida">Recebida</option>
-                  <option value="Antecipada">Antecipada</option>
-                </Select>
-
-                {data.situacaoNF === "Antecipada" && (
-                  <Input
-                    type="text"
-                    name="valorPrcentagemAntNF"
-                    onChange={valorInput}
-                    value={data.valorPrcentagemAntNF}
-                    className="col-span-1"
-                  />
-                )}
-
-                <Input
-                  type="text"
-                  readOnly
-                  name="valorRecebidoNF"
-                  onChange={valorInput}
-                  value={data.valorRecebidoNF}
-                  className="col-span-1"
-                />
-
-                <p className="col-span-2"></p>
-
-                <H1 className="col-span-4">Prazo de pagamento</H1>
-                <H2 className="col-span-4">{data.prazoPagamentoNF}</H2>
-
-                <H1 className="col-span-4">Observação</H1>
-                <H2 className="col-span-4">{data.observacaoNF}</H2>
-              </div>
-
-              <button
-                type="submit"
-                className="w-full mt-4 bg-orange-400 py-2 px-7 rounded-lg border-2 border-orange-500 font-semibold hover:text-white hover:scale-95 duration-500 mb-3"
-              >
-                Salvar
-              </button>
-            </form>
-          </>
-        ) : notaSelecionadaCompleta ? (
-          <>
-            <button
-              onClick={() => setNotaSelecionadaCompleta(null)}
-              className="w-full flex justify-end"
-            >
-              <h1 className="bg-red-600 w-auto font-bold p-1 px-3 rounded-full">
-                Voltar
-              </h1>
-            </button>
-
-            <div className="grid grid-cols-4 gap-x-2 w-full">
+          <form onSubmit={updateNota}>
+            <div className=" grid grid-cols-4 gap-x-2  w-full">
               <H1 className="col-span-1">Numero Nota</H1>
               <H1 className="col-span-3">Numero Pedido</H1>
               <H2 className="col-span-1">
@@ -569,14 +447,48 @@ export const MostruarioNota = ({ empresaId }) => {
               <H2 className="col-span-4">{data.descricaoServNF}</H2>
 
               <H1 className="col-span-1">Situação</H1>
-              <H1 className="col-span-3">Valor Recebido</H1>
-              <H2 className="col-span-1">{data.situacaoNF}</H2>
-              <H2 className="col-span-3">
-                {Number(data.valorRecebidoNF).toLocaleString("pt-BR", {
-                  style: "currency",
-                  currency: "BRL",
-                })}
-              </H2>
+              {data.situacaoNF === "Antecipada" && (
+                <H1 className="col-span-1">Porcentagem</H1>
+              )}
+
+              <H1
+                className={`${
+                  data.situacaoNF === "Antecipada" ? "col-span-2" : "col-span-3"
+                } `}
+              >
+                Valor Recebido
+              </H1>
+
+              <Select
+                name="situacaoNF"
+                onChange={valorInput}
+                value={data.situacaoNF}
+              >
+                <option></option>
+                <option value="Recebida">Recebida</option>
+                <option value="Antecipada">Antecipada</option>
+              </Select>
+
+              {data.situacaoNF === "Antecipada" && (
+                <Input
+                  type="text"
+                  name="valorPrcentagemAntNF"
+                  onChange={valorInput}
+                  value={data.valorPrcentagemAntNF}
+                  className="col-span-1"
+                />
+              )}
+
+              <Input
+                type="text"
+                readOnly
+                name="valorRecebidoNF"
+                onChange={valorInput}
+                value={data.valorRecebidoNF}
+                className="col-span-1"
+              />
+
+              <p className="col-span-2"></p>
 
               <H1 className="col-span-4">Prazo de pagamento</H1>
               <H2 className="col-span-4">{data.prazoPagamentoNF}</H2>
@@ -584,28 +496,119 @@ export const MostruarioNota = ({ empresaId }) => {
               <H1 className="col-span-4">Observação</H1>
               <H2 className="col-span-4">{data.observacaoNF}</H2>
             </div>
-          </>
-        ) : (
-          <>
-            <Header className="mb-4 ">
-              <p>Notas da {siglaEmpresa}</p>
-              <form
-                onSubmit={handleDataChange}
-                className="flex justify-center items-center "
+
+            <button
+              type="submit"
+              className="w-full mt-4 bg-orange-400 py-2 px-7 rounded-lg border-2 border-orange-500 font-semibold hover:text-white hover:scale-95 duration-500 mb-3"
+            >
+              Salvar
+            </button>
+          </form>
+        </>
+      ) : notaSelecionadaCompleta ? (
+        <>
+          <button
+            onClick={() => setNotaSelecionadaCompleta(null)}
+            className="w-full flex justify-end"
+          >
+            <h1 className="bg-red-600 w-auto font-bold p-1 px-3 rounded-full">
+              Voltar
+            </h1>
+          </button>
+
+          <div className="grid grid-cols-4 gap-x-2 w-full">
+            <H1 className="col-span-1">Numero Nota</H1>
+            <H1 className="col-span-3">Numero Pedido</H1>
+            <H2 className="col-span-1">
+              {String(data.numeroNotaNF).padStart(8, "0")}
+            </H2>
+            <H2 className="col-span-3">
+              {String(data.numeroPedidoNF).padStart(8, "0")}
+            </H2>
+
+            <H1 className="col-span-2">Nome da Empresa</H1>
+            <H1 className="col-span-2">CNPJ</H1>
+            <H2 className="col-span-2">{data.nomeEmpresaNF}</H2>
+            <H2 className="col-span-2">{data.cnpjEmpresaNF}</H2>
+
+            <H1 className="col-span-4">Local Retido</H1>
+            <H2 className="col-span-4">{data.retidoNF}</H2>
+
+            <H1 className="col-span-1">Numero(CNAE)</H1>
+            <H1 className="col-span-3">Atividade (CNAE)</H1>
+
+            <H2>{data.numeroKinayNF}</H2>
+            <H2 className="col-span-3">{data.KinayNF}</H2>
+
+            <H1 className="col-span-1">Porcentagem(CNAE)</H1>
+            <H1 className="col-span-3">Imposto</H1>
+            <H2 className="col-span-1">{data.porcentagemKinayNF}</H2>
+            <H2 className="col-span-3">{data.ImpostoNF}</H2>
+
+            <H1 className="col-span-1">Valor Total</H1>
+            <H1 className="col-span-1">Valor Imposto</H1>
+            <H1 className="col-span-2">Valor á Receber</H1>
+            <H2>
+              {Number(data.valorNF).toLocaleString("pt-BR", {
+                style: "currency",
+                currency: "BRL",
+              })}
+            </H2>
+            <H2>
+              {Number(data.valorImpostoNF).toLocaleString("pt-BR", {
+                style: "currency",
+                currency: "BRL",
+              })}
+            </H2>
+            <H2>
+              {Number(data.valorReceberNF).toLocaleString("pt-BR", {
+                style: "currency",
+                currency: "BRL",
+              })}
+            </H2>
+
+            <H1 className="col-span-4">Descrição do Serviço</H1>
+            <H2 className="col-span-4">{data.descricaoServNF}</H2>
+
+            <H1 className="col-span-1">Situação</H1>
+            <H1 className="col-span-3">Valor Recebido</H1>
+            <H2 className="col-span-1">{data.situacaoNF}</H2>
+            <H2 className="col-span-3">
+              {Number(data.valorRecebidoNF).toLocaleString("pt-BR", {
+                style: "currency",
+                currency: "BRL",
+              })}
+            </H2>
+
+            <H1 className="col-span-4">Prazo de pagamento</H1>
+            <H2 className="col-span-4">{data.prazoPagamentoNF}</H2>
+
+            <H1 className="col-span-4">Observação</H1>
+            <H2 className="col-span-4">{data.observacaoNF}</H2>
+          </div>
+        </>
+      ) : (
+        <>
+          <Header className="mb-4 ">
+            <p>Notas da {siglaEmpresa}</p>
+            <form
+              onSubmit={handleDataChange}
+              className="flex justify-center items-center "
+            >
+              <select
+                className="w-auto border-2 text-[2vh] rounded-xl border-gray-500 flex justify-center p-1 "
+                value={ano}
+                onChange={(event) => setAno(event.target.value)}
               >
-                <select
-                  className="w-auto border-2 text-[2vh] rounded-xl border-gray-500 flex justify-center p-1 "
-                  value={ano}
-                  onChange={(event) => setAno(event.target.value)}
-                >
-                  <option value="2022">2022</option>
-                  <option value="2023">2023</option>
-                  <option value="2024">2024</option>
-                  <option value="2025">2025</option>
-                  <option value="2026">2026</option>
-                </select>
-              </form>
-            </Header>
+                <option value="2022">2022</option>
+                <option value="2023">2023</option>
+                <option value="2024">2024</option>
+                <option value="2025">2025</option>
+                <option value="2026">2026</option>
+              </select>
+            </form>
+          </Header>
+          <Section className="w-full h-full">
             {contratoAtualizado.length > 0 ? (
               <>
                 <div className="w-full bg-orange-500 drop-shadow-2xl rounded-2xl mb-1 ">
@@ -746,7 +749,9 @@ export const MostruarioNota = ({ empresaId }) => {
                                 />
                               </div>
                             ) : (
-                              <Th className="col-span-1">{dateFormat(ctt.dataCT)}</Th>
+                              <Th className="col-span-1">
+                                {dateFormat(ctt.dataCT)}
+                              </Th>
                             )}
                           </div>
                         </div>
@@ -835,7 +840,9 @@ export const MostruarioNota = ({ empresaId }) => {
                               { style: "currency", currency: "BRL" }
                             )}
                           </Th>
-                          <Th className="col-span-1">{dateFormat(nota.dataNF)}</Th>
+                          <Th className="col-span-1">
+                            {dateFormat(nota.dataNF)}
+                          </Th>
                         </div>
                       </div>
                     );
@@ -845,8 +852,8 @@ export const MostruarioNota = ({ empresaId }) => {
             ) : null}
 
             {notasDaEmpresaRecebida.length > 0 ? (
-              <>
-                <div className="w-full bg-orange-500 drop-shadow-2xl rounded-2xl ">
+              <div>
+                <div className="w-full bg-orange-500 drop-shadow-2xl rounded-2xl">
                   <div className="flex justify-between items-center px-4">
                     <Th className="text-start text-2xl pt-1">
                       Notas Recebidas
@@ -876,7 +883,6 @@ export const MostruarioNota = ({ empresaId }) => {
 
                 <Article>
                   {notasDaEmpresaRecebida.map((nota) => {
-
                     return (
                       <>
                         <div className="relative w-auto flex justify-end ml-2">
@@ -913,18 +919,20 @@ export const MostruarioNota = ({ empresaId }) => {
                               { style: "currency", currency: "BRL" }
                             )}
                           </Th>
-                          <Th className="col-span-1">{dateFormat(nota.dataNF)}</Th>
+                          <Th className="col-span-1">
+                            {dateFormat(nota.dataNF)}
+                          </Th>
                         </div>
                       </>
                     );
                   })}
                 </Article>
-              </>
+              </div>
             ) : null}
 
             {notasDaEmpresaAntecipada.length > 0 ? (
               <>
-                <div className="w-full bg-orange-500 drop-shadow-2xl rounded-2xl">
+                <div className="w-full bg-orange-500 drop-shadow-2xl rounded-2xl ">
                   <div className="flex justify-between items-center px-4">
                     <Th className="text-start text-2xl pt-1">
                       Notas Antecipadas
@@ -990,7 +998,9 @@ export const MostruarioNota = ({ empresaId }) => {
                               { style: "currency", currency: "BRL" }
                             )}
                           </Th>
-                          <Th className="col-span-1">{dateFormat(nota.dataNF)}</Th>
+                          <Th className="col-span-1">
+                            {dateFormat(nota.dataNF)}
+                          </Th>
                         </div>
                       </>
                     );
@@ -998,36 +1008,35 @@ export const MostruarioNota = ({ empresaId }) => {
                 </Article>
               </>
             ) : null}
+          </Section>
 
-            <div className="w-full px-3 pb-3 sticky mt-5 bottom-0 left-0">
-              <div className="w-full bg-orange-400 drop-shadow-2xl rounded-2xl mb-1 sticky">
-                <div className="flex justify-around items-center w-full rounded-b-lg drop-shadow-2xl text-lg py-1">
-                  <dir>
-                    <Th className="text-end">Valor Recebido:</Th>
-                    <dir className="text-start px-3">
-                      {Number(valorTotal).toLocaleString("pt-BR", {
-                        style: "currency",
-                        currency: "BRL",
-                      })}
-                    </dir>
+          <div className="w-full sticky bottom-0 left-0">
+            <div className="w-full bg-orange-400 drop-shadow-2xl rounded-2xl mb-1 sticky">
+              <div className="flex justify-around items-center w-full rounded-b-lg drop-shadow-2xl text-lg py-1">
+                <dir>
+                  <Th className="text-end">Valor Recebido:</Th>
+                  <dir className="text-start px-3">
+                    {Number(valorTotal).toLocaleString("pt-BR", {
+                      style: "currency",
+                      currency: "BRL",
+                    })}
                   </dir>
+                </dir>
 
-                  <dir>
-                    <Th className="text-end">A Receber:</Th>
-                    <dir className="text-start px-3">
-                      {Number(valorTotalNotasAnalise).toLocaleString("pt-BR", {
-                        style: "currency",
-                        currency: "BRL",
-                      })}
-                    </dir>
+                <dir>
+                  <Th className="text-end">A Receber:</Th>
+                  <dir className="text-start px-3">
+                    {Number(valorTotalNotasAnalise).toLocaleString("pt-BR", {
+                      style: "currency",
+                      currency: "BRL",
+                    })}
                   </dir>
-                </div>
+                </dir>
               </div>
             </div>
-            <div className="w-full"></div>
-          </>
-        )}
-      </Div>
-    </>
+          </div>
+        </>
+      )}
+    </div>
   );
 };

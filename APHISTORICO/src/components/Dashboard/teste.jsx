@@ -1,5 +1,5 @@
 import styled from "styled-components";
-import { useGlobalContext } from "../../../global/Global";
+import { useGlobalContext } from "../../global/Global";
 import { NumericFormat } from "react-number-format";
 import { useState, useEffect } from "react";
 import axios from "axios";
@@ -360,7 +360,7 @@ export const ResumoEmpresa = () => {
                 <Texto>CNPJ</Texto>
               </TituloArgumentos>
             </HeaderDados>
-            <ArticleDados className="max-h-[7em]">
+            <ArticleDados>
               {empresa.map((empresas) => (
                 <ArgumentosDados key={empresas.id}>
                   <Texto>{empresas.siglaEmpresa}</Texto>

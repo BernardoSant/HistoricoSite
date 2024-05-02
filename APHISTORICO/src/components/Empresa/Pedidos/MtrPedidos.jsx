@@ -3,12 +3,10 @@ import { useGlobalContext } from "../../../global/Global";
 
 const Div = styled.div`
   height: 100%;
-  margin-bottom: 2em;
+  width: 100%;
   display: flex;
-  flex-wrap: wrap;
-  justify-content: start;
-  align-content: start;
-  flex-direction: row;
+  flex-direction: column;
+  overflow: auto;
 `;
 
 const Article = styled.article`
@@ -57,6 +55,22 @@ const Th = styled.div`
   text-overflow: ellipsis;
 `;
 
+const Section = styled.div`
+  width: 100%;
+  max-height: 100%;
+  overflow: auto;
+  padding-right: 2px;
+
+  &::-webkit-scrollbar {
+    width: 5px;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: #858585;
+    border-radius: 1em;
+  }
+`;
+
 export const MtrPedidos = ({ empresaId }) => {
   const { empresa, pedido } = useGlobalContext();
 
@@ -99,186 +113,206 @@ export const MtrPedidos = ({ empresaId }) => {
   return (
     <Div>
       <Header>Pedidos da {siglaEmpresa}</Header>
-      {pedidosDaEmpresaAndamento.length > 0 ? (
-        <>
-          <div className="w-full bg-orange-500 drop-shadow-2xl rounded-2xl ">
-            <div className="flex justify-between items-center px-4">
-              <Th className="text-start text-2xl pt-1">Pedidos em Andamento</Th>
-              <nav className="bg-orange-600 px-3 rounded-full shadow-inner flex">
-                <Th className="text-lg text-end pr-2">Valor Recebido: </Th>
-                <Th className="text-lg text-start">
-                  {Number(valorTotalPedidosAndamento).toLocaleString("pt-BR", {
-                    style: "currency",
-                    currency: "BRL",
-                  })}
+      <Section>
+        {pedidosDaEmpresaAndamento.length > 0 ? (
+          <>
+            <div className="w-full bg-orange-500 drop-shadow-2xl rounded-2xl ">
+              <div className="flex justify-between items-center px-4">
+                <Th className="text-start text-2xl pt-1">
+                  Pedidos em Andamento
                 </Th>
-              </nav>
-            </div>
-
-            <div className="grid grid-cols-7 justify-center items-center w-full rounded-b-lg drop-shadow-2xl text-lg pb-1">
-              <Th className="col-span-1">N° Pedido</Th>
-              <Th className="col-span-1">Situação</Th>
-              <Th className="col-span-3">Descrição</Th>
-              <Th className="col-span-1">A Receber</Th>
-              <Th className="col-span-1">Recebido</Th>
-            </div>
-          </div>
-
-          <Article className="w-full overflow-auto mt-2 rounded-[1em]">
-            {pedidosDaEmpresaAndamento.map((pedido) => {
-              return (
-                <>
-                  <div
-                    key={pedido.id}
-                    className="w-full grid grid-cols-7 justify-center items-center shadow-inner bg-gray-200 rounded-2xl p-2 my-2"
-                  >
-                    <Th className="col-span-1">
-                      {String(pedido.numeroPDD).padStart(5, "0")}
-                    </Th>
-
-                    <Th className="col-span-1">{pedido.situacaoPDD}</Th>
-                    <Th className="col-span-3">{pedido.nomePDD}</Th>
-
-                    <Th className="col-span-1">
-                      {Number(pedido.valorPDD).toLocaleString("pt-BR", {
+                <nav className="bg-orange-600 px-3 rounded-full shadow-inner flex">
+                  <Th className="text-lg text-end pr-2">Valor Recebido: </Th>
+                  <Th className="text-lg text-start">
+                    {Number(valorTotalPedidosAndamento).toLocaleString(
+                      "pt-BR",
+                      {
                         style: "currency",
                         currency: "BRL",
-                      })}
-                    </Th>
-                    <Th className="col-span-1">
-                      {Number(pedido.valorRecebidoPDD).toLocaleString("pt-BR", {
-                        style: "currency",
-                        currency: "BRL",
-                      })}
-                    </Th>
-                  </div>
-                </>
-              );
-            })}
-          </Article>
-        </>
-      ) : null}
+                      }
+                    )}
+                  </Th>
+                </nav>
+              </div>
 
-      {pedidosDaEmpresaFinalizada.length > 0 ? (
-        <>
-          <div className="w-full bg-orange-500 drop-shadow-2xl rounded-2xl ">
-            <div className="flex justify-between items-center px-4">
-              <Th className="text-start text-2xl pt-1">Pedidos Finalizados</Th>
-              <nav className="bg-orange-600 px-3 rounded-full shadow-inner flex">
-                <Th className="text-lg text-end pr-2">Valor Recebido: </Th>
-                <Th className="text-lg text-start">
-                  {Number(valorTotalPedidosFinalizada).toLocaleString("pt-BR", {
-                    style: "currency",
-                    currency: "BRL",
-                  })}
+              <div className="grid grid-cols-7 justify-center items-center w-full rounded-b-lg drop-shadow-2xl text-lg pb-1">
+                <Th className="col-span-1">N° Pedido</Th>
+                <Th className="col-span-1">Situação</Th>
+                <Th className="col-span-3">Descrição</Th>
+                <Th className="col-span-1">A Receber</Th>
+                <Th className="col-span-1">Recebido</Th>
+              </div>
+            </div>
+
+            <Article className="w-full overflow-auto mt-2 rounded-[1em]">
+              {pedidosDaEmpresaAndamento.map((pedido) => {
+                return (
+                  <>
+                    <div
+                      key={pedido.id}
+                      className="w-full grid grid-cols-7 justify-center items-center shadow-inner bg-gray-200 rounded-2xl p-2 my-2"
+                    >
+                      <Th className="col-span-1">
+                        {String(pedido.numeroPDD).padStart(5, "0")}
+                      </Th>
+
+                      <Th className="col-span-1">{pedido.situacaoPDD}</Th>
+                      <Th className="col-span-3">{pedido.nomePDD}</Th>
+
+                      <Th className="col-span-1">
+                        {Number(pedido.valorPDD).toLocaleString("pt-BR", {
+                          style: "currency",
+                          currency: "BRL",
+                        })}
+                      </Th>
+                      <Th className="col-span-1">
+                        {Number(pedido.valorRecebidoPDD).toLocaleString(
+                          "pt-BR",
+                          {
+                            style: "currency",
+                            currency: "BRL",
+                          }
+                        )}
+                      </Th>
+                    </div>
+                  </>
+                );
+              })}
+            </Article>
+          </>
+        ) : null}
+
+        {pedidosDaEmpresaFinalizada.length > 0 ? (
+          <>
+            <div className="w-full bg-orange-500 drop-shadow-2xl rounded-2xl ">
+              <div className="flex justify-between items-center px-4">
+                <Th className="text-start text-2xl pt-1">
+                  Pedidos Finalizados
                 </Th>
-              </nav>
-            </div>
-
-            <div className="grid grid-cols-7 justify-center items-center w-full rounded-b-lg drop-shadow-2xl text-lg pb-1">
-              <Th className="col-span-1">N° Pedido</Th>
-              <Th className="col-span-1">Situação</Th>
-              <Th className="col-span-3">Descrição</Th>
-              <Th className="col-span-1">A Receber</Th>
-              <Th className="col-span-1">Recebido</Th>
-            </div>
-          </div>
-
-          <Article className="w-full overflow-auto mt-2 rounded-[1em]">
-            {pedidosDaEmpresaFinalizada.map((pedido) => {
-              return (
-                <>
-                  <div
-                    key={pedido.id}
-                    className="w-full grid grid-cols-7 justify-center items-center shadow-inner bg-gray-200 rounded-2xl p-2 my-2"
-                  >
-                    <Th className="col-span-1">
-                      {String(pedido.numeroPDD).padStart(5, "0")}
-                    </Th>
-
-                    <Th className="col-span-1">{pedido.situacaoPDD}</Th>
-                    <Th className="col-span-3">{pedido.nomePDD}</Th>
-
-                    <Th className="col-span-1">
-                      {Number(pedido.valorPDD).toLocaleString("pt-BR", {
+                <nav className="bg-orange-600 px-3 rounded-full shadow-inner flex">
+                  <Th className="text-lg text-end pr-2">Valor Recebido: </Th>
+                  <Th className="text-lg text-start">
+                    {Number(valorTotalPedidosFinalizada).toLocaleString(
+                      "pt-BR",
+                      {
                         style: "currency",
                         currency: "BRL",
-                      })}
-                    </Th>
-                    <Th className="col-span-1">
-                      {Number(pedido.valorRecebidoPDD).toLocaleString("pt-BR", {
-                        style: "currency",
-                        currency: "BRL",
-                      })}
-                    </Th>
-                  </div>
-                </>
-              );
-            })}
-          </Article>
-        </>
-      ) : null}
+                      }
+                    )}
+                  </Th>
+                </nav>
+              </div>
 
-      {pedidosDaEmpresaCriada.length > 0 ? (
-        <>
-          <div className="w-full bg-orange-500 drop-shadow-2xl rounded-2xl ">
-            <div className="flex justify-between items-center px-4">
-              <Th className="text-start text-2xl pt-1">Pedidos Criados</Th>
-              <nav className="bg-orange-600 px-3 rounded-full shadow-inner flex">
-                <Th className="text-lg text-end pr-2">Valor Receber: </Th>
-                <Th className="text-lg text-start">
-                  {Number(valorTotalPedidosCriada).toLocaleString("pt-BR", {
-                    style: "currency",
-                    currency: "BRL",
-                  })}
-                </Th>
-              </nav>
+              <div className="grid grid-cols-7 justify-center items-center w-full rounded-b-lg drop-shadow-2xl text-lg pb-1">
+                <Th className="col-span-1">N° Pedido</Th>
+                <Th className="col-span-1">Situação</Th>
+                <Th className="col-span-3">Descrição</Th>
+                <Th className="col-span-1">A Receber</Th>
+                <Th className="col-span-1">Recebido</Th>
+              </div>
             </div>
 
-            <div className="grid grid-cols-7 justify-center items-center w-full rounded-b-lg drop-shadow-2xl text-lg pb-1">
-              <Th className="col-span-1">N° Pedido</Th>
-              <Th className="col-span-1">Situação</Th>
-              <Th className="col-span-3">Descrição</Th>
-              <Th className="col-span-1">A Receber</Th>
-              <Th className="col-span-1">Recebido</Th>
+            <Article className="w-full overflow-auto mt-2 rounded-[1em]">
+              {pedidosDaEmpresaFinalizada.map((pedido) => {
+                return (
+                  <>
+                    <div
+                      key={pedido.id}
+                      className="w-full grid grid-cols-7 justify-center items-center shadow-inner bg-gray-200 rounded-2xl p-2 my-2"
+                    >
+                      <Th className="col-span-1">
+                        {String(pedido.numeroPDD).padStart(5, "0")}
+                      </Th>
+
+                      <Th className="col-span-1">{pedido.situacaoPDD}</Th>
+                      <Th className="col-span-3">{pedido.nomePDD}</Th>
+
+                      <Th className="col-span-1">
+                        {Number(pedido.valorPDD).toLocaleString("pt-BR", {
+                          style: "currency",
+                          currency: "BRL",
+                        })}
+                      </Th>
+                      <Th className="col-span-1">
+                        {Number(pedido.valorRecebidoPDD).toLocaleString(
+                          "pt-BR",
+                          {
+                            style: "currency",
+                            currency: "BRL",
+                          }
+                        )}
+                      </Th>
+                    </div>
+                  </>
+                );
+              })}
+            </Article>
+          </>
+        ) : null}
+
+        {pedidosDaEmpresaCriada.length > 0 ? (
+          <>
+            <div className="w-full bg-orange-500 drop-shadow-2xl rounded-2xl ">
+              <div className="flex justify-between items-center px-4">
+                <Th className="text-start text-2xl pt-1">Pedidos Criados</Th>
+                <nav className="bg-orange-600 px-3 rounded-full shadow-inner flex">
+                  <Th className="text-lg text-end pr-2">Valor Receber: </Th>
+                  <Th className="text-lg text-start">
+                    {Number(valorTotalPedidosCriada).toLocaleString("pt-BR", {
+                      style: "currency",
+                      currency: "BRL",
+                    })}
+                  </Th>
+                </nav>
+              </div>
+
+              <div className="grid grid-cols-7 justify-center items-center w-full rounded-b-lg drop-shadow-2xl text-lg pb-1">
+                <Th className="col-span-1">N° Pedido</Th>
+                <Th className="col-span-1">Situação</Th>
+                <Th className="col-span-3">Descrição</Th>
+                <Th className="col-span-1">A Receber</Th>
+                <Th className="col-span-1">Recebido</Th>
+              </div>
             </div>
-          </div>
 
-          <Article className="w-full overflow-auto mt-2 rounded-[1em]">
-            {pedidosDaEmpresaCriada.map((pedido) => {
-              return (
-                <>
-                  <div
-                    key={pedido.id}
-                    className="w-full grid grid-cols-7 justify-center items-center shadow-inner bg-gray-200 rounded-2xl p-2 my-2"
-                  >
-                    <Th className="col-span-1">
-                      {String(pedido.numeroPDD).padStart(5, "0")}
-                    </Th>
+            <Article className="w-full overflow-auto mt-2 rounded-[1em]">
+              {pedidosDaEmpresaCriada.map((pedido) => {
+                return (
+                  <>
+                    <div
+                      key={pedido.id}
+                      className="w-full grid grid-cols-7 justify-center items-center shadow-inner bg-gray-200 rounded-2xl p-2 my-2"
+                    >
+                      <Th className="col-span-1">
+                        {String(pedido.numeroPDD).padStart(5, "0")}
+                      </Th>
 
-                    <Th className="col-span-1">{pedido.situacaoPDD}</Th>
-                    <Th className="col-span-3">{pedido.nomePDD}</Th>
+                      <Th className="col-span-1">{pedido.situacaoPDD}</Th>
+                      <Th className="col-span-3">{pedido.nomePDD}</Th>
 
-                    <Th className="col-span-1">
-                      {Number(pedido.valorPDD).toLocaleString("pt-BR", {
-                        style: "currency",
-                        currency: "BRL",
-                      })}
-                    </Th>
-                    <Th className="col-span-1">
-                      {Number(pedido.valorRecebidoPDD).toLocaleString("pt-BR", {
-                        style: "currency",
-                        currency: "BRL",
-                      })}
-                    </Th>
-                  </div>
-                </>
-              );
-            })}
-          </Article>
-        </>
-      ) : null}
-
+                      <Th className="col-span-1">
+                        {Number(pedido.valorPDD).toLocaleString("pt-BR", {
+                          style: "currency",
+                          currency: "BRL",
+                        })}
+                      </Th>
+                      <Th className="col-span-1">
+                        {Number(pedido.valorRecebidoPDD).toLocaleString(
+                          "pt-BR",
+                          {
+                            style: "currency",
+                            currency: "BRL",
+                          }
+                        )}
+                      </Th>
+                    </div>
+                  </>
+                );
+              })}
+            </Article>
+          </>
+        ) : null}
+      </Section>
       <div className="w-full px-3 pb-3 sticky mt-5 bottom-0 left-0">
         <div className="w-full bg-orange-400 drop-shadow-2xl rounded-2xl ">
           <div className="flex justify-around items-center w-full rounded-b-lg drop-shadow-2xl text-lg py-1">

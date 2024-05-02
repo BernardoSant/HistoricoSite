@@ -8,20 +8,20 @@ import { BsChevronCompactDown } from "react-icons/bs";
 import { LuArrowRightFromLine } from "react-icons/lu";
 import { HiOutlineDocumentDuplicate } from "react-icons/hi";
 import { dateFormat } from "../../../functions/dateFormat";
+import { NumericFormat } from "react-number-format";
 
 const Div = styled.div`
   height: 100%;
   width: 100%;
   display: flex;
-  flex-wrap: wrap;
-  justify-content: start;
-  align-content: start;
-  flex-direction: row;
+  flex-direction: column;
+  overflow: auto;
 `;
 
 const Article = styled.article`
-  margin-top: 1em;
+  height: 100%;
   width: 100%;
+  margin-top: 1em;
   display: flex;
   flex-direction: column;
   gap: 1em;
@@ -43,6 +43,13 @@ const Header = styled.header`
 `;
 
 const Input = styled.input`
+  width: 100%;
+  border: 2px solid #d1d5db;
+  border-radius: 4px;
+  padding-left: 8px;
+`;
+
+const InputDinheiro = styled(NumericFormat)`
   width: 100%;
   border: 2px solid #d1d5db;
   border-radius: 4px;
@@ -146,7 +153,7 @@ export const MtrTransporte = () => {
 
   const [data, setData] = useState({
     idTransporte: "",
-    vlrGasolina: "",
+    vlrGasolina: null,
     totalAbastecido: "",
     diasAbastecido: "",
     kmRodadoAbastecido: "",
@@ -157,7 +164,7 @@ export const MtrTransporte = () => {
     idTransport: "",
     descricaoManutencao: "",
     dataManutencao: "",
-    valorManutencao: "",
+    valorManutencao: null,
   });
 
   const valorInput = (e) => {
@@ -195,7 +202,7 @@ export const MtrTransporte = () => {
         setDataManutencao({
           descricaoManutencao: "",
           dataManutencao: "",
-          valorManutencao: "",
+          valorManutencao: null,
         });
       })
       .catch((err) => {
@@ -217,7 +224,7 @@ export const MtrTransporte = () => {
       .then((response) => {
         toast.success(response.data.message);
         setData({
-          vlrGasolina: "",
+          vlrGasolina: null,
           totalAbastecido: "",
           diasAbastecido: "",
           kmRodadoAbastecido: "",
@@ -247,7 +254,7 @@ export const MtrTransporte = () => {
       }));
       setData({
         idTransporte: "",
-        vlrGasolina: "",
+        vlrGasolina: null,
         totalAbastecido: "",
         diasAbastecido: "",
         kmRodadoAbastecido: "",
@@ -455,11 +462,20 @@ export const MtrTransporte = () => {
                     >
                       <div>
                         <Topico>Vlr Gasolina:</Topico>
-                        <Input
+                        <InputDinheiro
                           type="text"
-                          value={data.vlrGasolina}
-                          name="vlrGasolina"
-                          onChange={valorInput}
+                          placeholder="1000.00"
+                          value={data.vlrGasolina || ""}
+                          onValueChange={(e) => {
+                            setData({
+                              ...data,
+                              vlrGasolina: e.floatValue,
+                            });
+                          }}
+                          thousandSeparator="."
+                          decimalScale={2}
+                          fixedDecimalScale
+                          decimalSeparator=","
                         />
                       </div>
                       <div>
@@ -854,11 +870,20 @@ export const MtrTransporte = () => {
                         </div>
                         <div className="">
                           <Topico>Valor:</Topico>
-                          <Input
-                            type="number"
-                            value={dataManutencao.valorManutencao}
-                            name="valorManutencao"
-                            onChange={valorInputManutencao}
+                          <InputDinheiro
+                            type="text"
+                            placeholder="1000.00"
+                            value={dataManutencao.valorManutencao || ""}
+                            onValueChange={(e) => {
+                              setDataManutencao({
+                                ...dataManutencao,
+                                valorManutencao: e.floatValue,
+                              });
+                            }}
+                            thousandSeparator="."
+                            decimalScale={2}
+                            fixedDecimalScale
+                            decimalSeparator=","
                           />
                         </div>
                       </div>

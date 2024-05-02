@@ -30,7 +30,6 @@ const Div = styled.div`
   border-top-left-radius: 1em;
   border-bottom-left-radius: 1em;
   z-index: 20;
-  font-size: 1.3em;
   display: flex;
   flex-direction: column;
 `;
@@ -38,8 +37,8 @@ const Div = styled.div`
 const Div2 = styled.div`
   text-align: center;
   padding: 10px;
-  font-size: 1.3em;
   transition: 200ms;
+  font-size: 1.5vw;
 `;
 
 export const Inicio = () => {
@@ -68,7 +67,7 @@ export const Inicio = () => {
   };
 
   return (
-    <>
+    <div className="relative">
       <Header>
         <Nav>
           <Div className="bg-orange-400">
@@ -127,6 +126,9 @@ export const Inicio = () => {
         {state.Inicio && <Dashboard />}
         {state.Empresa && <Empresa />}
       </Header>
-    </>
+      <div className="absolute bottom-1 right-4 text-slate-400 cursor-not-allowed text-[0.8vw]">
+        1.00.01
+      </div>
+    </div>
   );
 };

@@ -59,7 +59,7 @@ const Div = styled.div`
   display: flex;
   flex-direction: column;
   gap: 0.5em;
-  overflow-x: auto;
+  overflow: hidden;
   z-index: 10;
 
   &::-webkit-scrollbar {
@@ -78,6 +78,7 @@ const Botao = styled.button`
   transition-duration: 200ms;
   cursor: pointer;
   text-align: start;
+  font-size: 0.9vw;
   font-weight: 600;
 `;
 
@@ -280,7 +281,7 @@ export const Empresa = () => {
         <Nav>
           <Div className="overflow-auto max-w-[20em] min-w-[13em]">
             <nav className="flex flex-col justify-center ">
-              <div className="relative w-full text-center bg-orange-600 rounded-full py-1 font-bold text-xl">
+              <div className="relative w-full text-center bg-orange-600 rounded-full py-1 font-bold text-[1.1vw] ">
                 <p className="absolute left-0 top-0 ml-4 h-full flex justify-center items-center">
                   <MdOutlineHomeWork />
                 </p>
@@ -454,7 +455,7 @@ export const Empresa = () => {
         <Div className="w-full h-full relative rounded-[1em] flex justify-center items-center">
           {state.addTransporte && <AddTransporte></AddTransporte>}
 
-          {state.Dashboard && <ResumoEmpresa />}
+          {state.Dashboard &&  <ResumoEmpresa />}
 
           {state.addContrato && <TabelaAddContrato />}
 

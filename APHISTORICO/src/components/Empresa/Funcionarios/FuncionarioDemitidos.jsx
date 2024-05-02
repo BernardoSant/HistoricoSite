@@ -12,24 +12,16 @@ import { dateFormat } from "../../../functions/dateFormat";
 const Div = styled.div`
   height: 100%;
   width: 100%;
-  padding-left: 1em;
-  padding-right: 1em;
-  padding-bottom: 1em;
-  padding-top: 1em;
   display: flex;
-  flex-wrap: wrap;
-  justify-content: start;
-  align-content: start;
-  flex-direction: row;
+  flex-direction: column;
+  overflow: auto;
 `;
 
 const Article = styled.article`
   width: 100%;
   height: 100%;
-  max-height: 65vh;
   overflow: auto;
   margin-top: 4px;
-  margin-bottom: 8px;
   border-radius: 1em;
   overflow-y: auto;
   position: relative;
