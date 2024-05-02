@@ -117,6 +117,9 @@ export const MostruarioFuncAdmitido = () => {
   FuncionariosAdmitidos.sort((a, b) =>
     a.nameFucionario.localeCompare(b.nameFucionario)
   );
+
+ 
+
   function getInitials(name) {
     const splitName = name.trim().split(" ");
 
@@ -180,6 +183,10 @@ export const MostruarioFuncAdmitido = () => {
     }
     setData({ ...data, [e.target.name]: valor });
   };
+
+  const cargoCalc = cargo.find(
+    (carg) => carg.nomeCargo === data.funcaoFuncionario
+  );
 
   const [funcionarioSelecionado, setFuncionarioSelecionado] = useState(null);
   const [funcionarioEditar, setFuncionarioEditar] = useState(null);
@@ -368,6 +375,14 @@ export const MostruarioFuncAdmitido = () => {
       },
     };
 
+    axios.put(
+      ip + "/cargo/" + cargoCalc.id,
+      {
+        quantidadeCargo: cargoCalc.quantidadeCargo - 1,
+      },
+      headers
+    );
+
     axios
       .put(
         ip + "/funcionario/" + funcionarioSelecionado.id,
@@ -532,6 +547,8 @@ export const MostruarioFuncAdmitido = () => {
   const valorSalario = FuncionariosAdmitidos.reduce((total, func) => {
     return valorTotalSalario - adiantamentoSalario;
   }, 0);
+
+
 
   function renderInfo(title, value) {
     return (

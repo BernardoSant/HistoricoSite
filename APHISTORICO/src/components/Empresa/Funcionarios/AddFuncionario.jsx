@@ -39,7 +39,6 @@ const InputDinheiro = styled(NumericFormat)`
   padding-left: 8px;
 `;
 
-
 const Header = styled.header`
   width: 100%;
   border-radius: 20px;
@@ -143,6 +142,10 @@ export const TabelaAddFuncionario = () => {
     });
   };
 
+  const cargoCalc = cargo.find(
+    (carg) => carg.nomeCargo === data.funcaoFuncionario
+  );
+
   const sendFuncionario = async (e) => {
     e.preventDefault();
 
@@ -160,6 +163,14 @@ export const TabelaAddFuncionario = () => {
       toast.error("Por favor, preencha todos os campos obrigatórios.");
       return;
     }
+
+    axios.put(
+      ip + "/cargo/" + cargoCalc.id,
+      {
+        quantidadeCargo: cargoCalc.quantidadeCargo + 1,
+      },
+      headers
+    );
 
     axios
       .post(ip + "/Funcionario", data, headers)
@@ -413,11 +424,11 @@ export const TabelaAddFuncionario = () => {
                 });
               }}
               thousandSeparator="."
-            decimalScale={2}
-            fixedDecimalScale
-            decimalSeparator=","
+              decimalScale={2}
+              fixedDecimalScale
+              decimalSeparator=","
             />
-        
+
             <p className="col-span-2"></p>
           </div>
 

@@ -94,7 +94,7 @@ const Button = styled.button`
 `;
 
 export const MostruarioFuncDemitido = () => {
-  const { ip, funcionario } = useGlobalContext();
+  const { ip, funcionario, cargo } = useGlobalContext();
   const [carregando, setCarregando] = useState(false);
 
   const FuncionariosDemitidos = funcionario.filter(
@@ -166,6 +166,10 @@ export const MostruarioFuncDemitido = () => {
     CadastroEmprFuncionario: "",
   });
 
+  const cargoCalc = cargo.find(
+    (carg) => carg.nomeCargo === data.funcaoFuncionario
+  );
+
   const [funcionarioSelecionado, setFuncionarioSelecionado] = useState(null);
 
   useEffect(() => {
@@ -192,6 +196,14 @@ export const MostruarioFuncDemitido = () => {
         "Content-Type": "application/json",
       },
     };
+
+    axios.put(
+      ip + "/cargo/" + cargoCalc.id,
+      {
+        quantidadeCargo: cargoCalc.quantidadeCargo + 1,
+      },
+      headers
+    );
 
     axios
       .put(
