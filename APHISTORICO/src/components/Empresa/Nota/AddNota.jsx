@@ -234,15 +234,17 @@ export const TabelaAddNota = () => {
     }
 
     let situacao;
-    if (
-      somaValores[data.numeroPedidoNF] + Number(data.valorNF) ===
-      atualizarPedido.valorPDD
-    ) {
-      situacao = "Finalizada";
-    } else if (Number(data.valorNF) > 0) {
-      situacao = "Andamento";
-    } else {
-      situacao = "Criada";
+    if (ContratoEmpresa.length <= 0) {
+      if (
+        somaValores[data.numeroPedidoNF] + Number(data.valorNF) ===
+        atualizarPedido.valorPDD
+      ) {
+        situacao = "Finalizada";
+      } else if (Number(data.valorNF) > 0) {
+        situacao = "Andamento";
+      } else {
+        situacao = "Criada";
+      }
     }
 
     if (data.situacaoNF === "Recebida" && ContratoEmpresa <= 0) {
