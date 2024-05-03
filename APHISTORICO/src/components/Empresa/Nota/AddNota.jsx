@@ -10,10 +10,18 @@ const Form = styled.form`
   width: 100%;
   gap: 1em;
   display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  align-content: start;
-  flex-direction: row;
+  flex-direction: column;
+`;
+
+const Nav = styled.div`
+  &::-webkit-scrollbar {
+    width: 5px;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: #575757;
+    border-radius: 1em;
+  }
 `;
 
 const H1 = styled.h1`
@@ -373,7 +381,7 @@ export const TabelaAddNota = () => {
       <Form onSubmit={sendNF}>
         <Header>Adcionar Nota Fiscal</Header>
 
-        <nav className="w-full">
+        <Nav className="w-full overflow-auto">
           <div className=" grid grid-cols-4 gap-x-2 w-full">
             <H1 className="col-span-4">Numero Nota*</H1>
 
@@ -647,13 +655,12 @@ export const TabelaAddNota = () => {
               className="col-span-4 border-2 border-gray-300 rounded-md px-2"
             ></textarea>
           </div>
-
-          <section className="w-full flex justify-end my-4">
-            <Button type="submit" className="">
-              Salvar
-            </Button>
-          </section>
-        </nav>
+        </Nav>
+        <section className="w-full flex justify-end my-4">
+          <Button type="submit" className="">
+            Salvar
+          </Button>
+        </section>
       </Form>
     </>
   );
