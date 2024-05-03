@@ -43,8 +43,8 @@ const Div2 = styled.div`
 
 export const Inicio = () => {
   const [state, setState] = useState({
-    Inicio: true,
-    Empresa: false,
+    Inicio: false,
+    Empresa: true,
     Casa: false,
     Conta: false,
   });
@@ -127,7 +127,7 @@ export const Inicio = () => {
         {state.Empresa && <Empresa />}
       </Header>
       <div className="absolute bottom-1 right-4 text-slate-400 cursor-not-allowed text-[0.8vw]">
-        1.00.01
+      1.00.01
       </div>
     </div>
   );

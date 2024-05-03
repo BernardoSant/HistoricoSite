@@ -59,6 +59,11 @@ const Th = styled.div`
   justify-content: center;
   align-items: center;
   text-align: center;
+  font-size: 0.8vw;
+`;
+
+const ThTitulo = styled(Th)`
+  font-size: 1.2vw;
 `;
 
 const Input = styled.input`
@@ -169,6 +174,11 @@ export const MostruarioNota = ({ empresaId }) => {
   );
   const valorTotalNotasRecebidas = notasDaEmpresaRecebida.reduce(
     (total, nota) => total + nota.valorRecebidoNF,
+    0
+  );
+
+  const diferencaNotasAntecipada = notasDaEmpresaAntecipada.reduce(
+    (total, nota) => total + (nota.valorReceberNF - nota.valorRecebidoNF),
     0
   );
 
@@ -764,21 +774,21 @@ export const MostruarioNota = ({ empresaId }) => {
 
             {notasDaEmpresaAnalise.length > 0 ? (
               <>
-                <div className="w-full bg-orange-500 drop-shadow-2xl rounded-2xl mb-1 ">
+                <div className="w-full bg-orange-500 drop-shadow-2xl rounded-2xl  p-1">
                   <div className="flex justify-between items-center px-4">
-                    <Th className="text-start text-2xl pt-1">
+                    <ThTitulo className="text-start pt-1">
                       Notas em Analise
-                    </Th>
+                    </ThTitulo>
                     <nav className="bg-orange-600 px-3 rounded-full shadow-inner flex">
-                      <Th className="text-lg text-end pr-2">
+                      <ThTitulo className=" text-end pr-2">
                         Valor a Receber:{" "}
-                      </Th>
-                      <Th className="text-lg text-start">
+                      </ThTitulo>
+                      <ThTitulo className=" text-start">
                         {Number(valorTotalNotasAnalise).toLocaleString(
                           "pt-BR",
                           { style: "currency", currency: "BRL" }
                         )}
-                      </Th>
+                      </ThTitulo>
                     </nav>
                   </div>
                   <div className="grid grid-cols-7 justify-center items-center w-full rounded-b-lg drop-shadow-2xl text-lg pb-1">
@@ -937,10 +947,24 @@ export const MostruarioNota = ({ empresaId }) => {
                     <Th className="text-start text-2xl pt-1">
                       Notas Antecipadas
                     </Th>
+
+                    <nav className="bg-orange-600 px-3 rounded-full shadow-inner flex">
+                      <Th className="text-lg text-end pr-2">
+                        Desconto Antecipado:{" "}
+                      </Th>
+
+                      <Th className="text-lg text-start">
+                        {Number(diferencaNotasAntecipada).toLocaleString(
+                          "pt-BR",
+                          { style: "currency", currency: "BRL" }
+                        )}
+                      </Th>
+                    </nav>
                     <nav className="bg-orange-600 px-3 rounded-full shadow-inner flex">
                       <Th className="text-lg text-end pr-2">
                         Valor Recebido:{" "}
                       </Th>
+
                       <Th className="text-lg text-start">
                         {Number(valorTotalNotasAntecipadas).toLocaleString(
                           "pt-BR",

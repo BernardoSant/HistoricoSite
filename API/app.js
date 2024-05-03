@@ -1,5 +1,5 @@
-let ipServer = "http://192.168.15.2:2523";
-let ipSite = "http://192.168.15.2:5173";
+let ipServer = "http://localhost:2523";
+let ipSite = "http://localhost:5173";
 
 const express = require("express");
 const socketIo = require("socket.io");

@@ -100,7 +100,7 @@ export const TabelaConta = () => {
       parcelasPagasConta: 0,
     });
   };
-  console.log(data);
+
   const [selectedOption, setSelectedOption] = useState(null);
 
   const handleChange = (option) => {
