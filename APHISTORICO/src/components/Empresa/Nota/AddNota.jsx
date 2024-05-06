@@ -214,6 +214,11 @@ export const TabelaAddNota = () => {
     return idPedido;
   });
 
+  const atualizarContrato = ContratoEmpresa.find((Contrato) => {
+    const idContrato = Contrato.numeroCT === data.numeroPedidoNF;
+    return idContrato;
+  });
+
   const somaValores = nota.reduce((acc, nota) => {
     if (acc[nota.numeroPedidoNF]) {
       acc[nota.numeroPedidoNF] += nota.valorNF;
@@ -255,65 +260,42 @@ export const TabelaAddNota = () => {
       }
     }
 
-    if (data.situacaoNF === "Recebida" && ContratoEmpresa <= 0) {
-      const novoValor =
-        Number(data.valorReceberNF) + atualizarPedido.valorRecebidoPDD;
+    if (data.situacaoNF === "Antecipada") {
+      if (ContratoEmpresa.length > 0) {
+        const calculorAntercipa =
+          data.valorReceberNF - data.valorReceberNF * 0.02;
+        var novoValor =
+          Number(calculorAntercipa) + atualizarContrato.ValorRecebidoCT;
 
-      axios.put(
-        ip + `/pedido/` + atualizarPedido.numeroPDD,
-        {
-          situacaoPDD: situacao,
-          valorRecebidoPDD: novoValor,
-        },
-        headers
-      );
+        axios.put(
+          ip + `/contrato/` + atualizarContrato.numeroCT,
+          {
+            ValorRecebidoCT: novoValor,
+          },
+          headers
+        );
+      } else {
+        var calculorAntercipa =
+          data.valorReceberNF - data.valorReceberNF * 0.02;
+        var novoValor =
+          Number(calculorAntercipa) + atualizarPedido.valorRecebidoPDD;
 
-      axios
-        .post(ip + "/nota", data, headers)
-        .then((response) => {
-          toast.success(response.data.message);
-          setData({
-            numeroPedidoNF: "",
-            numeroNotaNF: "",
-            idEmpresa: 0,
-            nomeEmpresaNF: "",
-            cnpjEmpresaNF: "",
-            retidoNF: "",
-            numeroKinayNF: "",
-            KinayNF: "",
-            porcentagemKinayNF: 0,
-            descricaoServNF: "",
-            ImpostoNF: "",
-            totalImpostoNF: "",
-            valorNF: "",
-            valorImpostoNF: "",
-            valorReceberNF: "",
-            valorRecebidoNF: null,
-            situacaoNF: "",
-            prazoPagamentoNF: "",
-            dataNF: "",
-            observacaoNF: "",
-          });
-        })
-        .catch((err) => {
-          toast.info(err.response.data.message);
-        });
-    } else if (data.situacaoNF === "Antecipada" && ContratoEmpresa <= 0) {
-      const calculorAntercipa =
-        data.valorReceberNF - data.valorReceberNF * 0.02;
-      const novoValor = calculorAntercipa + atualizarPedido.valorRecebidoPDD;
-
-      axios.put(
-        ip + `/pedido/` + atualizarPedido.numeroPDD,
-        {
-          situacaoPDD: situacao,
-          valorRecebidoPDD: novoValor,
-        },
-        headers
-      );
+        axios.put(
+          ip + `/pedido/` + atualizarPedido.numeroPDD,
+          {
+            situacaoPDD: situacao,
+            valorRecebidoPDD: novoValor,
+          },
+          headers
+        );
+      }
 
       axios
-        .post(ip + "/nota", { ...data, valorRecebidoNF: novoValor }, headers)
+        .post(
+          ip + "/nota",
+          { ...data, valorRecebidoNF: calculorAntercipa },
+          headers
+        )
         .then((response) => {
           toast.success(response.data.message);
           setData({
@@ -343,6 +325,33 @@ export const TabelaAddNota = () => {
           toast.info(err.response.data.message);
         });
     } else {
+      if (data.situacaoNF === "Recebida") {
+        if (ContratoEmpresa.length > 0) {
+          const novoValor =
+            Number(data.valorReceberNF) + atualizarContrato.ValorRecebidoCT;
+
+          axios.put(
+            ip + `/contrato/` + atualizarContrato.numeroCT,
+            {
+              ValorRecebidoCT: novoValor,
+            },
+            headers
+          );
+        } else {
+          const novoValor =
+            Number(data.valorReceberNF) + atualizarPedido.valorRecebidoPDD;
+
+          axios.put(
+            ip + `/pedido/` + atualizarPedido.numeroPDD,
+            {
+              situacaoPDD: situacao,
+              valorRecebidoPDD: novoValor,
+            },
+            headers
+          );
+        }
+      }
+      
       axios
         .post(ip + "/nota", data, headers)
         .then((response) => {

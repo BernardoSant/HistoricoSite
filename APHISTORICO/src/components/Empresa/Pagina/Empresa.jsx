@@ -456,7 +456,7 @@ export const Empresa = () => {
         <Div className="w-full h-full relative rounded-[1em] flex justify-center items-center">
           {state.addTransporte && <AddTransporte></AddTransporte>}
 
-          {state.Dashboard &&  <Fort />}
+          {state.Dashboard &&  <ResumoEmpresa  />}
 
           {state.addContrato && <TabelaAddContrato />}
 
