@@ -3,6 +3,7 @@ import { useGlobalContext } from "../../../global/Global";
 import { dateFormat } from "../../../functions/dateFormat";
 import { realFormat } from "../../../functions/realFormat";
 import { numNotaFormat } from "../../../functions/numNotaFormat";
+import { cnaeFormat } from "../../../functions/cnaeFormat";
 import {
   TbPencilCog,
   TbAlignLeft,
@@ -51,7 +52,6 @@ const Section = styled.div`
   height: 100%;
   display: flex;
   flex-direction: column;
-  justify-content: ;
   gap: 12px;
   font-size: 1vw;
 `;
@@ -114,7 +114,7 @@ const ArticleDados = styled.div`
   flex: 0 1 auto;
   display: flex;
   flex-direction: column;
-  max-height: 15.5em;
+  max-height: 16.5em;
   font-size: 0.8vw;
   font-weight: bolder;
   overflow-y: auto;
@@ -629,7 +629,6 @@ export const MostruarioNota = ({ empresaId }) => {
               <SectionBlock className="gap-y-2 flex-1">
                 <AgruparDNota>
                   {Descricao("N° Nota:", notaSelecionada.numeroNotaNF + "°")}
-                  {Descricao("Data Nota:", dateFormat(notaSelecionada.dataNF))}
                   {Descricao("N° Pedido:", notaSelecionada.numeroPedidoNF)}
                 </AgruparDNota>
                 <AgruparDNota>
@@ -647,7 +646,7 @@ export const MostruarioNota = ({ empresaId }) => {
                 </AgruparDNota>
 
                 <AgruparDNota>
-                  {Descricao("N° CNAE:", notaSelecionada.numeroKinayNF)}
+                  {Descricao("N° CNAE:", cnaeFormat(notaSelecionada.numeroKinayNF))}
                   {Descricao("Atividade CNAE:", notaSelecionada.KinayNF)}
                 </AgruparDNota>
 
@@ -778,10 +777,6 @@ export const MostruarioNota = ({ empresaId }) => {
                   notaSelecionadaCompleta.numeroNotaNF + "°"
                 )}
                 {Descricao(
-                  "Data Nota:",
-                  dateFormat(notaSelecionadaCompleta.dataNF)
-                )}
-                {Descricao(
                   "N° Pedido:",
                   notaSelecionadaCompleta.numeroPedidoNF
                 )}
@@ -807,7 +802,7 @@ export const MostruarioNota = ({ empresaId }) => {
               </AgruparDNota>
 
               <AgruparDNota>
-                {Descricao("N° CNAE:", notaSelecionadaCompleta.numeroKinayNF)}
+                {Descricao("N° CNAE:", cnaeFormat(notaSelecionadaCompleta.numeroKinayNF))}
                 {Descricao("Atividade CNAE:", notaSelecionadaCompleta.KinayNF)}
               </AgruparDNota>
 
