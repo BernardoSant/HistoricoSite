@@ -26,7 +26,7 @@ const Header = styled.header`
   padding-left: 1em;
   padding-right: 1em;
   font-weight: 600;
-  border-radius: 0.7em;
+  border-radius: 0.4em;
   background: #f97316;
   box-shadow: inset 5px -5px 10px #9f4a0e, inset -5px 5px 10px #ff9c1e;
 
@@ -42,7 +42,7 @@ const Footer = styled.div`
   font-size: 1.2vw;
   padding: 5px;
   font-weight: 600;
-  border-radius: 0.7em;
+  border-radius: 0.4em;
   background: #f97316;
   box-shadow: inset 5px -5px 10px #9f4a0e, inset -5px 5px 10px #ff9c1e;
 `;
@@ -58,7 +58,6 @@ const Section = styled.div`
 
 const Article = styled.div`
   width: 100%;
-
   display: flex;
   flex-direction: column;
   overflow: auto;
@@ -99,12 +98,14 @@ const SectionBlock = styled.div`
 `;
 
 const HeaderDados = styled.div`
+  position: sticky;
+  top: 0;
   flex: 0 1 auto;
   padding: 5px;
   padding-left: 10px;
   padding-right: 10px;
-  border-top-right-radius: 1em;
-  border-top-left-radius: 1em;
+  border-top-right-radius: 0.7em;
+  border-top-left-radius: 0.7em;
   border-bottom-right-radius: 0.2em;
   border-bottom-left-radius: 0.2em;
   background: #f97316;
@@ -646,7 +647,10 @@ export const MostruarioNota = ({ empresaId }) => {
                 </AgruparDNota>
 
                 <AgruparDNota>
-                  {Descricao("N° CNAE:", cnaeFormat(notaSelecionada.numeroKinayNF))}
+                  {Descricao(
+                    "N° CNAE:",
+                    cnaeFormat(notaSelecionada.numeroKinayNF)
+                  )}
                   {Descricao("Atividade CNAE:", notaSelecionada.KinayNF)}
                 </AgruparDNota>
 
@@ -802,7 +806,10 @@ export const MostruarioNota = ({ empresaId }) => {
               </AgruparDNota>
 
               <AgruparDNota>
-                {Descricao("N° CNAE:", cnaeFormat(notaSelecionadaCompleta.numeroKinayNF))}
+                {Descricao(
+                  "N° CNAE:",
+                  cnaeFormat(notaSelecionadaCompleta.numeroKinayNF)
+                )}
                 {Descricao("Atividade CNAE:", notaSelecionadaCompleta.KinayNF)}
               </AgruparDNota>
 
@@ -1023,24 +1030,30 @@ export const MostruarioNota = ({ empresaId }) => {
                 <HeaderDados>
                   <TituloDados>
                     Nota Analisando
-                    <div className="flex justify-center items-center gap-2 bg-orange-300 px-3 rounded-[1em]">
+                    <div
+                      className={`flex justify-center items-center gap-2 bg-orange-300 px-3 rounded-[1em] ${
+                        NAnalisada.length <= 0 && "hidden"
+                      }`}
+                    >
                       <Texto>Total a Receber:</Texto>{" "}
                       {realFormat(ValorReceberA)}
                     </div>
                   </TituloDados>
-                  <TituloArgumentos>
-                    <Texto>N° Pedido</Texto>
-                    <Texto>N° Nota</Texto>
-                    <Texto>Situação</Texto>
-                    <Texto>Receber</Texto>
-                    <Texto>Recebido</Texto>
-                    <Texto>Data</Texto>
-                  </TituloArgumentos>
+                  {NAnalisada.length > 0 && (
+                    <TituloArgumentos>
+                      <Texto>N° Pedido</Texto>
+                      <Texto>N° Nota</Texto>
+                      <Texto>Situação</Texto>
+                      <Texto>Receber</Texto>
+                      <Texto>Recebido</Texto>
+                      <Texto>Data</Texto>
+                    </TituloArgumentos>
+                  )}
                 </HeaderDados>
                 <ArticleDados>
                   {NAnalisada.length <= 0 ? (
                     <ArgumentosDados className=" text-[1.2vw] text-center bg-gray-200">
-                      <Texto>Nenhuma nota cadastrada!</Texto>
+                      <Texto>Nenhuma nota em analise!</Texto>
                     </ArgumentosDados>
                   ) : (
                     <ArticleDados>
@@ -1072,14 +1085,18 @@ export const MostruarioNota = ({ empresaId }) => {
                     </ArticleDados>
                   )}
                 </ArticleDados>
-                <p className="bg-[#f97316] w-full h-4 rounded-b-[1em] rounded-t-[0.2em]"></p>
+                <p className="bg-[#f97316] w-full h-4 rounded-b-[0.7em] rounded-t-[0.2em]"></p>
               </SectionBlock>
 
               <SectionBlock>
                 <HeaderDados>
                   <TituloDados>
                     Nota Antecipada
-                    <div className="flex justify-center items-center gap-3 flex-wrap">
+                    <div
+                      className={`flex justify-center items-center gap-3 flex-wrap ${
+                        NAntecipada.length <= 0 && "hidden"
+                      }`}
+                    >
                       <div className="flex justify-center items-center gap-2 bg-orange-300 px-3 rounded-[1em]">
                         <Texto>Total Desconto:</Texto>{" "}
                         {realFormat(DiferencaAntecipada)}
@@ -1090,19 +1107,21 @@ export const MostruarioNota = ({ empresaId }) => {
                       </div>
                     </div>
                   </TituloDados>
-                  <TituloArgumentos>
-                    <Texto>N° Pedido</Texto>
-                    <Texto>N° Nota</Texto>
-                    <Texto>Situação</Texto>
-                    <Texto>Receber</Texto>
-                    <Texto>Recebido</Texto>
-                    <Texto>Data</Texto>
-                  </TituloArgumentos>
+                  {NAntecipada.length > 0 && (
+                    <TituloArgumentos>
+                      <Texto>N° Pedido</Texto>
+                      <Texto>N° Nota</Texto>
+                      <Texto>Situação</Texto>
+                      <Texto>Receber</Texto>
+                      <Texto>Recebido</Texto>
+                      <Texto>Data</Texto>
+                    </TituloArgumentos>
+                  )}
                 </HeaderDados>
                 <ArticleDados>
                   {NAntecipada.length <= 0 ? (
                     <ArgumentosDados className=" text-[1.2vw] text-center bg-gray-200">
-                      <Texto>Nenhuma nota cadastrada!</Texto>
+                      <Texto>Nenhuma nota antecipada!</Texto>
                     </ArgumentosDados>
                   ) : (
                     <ArticleDados>
@@ -1134,30 +1153,36 @@ export const MostruarioNota = ({ empresaId }) => {
                     </ArticleDados>
                   )}
                 </ArticleDados>
-                <p className="bg-[#f97316] w-full h-4 rounded-b-[1em] rounded-t-[0.2em]"></p>
+                <p className="bg-[#f97316] w-full h-4 rounded-b-[0.7em] rounded-t-[0.2em]"></p>
               </SectionBlock>
 
               <SectionBlock>
                 <HeaderDados>
                   <TituloDados>
                     Nota Recebida{" "}
-                    <div className="flex justify-center items-center gap-2 bg-orange-300 px-3 rounded-[1em]">
+                    <div
+                      className={`flex justify-center items-center gap-2 bg-orange-300 px-3 rounded-[1em] ${
+                        NRecebida.length <= 0 && "hidden"
+                      }`}
+                    >
                       <Texto>Total Recebido:</Texto> {realFormat(ValorRecebido)}
                     </div>
                   </TituloDados>
-                  <TituloArgumentos>
-                    <Texto>N° Pedido</Texto>
-                    <Texto>N° Nota</Texto>
-                    <Texto>Situação</Texto>
-                    <Texto>Receber</Texto>
-                    <Texto>Recebido</Texto>
-                    <Texto>Data</Texto>
-                  </TituloArgumentos>
+                  {NRecebida.length > 0 && (
+                    <TituloArgumentos>
+                      <Texto>N° Pedido</Texto>
+                      <Texto>N° Nota</Texto>
+                      <Texto>Situação</Texto>
+                      <Texto>Receber</Texto>
+                      <Texto>Recebido</Texto>
+                      <Texto>Data</Texto>
+                    </TituloArgumentos>
+                  )}
                 </HeaderDados>
                 <ArticleDados>
                   {NRecebida.length <= 0 ? (
                     <ArgumentosDados className=" text-[1.2vw] text-cente bg-gray-200">
-                      <Texto>Nenhuma nota cadastrada!</Texto>
+                      <Texto>Nenhuma nota recebida!</Texto>
                     </ArgumentosDados>
                   ) : (
                     <ArticleDados>
@@ -1189,7 +1214,7 @@ export const MostruarioNota = ({ empresaId }) => {
                     </ArticleDados>
                   )}
                 </ArticleDados>
-                <p className="bg-[#f97316] w-full h-4 rounded-b-[1em] rounded-t-[0.2em]"></p>
+                <p className="bg-[#f97316] w-full h-4 rounded-b-[0.7em] rounded-t-[0.2em]"></p>
               </SectionBlock>
             </Article>
           </Article>

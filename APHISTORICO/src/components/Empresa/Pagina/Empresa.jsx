@@ -193,8 +193,6 @@ export const Empresa = () => {
       setState((prevState) => ({
         ...prevState,
         [key]: !prevState[key],
-        ...(key !== "verPedidos" && { verPedidos: false }),
-        ...(key !== "verContrato" && { verContrato: false }),
       }));
       return obj;
     }, {});
