@@ -1,9 +1,10 @@
 import styled from "styled-components";
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import axios from "axios";
 import { toast } from "react-toastify";
 import { useGlobalContext } from "../../../global/Global";
 import { NumericFormat } from "react-number-format";
+import { FaArrowDown } from "react-icons/fa";
 
 const Form = styled.form`
   height: 100%;
@@ -351,7 +352,7 @@ export const TabelaAddNota = () => {
           );
         }
       }
-      
+
       axios
         .post(ip + "/nota", data, headers)
         .then((response) => {
@@ -385,12 +386,52 @@ export const TabelaAddNota = () => {
     }
   };
 
+  const [isScrolledToBottom, setIsScrolledToBottom] = useState(false);
+  const [isScrollable, setIsScrollable] = useState(false);
+  const navRef = useRef(null);
+
+  const handleScroll = () => {
+    const isBottom =
+      navRef.current.scrollHeight - navRef.current.scrollTop ===
+      navRef.current.clientHeight;
+    setIsScrolledToBottom(isBottom);
+  };
+
+  useEffect(() => {
+    const navElement = navRef.current;
+    if (navElement) {
+      navElement.addEventListener("scroll", handleScroll);
+      setIsScrollable(navElement.scrollHeight > navElement.clientHeight);
+      return () => navElement.removeEventListener("scroll", handleScroll);
+    }
+  }, []);
+
+  const handleClick = () => {
+    const navElement = navRef.current;
+    if (navElement) {
+      navElement.scrollTop = navElement.scrollHeight;
+    }
+  };
+
+
   return (
     <>
       <Form onSubmit={sendNF}>
         <Header>Adcionar Nota Fiscal</Header>
+        <div className="absolute bottom-[10%] right-2/4 z-50">
+          {isScrollable && !isScrolledToBottom && (
+            <div className="flex flex-col justify-center items-center">
+              <h1
+                className="text-xl bg-gray-300 p-1 rounded-full opacity-60"
+                onClick={handleClick}
+              >
+                <FaArrowDown />
+              </h1>
+            </div>
+          )}
+        </div>
 
-        <Nav className="w-full overflow-auto">
+        <Nav className="w-full overflow-auto " ref={navRef}>
           <div className=" grid grid-cols-4 gap-x-2 w-full">
             <H1 className="col-span-4">Numero Nota*</H1>
 

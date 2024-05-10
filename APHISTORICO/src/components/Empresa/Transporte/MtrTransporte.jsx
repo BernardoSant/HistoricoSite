@@ -24,7 +24,17 @@ const Article = styled.article`
   margin-top: 1em;
   display: flex;
   flex-direction: column;
+  overflow: auto;
+  padding-right: 6px;
   gap: 1em;
+  &::-webkit-scrollbar {
+    width: 5px;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: #575757;
+    border-radius: 1em;
+  }
 `;
 
 const Header = styled.header`

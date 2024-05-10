@@ -1,13 +1,19 @@
 import styled from "styled-components";
 import { useGlobalContext } from "../../../global/Global";
 import { BiCategory } from "react-icons/bi";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import axios from "axios";
 import { toast } from "react-toastify";
 import { AiOutlineRight, AiOutlineLeft } from "react-icons/ai";
+import {
+  TbPencilCog,
+  TbAlignLeft,
+  TbArrowForward,
+} from "react-icons/tb";
 import { LoaderClin } from "../../Loaders/LoaderClin";
 import { NumericFormat } from "react-number-format";
 import { dateFormat } from "../../../functions/dateFormat";
+import { FaArrowDown } from "react-icons/fa";
 
 const Div = styled.div`
   height: 100%;
@@ -74,9 +80,35 @@ const InputDinheiro = styled(NumericFormat)`
   padding-left: 8px;
 `;
 
+const ButtonSubmit = styled.button`
+  width: auto;
+  border-radius: 20px;
+  background: #f97316;
+  box-shadow: inset 5px -5px 10px #9f4a0e, inset -5px 5px 10px #ff9c1e;
+  font-weight: 600;
+  font-size: x-large;
+  display: flex;
+  justify-content: center;
+  padding: 7px;
+  padding-left: 3em;
+  padding-right: 3em;
+  transition-duration: 200ms;
+
+  &:hover {
+    cursor: pointer;
+    color: white;
+    scale: 97%;
+  }
+`;
+
 const Header = styled.header`
-  width: 100%;
-  border-radius: 1em;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  font-size: 1.6vw;
+  padding-bottom: 5px;
+  font-weight: 600;
+  border-radius: 0.4em;
   background: #f97316;
   box-shadow: inset 5px -5px 10px #9f4a0e, inset -5px 5px 10px #ff9c1e;
 `;
@@ -110,8 +142,6 @@ export const MostruarioFuncAdmitido = () => {
   FuncionariosAdmitidos.sort((a, b) =>
     a.nameFucionario.localeCompare(b.nameFucionario)
   );
-
- 
 
   function getInitials(name) {
     const splitName = name.trim().split(" ");
@@ -541,8 +571,6 @@ export const MostruarioFuncAdmitido = () => {
     return valorTotalSalario - adiantamentoSalario;
   }, 0);
 
-
-
   function renderInfo(title, value) {
     return (
       <div>
@@ -599,6 +627,51 @@ export const MostruarioFuncAdmitido = () => {
     }
   }, [diaAtual, mesAtual, anoAtual]);
 
+  const [isScrolledToBottom, setIsScrolledToBottom] = useState(false);
+  const [isScrollable, setIsScrollable] = useState(false);
+  const navRef = useRef(null);
+
+  const handleScroll = () => {
+    const isBottom =
+      navRef.current.scrollHeight - navRef.current.scrollTop ===
+      navRef.current.clientHeight;
+    setIsScrolledToBottom(isBottom);
+  };
+
+  useEffect(() => {
+    const navElement = navRef.current;
+    if (navElement) {
+      navElement.addEventListener("scroll", handleScroll);
+      setIsScrollable(navElement.scrollHeight > navElement.clientHeight);
+      return () => navElement.removeEventListener("scroll", handleScroll);
+    }
+  }, []);
+
+  const handleClickEnd = () => {
+    const navElement = navRef.current;
+    if (navElement) {
+      navElement.scrollTop = navElement.scrollHeight;
+    }
+  };
+
+  const [funcState, setFuncState] = useState({});
+
+  const ButtoSelecao = (id) => {
+    const novoEstado = Object.keys(funcState).reduce((obj, key) => {
+      obj[key] = false;
+      setState((prevState) => ({
+        ...prevState,
+        [key]: !prevState[key],
+      }));
+      return obj;
+    }, {});
+
+    novoEstado[id] = true;
+    novoEstado[id] = !funcState[id];
+
+    setFuncState(novoEstado);
+  };
+
   return (
     <Div>
       {state.Alerta && (
@@ -629,20 +702,20 @@ export const MostruarioFuncAdmitido = () => {
       {carregando ? (
         <LoaderClin></LoaderClin>
       ) : funcionarioEditar ? (
-        <>
-          <div className="flex w-full justify-end">
-            <Button
+        <Article className="relative">
+          <div className="flex w-full justify-end fixed top-10 right-10">
+            <div
               onClick={() => setFuncionarioEditar(null)}
-              className="bg-red-600"
+              className="bg-red-600 text-[1.2vw] p-1 rounded-full cursor-pointer"
             >
-              Voltar
-            </Button>
+              <TbArrowForward />
+            </div>
           </div>
           <form
             onSubmit={updateFuncionario}
             className=" grid grid-cols-6 gap-x-2 mt-3"
           >
-            <h3 className="text-3xl mb-5 font-semibold col-span-6 -ml-3">
+            <h3 className="text-3xl mb-5 font-semibold col-span-6 ml-3">
               Identificação
             </h3>
             <p className="col-span-1 row-span-4 flex justify-center items-center">
@@ -741,7 +814,7 @@ export const MostruarioFuncAdmitido = () => {
               name="municipioFucionario"
               value={data.municipioFucionario}
             />
-            <h3 className="text-3xl my-4 font-semibold col-span-5 -ml-3">
+            <h3 className="text-3xl my-4 font-semibold col-span-5 ml-3">
               Documentos
             </h3>
             <H1 className="col-span-2">CTPS</H1>
@@ -822,18 +895,20 @@ export const MostruarioFuncAdmitido = () => {
                 </option>
               ))}
             </select>
-            <button
-              type="submit"
-              className="col-span-6 mt-4 bg-orange-400 py-2 px-7 rounded-lg border-2 border-orange-500 font-semibold hover:text-white hover:scale-95 duration-500 mb-3"
-            >
-              Salvar
-            </button>
+            <div className="col-span-6 flex justify-end">
+              <ButtonSubmit
+                type="submit"
+                className=" mt-4 bg-orange-400 py-2 px-7 rounded-lg border-2 border-orange-500 font-semibold hover:text-white hover:scale-95 duration-500 mb-3"
+              >
+                Salvar
+              </ButtonSubmit>
+            </div>
           </form>
-        </>
+        </Article>
       ) : funcionarioSelecionado ? (
-        <div className="w-full ">
-          <section className="flex w-full justify-end relative gap-2">
-            <article className="w-full  flex flex-col relative items-end">
+        <Article className="w-full relative">
+          <section className="flex w-full justify-end top-10 right-10 gap-2 fixed">
+            <article className="w-full flex flex-col relative items-end">
               <dir
                 className={` ${
                   state.Menu &&
@@ -1004,26 +1079,32 @@ export const MostruarioFuncAdmitido = () => {
               </dir>
             </article>
 
-            <article className=" inline-block">
-              <div className="flex gap-3">
-                <Button
+            <article className="mt-2">
+              <div className="flex gap-2">
+                <div
                   onClick={() => setFuncionarioEditar(funcionarioSelecionado)}
-                  className={`bg-green-600 pt-2 mt-2 ${state.Menu && "mt-0"}`}
+                  className={`bg-green-600 p-1 text-[1.2vw] rounded-full flex justify-center items-center${
+                    state.Menu && "mt-0"
+                  }`}
+                  title="Editar Funcionário"
                 >
-                  Editar
-                </Button>
-                <Button
+                  <TbPencilCog />
+                </div>
+                <div
                   onClick={() => setFuncionarioSelecionado(null)}
-                  className={`bg-orange-600 pt-2 mt-2 ${state.Menu && "mt-0"}`}
+                  className={`bg-orange-600 p-1 text-[1.2vw] rounded-full flex justify-center items-center ${
+                    state.Menu && "mt-0"
+                  }`}
+                  title="Fechar"
                 >
-                  Voltar
-                </Button>
+                  <TbArrowForward />
+                </div>
               </div>
             </article>
           </section>
 
           <div className="pb-3 grid grid-cols-6 gap-x-2 mt-3">
-            <h3 className="text-3xl mb-5 font-semibold col-span-6 -ml-3">
+            <h3 className="text-3xl mb-5 font-semibold col-span-6 ml-3">
               Identificação
             </h3>
 
@@ -1072,7 +1153,7 @@ export const MostruarioFuncAdmitido = () => {
             <H2 className="col-span-1">{data.municipioFucionario}</H2>
             <H2 className="col-span-1">{data.estadoFucionario}</H2>
 
-            <h3 className="text-3xl my-4 font-semibold col-span-5 -ml-3">
+            <h3 className="text-3xl my-4 font-semibold col-span-5 ml-3">
               Documentos
             </h3>
 
@@ -1108,17 +1189,31 @@ export const MostruarioFuncAdmitido = () => {
             <H2 className="col-span-1">{feriass}</H2>
             <H2 className="col-span-4">{data.CadastroEmprFuncionario}</H2>
           </div>
-        </div>
+        </Article>
       ) : (
         <>
+          <div className="absolute bottom-[11%] right-2/4 z-50">
+            {isScrollable && !isScrolledToBottom && (
+              <div className="flex flex-col justify-center items-center">
+                <h1
+                  className="text-xl bg-gray-400 p-1 rounded-full opacity-60"
+                  onClick={handleClickEnd}
+                >
+                  <FaArrowDown />
+                </h1>
+              </div>
+            )}
+            {/* O resto do seu conteúdo vai aqui */}
+          </div>
+
           <Header className="w-full bg-orange-500 drop-shadow-2xl rounded-2xl">
-            <thead className="flex justify-center items-center py-4">
-              <th className="text-start text-3xl pt-1">
+            <div className="flex  items-center py-4 ">
+              <th className="text-start text-3xl pt-1 px-10">
                 Funcionarios Admitidos
               </th>
-            </thead>
+            </div>
 
-            <thead className="grid grid-cols-[1fr_1fr_1fr_1fr_1fr_1fr_1fr_1fr_1fr_1fr_1fr_1fr_1fr_1fr_1fr_1fr] justify-center items-center w-full rounded-b-lg drop-shadow-2xl pb-1 text-center text-[1.4vw] xl:text-[0.95vw]">
+            <div className="grid grid-cols-[1fr_1fr_1fr_1fr_1fr_1fr_1fr_1fr_1fr_1fr_1fr_1fr_1fr_1fr_1fr_1fr] justify-center items-center w-full rounded-b-lg drop-shadow-2xl pb-1 text-center text-[1.4vw] xl:text-[0.95vw]">
               <th className="col-span-2">Faltas</th>
               <th className="col-span-3">Nome</th>
               <th className="col-span-2">Cargo</th>
@@ -1126,9 +1221,9 @@ export const MostruarioFuncAdmitido = () => {
               <th className="col-span-2">Salario</th>
               <th className="col-span-2">Salario.Liq</th>
               <th className="col-span-3">Situação</th>
-            </thead>
+            </div>
           </Header>
-          <Article>
+          <Article ref={navRef}>
             {FuncionariosAdmitidos.map((func) => {
               const dataAdimicao = new Date(func.dataAdmicaoFucionario);
               let opcoes = {
@@ -1213,33 +1308,50 @@ export const MostruarioFuncAdmitido = () => {
               }
 
               return (
-                <div className="text-[1.1vw] xl:text-[0.9vw]">
-                  <thead className="w-auto flex justify-end ml-2">
-                    <span
-                      className="absolute h-6 w-6 rounded-full bg-gray-400 flex justify-center items-center cursor-pointer drop-shadow-lg"
-                      onClick={() => {
-                        setFuncionarioSelecionado(func);
-                      }}
-                    >
-                      <BiCategory />
-                    </span>
-                  </thead>
+                <div
+                  className={`text-[1.1vw] xl:text-[0.9vw] `}
+                  key={func.id}
+                  onClick={() => ButtoSelecao(func.id)}
+                >
+                  <div className="w-auto flex justify-end ml-2"></div>
 
-                  <thead className="grid grid-cols-[1fr_1fr_1fr_1fr_1fr_1fr_1fr_1fr_1fr_1fr_1fr_1fr_1fr_1fr_1fr_1fr] gap-3 justify-center items-center shadow-inner bg-gray-200 rounded-2xl p-2 my-2">
-                    <th className="col-span-2 flex justify-center items-center gap-1">
+                  <div
+                    className={`grid grid-cols-[1fr_1fr_1fr_1fr_1fr_1fr_1fr_1fr_1fr_1fr_1fr_1fr_1fr_1fr_1fr_1fr] gap-3 justify-center items-center shadow-inner ${
+                      funcState[func.id] && "bg-gray-300"
+                    } bg-gray-200 rounded-2xl p-2 my-2`}
+                  >
+                    <th className="col-span-2 flex justify-center items-center gap-1 relative">
+                      <div className="absolute -left-2 -top-3 xl:left-0 xl:top-2">
+                        <spa
+                          className="absolute text-[0.8vw] p-1 rounded-full bg-gray-400 flex justify-center items-center cursor-pointer drop-shadow-lg"
+                          onClick={() => {
+                            setFuncionarioSelecionado(func);
+                          }}
+                        >
+                          <TbAlignLeft />
+                        </spa>
+                      </div>
                       <button
-                        className="w-5 h-5 rounded-[50em] bg-slate-300 flex justify-center items-center cursor-pointer"
+                        className={`w-5 h-5 rounded-[50em] bg-slate-300 flex justify-center items-center cursor-pointer ${
+                          funcState[func.id] && "border-2 border-white"
+                        }`}
                         onClick={() => {
                           AddFalta(func.id, 1, func.diasFaltas);
                         }}
                       >
                         <p>+</p>
                       </button>
-                      <th className="w-10 h-10 rounded-[50em]  bg-slate-300 flex justify-center items-center cursor-pointer">
+                      <th
+                        className={`w-10 h-10 rounded-[50em]  bg-slate-300 flex justify-center items-center cursor-pointer ${
+                          funcState[func.id] && "border-2 border-white"
+                        }`}
+                      >
                         {func.diasFaltas}
                       </th>
                       <button
-                        className="w-5 h-5 rounded-[50em] bg-slate-300 flex justify-center items-center cursor-pointer"
+                        className={`w-5 h-5 rounded-[50em] bg-slate-300 flex justify-center items-center cursor-pointer ${
+                          funcState[func.id] && "border-2 border-white"
+                        }`}
                         onClick={() => {
                           AddFalta(func.id, 2, func.diasFaltas);
                         }}
@@ -1307,7 +1419,7 @@ export const MostruarioFuncAdmitido = () => {
                         </p>
                       )}
                     </th>
-                  </thead>
+                  </div>
                 </div>
               );
             })}
@@ -1317,7 +1429,7 @@ export const MostruarioFuncAdmitido = () => {
 
       {funcionarioSelecionado || funcionarioEditar || carregando ? null : (
         <div className="w-full ">
-          <div className="w-full bg-orange-600 drop-shadow-2xl rounded-2xl mb-1 sticky">
+          <div className="w-full bg-orange-600 drop-shadow-2xl rounded-[0.7em] mb-1 sticky">
             <div className="grid grid-cols-4 justify-center items-center w-full rounded-b-lg drop-shadow-2xl text-lg py-1">
               {renderInfo("Total FGTS", fgtsSalario)}
               {renderInfo("Salario Total do Mês", valorTotalSalario)}

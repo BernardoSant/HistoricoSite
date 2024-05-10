@@ -1,23 +1,28 @@
 import styled from "styled-components";
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import axios from "axios";
 import { toast } from "react-toastify";
 import { useGlobalContext } from "../../../global/Global";
 import { NumericFormat } from "react-number-format";
+import { FaArrowDown } from "react-icons/fa";
 
 const Form = styled.form`
   height: 100%;
   width: 100%;
-  padding-left: 1em;
-  padding-right: 1em;
-  padding-bottom: 1em;
-  padding-top: 1em;
-  gap: 3em;
+  gap: 1em;
   display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  align-content: start;
-  flex-direction: row;
+  flex-direction: column;
+`;
+
+const Section = styled.div`
+  &::-webkit-scrollbar {
+    width: 5px;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: #575757;
+    border-radius: 1em;
+  }
 `;
 
 const H1 = styled.h1`
@@ -210,12 +215,48 @@ export const TabelaAddFuncionario = () => {
       });
   };
 
+  const [isScrolledToBottom, setIsScrolledToBottom] = useState(false);
+  const [isScrollable, setIsScrollable] = useState(false);
+  const navRef = useRef(null);
+
+  const handleScroll = () => {
+    const isBottom =
+      navRef.current.scrollHeight - navRef.current.scrollTop ===
+      navRef.current.clientHeight;
+    setIsScrolledToBottom(isBottom);
+  };
+
+  useEffect(() => {
+    const navElement = navRef.current;
+    if (navElement) {
+      navElement.addEventListener("scroll", handleScroll);
+      setIsScrollable(navElement.scrollHeight > navElement.clientHeight);
+      return () => navElement.removeEventListener("scroll", handleScroll);
+    }
+  }, []);
+
+  const handleClick = () => {
+    const navElement = navRef.current;
+    if (navElement) {
+      navElement.scrollTop = navElement.scrollHeight;
+    }
+  };
+
+
   return (
     <>
-      <Form onSubmit={sendFuncionario}>
+      <Form onSubmit={sendFuncionario} className="relative">
         <Header>Adcionar Funcionario</Header>
 
-        <nav className="flex flex-col justify-center w-full">
+        <div className="absolute bottom-[19%] right-2/4 z-50">
+          {isScrollable && !isScrolledToBottom && (
+            <div className="flex flex-col justify-center items-center">
+
+              <h1 className="text-xl bg-gray-300 p-1 rounded-full opacity-60" onClick={handleClick}><FaArrowDown /></h1>
+            </div>
+          )}
+        </div>
+        <Section className="w-full overflow-auto relative pr-1" ref={navRef}>
           <div className=" grid grid-cols-5 gap-x-2">
             <H1 className="col-span-3">Nome*</H1>
             <H1 className="col-span-1">Data Nascimento*</H1>
@@ -478,13 +519,12 @@ export const TabelaAddFuncionario = () => {
               ))}
             </select>
           </div>
-
-          <section className="w-full flex justify-end py-4">
-            <Button type="submit" className="">
-              Salvar
-            </Button>
-          </section>
-        </nav>
+        </Section>
+        <section className="w-full flex justify-end py-4">
+          <Button type="submit" className="">
+            Salvar
+          </Button>
+        </section>
       </Form>
     </>
   );

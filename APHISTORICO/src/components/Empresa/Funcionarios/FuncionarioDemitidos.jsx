@@ -7,7 +7,12 @@ import { toast } from "react-toastify";
 import { AiOutlineRight, AiOutlineLeft } from "react-icons/ai";
 import { LoaderClin } from "../../Loaders/LoaderClin";
 import { dateFormat } from "../../../functions/dateFormat";
-
+import {
+  TbPencilCog,
+  TbAlignLeft,
+  TbArrowForward,
+  TbFileXFilled,
+} from "react-icons/tb";
 
 const Div = styled.div`
   height: 100%;
@@ -42,7 +47,7 @@ const H1 = styled.h1`
   margin-top: 5px;
   font-size: 1.1vw;
   @media (min-width: 1640px) {
-    font-size: 0.7vw; 
+    font-size: 0.7vw;
   }
 `;
 
@@ -228,10 +233,10 @@ export const MostruarioFuncDemitido = () => {
     <Div>
       {carregando ? (
         <LoaderClin></LoaderClin>
-      ):funcionarioSelecionado ? (
-        <>
-          <section className="pb-3 flex w-full justify-end relative gap-2">
-            <article className="w-full  flex flex-col relative items-end">
+      ) : funcionarioSelecionado ? (
+        <Article className="relative">
+          <section className="pb-3 flex w-full justify-end gap-2 fixed top-10 right-12  ">
+            <article className="w-full  flex flex-col items-end">
               <dir
                 className={` ${
                   state.Menu &&
@@ -252,9 +257,10 @@ export const MostruarioFuncDemitido = () => {
 
                   <button
                     onClick={() => handleClick("Menu")}
-                    className={`bg-gray-400 text-2xl w-auto p-1 flex justify-center items-center rounded-full drop-shadow-lg ${
+                    className={`bg-gray-400 text-[1.2vw] w-auto p-1 flex justify-center items-center rounded-full drop-shadow-lg ${
                       state.Menu ? "mt-0 " : "mt-2"
                     }`}
+                    title="Menu"
                   >
                     {state.Menu ? <AiOutlineRight /> : <AiOutlineLeft />}
                   </button>
@@ -303,18 +309,19 @@ export const MostruarioFuncDemitido = () => {
 
             <article className=" inline-block">
               <div className="flex gap-3">
-                <Button
+                <div
                   onClick={() => setFuncionarioSelecionado(null)}
-                  className={`bg-orange-600 pt-2 mt-2 ${state.Menu && "mt-0"}`}
+                  className={`bg-orange-600 p-1 text-[1.2vw] rounded-full flex justify-center items-center mt-2 ${state.Menu && "mt-0"}`}
+                  title="Voltar"
                 >
-                  Voltar
-                </Button>
+                  <TbArrowForward />
+                </div>
               </div>
             </article>
           </section>
 
           <div className="w-full grid grid-cols-5 gap-x-2 mt-3">
-            <h3 className="text-3xl mb-5 font-semibold col-span-5 -ml-3">
+            <h3 className="text-3xl mb-5 font-semibold col-span-5 ml-3">
               Identificação
             </h3>
 
@@ -359,7 +366,7 @@ export const MostruarioFuncDemitido = () => {
             <H2 className="col-span-1">{data.municipioFucionario}</H2>
             <H2 className="col-span-1">{data.estadoFucionario}</H2>
 
-            <h3 className="text-3xl my-4 font-semibold col-span-5 -ml-3">
+            <h3 className="text-3xl my-4 font-semibold col-span-5 ml-3">
               Documentos
             </h3>
 
@@ -382,10 +389,12 @@ export const MostruarioFuncDemitido = () => {
 
             <H1 className="col-span-2">Data Demição</H1>
             <H1 className="col-span-3">Cadastro em Empresa</H1>
-            <H2 className="col-span-2">{dateFormat(data.dataAdmicaoFucionario)}</H2>
+            <H2 className="col-span-2">
+              {dateFormat(data.dataAdmicaoFucionario)}
+            </H2>
             <H2 className="col-span-3">{data.CadastroEmprFuncionario}</H2>
           </div>
-        </>
+        </Article>
       ) : (
         <>
           <Header className="drop-shadow-lg">
@@ -415,18 +424,19 @@ export const MostruarioFuncDemitido = () => {
 
               return (
                 <div key={func.id}>
-                  <thead className="w-auto flex justify-end ml-2" >
-                    <span
-                      className="absolute h-6 w-6 rounded-full bg-gray-400 flex justify-center items-center cursor-pointer "
-                      onClick={() => {
-                        setFuncionarioSelecionado(func);
-                      }}
-                    >
-                      <BiCategory />
-                    </span>
-                  </thead>
+                  <thead className="w-auto flex justify-end ml-2"></thead>
                   <thead className="grid grid-cols-6 justify-center items-center shadow-inner bg-gray-200 rounded-2xl p-2 my-2">
-                    <th className="col-span-2">{nameWithInitials}</th>
+                    <th className="col-span-2">
+                      <span
+                        className="absolute h-6 w-6 rounded-full bg-gray-400 flex justify-center items-center cursor-pointer "
+                        onClick={() => {
+                          setFuncionarioSelecionado(func);
+                        }}
+                      >
+                        <TbAlignLeft />
+                      </span>
+                      {nameWithInitials}
+                    </th>
                     <th className="col-span-2">{func.funcaoFuncionario}</th>
                     <th className="col-span-1">
                       {Number(func.salarioFucionario).toLocaleString("pt-BR", {
