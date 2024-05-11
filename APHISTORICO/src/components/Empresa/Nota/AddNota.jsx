@@ -229,6 +229,31 @@ export const TabelaAddNota = () => {
     return acc;
   }, {});
 
+  const somaValoresRecebidos = nota.reduce((acc, nota) => {
+    if (nota.situacaoNF === "Recebida" || nota.situacaoNF === "Antecipada") {
+      if (acc[nota.numeroPedidoNF]) {
+        acc[nota.numeroPedidoNF] += nota.valorRecebidoNF;
+      } else {
+        acc[nota.numeroPedidoNF] = nota.valorRecebidoNF;
+      }
+    }
+    return acc;
+  }, {});
+
+  const valorRecebido =
+    atualizarPedido &&
+    atualizarPedido.numeroPDD &&
+    somaValoresRecebidos[atualizarPedido.numeroPDD]
+      ? somaValoresRecebidos[atualizarPedido.numeroPDD]
+      : 0;
+
+  const novoValor =
+    'atualizarPedido' !== undefined
+      ? valorRecebido + Number(data.valorReceberNF)
+      : 0;
+
+  console.log(valorRecebido, novoValor);
+
   const sendNF = async (e) => {
     e.preventDefault();
 
@@ -263,10 +288,20 @@ export const TabelaAddNota = () => {
 
     if (data.situacaoNF === "Antecipada") {
       if (ContratoEmpresa.length > 0) {
+        const valorRecebido =
+          atualizarContrato &&
+          atualizarContrato.numeroCT &&
+          somaValoresRecebidos[atualizarContrato.numeroCT]
+            ? somaValoresRecebidos[atualizarContrato.numeroCT]
+            : 0;
+
         const calculorAntercipa =
           data.valorReceberNF - data.valorReceberNF * 0.02;
-        var novoValor =
-          Number(calculorAntercipa) + atualizarContrato.ValorRecebidoCT;
+
+        const novoValor =
+          atualizarContrato !== undefined
+            ? valorRecebido + Number(calculorAntercipa)
+            : 0;
 
         axios.put(
           ip + `/contrato/` + atualizarContrato.numeroCT,
@@ -276,10 +311,20 @@ export const TabelaAddNota = () => {
           headers
         );
       } else {
-        var calculorAntercipa =
+        const valorRecebido =
+          atualizarPedido &&
+          atualizarPedido.numeroPDD &&
+          somaValoresRecebidos[atualizarPedido.numeroPDD]
+            ? somaValoresRecebidos[atualizarPedido.numeroPDD]
+            : 0;
+
+        const calculorAntercipa =
           data.valorReceberNF - data.valorReceberNF * 0.02;
-        var novoValor =
-          Number(calculorAntercipa) + atualizarPedido.valorRecebidoPDD;
+
+        const novoValor =
+          atualizarPedido !== undefined
+            ? valorRecebido + Number(calculorAntercipa)
+            : 0;
 
         axios.put(
           ip + `/pedido/` + atualizarPedido.numeroPDD,
@@ -328,8 +373,17 @@ export const TabelaAddNota = () => {
     } else {
       if (data.situacaoNF === "Recebida") {
         if (ContratoEmpresa.length > 0) {
+          const valorRecebido =
+            atualizarContrato &&
+            atualizarContrato.numeroCT &&
+            somaValoresRecebidos[atualizarContrato.numeroCT]
+              ? somaValoresRecebidos[atualizarContrato.numeroCT]
+              : 0;
+
           const novoValor =
-            Number(data.valorReceberNF) + atualizarContrato.ValorRecebidoCT;
+            atualizarContrato !== undefined
+              ? valorRecebido + Number(data.valorReceberNF)
+              : 0;
 
           axios.put(
             ip + `/contrato/` + atualizarContrato.numeroCT,
@@ -339,8 +393,17 @@ export const TabelaAddNota = () => {
             headers
           );
         } else {
+          const valorRecebido =
+            atualizarPedido &&
+            atualizarPedido.numeroPDD &&
+            somaValoresRecebidos[atualizarPedido.numeroPDD]
+              ? somaValoresRecebidos[atualizarPedido.numeroPDD]
+              : 0;
+
           const novoValor =
-            Number(data.valorReceberNF) + atualizarPedido.valorRecebidoPDD;
+            atualizarPedido !== undefined
+              ? valorRecebido + Number(data.valorReceberNF)
+              : 0;
 
           axios.put(
             ip + `/pedido/` + atualizarPedido.numeroPDD,
@@ -412,7 +475,6 @@ export const TabelaAddNota = () => {
       navElement.scrollTop = navElement.scrollHeight;
     }
   };
-
 
   return (
     <>

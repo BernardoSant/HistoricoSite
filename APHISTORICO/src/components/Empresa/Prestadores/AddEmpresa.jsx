@@ -1,23 +1,36 @@
 import styled from "styled-components";
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import axios from "axios";
 import { toast } from "react-toastify";
 import { useGlobalContext } from "../../../global/Global";
+import { FaArrowDown } from "react-icons/fa";
 
 const Form = styled.form`
+  font-size: 1.2vw;
   height: 100%;
   width: 100%;
-  gap: 3em;
+  gap: 1em;
   display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  align-content: start;
-  flex-direction: row;
+  flex-direction: column;
 `;
 
 const H1 = styled.h1`
   font-weight: 600;
   margin-top: 5px;
+`;
+
+const Section = styled.div`
+  overflow: auto;
+  padding-right: 6px;
+
+  &::-webkit-scrollbar {
+    width: 5px;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: #575757;
+    border-radius: 1em;
+  }
 `;
 
 const Input = styled.input`
@@ -44,9 +57,9 @@ const Button = styled.button`
   background: #f97316;
   box-shadow: inset 5px -5px 10px #9f4a0e, inset -5px 5px 10px #ff9c1e;
   font-weight: 600;
-  font-size: x-large;
   display: flex;
   justify-content: center;
+  font-size: 1.7vw;
   padding: 7px;
   padding-left: 3em;
   padding-right: 3em;
@@ -134,12 +147,52 @@ export const TabelaAdicionarEmpresa = () => {
       });
   };
 
+  const [isScrolledToBottom, setIsScrolledToBottom] = useState(false);
+  const [isScrollable, setIsScrollable] = useState(false);
+  const navRef = useRef(null);
+
+  const handleScroll = () => {
+    const isBottom =
+      navRef.current.scrollHeight - navRef.current.scrollTop ===
+      navRef.current.clientHeight;
+    setIsScrolledToBottom(isBottom);
+  };
+
+  useEffect(() => {
+    const navElement = navRef.current;
+    if (navElement) {
+      navElement.addEventListener("scroll", handleScroll);
+      setIsScrollable(navElement.scrollHeight > navElement.clientHeight);
+      return () => navElement.removeEventListener("scroll", handleScroll);
+    }
+  }, []);
+
+  const handleClick = () => {
+    const navElement = navRef.current;
+    if (navElement) {
+      navElement.scrollTop = navElement.scrollHeight;
+    }
+  };
+
   return (
     <>
-      <Form onSubmit={sendEmpresa}>
+      <Form onSubmit={sendEmpresa} className="relative">
         <Header>Adcionar Empresa</Header>
 
-        <section className="grid grid-cols-4 gap-x-2 w-full">
+        <div className="absolute bottom-[11%] right-2/4 z-50">
+          {isScrollable && !isScrolledToBottom && (
+            <div className="flex flex-col justify-center items-center">
+              <h1
+                className="text-xl bg-gray-300 p-1 rounded-full opacity-60"
+                onClick={handleClick}
+              >
+                <FaArrowDown />
+              </h1>
+            </div>
+          )}
+        </div>
+
+        <Section className="grid grid-cols-4 gap-x-2 overflow-auto" useRef={navRef}>
           <H1 className="col-span-3">Nome*</H1>
 
           <H1 className="col-span-1">Sigla*</H1>
@@ -260,7 +313,7 @@ export const TabelaAdicionarEmpresa = () => {
             <option value="Particular">Particular</option>
             <option value="Contrato">Contrato</option>
           </select>
-        </section>
+        </Section>
 
         <section className="w-full flex justify-end">
           <Button type="submit" className="">

@@ -304,7 +304,7 @@ export const MtrPedidos = ({ empresaId }) => {
                         PCriada.length <= 0 && "hidden"
                       }`}
                     >
-                      <Texto>Total Recebido: {realFormat(VlrReceber)}</Texto>
+                      <Texto>Total Receber: {realFormat(VlrReceber)}</Texto>
                     </div>
                   </TituloDados>
                   {PCriada.length > 0 && (

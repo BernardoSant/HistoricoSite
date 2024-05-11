@@ -565,10 +565,16 @@ export const MostruarioNota = ({ empresaId }) => {
         situacao = "Criada";
       }
 
+      const valorRecebido =
+        notaSelecionada &&
+        notaSelecionada.numeroPedidoNF &&
+        somaValoresRecebidos[notaSelecionada.numeroPedidoNF]
+          ? somaValoresRecebidos[notaSelecionada.numeroPedidoNF]
+          : 0;
+
       const novoValor =
         atualizarPedido !== undefined
-          ? somaValoresRecebidos[notaSelecionada.numeroPedidoNF] +
-            Number(data.valorRecebidoNF)
+          ? valorRecebido + Number(data.valorRecebidoNF)
           : 0;
 
       axios.put(
@@ -580,10 +586,16 @@ export const MostruarioNota = ({ empresaId }) => {
         headers
       );
     } else if (ContratoEmpresa.length > 0) {
+      const valorRecebido =
+        notaSelecionada &&
+        notaSelecionada.numeroPedidoNF &&
+        somaValoresRecebidos[notaSelecionada.numeroPedidoNF]
+          ? somaValoresRecebidos[notaSelecionada.numeroPedidoNF]
+          : 0;
+
       const novoValor =
         atualizarContrato !== undefined
-          ? somaValoresRecebidos[notaSelecionada.numeroPedidoNF] +
-            Number(data.valorRecebidoNF)
+          ? valorRecebido + Number(data.valorRecebidoNF)
           : 0;
 
       axios.put(
@@ -600,6 +612,7 @@ export const MostruarioNota = ({ empresaId }) => {
       .then((response) => {
         toast.success(response.data.message);
         setNotaSelecionada(null);
+        setSelectedOption(null);
         setData({
           valorPrcentagemAntNF: "",
           situacaoNF: "",
