@@ -4,15 +4,18 @@ import { dateFormat } from "../functions/dateFormat";
 import { realFormat } from "../functions/realFormat";
 import { numNotaFormat } from "../functions/numNotaFormat";
 import { AiOutlineQuestionCircle } from "react-icons/ai";
-import {
-  TbAlertCircle
-} from "react-icons/tb";
-import { RiSaveLine } from "react-icons/ri";
-import Select from "react-select";
-import { NumericFormat } from "react-number-format";
-import { useState, useEffect } from "react";
-import axios from "axios";
+import { TbAlertCircle } from "react-icons/tb";
 import { toast } from "react-toastify";
+import { useState, useEffect } from "react";
+import {
+  HiOutlinePlusSm,
+  HiOutlineDocumentDuplicate,
+  HiOutlineTrash,
+} from "react-icons/hi";
+import { RiSaveLine } from "react-icons/ri";
+import { LuArrowRightFromLine } from "react-icons/lu";
+import { NumericFormat } from "react-number-format";
+import axios from "axios";
 
 const Header = styled.header`
   display: flex;
@@ -48,6 +51,7 @@ const Section = styled.div`
   width: 100%;
   height: 100%;
   display: flex;
+  position: relative;
   flex-direction: column;
   gap: 12px;
   font-size: 1vw;
@@ -55,10 +59,10 @@ const Section = styled.div`
 
 const Article = styled.div`
   width: 100%;
+  height: 100%;
   display: flex;
   flex-direction: column;
-  overflow: auto;
-  gap: 12px;
+  gap: 10px;
   padding-right: 5px;
 
   &::-webkit-scrollbar {
@@ -69,6 +73,13 @@ const Article = styled.div`
     background: #8f8f8f;
     border-radius: 1em;
   }
+`;
+
+const H1 = styled.h1`
+  width: 100%;
+  display: flex;
+  flex-direction: space-between;
+  font-weight: 700;
 `;
 
 const Input = styled.input`
@@ -91,7 +102,17 @@ const SectionBlock = styled.div`
   flex: 1 1 0%;
   width: 100%;
   display: flex;
+  flex-direction: row;
+  gap: 12px;
+  max-height: 45%;
+`;
+
+const ArticleBlock = styled.div`
+  flex: 1 1 0%;
+  display: flex;
   flex-direction: column;
+  border-radius: 1em;
+  background-color: #d8d6d679;
 `;
 
 const HeaderDados = styled.div`
@@ -112,10 +133,13 @@ const HeaderDados = styled.div`
 const ArticleDados = styled.div`
   flex: 0 1 auto;
   display: flex;
+  background-color: #d8d6d679;
   flex-direction: column;
-  max-height: 15.5em;
   font-size: 0.8vw;
   font-weight: bolder;
+  padding-bottom: 2px;
+  border-bottom-right-radius: 1em;
+  border-bottom-left-radius: 1em;
   overflow-y: auto;
 
   &::-webkit-scrollbar {
@@ -130,17 +154,14 @@ const ArticleDados = styled.div`
 
 const Texto = styled.h1`
   flex: 1 1 0%;
-  text-align: center;
   display: flex;
   justify-content: center;
   align-items: center;
 `;
 
-const Textorg = styled.h1`
-  text-align: center;
+const TextoDesc = styled.h1`
+  flex: 1 1 0%;
   display: flex;
-  justify-content: center;
-  align-items: center;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -182,336 +203,5 @@ const ArgumentosDados = styled.div`
 `;
 
 export const Fort = () => {
-  const { empresa, pedido, contrato } = useGlobalContext();
-
-  const handleDataChange = (event) => {
-    setData(event.target.value);
-
-    const dataSelecionada = new Date(event.target.value);
-    const anoSelecionado = dataSelecionada.getFullYear();
-
-    setAno(anoSelecionado);
-  };
-
-  const dataAtual = new Date();
-  const anoAtual = dataAtual.getFullYear();
-  const [ano, setAno] = useState(anoAtual);
-
-  useEffect(() => {
-    const intervalId = setInterval(() => {
-      const dataAtual = new Date();
-      const anoAtual = dataAtual.getFullYear();
-
-      setAno(anoAtual);
-    }, 600000);
-
-    return () => clearInterval(intervalId);
-  }, []);
-
-  let idTEMP = 3;
-  const Empresa = empresa.find((emp) => emp.id === idTEMP);
-  const siglaEmpresa = Empresa ? Empresa.siglaEmpresa : "N/A";
-  const ContratoEmpresa = contrato.filter(
-    (ct) => ct.empresaCT === idTEMP && ct.situacaoCT === "Ativo"
-  );
-
-  const PedidoEmpresa = pedido.filter((pdd) => {
-    const isSameEmpresa = pdd.empresaPDD === idTEMP;
-    const dataPedido = new Date(pdd.dataPDD);
-    const isSameYear = dataPedido.getFullYear() === parseInt(ano);
-    return isSameEmpresa && isSameYear;
-  });
-
-  PedidoEmpresa.sort((a, b) => new Date(b.dataPDD) - new Date(a.dataPDD));
-
-  const PCriada = PedidoEmpresa.filter((pdd) => pdd.situacaoPDD === "Criada");
-
-  const PAndamento = PedidoEmpresa.filter(
-    (pdd) => pdd.situacaoPDD === "Andamento"
-  );
-
-  const PFinalizada = PedidoEmpresa.filter(
-    (pdd) => pdd.situacaoPDD === "Finalizada"
-  );
-
-  const VlrReceber = PCriada.reduce((total, pdd) => total + pdd.valorPDD, 0);
-  const VlrAndamento = PAndamento.reduce(
-    (total, pdd) => total + pdd.valorRecebidoPDD,
-    0
-  );
-  const VlrRecebido = PFinalizada.reduce(
-    (total, pdd) => total + pdd.valorRecebidoPDD,
-    0
-  );
-
-  const VlrTotalRecebido = VlrAndamento + VlrRecebido;
-
-  const [state, setState] = useState({});
-
-  const [pedidoState, setPedidoState] = useState({});
-  const ButtoSelecao = (id) => {
-    const novoEstado = Object.keys(pedidoState).reduce((obj, key) => {
-      obj[key] = false;
-      setState((prevState) => ({
-        ...prevState,
-        [key]: !prevState[key],
-      }));
-      return obj;
-    }, {});
-
-    novoEstado[id] = true;
-    novoEstado[id] = !pedidoState[id];
-
-    setPedidoState(novoEstado);
-  };
-
-  return (
-    <Section>
-      {ContratoEmpresa.length > 0 ? (
-        <div className="w-full h-full justify-center items-center flex drop-shadow-md">
-          <nav className="flex flex-col justify-center items-center">
-            <h1 className="text-[2.5vw] text-red-500 "><TbAlertCircle/></h1>
-            <h1 className="w-full h-full justify-center items-center flex flex-col text-[1.8vw]">
-              Alerta! {siglaEmpresa} não contem pedidos.
-            </h1>
-            <h2 className="text-[0.8vw] ">Contrator e seviços estão disponiveis na tela <u>Notas Fiscais</u>.</h2>
-          </nav>
-        </div>
-      ) : (
-        <>
-          <Header>
-            <p>Notas da {siglaEmpresa}</p>
-
-            <form
-              className="flex justify-center items-center "
-              onSubmit={handleDataChange}
-            >
-              <select
-                className="w-auto border-2 text-[1vw] rounded-xl border-gray-500 flex justify-center p-1"
-                value={ano}
-                onChange={(event) => setAno(event.target.value)}
-              >
-                <option value="2022">2022</option>
-                <option value="2023">2023</option>
-                <option value="2024">2024</option>
-                <option value="2025">2025</option>
-                <option value="2026">2026</option>
-              </select>
-            </form>
-          </Header>
-          <Article className="h-full overflow-auto">
-            <Article>
-              <SectionBlock>
-                <HeaderDados>
-                  <TituloDados>
-                    Pedido Criado
-                    <div
-                      className={`flex justify-center items-center gap-2 bg-orange-300 px-3 rounded-[1em] ${
-                        PCriada.length <= 0 && "hidden"
-                      }`}
-                    >
-                      <Texto>Total Recebido: {realFormat(VlrReceber)}</Texto>
-                    </div>
-                  </TituloDados>
-                  {PCriada.length > 0 && (
-                    <TituloArgumentos>
-                      <Texto>N° Pedido</Texto>
-                      <Texto>Situação</Texto>
-                      <Textorg className="w-[17em]">Descrição</Textorg>
-                      <Texto>Receber</Texto>
-                      <Texto>Data</Texto>
-                    </TituloArgumentos>
-                  )}
-                </HeaderDados>
-                <ArticleDados>
-                  {PCriada.length <= 0 ? (
-                    <ArgumentosDados className=" text-[1.2vw] text-center bg-gray-200">
-                      <Texto>Nenhum pedido criado!</Texto>
-                    </ArgumentosDados>
-                  ) : (
-                    <ArticleDados>
-                      {PCriada.map((pdd) => {
-                        return (
-                          <ArgumentosDados
-                            onClick={() => ButtoSelecao(pdd.id)}
-                            className={`${
-                              pedidoState[pdd.id]
-                                ? "bg-gray-300"
-                                : "bg-gray-200"
-                            }`}
-                          >
-                            <Texto className="relative">
-                              <div
-                                title={`${pdd.descricaoServPDD}`}
-                                className="
-                        absolute top-0 left-0  p-1 flex justify-center items-center text-[0.8vw] bg-gray-400 rounded-full z-0"
-                              >
-                                <AiOutlineQuestionCircle />
-                              </div>
-                              {pdd.numeroPDD}
-                            </Texto>
-                            <Texto>{pdd.situacaoPDD}</Texto>
-                            <Textorg
-                              className=" w-[20em] max-w-[20em]"
-                              title={`${pdd.nomePDD}`}
-                            >
-                              {pdd.nomePDD}
-                            </Textorg>
-                            <Texto>{realFormat(pdd.valorPDD)}</Texto>
-                            <Texto>{dateFormat(pdd.dataPDD)}</Texto>
-                          </ArgumentosDados>
-                        );
-                      })}
-                    </ArticleDados>
-                  )}
-                </ArticleDados>
-                <p className="bg-[#f97316] w-full h-4 rounded-b-[0.7em] rounded-t-[0.2em]"></p>
-              </SectionBlock>
-
-              <SectionBlock>
-                <HeaderDados>
-                  <TituloDados>
-                    Pedido Andamento
-                    <div
-                      className={`flex justify-center items-center gap-2 bg-orange-300 px-3 rounded-[1em] ${
-                        PAndamento.length <= 0 && "hidden"
-                      }`}
-                    >
-                      <Texto>Total Recebido: {realFormat(VlrAndamento)}</Texto>
-                    </div>
-                  </TituloDados>
-                  {PAndamento.length > 0 && (
-                    <TituloArgumentos>
-                      <Texto>N° Pedido</Texto>
-                      <Texto>Situação</Texto>
-                      <Textorg className="w-[17em]">Descrição</Textorg>
-                      <Texto>Receber</Texto>
-                      <Texto>Recebido</Texto>
-                      <Texto>Data Alteração</Texto>
-                    </TituloArgumentos>
-                  )}
-                </HeaderDados>
-                <ArticleDados>
-                  {PAndamento.length <= 0 ? (
-                    <ArgumentosDados className=" text-[1.2vw] text-center bg-gray-200">
-                      <Texto>Nenhum pedido em andamento!</Texto>
-                    </ArgumentosDados>
-                  ) : (
-                    <ArticleDados>
-                      {PAndamento.map((pdd) => {
-                        return (
-                          <ArgumentosDados
-                            onClick={() => ButtoSelecao(pdd.id)}
-                            className={`${
-                              pedidoState[pdd.id]
-                                ? "bg-gray-300"
-                                : "bg-gray-200"
-                            }`}
-                          >
-                            <Texto className="relative">
-                              <div
-                                title={`${pdd.descricaoServPDD}`}
-                                className="
-                        absolute top-0 left-0  p-1 flex justify-center items-center text-[0.8vw] bg-gray-400 rounded-full z-0"
-                              >
-                                <AiOutlineQuestionCircle />
-                              </div>
-                              {pdd.numeroPDD}
-                            </Texto>
-                            <Texto>{pdd.situacaoPDD}</Texto>
-                            <Textorg
-                              className=" w-[20em] max-w-[20em]"
-                              title={`${pdd.nomePDD}`}
-                            >
-                              {pdd.nomePDD}
-                            </Textorg>
-                            <Texto>{realFormat(pdd.valorPDD)}</Texto>
-                            <Texto>{realFormat(pdd.valorRecebidoPDD)}</Texto>
-                            <Texto>{dateFormat(pdd.updatedAt)}</Texto>
-                          </ArgumentosDados>
-                        );
-                      })}
-                    </ArticleDados>
-                  )}
-                </ArticleDados>
-                <p className="bg-[#f97316] w-full h-4 rounded-b-[0.7em] rounded-t-[0.2em]"></p>
-              </SectionBlock>
-
-              <SectionBlock>
-                <HeaderDados>
-                  <TituloDados>
-                    Pedido Finalizado
-                    <div
-                      className={`flex justify-center items-center gap-2 bg-orange-300 px-3 rounded-[1em] ${
-                        PFinalizada.length <= 0 && "hidden"
-                      }`}
-                    >
-                      <Texto>Total Recebido: {realFormat(VlrRecebido)}</Texto>
-                    </div>
-                  </TituloDados>
-                  {PFinalizada.length > 0 && (
-                    <TituloArgumentos>
-                      <Texto>N° Pedido</Texto>
-                      <Texto>Situação</Texto>
-                      <Textorg className="w-[17em]">Descrição</Textorg>
-                      <Texto>Receber</Texto>
-                      <Texto>Recebido</Texto>
-                      <Texto>Data Concluida</Texto>
-                    </TituloArgumentos>
-                  )}
-                </HeaderDados>
-                <ArticleDados>
-                  {PFinalizada.length <= 0 ? (
-                    <ArgumentosDados className=" text-[1.2vw] text-center bg-gray-200">
-                      <Texto>Nenhum pedido finalizado!</Texto>
-                    </ArgumentosDados>
-                  ) : (
-                    <ArticleDados>
-                      {PFinalizada.map((pdd) => {
-                        return (
-                          <ArgumentosDados
-                            onClick={() => ButtoSelecao(pdd.id)}
-                            className={`${
-                              pedidoState[pdd.id]
-                                ? "bg-gray-300"
-                                : "bg-gray-200"
-                            }`}
-                          >
-                            <Texto className="relative">
-                              <div
-                                title={`${pdd.descricaoServPDD}`}
-                                className="
-                        absolute top-0 left-0  p-1 flex justify-center items-center text-[0.8vw] bg-gray-400 rounded-full z-0"
-                              >
-                                <AiOutlineQuestionCircle />
-                              </div>
-                              {pdd.numeroPDD}
-                            </Texto>
-                            <Texto>{pdd.situacaoPDD}</Texto>
-                            <Textorg
-                              className=" w-[20em] max-w-[20em]"
-                              title={`${pdd.nomePDD}`}
-                            >
-                              {pdd.nomePDD}
-                            </Textorg>
-                            <Texto>{realFormat(pdd.valorPDD)}</Texto>
-                            <Texto>{realFormat(pdd.valorRecebidoPDD)}</Texto>
-                            <Texto>{dateFormat(pdd.updatedAt)}</Texto>
-                          </ArgumentosDados>
-                        );
-                      })}
-                    </ArticleDados>
-                  )}
-                </ArticleDados>
-                <p className="bg-[#f97316] w-full h-4 rounded-b-[0.7em] rounded-t-[0.2em]"></p>
-              </SectionBlock>
-            </Article>
-          </Article>
-          <Footer>
-            <Texto>Total Recebido: {realFormat(VlrTotalRecebido)}</Texto>
-          </Footer>
-        </>
-      )}
-    </Section>
-  );
+  return <>dd</>;
 };

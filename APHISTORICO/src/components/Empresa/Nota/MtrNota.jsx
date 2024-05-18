@@ -311,6 +311,18 @@ export const MostruarioNota = ({ empresaId }) => {
     0
   );
 
+  const ValorNotaAnt = NAntecipada.reduce(
+    (total, nota) => total + nota.valorNF,
+    0
+  );
+  const ValorNotaRec = NRecebida.reduce(
+    (total, nota) => total + nota.valorNF,
+    0
+  );
+  
+  const ValorImpostoAnt = ValorNotaAnt - ValorRecebidoAntecipada;
+  const ValorImpostoRec = ValorNotaRec - ValorRecebido;
+
   const ValorTotalRecebido = ValorRecebidoAntecipada + ValorRecebido;
 
   const [state, setState] = useState({});
@@ -1111,6 +1123,9 @@ export const MostruarioNota = ({ empresaId }) => {
                       }`}
                     >
                       <div className="flex justify-center items-center gap-2 bg-orange-300 px-3 rounded-[1em]">
+                        <Texto>Imposto:</Texto> {realFormat(ValorImpostoAnt)}
+                      </div>
+                      <div className="flex justify-center items-center gap-2 bg-orange-300 px-3 rounded-[1em]">
                         <Texto>Total Desconto:</Texto>{" "}
                         {realFormat(DiferencaAntecipada)}
                       </div>
@@ -1174,11 +1189,17 @@ export const MostruarioNota = ({ empresaId }) => {
                   <TituloDados>
                     Nota Recebida{" "}
                     <div
-                      className={`flex justify-center items-center gap-2 bg-orange-300 px-3 rounded-[1em] ${
+                      className={`flex justify-center items-center gap-2  px-3 rounded-[1em] ${
                         NRecebida.length <= 0 && "hidden"
                       }`}
                     >
-                      <Texto>Total Recebido:</Texto> {realFormat(ValorRecebido)}
+                      <div className="flex justify-center items-center gap-2 bg-orange-300 px-3 rounded-[1em]">
+                        <Texto>Imposto:</Texto> {realFormat(ValorImpostoRec)}
+                      </div>
+                      <div className="flex justify-center items-center gap-2 bg-orange-300 px-3 rounded-[1em]">
+                        <Texto>Total Recebido:</Texto>{" "}
+                        {realFormat(ValorRecebido)}
+                      </div>
                     </div>
                   </TituloDados>
                   {NRecebida.length > 0 && (

@@ -240,20 +240,6 @@ export const TabelaAddNota = () => {
     return acc;
   }, {});
 
-  const valorRecebido =
-    atualizarPedido &&
-    atualizarPedido.numeroPDD &&
-    somaValoresRecebidos[atualizarPedido.numeroPDD]
-      ? somaValoresRecebidos[atualizarPedido.numeroPDD]
-      : 0;
-
-  const novoValor =
-    'atualizarPedido' !== undefined
-      ? valorRecebido + Number(data.valorReceberNF)
-      : 0;
-
-  console.log(valorRecebido, novoValor);
-
   const sendNF = async (e) => {
     e.preventDefault();
 
@@ -286,6 +272,8 @@ export const TabelaAddNota = () => {
       }
     }
 
+    let calculorAntercipa = data.valorReceberNF - data.valorReceberNF * 0.02;
+
     if (data.situacaoNF === "Antecipada") {
       if (ContratoEmpresa.length > 0) {
         const valorRecebido =
@@ -295,12 +283,9 @@ export const TabelaAddNota = () => {
             ? somaValoresRecebidos[atualizarContrato.numeroCT]
             : 0;
 
-        const calculorAntercipa =
-          data.valorReceberNF - data.valorReceberNF * 0.02;
-
         const novoValor =
           atualizarContrato !== undefined
-            ? valorRecebido + Number(calculorAntercipa)
+            ? valorRecebido + calculorAntercipa
             : 0;
 
         axios.put(
@@ -318,13 +303,8 @@ export const TabelaAddNota = () => {
             ? somaValoresRecebidos[atualizarPedido.numeroPDD]
             : 0;
 
-        const calculorAntercipa =
-          data.valorReceberNF - data.valorReceberNF * 0.02;
-
         const novoValor =
-          atualizarPedido !== undefined
-            ? valorRecebido + Number(calculorAntercipa)
-            : 0;
+          atualizarPedido !== undefined ? valorRecebido + calculorAntercipa : 0;
 
         axios.put(
           ip + `/pedido/` + atualizarPedido.numeroPDD,
