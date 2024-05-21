@@ -28,6 +28,7 @@ const Section = styled.div`
   display: flex;
   flex-direction: column;
   gap: 12px;
+
 `;
 
 const Article = styled.div`
@@ -39,7 +40,6 @@ const Article = styled.div`
 `;
 
 const SectionBlock = styled.div`
-  flex: 1 1 0%;
   width: 100%;
   height: 100%;
   display: flex;
@@ -48,7 +48,7 @@ const SectionBlock = styled.div`
 `;
 
 const ArticleBlock = styled.div`
-  flex: 1 1 0%;
+  flex: auto;
   display: flex;
   flex-direction: column;
   gap: 10px;
@@ -56,15 +56,6 @@ const ArticleBlock = styled.div`
   background-color: #d8d6d679;
 `;
 
-const ArticleBlock2 = styled.div`
-  padding-bottom: 10px;
-  flex: 0 1 auto;
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  border-radius: 1em;
-  background-color: #d8d6d679;
-`;
 
 const HeaderDados = styled.div`
   flex: 0 1 auto;
@@ -291,7 +282,7 @@ export const ResumoEmpresa = () => {
 
       <Article>
         <SectionBlock className=" max-w-[30em]">
-          <ArticleBlock className="bg-orange-200">
+          <ArticleBlock className="max-h-[38%]">
             <HeaderDados>
               <TituloDados>Nota Fiscal Recebida:</TituloDados>
               <TituloArgumentos>
@@ -301,7 +292,7 @@ export const ResumoEmpresa = () => {
               </TituloArgumentos>
             </HeaderDados>
 
-            <ArticleDados className="max-h-[12em]">
+            <ArticleDados>
               {notasRecebidas.map((nota) => {
                 return (
                   <ArgumentosDados key={nota.id}>
@@ -319,7 +310,7 @@ export const ResumoEmpresa = () => {
             </ArticleDados>
           </ArticleBlock>
 
-          <ArticleBlock>
+          <ArticleBlock className="max-h-[40%]">
             <HeaderDados>
               <TituloDados className="flex justify-between pr-3 flex-wrap">
                 <h1>Nota Fiscal em Análise:</h1>
@@ -336,7 +327,8 @@ export const ResumoEmpresa = () => {
                 <Texto>V.Receber</Texto>
               </TituloArgumentos>
             </HeaderDados>
-            <ArticleDados className="max-h-[12em]">
+
+            <ArticleDados>
               {notasReceberFiltradas.map((nota) => (
                 <ArgumentosDados key={nota.id}>
                   <Texto>{nota.numeroPedidoNF}</Texto>
@@ -352,7 +344,7 @@ export const ResumoEmpresa = () => {
             </ArticleDados>
           </ArticleBlock>
 
-          <ArticleBlock2 className=" rounded-t-[1em]">
+          <ArticleBlock className=" rounded-t-[1em] max-h-[20%]">
             <HeaderDados>
               <TituloDados>Empresas Cadastradas:</TituloDados>
               <TituloArgumentos>
@@ -360,7 +352,7 @@ export const ResumoEmpresa = () => {
                 <Texto>CNPJ</Texto>
               </TituloArgumentos>
             </HeaderDados>
-            <ArticleDados className="max-h-[7em]">
+            <ArticleDados>
               {empresa.map((empresas) => (
                 <ArgumentosDados key={empresas.id}>
                   <Texto>{empresas.siglaEmpresa}</Texto>
@@ -368,11 +360,11 @@ export const ResumoEmpresa = () => {
                 </ArgumentosDados>
               ))}
             </ArticleDados>
-          </ArticleBlock2>
+          </ArticleBlock>
         </SectionBlock>
 
         <SectionBlock>
-          <ArticleBlock className="bg-orange-700 ">
+          <ArticleBlock className="max-h-[30%]">
             <HeaderDados>
               <TituloDados>Pedidos:</TituloDados>
               <TituloArgumentos>
@@ -384,7 +376,35 @@ export const ResumoEmpresa = () => {
               </TituloArgumentos>
             </HeaderDados>
 
-            <ArticleDados className="max-h-[16em]">
+            <ArticleDados>
+              {pedidosFiltrados.map((pedido) => {
+                const empresaEncontrada = empresa.find(
+                  (empresas) => empresas.id === pedido.empresaPDD
+                );
+                const siglaEmpresa = empresaEncontrada
+                  ? empresaEncontrada.siglaEmpresa
+                  : "N/A";
+
+                return (
+                  <ArgumentosDados key={pedido.id}>
+                    <Texto>{pedido.numeroPDD}</Texto>
+                    <Texto>{siglaEmpresa}</Texto>
+                    <Texto>{pedido.situacaoPDD}</Texto>
+                    <Texto>
+                      {Number(pedido.valorPDD).toLocaleString("pt-BR", {
+                        style: "currency",
+                        currency: "BRL",
+                      })}
+                    </Texto>
+                    <Texto>
+                      {Number(pedido.valorRecebidoPDD).toLocaleString("pt-BR", {
+                        style: "currency",
+                        currency: "BRL",
+                      })}
+                    </Texto>
+                  </ArgumentosDados>
+                );
+              })}
               {pedidosFiltrados.map((pedido) => {
                 const empresaEncontrada = empresa.find(
                   (empresas) => empresas.id === pedido.empresaPDD
@@ -416,7 +436,7 @@ export const ResumoEmpresa = () => {
             </ArticleDados>
           </ArticleBlock>
 
-          <ArticleBlock2>
+          <ArticleBlock className="max-h-[20%]">
             <HeaderDados>
               <TituloDados>Contrato:</TituloDados>
               <TituloArgumentos>
@@ -426,7 +446,8 @@ export const ResumoEmpresa = () => {
                 <Texto>V.Recebido</Texto>
               </TituloArgumentos>
             </HeaderDados>
-            <ArticleDados className="max-h-[4em]">
+
+            <ArticleDados>
               {ContratoAtivo.map((ctt) => {
                 const empresaEncontrada = empresa.find(
                   (empresas) => empresas.id === ctt.empresaCT
@@ -467,8 +488,9 @@ export const ResumoEmpresa = () => {
                 );
               })}
             </ArticleDados>
-          </ArticleBlock2>
-          <ArticleBlock className="bg-orange-700 ">
+          </ArticleBlock>
+
+          <ArticleBlock className="max-h-[50%]">
             <HeaderDados>
               <TituloDados className="flex justify-between pr-3">
                 <h1>Ganhos Mensais:</h1>{" "}

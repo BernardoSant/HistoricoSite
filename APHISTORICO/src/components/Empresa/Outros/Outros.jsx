@@ -124,6 +124,7 @@ const HeaderDados = styled.div`
   border-bottom-left-radius: 0.2em;
   z-index: 10;
   background: #f97316;
+  box-shadow: inset 3px -3px 10px #9f4a0e, inset -5px 5px 10px #ff9c1e;
 `;
 
 const ArticleDados = styled.div`
