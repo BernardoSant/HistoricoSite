@@ -178,7 +178,7 @@ const ArgumentosDados = styled.div`
 `;
 
 export const Fort = () => {
-  const { funcionario, nota, pedido } = useGlobalContext();
+  const { funcionario, nota, pedido, impostos } = useGlobalContext();
 
   const FuncAdmitido = funcionario.filter(
     (func) => func.statuFucionario === "Admitido"
@@ -192,6 +192,43 @@ export const Fort = () => {
   const PddFinalizada = pedido.filter(
     (pdd) => pdd.situacaoPDD === "Finalizada"
   );
+
+  const FuncionariosAdmitidos = funcionario.filter(
+    (funcionario) => funcionario.statuFucionario === "Admitido"
+  );
+
+  const impostoSalarioINSS = impostos.find(
+    (imposto) => imposto.siglaImposto.toLowerCase() === "salarioinss"
+  );
+
+  let impostoSalario = 0;
+  if (!impostoSalarioINSS) {
+    impostoSalario = 0;
+  } else {
+    impostoSalario = impostoSalarioINSS.porcentagemImposto;
+  }
+
+  const valorTotalSalario = FuncionariosAdmitidos.reduce((total, func) => {
+    const salarioTotal = func.salarioFucionario;
+    const salarioDia = salarioTotal / 30;
+    const salarioMes = salarioDia * 30;
+    const salarioMesImposto = salarioMes - salarioMes * impostoSalario;
+    const descontoPorFalta = salarioDia * func.diasFaltas;
+
+    return total + salarioMesImposto - descontoPorFalta;
+  }, 0);
+
+  const adiantamentoSalario = FuncionariosAdmitidos.reduce((total, func) => {
+    const salarioTotal = func.salarioFucionario;
+    const salarioDia = salarioTotal / 30;
+    const salarioMes = salarioDia * 30;
+    const procentagemAdiantamento = 0.4;
+    const adiantamento = salarioMes * procentagemAdiantamento; // 0.4 E IGUAL A PORCENTAGEM DE ADIANTAMENTO
+
+    return total + adiantamento;
+  }, 0);
+
+  const valorSalario = valorTotalSalario - adiantamentoSalario;
 
   return (
     <Section>
@@ -231,11 +268,23 @@ export const Fort = () => {
                     <DescricaoDados>Quantidade</DescricaoDados>
                   </SeparacaoDados>
                   <SeparacaoDados>
-                    <NumberDados>R$200,000</NumberDados>
+                    <NumberDados>
+                      R$
+                      {adiantamentoSalario.toLocaleString({
+                        style: "currency",
+                        currency: "BRL",
+                      })}
+                    </NumberDados>
                     <DescricaoDados>Adiantamento</DescricaoDados>
                   </SeparacaoDados>
                   <SeparacaoDados>
-                    <NumberDados>19</NumberDados>
+                    <NumberDados>
+                      R$
+                      {valorSalario.toLocaleString({
+                        style: "currency",
+                        currency: "BRL",
+                      })}
+                    </NumberDados>
                     <DescricaoDados>Salario</DescricaoDados>
                   </SeparacaoDados>
                 </Dados>

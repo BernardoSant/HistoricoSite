@@ -1,4 +1,6 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { toast } from "react-toastify";
+import axios from "axios";
 import { MdOutlineHomeWork } from "react-icons/md";
 import styled from "styled-components";
 import { TabelaAdicionarEmpresa } from "../Prestadores/AddEmpresa";
@@ -157,7 +159,7 @@ const Button = ({
 };
 
 export const Empresa = () => {
-  const { empresa } = useGlobalContext();
+  const {ip, empresa, impostos, funcionario} = useGlobalContext();
   const [state, setState] = useState({
     Prestadores: false,
     funcionarios: false,
@@ -275,6 +277,109 @@ export const Empresa = () => {
   empresa.sort(
     (a, b) => String(a.siglaEmpresa).length - String(b.siglaEmpresa).length
   );
+
+  const FuncionariosAdmitidos = funcionario.filter(
+    (funcionario) => funcionario.statuFucionario === "Admitido"
+  );
+
+  const impostoSalarioINSS = impostos.find(
+    (imposto) => imposto.siglaImposto.toLowerCase() === "salarioinss"
+  );
+
+  let impostoSalario = 0;
+  if (!impostoSalarioINSS) {
+    impostoSalario = 7.5;
+  } else {
+    impostoSalario = impostoSalarioINSS.porcentagemImposto;
+  }
+
+  const valorTotalSalario = FuncionariosAdmitidos.reduce((total, func) => {
+    const salarioTotal = func.salarioFucionario;
+    const salarioDia = salarioTotal / 30;
+    const salarioMes = salarioDia * 30;
+    const salarioMesImposto = salarioMes - salarioMes * impostoSalario;
+    const descontoPorFalta = salarioDia * func.diasFaltas;
+
+    return total + salarioMesImposto - descontoPorFalta;
+  }, 0);
+
+  const adiantamentoSalario = FuncionariosAdmitidos.reduce((total, func) => {
+    const salarioTotal = func.salarioFucionario;
+    const salarioDia = salarioTotal / 30;
+    const salarioMes = salarioDia * 30;
+    const procentagemAdiantamento = 0.4;
+    const adiantamento = salarioMes * procentagemAdiantamento; // 0.4 E IGUAL A PORCENTAGEM DE ADIANTAMENTO
+
+    return total + adiantamento;
+  }, 0);
+
+  const impostoSalarioFGTS = impostos.find(
+    (imposto) => imposto.siglaImposto.toLowerCase() === "fgts"
+  );
+
+  let impostoFGTS = 0;
+  if (!impostoSalarioFGTS) {
+    impostoFGTS = 8;
+  } else {
+    impostoFGTS = impostoSalarioFGTS.porcentagemImposto;
+  }
+
+  const fgtsSalario = FuncionariosAdmitidos.reduce((total, func) => {
+    const salarioTotal = func.salarioFucionario;
+    const salarioDia = salarioTotal / 30;
+    const salarioMes = salarioDia * 30;
+    const descontoPorFalta = salarioDia * func.diasFaltas;
+    const salarioFunc = salarioMes - descontoPorFalta;
+    const inssSobSalario = salarioFunc * impostoFGTS;
+
+    return total + inssSobSalario;
+  }, 0);
+
+  const valorSalario = FuncionariosAdmitidos.reduce((total, func) => {
+    return valorTotalSalario - adiantamentoSalario;
+  }, 0);
+
+  const hoje = new Date();
+  const diaAtual = hoje.getDate();
+  const mesAtual = hoje.getMonth() + 1;
+  const anoAtual = hoje.getFullYear();
+  useEffect(() => {
+    const headers = {
+      headers: {
+        "Content-Type": "application/json",
+      },
+    };
+    
+
+    const ultimoMesExecutado = localStorage.getItem("ultimoMesExecutado");
+    const mesExecutado = Number(ultimoMesExecutado);
+    if (diaAtual === 27 && mesAtual !== mesExecutado) {
+      axios.post(
+        ip + "/salario",
+        {
+          totalFgtsSalario: fgtsSalario,
+          totalSalarioMes: valorTotalSalario,
+          adiantamentoSalario: adiantamentoSalario,
+          salarioFinal: valorSalario,
+          dataSalario: hoje,
+        },
+        headers
+      );
+      toast.success("Salario enviado com sucesso");
+      var TotalFaltas = 0;
+      funcionario.forEach((funcionario) => {
+        axios.put(
+          ip + "/funcionario/" + funcionario.id,
+          { diasFaltas: TotalFaltas },
+          headers
+        );
+      });
+
+      localStorage.setItem("ultimoMesExecutado", mesAtual);
+    }
+  }, [diaAtual, mesAtual, anoAtual]);
+
+
   return (
     <>
       <Header>
