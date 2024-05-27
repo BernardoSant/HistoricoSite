@@ -130,7 +130,6 @@ const HeaderDados = styled.div`
 const ArticleDados = styled.div`
   flex: 0 1 auto;
   display: flex;
-  background-color: #d8d6d679;
   flex-direction: column;
   font-size: 0.8vw;
   font-weight: bolder;
