@@ -18,6 +18,7 @@ import { Outros } from "../Outros/Outros";
 import { MdClose } from "react-icons/md";
 import { Fort } from "../../Formatação";
 
+
 const Nav = styled.nav`
   height: 100%;
   display: flex;
@@ -454,7 +455,7 @@ export const Empresa = () => {
         <Div className="w-full h-full relative rounded-[1em] flex justify-center items-center">
           {state.addTransporte && <AddTransporte></AddTransporte>}
 
-          {state.Dashboard &&  <ResumoEmpresa  />}
+          {state.Dashboard &&  <Fort  />}
 
           {state.addContrato && <TabelaAddContrato />}
 

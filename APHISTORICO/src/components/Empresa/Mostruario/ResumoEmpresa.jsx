@@ -1,10 +1,7 @@
 import styled from "styled-components";
 import { useGlobalContext } from "../../../global/Global";
-import { NumericFormat } from "react-number-format";
 import { useState, useEffect } from "react";
-import axios from "axios";
 import { Chart } from "react-google-charts";
-import { toast } from "react-toastify";
 
 const Header = styled.header`
   display: flex;
@@ -120,7 +117,7 @@ const ArgumentosDados = styled.div`
 `;
 
 export const ResumoEmpresa = () => {
-  const { ip, empresa, nota, pedido, contrato, setPedido } = useGlobalContext();
+  const {empresa, nota, pedido, contrato } = useGlobalContext();
   const [data, setData] = useState("");
 
   const dataAtual = new Date();

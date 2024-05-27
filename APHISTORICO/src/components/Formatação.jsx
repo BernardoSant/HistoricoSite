@@ -1,21 +1,8 @@
 import styled from "styled-components";
 import { useGlobalContext } from "../global/Global";
-import { dateFormat } from "../functions/dateFormat";
-import { realFormat } from "../functions/realFormat";
-import { numNotaFormat } from "../functions/numNotaFormat";
-import { AiOutlineQuestionCircle } from "react-icons/ai";
-import { TbAlertCircle } from "react-icons/tb";
-import { toast } from "react-toastify";
-import { useState, useEffect } from "react";
-import {
-  HiOutlinePlusSm,
-  HiOutlineDocumentDuplicate,
-  HiOutlineTrash,
-} from "react-icons/hi";
-import { RiSaveLine } from "react-icons/ri";
-import { LuArrowRightFromLine } from "react-icons/lu";
 import { NumericFormat } from "react-number-format";
-import axios from "axios";
+import { DashGanhos } from "./Graficos/DashGanhos";
+import { CarrocelDash } from "./Carrossel/CarrocelDash";
 
 const Header = styled.header`
   display: flex;
@@ -60,8 +47,8 @@ const Section = styled.div`
 const Article = styled.div`
   width: 100%;
   height: 100%;
-  display: flex;
-  flex-direction: column;
+  display: grid;
+  grid-template-columns: 40% 60%;
   gap: 10px;
   padding-right: 5px;
 
@@ -75,36 +62,12 @@ const Article = styled.div`
   }
 `;
 
-const H1 = styled.h1`
-  width: 100%;
-  display: flex;
-  flex-direction: space-between;
-  font-weight: 700;
-`;
-
-const Input = styled.input`
-  max-width: 10em;
-  text-align: center;
-  align-items: center;
-  border-radius: 0.5em;
-  border: solid 2px #575757;
-`;
-
-const InputDinheiro = styled(NumericFormat)`
-  max-width: 10em;
-  text-align: center;
-  align-items: center;
-  border-radius: 0.5em;
-  border: solid 2px #575757;
-`;
-
 const SectionBlock = styled.div`
-  flex: 1 1 0%;
   width: 100%;
+  height: 100%;
   display: flex;
-  flex-direction: row;
+  flex-direction: column;
   gap: 12px;
-  max-height: 45%;
 `;
 
 const ArticleBlock = styled.div`
@@ -131,25 +94,12 @@ const HeaderDados = styled.div`
 `;
 
 const ArticleDados = styled.div`
-  flex: 0 1 auto;
+  height: 100%;
+  overflow: hidden;
+  position: relative;
   display: flex;
-  background-color: #d8d6d679;
-  flex-direction: column;
-  font-size: 0.8vw;
-  font-weight: bolder;
-  padding-bottom: 2px;
-  border-bottom-right-radius: 1em;
-  border-bottom-left-radius: 1em;
-  overflow-y: auto;
-
-  &::-webkit-scrollbar {
-    width: 5px;
-  }
-
-  &::-webkit-scrollbar-thumb {
-    background: #575757;
-    border-radius: 1em;
-  }
+  justify-content: center;
+  align-items: center;
 `;
 
 const Texto = styled.h1`
@@ -167,19 +117,44 @@ const TextoDesc = styled.h1`
   text-overflow: ellipsis;
 `;
 
-const TituloDados = styled.div`
+const Dados = styled.div`
   display: flex;
-  justify-content: space-between;
+  height: 100%;
+  flex-direction: row;
+  justify-content: space-evenly;
   align-items: center;
   font-size: 1.2vw;
   font-weight: 650;
 `;
 
-const TituloArgumentos = styled.div`
+const SeparacaoDados = styled.div`
+  display: flex;
+  width: 10%;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+`;
+
+const NumberDados = styled.div`
+  font-size: 1.7vw;
+  height: auto;
+  text-align: center;
+`;
+
+const DescricaoDados = styled.div`
+  display: flex;
+  height: auto;
+  justify-content: center;
+  align-items: center;
+  font-size: 1vw;
+  overflow: hidden;
+`;
+
+const TituloDados = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
-  font-size: 0.95vw;
+  font-size: 1.2vw;
   font-weight: 650;
 `;
 
@@ -203,5 +178,188 @@ const ArgumentosDados = styled.div`
 `;
 
 export const Fort = () => {
-  return <>dd</>;
+  const { funcionario, nota, pedido } = useGlobalContext();
+
+  const FuncAdmitido = funcionario.filter(
+    (func) => func.statuFucionario === "Admitido"
+  );
+  const NtAnalise = nota.filter((not) => not.situacaoNF === "Em Análise");
+  const NtAntecipada = nota.filter((not) => not.situacaoNF === "Antecipada");
+  const NtRecebida = nota.filter((not) => not.situacaoNF === "Recebida");
+
+  const PddCriado = pedido.filter((pdd) => pdd.situacaoPDD === "Criada");
+  const PddAndamento = pedido.filter((pdd) => pdd.situacaoPDD === "Andamento");
+  const PddFinalizada = pedido.filter(
+    (pdd) => pdd.situacaoPDD === "Finalizada"
+  );
+
+  return (
+    <Section>
+      <Header>Dashboard</Header>
+      <Article>
+        <SectionBlock>
+          <ArticleBlock>
+            <HeaderDados>
+              <TituloDados>Ganhos</TituloDados>{" "}
+            </HeaderDados>
+
+            <ArticleDados>
+              <DashGanhos></DashGanhos>
+            </ArticleDados>
+          </ArticleBlock>
+
+          <ArticleBlock>
+            <HeaderDados>
+              <TituloDados>Gastos</TituloDados>
+            </HeaderDados>
+            <ArticleDados>
+              <Texto>texto</Texto>
+            </ArticleDados>
+          </ArticleBlock>
+        </SectionBlock>
+
+        <SectionBlock>
+          <ArticleBlock>
+            <HeaderDados>
+              <TituloDados> Funcionario</TituloDados>
+            </HeaderDados>
+            <ArticleDados>
+              <CarrocelDash>
+                <Dados>
+                  <SeparacaoDados>
+                    <NumberDados>{FuncAdmitido.length}</NumberDados>
+                    <DescricaoDados>Quantidade</DescricaoDados>
+                  </SeparacaoDados>
+                  <SeparacaoDados>
+                    <NumberDados>R$200,000</NumberDados>
+                    <DescricaoDados>Adiantamento</DescricaoDados>
+                  </SeparacaoDados>
+                  <SeparacaoDados>
+                    <NumberDados>19</NumberDados>
+                    <DescricaoDados>Salario</DescricaoDados>
+                  </SeparacaoDados>
+                </Dados>
+
+                <Dados>
+                  <SeparacaoDados>
+                    <NumberDados>19</NumberDados>
+                    <DescricaoDados>Quantidade</DescricaoDados>
+                  </SeparacaoDados>
+                  <SeparacaoDados>
+                    <NumberDados>19</NumberDados>
+                    <DescricaoDados>Salario</DescricaoDados>
+                  </SeparacaoDados>
+                </Dados>
+              </CarrocelDash>
+            </ArticleDados>
+          </ArticleBlock>
+
+          <ArticleBlock>
+            <HeaderDados>
+              <TituloDados>Notas</TituloDados>{" "}
+            </HeaderDados>
+            <ArticleDados>
+              <CarrocelDash>
+                <Dados>
+                  <SeparacaoDados>
+                    <NumberDados>{NtAnalise.length}</NumberDados>
+                    <DescricaoDados>Analisando</DescricaoDados>
+                  </SeparacaoDados>
+                  <SeparacaoDados>
+                    <NumberDados>{NtAntecipada.length}</NumberDados>
+                    <DescricaoDados>Antecipadas</DescricaoDados>
+                  </SeparacaoDados>
+                  <SeparacaoDados>
+                    <NumberDados>{NtRecebida.length}</NumberDados>
+                    <DescricaoDados>Recebidas</DescricaoDados>
+                  </SeparacaoDados>
+                </Dados>
+
+                <Dados>
+                  <SeparacaoDados>
+                    <NumberDados>19</NumberDados>
+                    <DescricaoDados>Quantidade</DescricaoDados>
+                  </SeparacaoDados>
+                  <SeparacaoDados>
+                    <NumberDados>19</NumberDados>
+                    <DescricaoDados>Salario</DescricaoDados>
+                  </SeparacaoDados>
+                </Dados>
+              </CarrocelDash>
+            </ArticleDados>
+          </ArticleBlock>
+
+          <ArticleBlock>
+            <HeaderDados>
+              <TituloDados> Pedidos</TituloDados>
+            </HeaderDados>
+            <ArticleDados>
+              <CarrocelDash>
+                <Dados>
+                  <SeparacaoDados>
+                    <NumberDados>{PddCriado.length}</NumberDados>
+                    <DescricaoDados>Criadas</DescricaoDados>
+                  </SeparacaoDados>
+                  <SeparacaoDados>
+                    <NumberDados>{PddAndamento.length}</NumberDados>
+                    <DescricaoDados>Adantamento</DescricaoDados>
+                  </SeparacaoDados>
+                  <SeparacaoDados>
+                    <NumberDados>{PddFinalizada.length}</NumberDados>
+                    <DescricaoDados>Finalizadas</DescricaoDados>
+                  </SeparacaoDados>
+                </Dados>
+
+                <Dados>
+                  <SeparacaoDados>
+                    <NumberDados>19</NumberDados>
+                    <DescricaoDados>Quantidade</DescricaoDados>
+                  </SeparacaoDados>
+                  <SeparacaoDados>
+                    <NumberDados>19</NumberDados>
+                    <DescricaoDados>Salario</DescricaoDados>
+                  </SeparacaoDados>
+                </Dados>
+              </CarrocelDash>
+            </ArticleDados>
+          </ArticleBlock>
+
+          <ArticleBlock>
+            <HeaderDados>
+              <TituloDados> Trasnporte</TituloDados>
+            </HeaderDados>
+            <ArticleDados>
+              <CarrocelDash>
+                <Dados>
+                  <SeparacaoDados>
+                    <NumberDados>{FuncAdmitido.length}</NumberDados>
+                    <DescricaoDados>Quantidade</DescricaoDados>
+                  </SeparacaoDados>
+                  <SeparacaoDados>
+                    <NumberDados>R$200,000</NumberDados>
+                    <DescricaoDados>Adantamento</DescricaoDados>
+                  </SeparacaoDados>
+                  <SeparacaoDados>
+                    <NumberDados>19</NumberDados>
+                    <DescricaoDados>Salario</DescricaoDados>
+                  </SeparacaoDados>
+                </Dados>
+
+                <Dados>
+                  <SeparacaoDados>
+                    <NumberDados>19</NumberDados>
+                    <DescricaoDados>Quantidade</DescricaoDados>
+                  </SeparacaoDados>
+                  <SeparacaoDados>
+                    <NumberDados>19</NumberDados>
+                    <DescricaoDados>Salario</DescricaoDados>
+                  </SeparacaoDados>
+                </Dados>
+              </CarrocelDash>
+            </ArticleDados>
+          </ArticleBlock>
+        </SectionBlock>
+      </Article>
+    </Section>
+  );
 };
