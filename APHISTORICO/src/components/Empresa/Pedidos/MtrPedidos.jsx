@@ -3,9 +3,7 @@ import { useGlobalContext } from "../../../global/Global";
 import { dateFormat } from "../../../functions/dateFormat";
 import { realFormat } from "../../../functions/realFormat";
 import { AiOutlineQuestionCircle } from "react-icons/ai";
-import {
-  TbAlertCircle
-} from "react-icons/tb";
+import { TbAlertCircle } from "react-icons/tb";
 import { NumericFormat } from "react-number-format";
 import { useState, useEffect } from "react";
 
@@ -264,11 +262,16 @@ export const MtrPedidos = ({ empresaId }) => {
       {ContratoEmpresa.length > 0 ? (
         <div className="w-full h-full justify-center items-center flex drop-shadow-md">
           <nav className="flex flex-col justify-center items-center">
-            <h1 className="text-[2.5vw] text-red-500 "><TbAlertCircle/></h1>
+            <h1 className="text-[2.5vw] text-red-500 ">
+              <TbAlertCircle />
+            </h1>
             <h1 className="w-full h-full justify-center items-center flex flex-col text-[1.8vw]">
               Alerta! {siglaEmpresa} não contem pedidos.
             </h1>
-            <h2 className="text-[0.8vw] ">Contrator e seviços estão disponiveis na tela <u>Notas Fiscais</u>.</h2>
+            <h2 className="text-[0.8vw] ">
+              Contrator e seviços estão disponiveis na tela <u>Notas Fiscais</u>
+              .
+            </h2>
           </nav>
         </div>
       ) : (
@@ -295,19 +298,21 @@ export const MtrPedidos = ({ empresaId }) => {
           </Header>
           <Article className="h-full overflow-auto">
             <Article>
-              <SectionBlock>
-                <HeaderDados>
-                  <TituloDados>
-                    Pedido Criado
-                    <div
-                      className={`flex justify-center items-center gap-2 bg-orange-300 px-3 rounded-[1em] ${
-                        PCriada.length <= 0 && "hidden"
-                      }`}
-                    >
-                      <Texto>Total Receber: {realFormat(VlrReceber)}</Texto>
-                    </div>
-                  </TituloDados>
-                  {PCriada.length > 0 && (
+
+              {PCriada.length > 0 && (
+                <SectionBlock>
+                  <HeaderDados>
+                    <TituloDados>
+                      Pedido Criado
+                      <div
+                        className={`flex justify-center items-center gap-2 bg-orange-300 px-3 rounded-[1em] ${
+                          PCriada.length <= 0 && "hidden"
+                        }`}
+                      >
+                        <Texto>Total Receber: {realFormat(VlrReceber)}</Texto>
+                      </div>
+                    </TituloDados>
+
                     <TituloArgumentos>
                       <Texto>N° Pedido</Texto>
                       <Texto>Situação</Texto>
@@ -315,14 +320,8 @@ export const MtrPedidos = ({ empresaId }) => {
                       <Texto>Receber</Texto>
                       <Texto>Data</Texto>
                     </TituloArgumentos>
-                  )}
-                </HeaderDados>
-                <ArticleDados>
-                  {PCriada.length <= 0 ? (
-                    <ArgumentosDados className=" text-[1.2vw] text-center bg-gray-200">
-                      <Texto>Nenhum pedido criado!</Texto>
-                    </ArgumentosDados>
-                  ) : (
+                  </HeaderDados>
+                  <ArticleDados>
                     <ArticleDados>
                       {PCriada.map((pdd) => {
                         return (
@@ -357,24 +356,26 @@ export const MtrPedidos = ({ empresaId }) => {
                         );
                       })}
                     </ArticleDados>
-                  )}
-                </ArticleDados>
-                <p className="bg-[#f97316] w-full h-4 rounded-b-[0.7em] rounded-t-[0.2em]"></p>
-              </SectionBlock>
+                  </ArticleDados>
+                  <p className="bg-[#f97316] w-full h-4 rounded-b-[0.7em] rounded-t-[0.2em]"></p>
+                </SectionBlock>
+              )}
+              {PAndamento.length > 0 && (
+                <SectionBlock>
+                  <HeaderDados>
+                    <TituloDados>
+                      Pedido Andamento
+                      <div
+                        className={`flex justify-center items-center gap-2 bg-orange-300 px-3 rounded-[1em] ${
+                          PAndamento.length <= 0 && "hidden"
+                        }`}
+                      >
+                        <Texto>
+                          Total Recebido: {realFormat(VlrAndamento)}
+                        </Texto>
+                      </div>
+                    </TituloDados>
 
-              <SectionBlock>
-                <HeaderDados>
-                  <TituloDados>
-                    Pedido Andamento
-                    <div
-                      className={`flex justify-center items-center gap-2 bg-orange-300 px-3 rounded-[1em] ${
-                        PAndamento.length <= 0 && "hidden"
-                      }`}
-                    >
-                      <Texto>Total Recebido: {realFormat(VlrAndamento)}</Texto>
-                    </div>
-                  </TituloDados>
-                  {PAndamento.length > 0 && (
                     <TituloArgumentos>
                       <Texto>N° Pedido</Texto>
                       <Texto>Situação</Texto>
@@ -383,14 +384,8 @@ export const MtrPedidos = ({ empresaId }) => {
                       <Texto>Recebido</Texto>
                       <Texto>Data Alteração</Texto>
                     </TituloArgumentos>
-                  )}
-                </HeaderDados>
-                <ArticleDados>
-                  {PAndamento.length <= 0 ? (
-                    <ArgumentosDados className=" text-[1.2vw] text-center bg-gray-200">
-                      <Texto>Nenhum pedido em andamento!</Texto>
-                    </ArgumentosDados>
-                  ) : (
+                  </HeaderDados>
+                  <ArticleDados>
                     <ArticleDados>
                       {PAndamento.map((pdd) => {
                         return (
@@ -426,24 +421,24 @@ export const MtrPedidos = ({ empresaId }) => {
                         );
                       })}
                     </ArticleDados>
-                  )}
-                </ArticleDados>
-                <p className="bg-[#f97316] w-full h-4 rounded-b-[0.7em] rounded-t-[0.2em]"></p>
-              </SectionBlock>
+                  </ArticleDados>
+                  <p className="bg-[#f97316] w-full h-4 rounded-b-[0.7em] rounded-t-[0.2em]"></p>
+                </SectionBlock>
+              )}
+              {PFinalizada.length > 0 && (
+                <SectionBlock>
+                  <HeaderDados>
+                    <TituloDados>
+                      Pedido Finalizado
+                      <div
+                        className={`flex justify-center items-center gap-2 bg-orange-300 px-3 rounded-[1em] ${
+                          PFinalizada.length <= 0 && "hidden"
+                        }`}
+                      >
+                        <Texto>Total Recebido: {realFormat(VlrRecebido)}</Texto>
+                      </div>
+                    </TituloDados>
 
-              <SectionBlock>
-                <HeaderDados>
-                  <TituloDados>
-                    Pedido Finalizado
-                    <div
-                      className={`flex justify-center items-center gap-2 bg-orange-300 px-3 rounded-[1em] ${
-                        PFinalizada.length <= 0 && "hidden"
-                      }`}
-                    >
-                      <Texto>Total Recebido: {realFormat(VlrRecebido)}</Texto>
-                    </div>
-                  </TituloDados>
-                  {PFinalizada.length > 0 && (
                     <TituloArgumentos>
                       <Texto>N° Pedido</Texto>
                       <Texto>Situação</Texto>
@@ -452,14 +447,8 @@ export const MtrPedidos = ({ empresaId }) => {
                       <Texto>Recebido</Texto>
                       <Texto>Data Concluida</Texto>
                     </TituloArgumentos>
-                  )}
-                </HeaderDados>
-                <ArticleDados>
-                  {PFinalizada.length <= 0 ? (
-                    <ArgumentosDados className=" text-[1.2vw] text-center bg-gray-200">
-                      <Texto>Nenhum pedido finalizado!</Texto>
-                    </ArgumentosDados>
-                  ) : (
+                  </HeaderDados>
+                  <ArticleDados>
                     <ArticleDados>
                       {PFinalizada.map((pdd) => {
                         return (
@@ -495,10 +484,10 @@ export const MtrPedidos = ({ empresaId }) => {
                         );
                       })}
                     </ArticleDados>
-                  )}
-                </ArticleDados>
-                <p className="bg-[#f97316] w-full h-4 rounded-b-[0.7em] rounded-t-[0.2em]"></p>
-              </SectionBlock>
+                  </ArticleDados>
+                  <p className="bg-[#f97316] w-full h-4 rounded-b-[0.7em] rounded-t-[0.2em]"></p>
+                </SectionBlock>
+              )}
             </Article>
           </Article>
           <Footer>

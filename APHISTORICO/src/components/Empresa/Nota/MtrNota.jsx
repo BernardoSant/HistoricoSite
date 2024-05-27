@@ -319,7 +319,7 @@ export const MostruarioNota = ({ empresaId }) => {
     (total, nota) => total + nota.valorNF,
     0
   );
-  
+
   const ValorImpostoAnt = ValorNotaAnt - ValorRecebidoAntecipada;
   const ValorImpostoRec = ValorNotaRec - ValorRecebido;
 
@@ -1051,20 +1051,22 @@ export const MostruarioNota = ({ empresaId }) => {
 
           <Article className="h-full overflow-auto">
             <Article>
-              <SectionBlock>
-                <HeaderDados>
-                  <TituloDados>
-                    Nota Analisando
-                    <div
-                      className={`flex justify-center items-center gap-2 bg-orange-300 px-3 rounded-[1em] ${
-                        NAnalisada.length <= 0 && "hidden"
-                      }`}
-                    >
-                      <Texto>Total a Receber:</Texto>{" "}
-                      {realFormat(ValorReceberA)}
-                    </div>
-                  </TituloDados>
-                  {NAnalisada.length > 0 && (
+              {" "}
+              {NAnalisada.length > 0 && (
+                <SectionBlock>
+                  <HeaderDados>
+                    <TituloDados>
+                      Nota Analisando
+                      <div
+                        className={`flex justify-center items-center gap-2 bg-orange-300 px-3 rounded-[1em] ${
+                          NAnalisada.length <= 0 && "hidden"
+                        }`}
+                      >
+                        <Texto>Total a Receber:</Texto>{" "}
+                        {realFormat(ValorReceberA)}
+                      </div>
+                    </TituloDados>
+
                     <TituloArgumentos>
                       <Texto>N° Pedido</Texto>
                       <Texto>N° Nota</Texto>
@@ -1073,14 +1075,8 @@ export const MostruarioNota = ({ empresaId }) => {
                       <Texto>Recebido</Texto>
                       <Texto>Data</Texto>
                     </TituloArgumentos>
-                  )}
-                </HeaderDados>
-                <ArticleDados>
-                  {NAnalisada.length <= 0 ? (
-                    <ArgumentosDados className=" text-[1.2vw] text-center bg-gray-200">
-                      <Texto>Nenhuma nota em analise!</Texto>
-                    </ArgumentosDados>
-                  ) : (
+                  </HeaderDados>
+                  <ArticleDados>
                     <ArticleDados>
                       {NAnalisada.map((nt) => {
                         return (
@@ -1108,34 +1104,34 @@ export const MostruarioNota = ({ empresaId }) => {
                         );
                       })}
                     </ArticleDados>
-                  )}
-                </ArticleDados>
-                <p className="bg-[#f97316] w-full h-4 rounded-b-[0.7em] rounded-t-[0.2em]"></p>
-              </SectionBlock>
+                  </ArticleDados>
+                  <p className="bg-[#f97316] w-full h-4 rounded-b-[0.7em] rounded-t-[0.2em]"></p>
+                </SectionBlock>
+              )}
+              {NAntecipada.length > 0 && (
+                <SectionBlock>
+                  <HeaderDados>
+                    <TituloDados>
+                      Nota Antecipada
+                      <div
+                        className={`flex justify-center items-center gap-3 flex-wrap ${
+                          NAntecipada.length <= 0 && "hidden"
+                        }`}
+                      >
+                        <div className="flex justify-center items-center gap-2 bg-orange-300 px-3 rounded-[1em]">
+                          <Texto>Imposto:</Texto> {realFormat(ValorImpostoAnt)}
+                        </div>
+                        <div className="flex justify-center items-center gap-2 bg-orange-300 px-3 rounded-[1em]">
+                          <Texto>Total Desconto:</Texto>{" "}
+                          {realFormat(DiferencaAntecipada)}
+                        </div>
+                        <div className="flex justify-center items-center gap-2 bg-orange-300 px-3 rounded-[1em]">
+                          <Texto>Total Recebido:</Texto>{" "}
+                          {realFormat(ValorRecebidoAntecipada)}
+                        </div>
+                      </div>
+                    </TituloDados>
 
-              <SectionBlock>
-                <HeaderDados>
-                  <TituloDados>
-                    Nota Antecipada
-                    <div
-                      className={`flex justify-center items-center gap-3 flex-wrap ${
-                        NAntecipada.length <= 0 && "hidden"
-                      }`}
-                    >
-                      <div className="flex justify-center items-center gap-2 bg-orange-300 px-3 rounded-[1em]">
-                        <Texto>Imposto:</Texto> {realFormat(ValorImpostoAnt)}
-                      </div>
-                      <div className="flex justify-center items-center gap-2 bg-orange-300 px-3 rounded-[1em]">
-                        <Texto>Total Desconto:</Texto>{" "}
-                        {realFormat(DiferencaAntecipada)}
-                      </div>
-                      <div className="flex justify-center items-center gap-2 bg-orange-300 px-3 rounded-[1em]">
-                        <Texto>Total Recebido:</Texto>{" "}
-                        {realFormat(ValorRecebidoAntecipada)}
-                      </div>
-                    </div>
-                  </TituloDados>
-                  {NAntecipada.length > 0 && (
                     <TituloArgumentos>
                       <Texto>N° Pedido</Texto>
                       <Texto>N° Nota</Texto>
@@ -1144,14 +1140,8 @@ export const MostruarioNota = ({ empresaId }) => {
                       <Texto>Recebido</Texto>
                       <Texto>Data</Texto>
                     </TituloArgumentos>
-                  )}
-                </HeaderDados>
-                <ArticleDados>
-                  {NAntecipada.length <= 0 ? (
-                    <ArgumentosDados className=" text-[1.2vw] text-center bg-gray-200">
-                      <Texto>Nenhuma nota antecipada!</Texto>
-                    </ArgumentosDados>
-                  ) : (
+                  </HeaderDados>
+                  <ArticleDados>
                     <ArticleDados>
                       {NAntecipada.map((nt) => {
                         return (
@@ -1179,30 +1169,29 @@ export const MostruarioNota = ({ empresaId }) => {
                         );
                       })}
                     </ArticleDados>
-                  )}
-                </ArticleDados>
-                <p className="bg-[#f97316] w-full h-4 rounded-b-[0.7em] rounded-t-[0.2em]"></p>
-              </SectionBlock>
-
-              <SectionBlock>
-                <HeaderDados>
-                  <TituloDados>
-                    Nota Recebida{" "}
-                    <div
-                      className={`flex justify-center items-center gap-2  px-3 rounded-[1em] ${
-                        NRecebida.length <= 0 && "hidden"
-                      }`}
-                    >
-                      <div className="flex justify-center items-center gap-2 bg-orange-300 px-3 rounded-[1em]">
-                        <Texto>Imposto:</Texto> {realFormat(ValorImpostoRec)}
+                  </ArticleDados>
+                  <p className="bg-[#f97316] w-full h-4 rounded-b-[0.7em] rounded-t-[0.2em]"></p>
+                </SectionBlock>
+              )}
+              {NRecebida.length > 0 && (
+                <SectionBlock>
+                  <HeaderDados>
+                    <TituloDados>
+                      Nota Recebida{" "}
+                      <div
+                        className={`flex justify-center items-center gap-2  px-3 rounded-[1em] ${
+                          NRecebida.length <= 0 && "hidden"
+                        }`}
+                      >
+                        <div className="flex justify-center items-center gap-2 bg-orange-300 px-3 rounded-[1em]">
+                          <Texto>Imposto:</Texto> {realFormat(ValorImpostoRec)}
+                        </div>
+                        <div className="flex justify-center items-center gap-2 bg-orange-300 px-3 rounded-[1em]">
+                          <Texto>Total Recebido:</Texto>{" "}
+                          {realFormat(ValorRecebido)}
+                        </div>
                       </div>
-                      <div className="flex justify-center items-center gap-2 bg-orange-300 px-3 rounded-[1em]">
-                        <Texto>Total Recebido:</Texto>{" "}
-                        {realFormat(ValorRecebido)}
-                      </div>
-                    </div>
-                  </TituloDados>
-                  {NRecebida.length > 0 && (
+                    </TituloDados>
                     <TituloArgumentos>
                       <Texto>N° Pedido</Texto>
                       <Texto>N° Nota</Texto>
@@ -1211,14 +1200,8 @@ export const MostruarioNota = ({ empresaId }) => {
                       <Texto>Recebido</Texto>
                       <Texto>Data</Texto>
                     </TituloArgumentos>
-                  )}
-                </HeaderDados>
-                <ArticleDados>
-                  {NRecebida.length <= 0 ? (
-                    <ArgumentosDados className=" text-[1.2vw] text-cente bg-gray-200">
-                      <Texto>Nenhuma nota recebida!</Texto>
-                    </ArgumentosDados>
-                  ) : (
+                  </HeaderDados>
+                  <ArticleDados>
                     <ArticleDados>
                       {NRecebida.map((nt) => {
                         return (
@@ -1246,10 +1229,10 @@ export const MostruarioNota = ({ empresaId }) => {
                         );
                       })}
                     </ArticleDados>
-                  )}
-                </ArticleDados>
-                <p className="bg-[#f97316] w-full h-4 rounded-b-[0.7em] rounded-t-[0.2em]"></p>
-              </SectionBlock>
+                  </ArticleDados>
+                  <p className="bg-[#f97316] w-full h-4 rounded-b-[0.7em] rounded-t-[0.2em]"></p>
+                </SectionBlock>
+              )}
             </Article>
           </Article>
           <Footer>
