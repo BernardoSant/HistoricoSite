@@ -133,7 +133,7 @@ export const TabelaAddContrato = () => {
   };
 
   return (
-    <>
+    <div className="w-full h-full">
       <Header>Adcionar Contrato</Header>
 
       <Form onSubmit={sendContrato}>
@@ -203,6 +203,6 @@ export const TabelaAddContrato = () => {
           <Button type="submit">Salvar</Button>
         </section>
       </Form>
-    </>
+    </div>
   );
 };

@@ -176,7 +176,7 @@ export const AddTransporte = () => {
   };
 
   return (
-    <>
+    <div className="w-full h-full ">
       <Header>Adicionar Transporte</Header>
       <Form id="addTransporte" onSubmit={addTransporte}>
         <TelaGrid>
@@ -383,6 +383,6 @@ export const AddTransporte = () => {
           </div>
         )}
       </Form>
-    </>
+    </div>
   );
 };

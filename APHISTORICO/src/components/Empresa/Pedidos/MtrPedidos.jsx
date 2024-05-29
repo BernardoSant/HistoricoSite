@@ -257,6 +257,25 @@ export const MtrPedidos = ({ empresaId }) => {
     setPedidoState(novoEstado);
   };
 
+  const [seachState, setSeachState] = useState({});
+  const ButtoSeach = (id) => {
+    const novoEstado = Object.keys(seachState).reduce((obj, key) => {
+      obj[key] = false;
+      setState((prevState) => ({
+        ...prevState,
+        [key]: !prevState[key],
+      }));
+      return obj;
+    }, {});
+
+    novoEstado[id] = true;
+
+    setSeachState(novoEstado);
+  };
+
+  console.log(seachState)
+
+
   return (
     <Section>
       {ContratoEmpresa.length > 0 ? (
@@ -277,8 +296,26 @@ export const MtrPedidos = ({ empresaId }) => {
       ) : (
         <>
           <Header>
-            <p>Notas da {siglaEmpresa}</p>
+            <p>Pedidos da {siglaEmpresa}</p>
 
+            <input
+              list="Serch"
+              type="text"
+              placeholder="Pesquisar Pedido"
+              title="Informe o N° do Pedido"
+              className="w-auto border-2 text-[1vw] rounded-xl border-gray-500 flex justify-center p-1"
+              onChange={(e) => ButtoSeach(e.target.value)}
+            />
+
+            <datalist id="Serch" className="">
+              {PedidoEmpresa.map((pdd) => {
+                return (
+                  <option value={pdd.numeroPDD}>
+                 {pdd.nomePDD} - {pdd.situacaoPDD}
+                  </option>
+                );
+              })}
+            </datalist>
             <form
               className="flex justify-center items-center "
               onSubmit={handleDataChange}
@@ -331,6 +368,9 @@ export const MtrPedidos = ({ empresaId }) => {
                               pedidoState[pdd.id]
                                 ? "bg-gray-300"
                                 : "bg-gray-200"
+                            } ${
+                              seachState[pdd.numeroPDD]
+                                && "bg-gray-400/60"
                             }`}
                           >
                             <Texto className="relative">
@@ -395,6 +435,9 @@ export const MtrPedidos = ({ empresaId }) => {
                               pedidoState[pdd.id]
                                 ? "bg-gray-300"
                                 : "bg-gray-200"
+                            } ${
+                              seachState[pdd.numeroPDD]
+                                && "bg-gray-400/60"
                             }`}
                           >
                             <Texto className="relative">
@@ -458,6 +501,9 @@ export const MtrPedidos = ({ empresaId }) => {
                               pedidoState[pdd.id]
                                 ? "bg-gray-300"
                                 : "bg-gray-200"
+                            } ${
+                              seachState[pdd.numeroPDD]
+                                && "bg-gray-400/60" 
                             }`}
                           >
                             <Texto className="relative">

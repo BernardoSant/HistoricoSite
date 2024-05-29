@@ -327,6 +327,7 @@ export const MostruarioNota = ({ empresaId }) => {
   const ValorTotalRecebido = ValorRecebidoAntecipada + ValorRecebido;
 
   const [state, setState] = useState({});
+  const [seachState, setSeachState] = useState({});
   const [notaState, setNotaState] = useState({});
   const [notaSelecionada, setNotaSelecionada] = useState(null);
   const [notaSelecionadaCompleta, setNotaSelecionadaCompleta] = useState(null);
@@ -357,6 +358,22 @@ export const MostruarioNota = ({ empresaId }) => {
     novoEstado[id] = !notaState[id];
 
     setNotaState(novoEstado);
+  };
+
+  const ButtoSeach = (id) => {
+    const novoEstado = Object.keys(seachState).reduce((obj, key) => {
+      obj[key] = false;
+      setState((prevState) => ({
+        ...prevState,
+        [key]: !prevState[key],
+      }));
+      return obj;
+    }, {});
+
+    novoEstado[id] = true;
+    novoEstado[id] = !notaState[id];
+
+    setSeachState(novoEstado);
   };
 
   const valorInput = (e) => {
@@ -899,6 +916,24 @@ export const MostruarioNota = ({ empresaId }) => {
         <>
           <Header>
             <p>Notas da {siglaEmpresa}</p>
+            <input
+              list="Serch"
+              type="text"
+              placeholder="Pesquisar Nota"
+              title="Informe o N° da Nota ou do Pedido"
+              className="w-auto border-2 text-[1vw] rounded-xl border-gray-500 flex justify-center p-1"
+              onChange={(e) => ButtoSeach(e.target.value)}
+            />
+
+            <datalist id="Serch" className="">
+              {NotasEmpresa.map((nt) => {
+                return (
+                  <option value={nt.numeroNotaNF}>
+                    {nt.numeroNotaNF} - {nt.situacaoNF}
+                  </option>
+                );
+              })}
+            </datalist>
 
             <form
               className="flex justify-center items-center "
@@ -1085,6 +1120,11 @@ export const MostruarioNota = ({ empresaId }) => {
                             onClick={() => ButtoSelecao(nt.id)}
                             className={`${
                               notaState[nt.id] ? "bg-gray-300" : "bg-gray-200"
+                            } ${
+                              seachState[nt.numeroPedidoNF] ||
+                              seachState[nt.numeroNotaNF]
+                                ? "bg-gray-400/60"
+                                : "bg-gray-200"
                             }`}
                           >
                             <Texto>{nt.numeroPedidoNF}</Texto>
@@ -1150,6 +1190,11 @@ export const MostruarioNota = ({ empresaId }) => {
                             onClick={() => ButtoSelecao(nt.id)}
                             className={`${
                               notaState[nt.id] ? "bg-gray-300" : "bg-gray-200"
+                            } ${
+                              seachState[nt.numeroPedidoNF] ||
+                              seachState[nt.numeroNotaNF]
+                                ? "bg-gray-400/60"
+                                : "bg-gray-200"
                             }`}
                           >
                             <Texto>{nt.numeroPedidoNF}</Texto>
@@ -1210,6 +1255,11 @@ export const MostruarioNota = ({ empresaId }) => {
                             onClick={() => ButtoSelecao(nt.id)}
                             className={`${
                               notaState[nt.id] ? "bg-gray-300" : "bg-gray-200"
+                            } ${
+                              seachState[nt.numeroPedidoNF] ||
+                              seachState[nt.numeroNotaNF]
+                                ? "bg-gray-400/60"
+                                : "bg-gray-200"
                             }`}
                           >
                             <Texto>{nt.numeroPedidoNF}</Texto>
