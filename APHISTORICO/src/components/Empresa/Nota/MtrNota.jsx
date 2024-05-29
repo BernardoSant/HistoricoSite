@@ -100,6 +100,7 @@ const SectionBlock = styled.div`
 const HeaderDados = styled.div`
   position: sticky;
   top: 0;
+  z-index: 20;
   flex: 0 1 auto;
   padding: 5px;
   padding-left: 10px;

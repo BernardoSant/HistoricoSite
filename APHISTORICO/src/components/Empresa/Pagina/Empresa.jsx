@@ -19,6 +19,7 @@ import { useGlobalContext } from "../../../global/Global";
 import { Outros } from "../Outros/Outros";
 import { MdClose } from "react-icons/md";
 import { Fort } from "../../Formatação";
+import { Restaurando } from "../../Restaurando";
 
 
 const Nav = styled.nav`
@@ -30,8 +31,9 @@ const Nav = styled.nav`
 const Header = styled.header`
   height: 100%;
   width: 100%;
-  display: flex;
-  gap: 2em;
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 1em;
   background-color: #fffafa;
 `;
 
@@ -55,14 +57,10 @@ const Div = styled.div`
   border-bottom-right-radius: 1em;
   border-bottom-left-radius: 1em;
   border-top-right-radius: 1em;
-  padding-top: 1em;
-  padding-bottom: 1em;
-  padding-left: 1em;
-  padding-right: 1em;
+  padding: 1em;
   font-size: medium;
-  display: flex;
-  flex-direction: column;
   gap: 0.5em;
+  position: relative;
   overflow: hidden;
   z-index: 10;
 
@@ -557,7 +555,7 @@ export const Empresa = () => {
             </nav>
           </Div>
         </Nav>
-        <Div className="w-full h-full relative rounded-[1em] flex justify-center items-center">
+        <Div className="w-full relative rounded-[1em] flex justify-center items-center">
           {state.addTransporte && <AddTransporte></AddTransporte>}
 
           {state.Dashboard &&  <Fort  />}

@@ -1,7 +1,7 @@
 import styled from "styled-components";
-import { useGlobalContext } from "../../../global/Global";
+import { useGlobalContext } from "../global/Global";
 import { useState, useEffect } from "react";
-import { GanhosMensais } from "../../Graficos/ResumoGanhos";
+import { GanhosMensais } from "./Graficos/ResumoGanhos";
 
 const Header = styled.header`
   display: flex;
@@ -194,7 +194,7 @@ const ArgumentosDados = styled.div`
   cursor: pointer;
 `;
 
-export const ResumoEmpresa = () => {
+export const Restaurando = () => {
   const { empresa, nota, pedido, contrato } = useGlobalContext();
   const [data, setData] = useState("");
 

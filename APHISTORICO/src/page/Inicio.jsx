@@ -21,7 +21,8 @@ const Header = styled.header`
   padding-top: 2em;
   padding-left: 1em;
   padding-right: 1em;
-  padding-bottom: 2em;
+  padding-bottom: 2em; 
+   overflow: hidden;
 `;
 
 const Div = styled.div`
@@ -31,6 +32,7 @@ const Div = styled.div`
   border-bottom-left-radius: 1em;
   z-index: 20;
   display: flex;
+
   flex-direction: column;
 `;
 
@@ -122,12 +124,13 @@ export const Inicio = () => {
           </Div>
           {state.Conta && <TabelaConta></TabelaConta>}
         </Nav>
-
-        {state.Inicio && <Dashboard />}
-        {state.Empresa && <Empresa />}
+        <>
+          {state.Inicio && <Dashboard />}
+          {state.Empresa && <Empresa />}
+        </>
       </Header>
       <div className="absolute bottom-1 right-4 text-slate-400 cursor-not-allowed text-[0.8vw]">
-      1.01.02
+        1.01.02
       </div>
     </div>
   );
