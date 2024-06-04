@@ -137,7 +137,7 @@ export const TabelaAddPedido = () => {
   };
 
   return (
-    <>
+    <div className="h-full lflex flex-col justify-center items-start ">
       <Header>Adcionar Pedido</Header>
 
       <Form onSubmit={sendPedido}>
@@ -228,6 +228,6 @@ export const TabelaAddPedido = () => {
           <Button type="submit">Salvar</Button>
         </section>
       </Form>
-    </>
+    </div>
   );
 };

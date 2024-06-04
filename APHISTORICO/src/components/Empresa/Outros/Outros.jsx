@@ -108,7 +108,7 @@ const ArticleBlock = styled.div`
   display: flex;
   flex-direction: column;
   border-radius: 1em;
-  background-color: #d8d6d679;
+  background-color: #dfdfdf79;
 `;
 
 const HeaderDados = styled.div`

@@ -71,7 +71,7 @@ const ArticleBlock = styled.div`
   overflow: hidden;
   flex-direction: column;
   border-radius: 1em;
-  background-color: #d8d6d679;
+  background-color: #dfdfdf79;
 
   @media (max-height: 700px) {
     max-height: 14.8vw;

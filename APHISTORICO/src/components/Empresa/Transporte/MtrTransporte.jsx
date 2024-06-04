@@ -9,6 +9,7 @@ import { LuArrowRightFromLine } from "react-icons/lu";
 import { HiOutlineDocumentDuplicate } from "react-icons/hi";
 import { dateFormat } from "../../../functions/dateFormat";
 import { NumericFormat } from "react-number-format";
+import { CarrocelDash } from "../../Carrossel/CarrocelDash";
 
 const Div = styled.div`
   height: 100%;
@@ -157,15 +158,24 @@ export const MtrTransporte = () => {
   const dia = hoje.getDate();
   const mes = hoje.getMonth() + 1;
   const ano = hoje.getFullYear();
-  let dataFormatada = `${ano}-${mes}-${dia}`;
 
   const { transporte, ip, abastecimento, manutencao } = useGlobalContext();
+  const [state, setState] = useState({
+    addManutencao: false,
+  });
+  const [transporteState, setTransporteState] = useState({});
+  const [manutencaoState, setManutencaoState] = useState({});
+  const [transporteSelecionado, setTransporteSelecionado] = useState({});
+
+  const TransporteSelecionadoKm = transporte.find(
+    (tr) => tr.id === transporteSelecionado
+  );
 
   const [data, setData] = useState({
     idTransporte: "",
     vlrGasolina: null,
     totalAbastecido: "",
-    diasAbastecido: "",
+    totalValor: "",
     kmRodadoAbastecido: "",
     dataCadastro: "",
   });
@@ -177,14 +187,53 @@ export const MtrTransporte = () => {
     valorManutencao: null,
   });
 
+  const AbastecimentoMenAnterior = abastecimento
+    .filter((abast) => {
+      const isCurrentTransport = abast.idTransporte === transporteSelecionado;
+      const abastDate = new Date(abast.dataCadastro);
+      const isBeforeOrEqualToday = abastDate <= hoje;
+
+      return isCurrentTransport && isBeforeOrEqualToday;
+    })
+    .sort((a, b) => new Date(b.dataCadastro) - new Date(a.dataCadastro));
+
+  var penultimoAbastecimento;
+  var ultimoAbastecimento;
+
+  if (AbastecimentoMenAnterior.length >= 2) {
+    ultimoAbastecimento = AbastecimentoMenAnterior[0];
+    penultimoAbastecimento = AbastecimentoMenAnterior[1];
+  } else if (AbastecimentoMenAnterior.length === 1) {
+    ultimoAbastecimento = AbastecimentoMenAnterior[0];
+    penultimoAbastecimento = 0;
+  } else {
+    ultimoAbastecimento = TransporteSelecionadoKm;
+    penultimoAbastecimento = 0;
+  }
+
   const valorInput = (e) => {
     let valor = e.target.value;
-    setData({
-      ...data,
-      [e.target.name]: valor,
-      idTransporte: transporteSelecionado,
-      dataCadastro: dataFormatada,
-    });
+    if (e.target.name === "dataCadastro") {
+      const ValorTotal = Number(data.totalAbastecido) * data.vlrGasolina;
+      const DiferencaKm =
+        data.kmRodadoAbastecido -
+        (AbastecimentoMenAnterior.length === 0
+          ? TransporteSelecionadoKm.kmRodadoTransporte
+          : ultimoAbastecimento.kmRodadoAbastecido);
+      setData({
+        ...data,
+        [e.target.name]: valor,
+        idTransporte: transporteSelecionado,
+        totalValor: ValorTotal,
+        kmDiferença: DiferencaKm,
+      });
+    } else {
+      setData({
+        ...data,
+        [e.target.name]: valor,
+        idTransporte: transporteSelecionado,
+      });
+    }
   };
 
   const valorInputManutencao = (e) => {
@@ -234,10 +283,12 @@ export const MtrTransporte = () => {
       .then((response) => {
         toast.success(response.data.message);
         setData({
+          idTransporte: "",
           vlrGasolina: null,
           totalAbastecido: "",
-          diasAbastecido: "",
+          totalValor: "",
           kmRodadoAbastecido: "",
+          dataCadastro: "",
         });
         axios.put(ip + "/transporte/" + transporteSelecionado, {
           kmRodadoTransporte: data.kmRodadoAbastecido,
@@ -247,13 +298,6 @@ export const MtrTransporte = () => {
         toast.error(err.response.data.message);
       });
   };
-
-  const [state, setState] = useState({
-    addManutencao: false,
-  });
-  const [transporteState, setTransporteState] = useState({});
-  const [manutencaoState, setManutencaoState] = useState({});
-  const [transporteSelecionado, setTransporteSelecionado] = useState({});
 
   const ButtomPrimario = (id) => {
     const novoEstado = Object.keys(transporteState).reduce((obj, key) => {
@@ -311,6 +355,24 @@ export const MtrTransporte = () => {
       <Article>
         {transporte.map((trans) => {
           const Hoje = new Date();
+          const mesAtual = String(Hoje.getMonth() + 1).padStart(2, "0");
+          const anoAtual = Hoje.getFullYear();
+
+          const [mes, setMes] = useState(mesAtual);
+          const [ano, setAno] = useState(anoAtual);
+
+          const handleDataChange = (event) => {
+            setData(event.target.value);
+
+            const dataSelecionada = new Date(event.target.value);
+            const mesSelecionado = String(
+              dataSelecionada.getMonth() + 1
+            ).padStart(2, "0");
+            const anoSelecionado = dataSelecionada.getFullYear();
+
+            setMes(mesSelecionado);
+            setAno(anoSelecionado);
+          };
 
           var placaTransporte = trans.placaTransporte;
           var str = placaTransporte.toString();
@@ -331,42 +393,19 @@ export const MtrTransporte = () => {
           var totalAbastecido =
             (Kmdia * diasRodado) / trans.kmPorLitroTransporte;
 
-          const AbastecimentoMenAnterior = abastecimento.filter((abast) => {
-            const isCurrentTransport = abast.idTransporte === trans.id;
-            const abastDate = new Date(abast.dataCadastro);
+          const AbastecimentosCar = abastecimento
+            .filter((abast) => {
+              const DataAbaste = new Date(abast.dataCadastro);
+              const TransAbastecimento = abast.idTransporte === trans.id;
+              const DataAbasteMes =
+                DataAbaste.getMonth() + 1 === parseInt(mes) &&
+                DataAbaste.getFullYear() === parseInt(ano);
 
-            // Verifica se o abastecimento ocorreu neste mês
-            const isThisMonth =
-              abastDate.getMonth() === Hoje.getMonth() - 1 &&
-              abastDate.getFullYear() === Hoje.getFullYear();
-
-            return isCurrentTransport && isThisMonth;
-          });
-
-          const AbastecimentoMen = abastecimento.filter((abast) => {
-            const isCurrentTransport = abast.idTransporte === trans.id;
-            const abastDate = new Date(abast.dataCadastro);
-
-            // Verifica se o abastecimento ocorreu neste mês
-            const isThisMonth =
-              abastDate.getMonth() === Hoje.getMonth() &&
-              abastDate.getFullYear() === Hoje.getFullYear();
-
-            return isCurrentTransport && isThisMonth;
-          });
-
-          const RelatorioMesAnterior = AbastecimentoMenAnterior.reduce(
-            (total, abast) => total + abast.kmRodadoAbastecido,
-            0
-          );
-
-          const RelatorioMes = AbastecimentoMen.reduce(
-            (total, abast) => total + abast.kmRodadoAbastecido,
-            0
-          );
-
-          const diferencaKm = RelatorioMes - RelatorioMesAnterior;
-
+              return TransAbastecimento && DataAbasteMes;
+            })
+            .sort(
+              (a, b) => new Date(b.dataCadastro) - new Date(a.dataCadastro)
+            );
           //Manutenção
           const mantTransorte = manutencao.filter(
             (manut) => manut.idTransport === trans.id
@@ -376,6 +415,12 @@ export const MtrTransporte = () => {
             (total, manut) => total + manut.valorManutencao,
             0
           );
+
+          const DataCar = abastecimento.filter(
+            (abast) => abast.idTransporte === trans.id
+          );
+          const uniqueMonths = new Set();
+          const uniqueYears = new Set();
 
           return (
             <div
@@ -471,6 +516,16 @@ export const MtrTransporte = () => {
                       className="bg-slate-200 px-1 gap-3 h-full rounded-[0.6em] flex justify-around items-center flex-wrap py-2"
                     >
                       <div>
+                        <Topico>Kilometragem:</Topico>
+                        <Input
+                          type="text"
+                          value={data.kmRodadoAbastecido}
+                          name="kmRodadoAbastecido"
+                          onChange={valorInput}
+                        />
+                      </div>
+
+                      <div>
                         <Topico>Vlr Gasolina:</Topico>
                         <InputDinheiro
                           type="text"
@@ -489,7 +544,7 @@ export const MtrTransporte = () => {
                         />
                       </div>
                       <div>
-                        <Topico>Combustível:</Topico>
+                        <Topico>Qnt.Combustível:</Topico>
                         <Input
                           type="text"
                           value={data.totalAbastecido}
@@ -498,20 +553,11 @@ export const MtrTransporte = () => {
                         />
                       </div>
                       <div>
-                        <Topico>Dias Rodado:</Topico>
+                        <Topico>Data:</Topico>
                         <Input
-                          type="text"
-                          value={data.diasAbastecido}
-                          name="diasAbastecido"
-                          onChange={valorInput}
-                        />
-                      </div>
-                      <div>
-                        <Topico>Kilometragem:</Topico>
-                        <Input
-                          type="text"
-                          value={data.kmRodadoAbastecido}
-                          name="kmRodadoAbastecido"
+                          type="date"
+                          value={data.dataCadastro}
+                          name="dataCadastro"
                           onChange={valorInput}
                         />
                       </div>
@@ -621,194 +667,186 @@ export const MtrTransporte = () => {
                 <div className=" bg-orange-300 h-full rounded-[0.6em] p-2 px-3 flex flex-col gap-2">
                   <div className="flex justify-between flex-wrap">
                     <Titulo className="flex-initial w-auto">
-                      Resumo Mensal:
+                      Abastecimentos:
                     </Titulo>
-                    <div className="mr-6 bg-slate-100 text-center flex justify-center items-center px-5 rounded-[0.6em] border-2 border-orange-500 font-semibold">
-                      {AbastecimentoMen.length === 1 ? (
-                        <>{meses[hoje.getMonth()]}</>
-                      ) : (
-                        <>{meses[hoje.getMonth() - 1]}</>
-                      )}
-                    </div>
+                    {DataCar.length > 0 && (
+                      <form
+                        onSubmit={handleDataChange}
+                        className="flex flex-row gap-2 w-auto md:justify-end justify-center pr-4 "
+                      >
+                        <select
+                          className=" bg-slate-100 text-center flex justify-center items-center rounded-[0.6em] border-2 border-orange-500 font-semibold"
+                          value={mes}
+                          onChange={(event) => setMes(event.target.value)}
+                        >
+                          {DataCar.map((abst) => {
+                            const DateAbast = new Date(abst.dataCadastro);
+                            const Mes = DateAbast.getMonth() + 1;
+                            const MesAparencia = DateAbast.getMonth();
+                            if (!uniqueMonths.has(Mes)) {
+                              uniqueMonths.add(Mes);
+                              return (
+                                <option key={Mes} value={Mes}>
+                                  {meses[MesAparencia]}
+                                </option>
+                              );
+                            }
+                          }).filter((option) => option !== null)}
+                        </select>
+
+                        <select
+                          className=" bg-slate-100 text-center flex justify-center items-center rounded-[0.6em] border-2 border-orange-500 font-semibold"
+                          value={ano}
+                          onChange={(event) => setAno(event.target.value)}
+                        >
+                          {DataCar.map((abst) => {
+                            const DateAbast = new Date(abst.dataCadastro);
+                            const Ano = DateAbast.getFullYear();
+
+                            if (!uniqueYears.has(Ano)) {
+                              uniqueYears.add(Ano);
+                              return (
+                                <option key={Ano} value={Ano}>
+                                  {Ano}
+                                </option>
+                              );
+                            }
+                          }).filter((option) => option !== null)}
+                        </select>
+                      </form>
+                    )}
                   </div>
-                  {AbastecimentoMen.length === 1 ? (
-                    <>
-                      {AbastecimentoMen.map((abast) => {
-                        var KmDiario = diferencaKm / abast.diasAbastecido;
-                        var KmPorLitroD = diferencaKm / abast.totalAbastecido;
-                        var valorMes =
-                          abast.vlrGasolina * abast.totalAbastecido;
-                        return (
-                          <div
-                            key={abast.id}
-                            className="p-1 rounded-[0.6em] flex-wrap shadow-inner h-full flex justify-around items-center gap-3 duration-500 bg-slate-100"
-                          >
-                            <div>
-                              <div className="flex items-center gap-2">
-                                <Topico>Km:</Topico>
-                                <Descricao>
-                                  {Number(
-                                    abast.kmRodadoAbastecido
-                                  ).toLocaleString("pt-BR")}
-                                  Km
-                                </Descricao>
-                              </div>
 
-                              <div className="flex items-center gap-2">
-                                <Topico>Km/L:</Topico>
-                                <Descricao>
-                                  {Number(KmPorLitroD)
-                                    .toFixed(2)
-                                    .toLocaleString("pt-BR")}
-                                  Km
-                                </Descricao>
-                              </div>
+                  <div className="relative overflow-hidden h-[8em] rounded-[0.6em]  shadow-inner  gap-3 duration-500 bg-slate-100">
+                    {DataCar.length > 0 ? (
+                      <CarrocelDash>
+                        {AbastecimentosCar.map((abst) => {
+                          const DataAbast = new Date(abst.dataCadastro);
+                          const KmPorLitro =
+                            Number(abst.kmDiferença) /
+                            Number(abst.totalAbastecido);
 
-                              <div className="flex items-center gap-2">
-                                <Topico>Km/Dia:</Topico>
-                                <Descricao>
-                                  {Number(KmDiario)
-                                    .toFixed(2)
-                                    .toLocaleString("pt-BR")}
-                                  Km
-                                </Descricao>
-                              </div>
+                          const AbastecimentoPassado = abastecimento
+                            .filter((abast) => {
+                              const isCurrentTransport =
+                                abast.idTransporte === abst.idTransporte;
+                              const abastDate = new Date(abast.dataCadastro);
+                              const isBeforeOrEqualToday =
+                                abastDate < DataAbast;
 
-                              <div className="flex items-center gap-2">
-                                <Topico>Diferença:</Topico>
-                                <Descricao>
-                                  {Number(diferencaKm)
-                                    .toFixed(2)
-                                    .toLocaleString("pt-BR")}
-                                  Km
-                                </Descricao>
-                              </div>
-                            </div>
+                              return isCurrentTransport && isBeforeOrEqualToday;
+                            })
+                            .sort(
+                              (a, b) =>
+                                new Date(b.dataCadastro) -
+                                new Date(a.dataCadastro)
+                            );
 
-                            <div>
-                              <div className="flex items-center gap-2">
-                                <Topico>Dias:</Topico>
-                                <Descricao>{abast.diasAbastecido}</Descricao>
-                              </div>
+                          const DataAbastPassado = new Date(
+                            AbastecimentoPassado[0]?.dataCadastro || 0
+                          );
 
-                              <div className="flex items-center gap-2">
-                                <Topico>Total Abastecido:</Topico>
-                                <Descricao>{abast.totalAbastecido}L</Descricao>
-                              </div>
+                          const diferencaEmMilissegundos =
+                            AbastecimentoPassado.length === 0
+                              ? 0
+                              : DataAbast - DataAbastPassado;
 
-                              <div className="flex items-center gap-2">
-                                <Topico>Valor Gasolina:</Topico>
-                                <Descricao>
-                                  {Number(abast.vlrGasolina).toLocaleString(
-                                    "pt-BR",
-                                    {
+                          const diferencaEmDias = Math.floor(
+                            diferencaEmMilissegundos / (1000 * 60 * 60 * 24)
+                          );
+
+                          const KmPorPorDias =
+                            abst.kmDiferença / diferencaEmDias;
+                          return (
+                            <div className="w-full  flex justify-around pt-3">
+                              <div>
+                                <div className="flex items-center gap-2">
+                                  <Topico>Km:</Topico>
+                                  <Descricao>
+                                    {Number(
+                                      abst.kmRodadoAbastecido
+                                    ).toLocaleString("pt-BR")}
+                                    Km
+                                  </Descricao>
+                                </div>
+
+                                <div className="flex items-center gap-2">
+                                  <Topico>Km/L:</Topico>
+                                  <Descricao>
+                                    {Number(KmPorLitro)
+                                      .toFixed(2)
+                                      .toLocaleString("pt-BR")}
+                                    Km
+                                  </Descricao>
+                                </div>
+
+                                <div className="flex items-center gap-2">
+                                  <Topico>Km/Dia:</Topico>
+                                  <Descricao>
+                                    {Number(KmPorPorDias)
+                                      .toFixed(2)
+                                      .toLocaleString("pt-BR")}
+                                    Km
+                                  </Descricao>
+                                </div>
+
+                                <div className="flex items-center gap-2">
+                                  <Topico>Diferença:</Topico>
+                                  <Descricao>
+                                    {Number(abst.kmDiferença).toLocaleString({
                                       style: "currency",
                                       currency: "BRL",
-                                    }
-                                  )}
-                                </Descricao>
+                                    })}
+                                    Km
+                                  </Descricao>
+                                </div>
                               </div>
 
-                              <div className="flex items-center gap-2">
-                                <Topico>Gasto Mês:</Topico>
-                                <Descricao>
-                                  {Number(valorMes).toLocaleString("pt-BR", {
-                                    style: "currency",
-                                    currency: "BRL",
-                                  })}
-                                </Descricao>
+                              <div>
+                                <div className="flex items-center gap-2">
+                                  <Topico>Dias:</Topico>
+                                  <Descricao>
+                                    {diferencaEmDias === Infinity
+                                      ? 0
+                                      : diferencaEmDias}
+                                  </Descricao>
+                                </div>
+
+                                <div className="flex items-center gap-2">
+                                  <Topico>Total Abastecido:</Topico>
+                                  <Descricao>{abst.totalAbastecido}L</Descricao>
+                                </div>
+
+                                <div className="flex items-center gap-2">
+                                  <Topico>Valor Gasolina:</Topico>
+                                  <Descricao>
+                                    {Number(abst.vlrGasolina).toLocaleString(
+                                      "pt-BR",
+                                      {
+                                        style: "currency",
+                                        currency: "BRL",
+                                      }
+                                    )}
+                                  </Descricao>
+                                </div>
+
+                                <div className="flex items-center gap-2">
+                                  <Topico>Data:</Topico>
+                                  <Descricao>
+                                    {dateFormat(abst.dataCadastro)}
+                                  </Descricao>
+                                </div>
                               </div>
                             </div>
-                          </div>
-                        );
-                      })}
-                    </>
-                  ) : (
-                    <>
-                      {AbastecimentoMenAnterior.map((abast) => {
-                        var diferencaKmAnt =
-                          Number(trans.kmRodadoTransporte) -
-                          abast.kmRodadoAbastecido;
-                        var KmDiario = diferencaKmAnt / abast.diasAbastecido;
-                        var KmPorLitroD =
-                          diferencaKmAnt / abast.totalAbastecido;
-                        var valorMes =
-                          abast.vlrGasolina * abast.totalAbastecido;
-                        return (
-                          <div
-                            key={abast.id}
-                            className="p-1 rounded-[0.6em] flex-wrap shadow-inner h-full flex justify-around items-center gap-3 duration-500 bg-slate-100"
-                          >
-                            <div>
-                              <div className="flex items-center gap-2">
-                                <Topico>Km:</Topico>
-                                <Descricao>
-                                  {Number(
-                                    abast.kmRodadoAbastecido
-                                  ).toLocaleString("pt-BR")}
-                                  Km
-                                </Descricao>
-                              </div>
-                              <div className="flex items-center gap-2">
-                                <Topico>Km/L:</Topico>
-                                <Descricao>
-                                  {Number(KmPorLitroD)
-                                    .toFixed(2)
-                                    .toLocaleString("pt-BR")}
-                                  Km
-                                </Descricao>
-                              </div>
-
-                              <div className="flex items-center gap-2">
-                                <Topico>Km/Dia:</Topico>
-                                <Descricao>
-                                  {Number(KmDiario)
-                                    .toFixed(2)
-                                    .toLocaleString("pt-BR")}
-                                  Km
-                                </Descricao>
-                              </div>
-                            </div>
-
-                            <div>
-                              <div className="flex items-center gap-2">
-                                <Topico>Dias:</Topico>
-                                <Descricao>{abast.diasAbastecido}</Descricao>
-                              </div>
-
-                              <div className="flex items-center gap-2">
-                                <Topico>Total Abastecido:</Topico>
-                                <Descricao>{abast.totalAbastecido}L</Descricao>
-                              </div>
-
-                              <div className="flex items-center gap-2">
-                                <Topico>Valor Gasolina:</Topico>
-                                <Descricao>
-                                  {Number(abast.vlrGasolina).toLocaleString(
-                                    "pt-BR",
-                                    {
-                                      style: "currency",
-                                      currency: "BRL",
-                                    }
-                                  )}
-                                </Descricao>
-                              </div>
-
-                              <div className="flex items-center gap-2">
-                                <Topico>Gasto Mês:</Topico>
-                                <Descricao>
-                                  {Number(valorMes).toLocaleString("pt-BR", {
-                                    style: "currency",
-                                    currency: "BRL",
-                                  })}
-                                </Descricao>
-                              </div>
-                            </div>
-                          </div>
-                        );
-                      })}
-                    </>
-                  )}
+                          );
+                        })}
+                      </CarrocelDash>
+                    ) : (
+                      <div className="w-full h-full flex justify-center items-center font-semibold text-gray-500/60">
+                        Nenhum abastecimento encontrado!
+                      </div>
+                    )}
+                  </div>
                 </div>
               </div>
 

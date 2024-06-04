@@ -13,7 +13,7 @@ export const CarrocelDash = ({ children }) => {
 
   return (
     <Carousel
-      className="rounded-xl"
+      className="rounded-xl absolute h-full"
       nextArrow={({ loop, handleNext, lastIndex }) => (
         <button
           onClick={handleNext}
