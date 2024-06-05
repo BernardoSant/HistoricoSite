@@ -277,6 +277,10 @@ export const MtrTransporte = () => {
         "Content-Type": "application/json",
       },
     };
+    if (data.dataCadastro === "" || data.kmRodadoAbastecido === "" || data.vlrGasolina === "") {
+      toast.error("Esta faltando dados para cadastrar!")
+      return;
+    }
 
     axios
       .post(ip + "/abastecimento", data, headers)
@@ -651,9 +655,8 @@ export const MtrTransporte = () => {
 
                 <div className="h-[6vh] lg:h-[3vh] relative z-20">
                   <p
-                    className={`absolute top-1 right-0 p-1 rounded-full ${
-                      transporteState[trans.id] ? "bg-red-500" : "bg-slate-500"
-                    }`}
+                    className={`absolute top-1 right-0 p-1 rounded-full ${transporteState[trans.id] ? "bg-red-500" : "bg-slate-500"
+                      }`}
                     onClick={() => ButtomPrimario(trans.id)}
                   >
                     {transporteState[trans.id] ? (
@@ -884,9 +887,8 @@ export const MtrTransporte = () => {
                       )}
 
                       <button
-                        className={`bg-orange-500 p-2 rounded-[0.6em] font-semibold  hover:scale-95 hover:bg-orange-400 ${
-                          state.addManutencao && "bg-red-500 hover:bg-red-400"
-                        } `}
+                        className={`bg-orange-500 p-2 rounded-[0.6em] font-semibold  hover:scale-95 hover:bg-orange-400 ${state.addManutencao && "bg-red-500 hover:bg-red-400"
+                          } `}
                         onClick={() => Buttom("addManutencao")}
                       >
                         {state.addManutencao ? (
@@ -975,9 +977,8 @@ export const MtrTransporte = () => {
               ) : null}
 
               <div
-                className={`col-span-2 flex justify-center items-center text-lg ${
-                  manutencaoState[trans.id] ? "rotate-180" : " hover:mt-2"
-                } duration-500`}
+                className={`col-span-2 flex justify-center items-center text-lg ${manutencaoState[trans.id] ? "rotate-180" : " hover:mt-2"
+                  } duration-500`}
                 onClick={() => ButtomManutencao(trans.id)}
               >
                 <BsChevronCompactDown />
