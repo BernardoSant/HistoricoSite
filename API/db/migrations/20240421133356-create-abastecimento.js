@@ -18,8 +18,8 @@ module.exports = {
       totalAbastecido: {
         type: Sequelize.FLOAT
       },
-      totalValor: {
-        type: Sequelize.FLOAT
+      diasRodadosAbastecido: {
+        type: Sequelize.INTEGER
       },
       kmRodadoAbastecido: {
         type: Sequelize.FLOAT

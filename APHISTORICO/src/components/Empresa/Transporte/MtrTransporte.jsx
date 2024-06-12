@@ -175,7 +175,7 @@ export const MtrTransporte = () => {
     idTransporte: "",
     vlrGasolina: null,
     totalAbastecido: "",
-    totalValor: "",
+    diasRodadosAbastecido: "",
     kmRodadoAbastecido: "",
     dataCadastro: "",
   });
@@ -214,7 +214,6 @@ export const MtrTransporte = () => {
   const valorInput = (e) => {
     let valor = e.target.value;
     if (e.target.name === "dataCadastro") {
-      const ValorTotal = Number(data.totalAbastecido) * data.vlrGasolina;
       const DiferencaKm =
         data.kmRodadoAbastecido -
         (AbastecimentoMenAnterior.length === 0
@@ -224,7 +223,6 @@ export const MtrTransporte = () => {
         ...data,
         [e.target.name]: valor,
         idTransporte: transporteSelecionado,
-        totalValor: ValorTotal,
         kmDiferença: DiferencaKm,
       });
     } else {
@@ -277,8 +275,12 @@ export const MtrTransporte = () => {
         "Content-Type": "application/json",
       },
     };
-    if (data.dataCadastro === "" || data.kmRodadoAbastecido === "" || data.vlrGasolina === "") {
-      toast.error("Esta faltando dados para cadastrar!")
+    if (
+      data.dataCadastro === "" ||
+      data.kmRodadoAbastecido === "" ||
+      data.vlrGasolina === ""
+    ) {
+      toast.error("Esta faltando dados para cadastrar!");
       return;
     }
 
@@ -290,10 +292,11 @@ export const MtrTransporte = () => {
           idTransporte: "",
           vlrGasolina: null,
           totalAbastecido: "",
-          totalValor: "",
+          diasRodadosAbastecido: "",
           kmRodadoAbastecido: "",
           dataCadastro: "",
         });
+        ButtomPrimario(null);
         axios.put(ip + "/transporte/" + transporteSelecionado, {
           kmRodadoTransporte: data.kmRodadoAbastecido,
         });
@@ -314,7 +317,7 @@ export const MtrTransporte = () => {
         idTransporte: "",
         vlrGasolina: null,
         totalAbastecido: "",
-        diasAbastecido: "",
+        diasRodadosAbastecido: "",
         kmRodadoAbastecido: "",
       });
       return obj;
@@ -382,21 +385,6 @@ export const MtrTransporte = () => {
           var str = placaTransporte.toString();
           var placa = str.slice(0, 3) + "-" + str.slice(3);
 
-          var diasRodado = 22; // dias uteis do mes
-          var valorGasolina = 5.59;
-          var Kmdia = trans.kmPorDiaTransporte;
-
-          var kmMensal = Kmdia * diasRodado;
-          var valorGastoMensal =
-            (kmMensal / trans.kmPorLitroTransporte) * valorGasolina;
-          var consumoGasolina =
-            trans.kmPorDiaTransporte / trans.kmPorLitroTransporte;
-          var quantidadeAbastecida =
-            kmMensal / trans.kmPorLitroTransporte / trans.tanqueTransporte;
-
-          var totalAbastecido =
-            (Kmdia * diasRodado) / trans.kmPorLitroTransporte;
-
           const AbastecimentosCar = abastecimento
             .filter((abast) => {
               const DataAbaste = new Date(abast.dataCadastro);
@@ -410,7 +398,44 @@ export const MtrTransporte = () => {
             .sort(
               (a, b) => new Date(b.dataCadastro) - new Date(a.dataCadastro)
             );
-          //Manutenção
+
+            console.log(AbastecimentosCar)
+
+          const DiferençaResumo = AbastecimentosCar.reduce(
+            (total, abast) => total + abast.kmDiferença,
+            0
+          );
+
+          const TotalResumo = AbastecimentosCar.reduce(
+            (total, abast) => total + abast.totalAbastecido * abast.vlrGasolina,
+            0
+          );
+
+          const TotalAbastecidoResumo = AbastecimentosCar.reduce(
+            (total, abast) => total + abast.totalAbastecido,
+            0
+          );
+
+          const MediaGasolinaResumo = AbastecimentosCar.reduce(
+            (total, abast) =>
+              total + abast.vlrGasolina / AbastecimentosCar.length,
+            0
+          );
+
+          const SomaDia = AbastecimentosCar.reduce(
+            (total, abast) => total + abast.diasRodadosAbastecido,
+            0
+          );
+
+          const MediaAbastecimento = AbastecimentosCar.reduce(
+            (total, abast) =>
+              total + abast.diasRodadosAbastecido / AbastecimentosCar.length,
+            0
+          );
+
+          const KmDiario = DiferençaResumo / SomaDia;
+          const GasolinaDia = DiferençaResumo / TotalAbastecidoResumo;
+
           const mantTransorte = manutencao.filter(
             (manut) => manut.idTransport === trans.id
           );
@@ -498,7 +523,7 @@ export const MtrTransporte = () => {
                 </div>
               </div>
 
-              <div className="flex flex-col ">
+              <div className="flex flex-col gap-3">
                 {transporteState[trans.id] ? (
                   <div className="bg-gray-100 h-full rounded-[0.6em] p-2 px-3 flex flex-col gap-2">
                     <div className="flex justify-between">
@@ -521,11 +546,20 @@ export const MtrTransporte = () => {
                     >
                       <div>
                         <Topico>Kilometragem:</Topico>
-                        <Input
+                        <InputDinheiro
                           type="text"
-                          value={data.kmRodadoAbastecido}
-                          name="kmRodadoAbastecido"
-                          onChange={valorInput}
+                          placeholder="1.000Km"
+                          value={data.kmRodadoAbastecido || ""}
+                          onValueChange={(e) => {
+                            setData({
+                              ...data,
+                              kmRodadoAbastecido: e.floatValue,
+                            });
+                          }}
+                          thousandSeparator="."
+                          decimalScale={0}
+                          fixedDecimalScale
+                          decimalSeparator=","
                         />
                       </div>
 
@@ -533,7 +567,7 @@ export const MtrTransporte = () => {
                         <Topico>Vlr Gasolina:</Topico>
                         <InputDinheiro
                           type="text"
-                          placeholder="1000.00"
+                          placeholder="0,00"
                           value={data.vlrGasolina || ""}
                           onValueChange={(e) => {
                             setData({
@@ -549,10 +583,29 @@ export const MtrTransporte = () => {
                       </div>
                       <div>
                         <Topico>Qnt.Combustível:</Topico>
-                        <Input
+                        <InputDinheiro
                           type="text"
-                          value={data.totalAbastecido}
-                          name="totalAbastecido"
+                          placeholder="00,000"
+                          value={data.totalAbastecido || ""}
+                          onValueChange={(e) => {
+                            setData({
+                              ...data,
+                              totalAbastecido: e.floatValue,
+                            });
+                          }}
+                          thousandSeparator="."
+                          decimalScale={3}
+                          fixedDecimalScale
+                          decimalSeparator=","
+                        />
+                      </div>
+                      <div>
+                        <Topico>Dias Rodados:</Topico>
+                        <Input
+                          type="number"
+                          value={data.diasRodadosAbastecido}
+                          name="diasRodadosAbastecido"
+                          placeholder="00"
                           onChange={valorInput}
                         />
                       </div>
@@ -571,14 +624,14 @@ export const MtrTransporte = () => {
                   <div className="bg-orange-300 h-auto rounded-[0.6em] p-2 px-3 flex flex-col gap-2 duration-500">
                     <div className="flex gap-x-10 flex-wrap">
                       <Titulo className="flex-initial w-full xl:w-auto">
-                        Estimativa Mensal:
+                        Resumo Mensal:
                       </Titulo>
 
                       <div className="flex-1 p-1 rounded-[0.6em] shadow-inner flex justify-around items-center  duration-500 bg-slate-100">
                         <div className="flex flex-col">
-                          <Topico>Valor Gasolina:</Topico>
+                          <Topico>Total Gasto:</Topico>
                           <Descricao className="flex justify-center">
-                            {Number(valorGasolina).toLocaleString("pt-BR", {
+                            {Number(TotalResumo).toLocaleString("pt-BR", {
                               style: "currency",
                               currency: "BRL",
                             })}
@@ -588,14 +641,21 @@ export const MtrTransporte = () => {
                         <div className="flex flex-col ">
                           <Topico>Dias Rodado:</Topico>
                           <Descricao className="flex justify-center">
-                            {diasRodado}
+                            {SomaDia}
+                          </Descricao>
+                        </div>
+
+                        <div className="flex flex-col ">
+                          <Topico>Media Abastecer:</Topico>
+                          <Descricao className="flex justify-center">
+                            {MediaAbastecimento.toFixed(0)}
                           </Descricao>
                         </div>
 
                         <div className="flex flex-col ">
                           <Topico>Km/Dia:</Topico>
                           <Descricao className="flex justify-center">
-                            {Number(Kmdia).toLocaleString("pt-BR")}Km
+                            {Number(KmDiario).toLocaleString("pt-BR")}Km
                           </Descricao>
                         </div>
                       </div>
@@ -605,15 +665,17 @@ export const MtrTransporte = () => {
                       <div className="flex gap-2">
                         <Topico>Km/Mes:</Topico>
                         <Descricao>
-                          {Number(kmMensal).toFixed(2).toLocaleString("pt-BR")}
+                          {Number(DiferençaResumo)
+                            .toFixed(2)
+                            .toLocaleString("pt-BR")}
                           Km
                         </Descricao>
                       </div>
 
                       <div className="flex gap-2">
-                        <Topico>Gasolina/Dia:</Topico>
+                        <Topico>Km/L:</Topico>
                         <Descricao>
-                          {Number(consumoGasolina)
+                          {Number(GasolinaDia)
                             .toFixed(2)
                             .toLocaleString("pt-BR")}
                           L
@@ -623,7 +685,7 @@ export const MtrTransporte = () => {
                       <div className="flex gap-2">
                         <Topico>Gasolina/Mes:</Topico>
                         <Descricao>
-                          {Number(totalAbastecido)
+                          {Number(TotalAbastecidoResumo)
                             .toFixed(2)
                             .toLocaleString("pt-BR")}
                           L
@@ -633,7 +695,7 @@ export const MtrTransporte = () => {
                       <div className="flex gap-2">
                         <Topico>Abastecimento:</Topico>
                         <Descricao>
-                          {quantidadeAbastecida
+                          {AbastecimentosCar.length
                             .toFixed(0)
                             .toLocaleString("pt-BR")}{" "}
                           Vezes
@@ -641,9 +703,9 @@ export const MtrTransporte = () => {
                       </div>
 
                       <div className="flex gap-2">
-                        <Topico>Valor:</Topico>
+                        <Topico>Media Gasolina:</Topico>
                         <Descricao>
-                          {Number(valorGastoMensal).toLocaleString("pt-BR", {
+                          {Number(MediaGasolinaResumo).toLocaleString("pt-BR", {
                             style: "currency",
                             currency: "BRL",
                           })}
@@ -653,10 +715,11 @@ export const MtrTransporte = () => {
                   </div>
                 )}
 
-                <div className="h-[6vh] lg:h-[3vh] relative z-20">
+                <div className=" bg-orange-300 h-full rounded-[0.6em] p-2 px-3 flex flex-col gap-2 relative">
                   <p
-                    className={`absolute top-1 right-0 p-1 rounded-full ${transporteState[trans.id] ? "bg-red-500" : "bg-slate-500"
-                      }`}
+                    className={`absolute -top-2 -right-1 p-1 rounded-full ${
+                      transporteState[trans.id] ? "bg-red-500" : "bg-slate-500"
+                    }`}
                     onClick={() => ButtomPrimario(trans.id)}
                   >
                     {transporteState[trans.id] ? (
@@ -665,9 +728,6 @@ export const MtrTransporte = () => {
                       <HiOutlinePlusSm className="duration-300" />
                     )}
                   </p>
-                </div>
-
-                <div className=" bg-orange-300 h-full rounded-[0.6em] p-2 px-3 flex flex-col gap-2">
                   <div className="flex justify-between flex-wrap">
                     <Titulo className="flex-initial w-auto">
                       Abastecimentos:
@@ -724,42 +784,16 @@ export const MtrTransporte = () => {
                     {DataCar.length > 0 ? (
                       <CarrocelDash>
                         {AbastecimentosCar.map((abst) => {
-                          const DataAbast = new Date(abst.dataCadastro);
                           const KmPorLitro =
                             Number(abst.kmDiferença) /
                             Number(abst.totalAbastecido);
 
-                          const AbastecimentoPassado = abastecimento
-                            .filter((abast) => {
-                              const isCurrentTransport =
-                                abast.idTransporte === abst.idTransporte;
-                              const abastDate = new Date(abast.dataCadastro);
-                              const isBeforeOrEqualToday =
-                                abastDate < DataAbast;
+                          const ValorGasto =
+                            abst.vlrGasolina * abst.totalAbastecido;
 
-                              return isCurrentTransport && isBeforeOrEqualToday;
-                            })
-                            .sort(
-                              (a, b) =>
-                                new Date(b.dataCadastro) -
-                                new Date(a.dataCadastro)
-                            );
+                          const KmAnterior =
+                            abst.kmRodadoAbastecido - abst.kmDiferença;
 
-                          const DataAbastPassado = new Date(
-                            AbastecimentoPassado[0]?.dataCadastro || 0
-                          );
-
-                          const diferencaEmMilissegundos =
-                            AbastecimentoPassado.length === 0
-                              ? 0
-                              : DataAbast - DataAbastPassado;
-
-                          const diferencaEmDias = Math.floor(
-                            diferencaEmMilissegundos / (1000 * 60 * 60 * 24)
-                          );
-
-                          const KmPorPorDias =
-                            abst.kmDiferença / diferencaEmDias;
                           return (
                             <div className="w-full  flex justify-around pt-3">
                               <div>
@@ -774,25 +808,12 @@ export const MtrTransporte = () => {
                                 </div>
 
                                 <div className="flex items-center gap-2">
-                                  <Topico>Km/L:</Topico>
+                                  <Topico>Km Anterior:</Topico>
                                   <Descricao>
-                                    {Number(KmPorLitro)
-                                      .toFixed(2)
-                                      .toLocaleString("pt-BR")}
+                                    {Number(KmAnterior).toLocaleString("pt-BR")}
                                     Km
                                   </Descricao>
                                 </div>
-
-                                <div className="flex items-center gap-2">
-                                  <Topico>Km/Dia:</Topico>
-                                  <Descricao>
-                                    {Number(KmPorPorDias)
-                                      .toFixed(2)
-                                      .toLocaleString("pt-BR")}
-                                    Km
-                                  </Descricao>
-                                </div>
-
                                 <div className="flex items-center gap-2">
                                   <Topico>Diferença:</Topico>
                                   <Descricao>
@@ -803,15 +824,23 @@ export const MtrTransporte = () => {
                                     Km
                                   </Descricao>
                                 </div>
+
+                                <div className="flex items-center gap-2">
+                                  <Topico>Km/L:</Topico>
+                                  <Descricao>
+                                    {Number(KmPorLitro)
+                                      .toFixed(2)
+                                      .toLocaleString("pt-BR")}
+                                    Km
+                                  </Descricao>
+                                </div>
                               </div>
 
                               <div>
                                 <div className="flex items-center gap-2">
                                   <Topico>Dias:</Topico>
                                   <Descricao>
-                                    {diferencaEmDias === Infinity
-                                      ? 0
-                                      : diferencaEmDias}
+                                    {abst.diasRodadosAbastecido}
                                   </Descricao>
                                 </div>
 
@@ -821,9 +850,9 @@ export const MtrTransporte = () => {
                                 </div>
 
                                 <div className="flex items-center gap-2">
-                                  <Topico>Valor Gasolina:</Topico>
+                                  <Topico>Valor Gasto:</Topico>
                                   <Descricao>
-                                    {Number(abst.vlrGasolina).toLocaleString(
+                                    {Number(ValorGasto).toLocaleString(
                                       "pt-BR",
                                       {
                                         style: "currency",
@@ -887,8 +916,9 @@ export const MtrTransporte = () => {
                       )}
 
                       <button
-                        className={`bg-orange-500 p-2 rounded-[0.6em] font-semibold  hover:scale-95 hover:bg-orange-400 ${state.addManutencao && "bg-red-500 hover:bg-red-400"
-                          } `}
+                        className={`bg-orange-500 p-2 rounded-[0.6em] font-semibold  hover:scale-95 hover:bg-orange-400 ${
+                          state.addManutencao && "bg-red-500 hover:bg-red-400"
+                        } `}
                         onClick={() => Buttom("addManutencao")}
                       >
                         {state.addManutencao ? (
@@ -977,8 +1007,9 @@ export const MtrTransporte = () => {
               ) : null}
 
               <div
-                className={`col-span-2 flex justify-center items-center text-lg ${manutencaoState[trans.id] ? "rotate-180" : " hover:mt-2"
-                  } duration-500`}
+                className={`col-span-2 flex justify-center items-center text-lg ${
+                  manutencaoState[trans.id] ? "rotate-180" : " hover:mt-2"
+                } duration-500`}
                 onClick={() => ButtomManutencao(trans.id)}
               >
                 <BsChevronCompactDown />

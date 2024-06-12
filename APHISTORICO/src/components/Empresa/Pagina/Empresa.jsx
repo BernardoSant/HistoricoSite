@@ -73,6 +73,9 @@ const Div = styled.div`
     border-radius: 1em;
   }
 `;
+const Div2 = styled(Div)`
+  overflow: auto;
+`;
 
 const Botao = styled.button`
   padding: 6px;
@@ -382,8 +385,8 @@ export const Empresa = () => {
     <>
       <Header>
         <Nav>
-          <Div className="overflow-auto max-w-[20em] min-w-[13em]">
-            <nav className="flex flex-col justify-center ">
+          <Div2 className="overflow-auto max-w-[20em] min-w-[13em] max-h-[100vh]">
+            <nav className="flex flex-col justify-center">
               <div className="relative w-full text-center bg-orange-600 rounded-full py-1 font-bold text-[1.1vw] ">
                 <p className="absolute left-0 top-0 ml-4 h-full flex justify-center items-center">
                   <MdOutlineHomeWork />
@@ -553,7 +556,7 @@ export const Empresa = () => {
                 }}
               ></Button>
             </nav>
-          </Div>
+          </Div2>
         </Nav>
         <Div className="w-full relative rounded-[1em] flex justify-center items-center">
           {state.addTransporte && <AddTransporte></AddTransporte>}

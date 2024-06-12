@@ -17,7 +17,7 @@ module.exports = (sequelize, DataTypes) => {
     idTransporte: DataTypes.INTEGER,
     vlrGasolina: DataTypes.FLOAT,
     totalAbastecido: DataTypes.FLOAT,
-    totalValor: DataTypes.FLOAT,
+    diasRodadosAbastecido: DataTypes.INTEGER,
     kmRodadoAbastecido: DataTypes.FLOAT,
     kmDiferença: DataTypes.FLOAT,
     dataCadastro: DataTypes.DATEONLY

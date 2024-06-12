@@ -178,7 +178,7 @@ const ArgumentosDados = styled.div`
 `;
 
 export const Fort = () => {
-  const { funcionario, nota, pedido, impostos } = useGlobalContext();
+  const { funcionario, nota, pedido, impostos, contrato } = useGlobalContext();
 
   const FuncAdmitido = funcionario.filter(
     (func) => func.statuFucionario === "Admitido"
@@ -192,6 +192,8 @@ export const Fort = () => {
   const PddFinalizada = pedido.filter(
     (pdd) => pdd.situacaoPDD === "Finalizada"
   );
+
+  const CttAtivo = contrato.filter((ctt) => ctt.situacaoCT === "Ativo");
 
   const FuncionariosAdmitidos = funcionario.filter(
     (funcionario) => funcionario.statuFucionario === "Admitido"
@@ -229,6 +231,42 @@ export const Fort = () => {
   }, 0);
 
   const valorSalario = valorTotalSalario - adiantamentoSalario;
+
+  function ValorTotal(parametro1, parametro2) {
+    const valorTotal = parametro1.reduce(
+      (total, func) => total + func[parametro2],
+      0
+    );
+    return valorTotal;
+  }
+
+  const RecebidoTotalNota =
+    ValorTotal(NtRecebida, "valorRecebidoNF") +
+    ValorTotal(NtAntecipada, "valorRecebidoNF");
+
+  const ImpostosPagos =
+    ValorTotal(NtRecebida, "valorNF") -
+    ValorTotal(NtRecebida, "valorRecebidoNF") +
+    (ValorTotal(NtAntecipada, "valorNF") -
+      ValorTotal(NtAntecipada, "valorRecebidoNF"));
+
+  const ImpostosPagosAntecipar =
+    ValorTotal(NtAntecipada, "valorNF") -
+    ValorTotal(NtAntecipada, "valorRecebidoNF");
+
+  const RecebidoTotalPedido =
+    ValorTotal(PddAndamento, "valorRecebidoPDD") +
+    ValorTotal(PddFinalizada, "valorRecebidoPDD");
+
+  const ReceberTotalPedido =
+    ValorTotal(PddCriado, "valorPDD") +
+    (ValorTotal(PddAndamento, "valorPDD") -
+      ValorTotal(PddAndamento, "valorRecebidoPDD"));
+
+  const RecebidoContrato = ValorTotal(CttAtivo, "ValorRecebidoCT");
+
+  console.log(ValorTotal(PddCriado, "valorPDD"), (ValorTotal(PddAndamento, "valorPDD") -
+      ValorTotal(PddAndamento, "valorRecebidoPDD")))
 
   return (
     <Section>
@@ -326,12 +364,57 @@ export const Fort = () => {
 
                 <Dados>
                   <SeparacaoDados>
-                    <NumberDados>19</NumberDados>
-                    <DescricaoDados>Quantidade</DescricaoDados>
+                    <NumberDados>
+                      R$
+                      {ValorTotal(NtAnalise, "valorReceberNF").toLocaleString({
+                        style: "currency",
+                        currency: "BRL",
+                      })}
+                    </NumberDados>
+                    <DescricaoDados>Receber</DescricaoDados>
                   </SeparacaoDados>
+
                   <SeparacaoDados>
-                    <NumberDados>19</NumberDados>
-                    <DescricaoDados>Salario</DescricaoDados>
+                    <NumberDados>Ganhos</NumberDados>
+                  </SeparacaoDados>
+
+                  <SeparacaoDados>
+                    <NumberDados>
+                      R$
+                      {RecebidoTotalNota.toLocaleString({
+                        style: "currency",
+                        currency: "BRL",
+                      })}
+                    </NumberDados>
+                    <DescricaoDados>Recebido</DescricaoDados>
+                  </SeparacaoDados>
+                </Dados>
+
+                <Dados>
+                  <SeparacaoDados>
+                    <NumberDados>
+                      R$
+                      {ImpostosPagosAntecipar.toLocaleString({
+                        style: "currency",
+                        currency: "BRL",
+                      })}
+                    </NumberDados>
+                    <DescricaoDados>Antecipar</DescricaoDados>
+                  </SeparacaoDados>
+
+                  <SeparacaoDados>
+                    <NumberDados>Impostos</NumberDados>
+                  </SeparacaoDados>
+
+                  <SeparacaoDados>
+                    <NumberDados>
+                      R$
+                      {ImpostosPagos.toLocaleString({
+                        style: "currency",
+                        currency: "BRL",
+                      })}
+                    </NumberDados>
+                    <DescricaoDados>Imposto</DescricaoDados>
                   </SeparacaoDados>
                 </Dados>
               </CarrocelDash>
@@ -340,7 +423,7 @@ export const Fort = () => {
 
           <ArticleBlock>
             <HeaderDados>
-              <TituloDados> Pedidos</TituloDados>
+              <TituloDados>Pedidos</TituloDados>
             </HeaderDados>
             <ArticleDados>
               <CarrocelDash>
@@ -361,12 +444,81 @@ export const Fort = () => {
 
                 <Dados>
                   <SeparacaoDados>
-                    <NumberDados>19</NumberDados>
+                    <NumberDados>
+                      R$
+                      {ReceberTotalPedido.toLocaleString({
+                        style: "currency",
+                        currency: "BRL",
+                      })}
+                    </NumberDados>
+                    <DescricaoDados>Receber</DescricaoDados>
+                  </SeparacaoDados>
+
+                  <SeparacaoDados>
+                    <NumberDados>Ganhos</NumberDados>
+                  </SeparacaoDados>
+
+                  <SeparacaoDados>
+                    <NumberDados>
+                      R$
+                      {RecebidoTotalPedido.toLocaleString({
+                        style: "currency",
+                        currency: "BRL",
+                      })}
+                    </NumberDados>
+                    <DescricaoDados>Recebido</DescricaoDados>
+                  </SeparacaoDados>
+                </Dados>
+
+                <Dados>
+                  <SeparacaoDados>
+                    <NumberDados>
+                      {CttAtivo.length}
+                    </NumberDados>
                     <DescricaoDados>Quantidade</DescricaoDados>
                   </SeparacaoDados>
+
                   <SeparacaoDados>
-                    <NumberDados>19</NumberDados>
-                    <DescricaoDados>Salario</DescricaoDados>
+                    <NumberDados>Contrato</NumberDados>
+                  </SeparacaoDados>
+
+                  <SeparacaoDados>
+                    <NumberDados>
+                      R$
+                      {RecebidoContrato.toLocaleString({
+                        style: "currency",
+                        currency: "BRL",
+                      })}
+                    </NumberDados>
+                    <DescricaoDados>Recebido</DescricaoDados>
+                  </SeparacaoDados>
+                </Dados>
+
+                <Dados>
+                  <SeparacaoDados>
+                    <NumberDados>
+                      R$
+                      {ImpostosPagosAntecipar.toLocaleString({
+                        style: "currency",
+                        currency: "BRL",
+                      })}
+                    </NumberDados>
+                    <DescricaoDados>Antecipar</DescricaoDados>
+                  </SeparacaoDados>
+
+                  <SeparacaoDados>
+                    <NumberDados>Impostos</NumberDados>
+                  </SeparacaoDados>
+
+                  <SeparacaoDados>
+                    <NumberDados>
+                      R$
+                      {ImpostosPagos.toLocaleString({
+                        style: "currency",
+                        currency: "BRL",
+                      })}
+                    </NumberDados>
+                    <DescricaoDados>Imposto</DescricaoDados>
                   </SeparacaoDados>
                 </Dados>
               </CarrocelDash>
