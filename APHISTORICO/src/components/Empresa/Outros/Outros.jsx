@@ -192,6 +192,10 @@ const ArgumentosDados = styled.div`
   padding-top: 5px;
   padding-bottom: 5px;
   background-color: #e5e7eb;
+  --tw-shadow: inset 0 2px 4px 0 rgb(0 0 0 / 0.05);
+  --tw-shadow-colored: inset 0 2px 4px 0 var(--tw-shadow-color);
+  box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000),
+    var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);
   cursor: pointer;
 `;
 
