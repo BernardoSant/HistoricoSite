@@ -385,10 +385,10 @@ export const Empresa = () => {
     <>
       <Header>
         <Nav>
-          <Div2 className="overflow-auto max-w-[20em] min-w-[13em] max-h-[100vh]">
-            <nav className="flex flex-col justify-center">
-              <div className="relative w-full text-center bg-orange-600 rounded-full py-1 font-bold text-[1.1vw] ">
-                <p className="absolute left-0 top-0 ml-4 h-full flex justify-center items-center">
+          <Div2 className="overflow-auto max-w-[20em] min-w-[13em] max-h-[90vh] 2xl:max-h-[100%]">
+            <nav className="flex flex-col justify-center relative">
+              <div className="w-full text-center bg-orange-600 rounded-full py-1 font-bold text-[1.1vw] sticky top-0">
+                <p className="absolute  left-0 top-0 ml-4 h-full flex justify-center items-center">
                   <MdOutlineHomeWork />
                 </p>
                 Empresa

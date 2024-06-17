@@ -108,7 +108,7 @@ const ArticleBlock = styled.div`
   display: flex;
   flex-direction: column;
   border-radius: 1em;
-  background-color: #dfdfdf79;
+  background-color: #dfdfdf32;
 `;
 
 const HeaderDados = styled.div`
@@ -191,10 +191,7 @@ const ArgumentosDados = styled.div`
   padding-left: 10px;
   padding-top: 5px;
   padding-bottom: 5px;
-  --tw-shadow: inset 0 2px 4px 0 rgb(0 0 0 / 0.05);
-  --tw-shadow-colored: inset 0 2px 4px 0 var(--tw-shadow-color);
-  box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000),
-    var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);
+  background-color: #e5e7eb;
   cursor: pointer;
 `;
 
