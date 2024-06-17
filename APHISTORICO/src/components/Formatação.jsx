@@ -3,6 +3,10 @@ import { useGlobalContext } from "../global/Global";
 import { NumericFormat } from "react-number-format";
 import { DashGanhos } from "./Graficos/DashGanhos";
 import { CarrocelDash } from "./Carrossel/CarrocelDash";
+import { DashGastos } from "./Graficos/DashGastos";
+import { DashGastosMensais } from "./Graficos/DashGastosMensal";
+import { DashAbastecimentos } from "./Graficos/DashAbastecimentos";
+import { DashNotasPedidos } from "./Graficos/DashNotasPedidos";
 
 const Header = styled.header`
   display: flex;
@@ -265,31 +269,68 @@ export const Fort = () => {
 
   const RecebidoContrato = ValorTotal(CttAtivo, "ValorRecebidoCT");
 
-  console.log(ValorTotal(PddCriado, "valorPDD"), (ValorTotal(PddAndamento, "valorPDD") -
-      ValorTotal(PddAndamento, "valorRecebidoPDD")))
-
   return (
     <Section>
       <Header>Dashboard</Header>
       <Article>
         <SectionBlock>
-          <ArticleBlock>
-            <HeaderDados>
-              <TituloDados>Ganhos</TituloDados>{" "}
-            </HeaderDados>
+          <ArticleBlock className="drop-shadow-lg overflow-hidden">
+            <CarrocelDash>
+              <div className="h-[85%]">
+                <HeaderDados>
+                  <TituloDados>Ganhos</TituloDados>
+                </HeaderDados>
 
-            <ArticleDados>
-              <DashGanhos></DashGanhos>
-            </ArticleDados>
+                <ArticleDados>
+                  <DashGanhos></DashGanhos>
+                </ArticleDados>
+              </div>
+
+              <div className="h-[85%]">
+                <HeaderDados>
+                  <TituloDados>Análise de Entrada</TituloDados>{" "}
+                </HeaderDados>
+
+                <ArticleDados>
+                  <DashNotasPedidos></DashNotasPedidos>
+                </ArticleDados>
+              </div>
+
+            </CarrocelDash>
           </ArticleBlock>
 
-          <ArticleBlock>
-            <HeaderDados>
-              <TituloDados>Gastos</TituloDados>
-            </HeaderDados>
-            <ArticleDados>
-              <Texto>texto</Texto>
-            </ArticleDados>
+          <ArticleBlock className="drop-shadow-lg overflow-hidden">
+            <CarrocelDash>
+              <div className="h-[85%]">
+                <HeaderDados>
+                  <TituloDados>Gastos</TituloDados>{" "}
+                </HeaderDados>
+
+                <ArticleDados>
+                  <DashGastos></DashGastos>
+                </ArticleDados>
+              </div>
+
+              <div className="h-[85%]">
+                <HeaderDados>
+                  <TituloDados>Gastos</TituloDados>{" "}
+                </HeaderDados>
+
+                <ArticleDados>
+                  <DashGastosMensais></DashGastosMensais>
+                </ArticleDados>
+              </div>
+
+              <div className="h-[82%]">
+                <HeaderDados>
+                  <TituloDados>Abastecimentos Gastos</TituloDados>{" "}
+                </HeaderDados>
+
+                <ArticleDados>
+                  <DashAbastecimentos></DashAbastecimentos>
+                </ArticleDados>
+              </div>
+            </CarrocelDash>
           </ArticleBlock>
         </SectionBlock>
 
@@ -472,9 +513,7 @@ export const Fort = () => {
 
                 <Dados>
                   <SeparacaoDados>
-                    <NumberDados>
-                      {CttAtivo.length}
-                    </NumberDados>
+                    <NumberDados>{CttAtivo.length}</NumberDados>
                     <DescricaoDados>Quantidade</DescricaoDados>
                   </SeparacaoDados>
 
@@ -525,40 +564,7 @@ export const Fort = () => {
             </ArticleDados>
           </ArticleBlock>
 
-          <ArticleBlock>
-            <HeaderDados>
-              <TituloDados> Trasnporte</TituloDados>
-            </HeaderDados>
-            <ArticleDados>
-              <CarrocelDash>
-                <Dados>
-                  <SeparacaoDados>
-                    <NumberDados>{FuncAdmitido.length}</NumberDados>
-                    <DescricaoDados>Quantidade</DescricaoDados>
-                  </SeparacaoDados>
-                  <SeparacaoDados>
-                    <NumberDados>R$200,000</NumberDados>
-                    <DescricaoDados>Adantamento</DescricaoDados>
-                  </SeparacaoDados>
-                  <SeparacaoDados>
-                    <NumberDados>19</NumberDados>
-                    <DescricaoDados>Salario</DescricaoDados>
-                  </SeparacaoDados>
-                </Dados>
-
-                <Dados>
-                  <SeparacaoDados>
-                    <NumberDados>19</NumberDados>
-                    <DescricaoDados>Quantidade</DescricaoDados>
-                  </SeparacaoDados>
-                  <SeparacaoDados>
-                    <NumberDados>19</NumberDados>
-                    <DescricaoDados>Salario</DescricaoDados>
-                  </SeparacaoDados>
-                </Dados>
-              </CarrocelDash>
-            </ArticleDados>
-          </ArticleBlock>
+       
         </SectionBlock>
       </Article>
     </Section>

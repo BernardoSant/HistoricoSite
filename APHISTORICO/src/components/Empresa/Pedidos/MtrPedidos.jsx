@@ -186,20 +186,8 @@ export const MtrPedidos = ({ empresaId }) => {
     setAno(anoSelecionado);
   };
 
-  const dataAtual = new Date();
-  const anoAtual = dataAtual.getFullYear();
-  const [ano, setAno] = useState(anoAtual);
-
-  useEffect(() => {
-    const intervalId = setInterval(() => {
-      const dataAtual = new Date();
-      const anoAtual = dataAtual.getFullYear();
-
-      setAno(anoAtual);
-    }, 600000);
-
-    return () => clearInterval(intervalId);
-  }, []);
+  const [ano, setAno] = useState(new Date().getFullYear());
+  const uniqueYears = new Set();
 
   const Empresa = empresa.find((emp) => emp.id === empresaId);
   const siglaEmpresa = Empresa ? Empresa.siglaEmpresa : "N/A";
@@ -213,6 +201,9 @@ export const MtrPedidos = ({ empresaId }) => {
     const isSameYear = dataPedido.getFullYear() === parseInt(ano);
     return isSameEmpresa && isSameYear;
   });
+
+  const PedidosFiltro = pedido.filter((pdd) => pdd.empresaPDD === empresaId);
+  PedidosFiltro.sort((a, b) => new Date(b.dataPDD) - new Date(a.dataPDD));
 
   PedidoEmpresa.sort((a, b) => new Date(b.dataPDD) - new Date(a.dataPDD));
 
@@ -325,11 +316,19 @@ export const MtrPedidos = ({ empresaId }) => {
                 value={ano}
                 onChange={(event) => setAno(event.target.value)}
               >
-                <option value="2022">2022</option>
-                <option value="2023">2023</option>
-                <option value="2024">2024</option>
-                <option value="2025">2025</option>
-                <option value="2026">2026</option>
+                {PedidosFiltro.map((nt) => {
+                  const Data = new Date(nt.dataPDD);
+                  const Ano = Data.getFullYear();
+
+                  if (!uniqueYears.has(Ano)) {
+                    uniqueYears.add(Ano);
+                    return (
+                      <option key={Ano} value={Ano}>
+                        {Ano}
+                      </option>
+                    );
+                  }
+                }).filter((option) => option !== null)}
               </select>
             </form>
           </Header>

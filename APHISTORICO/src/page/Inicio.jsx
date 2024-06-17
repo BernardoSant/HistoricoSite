@@ -21,8 +21,8 @@ const Header = styled.header`
   padding-top: 2em;
   padding-left: 1em;
   padding-right: 1em;
-  padding-bottom: 2em; 
-   overflow: hidden;
+  padding-bottom: 2em;
+  overflow: hidden;
 `;
 
 const Div = styled.div`
@@ -73,6 +73,7 @@ export const Inicio = () => {
       <Header>
         <Nav>
           <Div className="bg-orange-400">
+            {/*
             <Div2
               className={`${
                 state.Inicio &&
@@ -85,7 +86,7 @@ export const Inicio = () => {
             >
               <BsList />
             </Div2>
-
+*/}
             <Div2
               className={`${
                 state.Empresa &&

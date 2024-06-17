@@ -354,7 +354,7 @@ export const Empresa = () => {
 
     const ultimoMesExecutado = localStorage.getItem("ultimoMesExecutado");
     const mesExecutado = Number(ultimoMesExecutado);
-    if (diaAtual === 27 && mesAtual !== mesExecutado) {
+    if (diaAtual === 1 && mesAtual !== mesExecutado) {
       axios.post(
         ip + "/salario",
         {

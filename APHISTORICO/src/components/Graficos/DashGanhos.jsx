@@ -57,7 +57,7 @@ export const DashGanhos = () => {
   const options = {
     title: "Performance da Empresa",
     curveType: "function",
-    legend: { position: "bottom" },
+    legend: { position: "", maxLines: 2 },
     backgroundColor: "transparent",
   };
 

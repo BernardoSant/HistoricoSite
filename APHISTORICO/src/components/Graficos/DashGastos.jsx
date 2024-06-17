@@ -1,76 +1,58 @@
-import styled from "styled-components";
-import { useGlobalContext } from "../../global/Global";
-import { NumericFormat } from "react-number-format";
 import { useState, useEffect } from "react";
-import axios from "axios";
 import { Chart } from "react-google-charts";
-import { toast } from "react-toastify";
+import { useGlobalContext } from "../../global/Global";
 
 export const DashGastos = () => {
-    const { empresa, nota } = useGlobalContext();
-    const [chartData, setChartData] = useState([]);
+  const { ferias, conta, abastecimento, manutencao, salario } = useGlobalContext();
+  const [chartData, setChartData] = useState([]);
+
+  useEffect(() => {
+    if (ferias && conta && abastecimento && manutencao && salario) {
+      const data = prepareChartData(ferias, conta, abastecimento, manutencao, salario);
+      setChartData(data);
+    }
+  }, [ferias, conta, abastecimento, manutencao, salario]);
+
+  const prepareChartData = (ferias, conta, abastecimento, manutencao, salario) => {
+    const mesesAnos = Array.from(
+      new Set([
+        ...ferias.map((item) => item.dataInicioFerias.slice(0, 7)),
+        ...conta.map((item) => item.dataInConta.slice(0, 7)),
+        ...abastecimento.map((item) => item.dataCadastro.slice(0, 7)),
+        ...manutencao.map((item) => item.dataManutencao.slice(0, 7)),
+        ...salario.map((item) => item.dataSalario.slice(0, 7)),
+      ])
+    ).sort();
   
-    useEffect(() => {
-      if (empresa && nota) {
-        const data = prepareChartData(empresa, nota);
-        setChartData(data);
-      }
-    }, [empresa, nota]);
+    const valoresAgrupados = mesesAnos.map((mesAno) => {
+      const totalFerias = ferias.filter((f) => f.dataInicioFerias.slice(0, 7) === mesAno).reduce((acc, curr) => acc + curr.valorFerias, 0);
+      const totalConta = conta.filter((c) => c.dataInConta.slice(0, 7) === mesAno).reduce((acc, curr) => acc + curr.valorConta, 0);
+      const totalAbastecimento = abastecimento.filter((a) => a.dataCadastro.slice(0, 7) === mesAno).reduce((acc, curr) => acc + (curr.vlrGasolina * curr.totalAbastecido), 0);
+      const totalManutencao = manutencao.filter((m) => m.dataManutencao.slice(0, 7) === mesAno).reduce((acc, curr) => acc + curr.valorManutencao, 0);
+      const totalSalario = salario.filter((s) => s.dataSalario.slice(0, 7) === mesAno).reduce((acc, curr) => acc + curr.totalSalarioMes, 0);
   
-    const prepareChartData = (empresa, nota) => {
-      const empresasSiglas = empresa.map((emp) => emp.siglaEmpresa);
-      const mesesAnos = Array.from(new Set(nota.map((n) => n.dataNF.slice(0, 7)))).sort();
+      return [mesAno, totalFerias, totalConta, totalAbastecimento, totalManutencao, totalSalario];
+    });
   
-      const valoresAgrupados = {};
-  
-      nota.forEach((n) => {
-        const { idEmpresa, valorRecebidoNF, dataNF } = n;
-        const empresaEncontrada = empresa.find((emp) => emp.id === idEmpresa);
-  
-        if (empresaEncontrada) {
-          const siglaEmpresa = empresaEncontrada.siglaEmpresa;
-          const mesAno = dataNF.slice(0, 7);
-  
-          if (!valoresAgrupados[mesAno]) {
-            valoresAgrupados[mesAno] = {};
-          }
-  
-          if (!valoresAgrupados[mesAno][siglaEmpresa]) {
-            valoresAgrupados[mesAno][siglaEmpresa] = 0;
-          }
-  
-          valoresAgrupados[mesAno][siglaEmpresa] += valorRecebidoNF;
-        }
-      });
-  
-      const data = [["", ...empresasSiglas]];
-  
-      mesesAnos.forEach((mesAno) => {
-        const row = [mesAno];
-        empresasSiglas.forEach((siglaEmpresa) => {
-          row.push(valoresAgrupados[mesAno][siglaEmpresa] || 0);
-        });
-        data.push(row);
-      });
-  
-      return data;
-    };
-  
-    const options = {
-      title: "Performance da Empresa",
-      curveType: "function",
-      legend: { position: "bottom" },
-      backgroundColor: "transparent",
-    };
-  
-    return (
-      <Chart
-        chartType="Line"
-        width={"100%"}
-        height={"100%"}
-        data={chartData}
-        options={options}
-      />
-    );
+    return [["", "Férias", "Contas", "Abastecimentos", "Manutenções", "Salários"], ...valoresAgrupados];
   };
   
+
+  const options = {
+    title: "Gastos Mensais da Empresa",
+    curveType: "function",
+    legend: { position: "bottom" },
+    backgroundColor: "transparent",
+    fontSize: "0.8vw",
+  };
+
+  return (
+    <Chart
+      chartType="Line"
+      width={"100%"}
+      height={"100%"}
+      data={chartData}
+      options={options}
+    />
+  );
+};

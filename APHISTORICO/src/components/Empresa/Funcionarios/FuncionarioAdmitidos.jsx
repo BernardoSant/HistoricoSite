@@ -5,11 +5,7 @@ import { useState, useEffect, useRef } from "react";
 import axios from "axios";
 import { toast } from "react-toastify";
 import { AiOutlineRight, AiOutlineLeft } from "react-icons/ai";
-import {
-  TbPencilCog,
-  TbAlignLeft,
-  TbArrowForward,
-} from "react-icons/tb";
+import { TbPencilCog, TbAlignLeft, TbArrowForward } from "react-icons/tb";
 import { LoaderClin } from "../../Loaders/LoaderClin";
 import { NumericFormat } from "react-number-format";
 import { dateFormat } from "../../../functions/dateFormat";
@@ -68,14 +64,12 @@ const H2 = styled(H1)`
 const Input = styled.input`
   width: 100%;
   border: 2px solid #d1d5db;
-  border-radius: 4px;
   max-width: 40em;
   padding-left: 8px;
 `;
 const InputDinheiro = styled(NumericFormat)`
   width: 100%;
   border: 2px solid #d1d5db;
-  border-radius: 4px;
   max-width: 40em;
   padding-left: 8px;
 `;
@@ -314,7 +308,7 @@ export const MostruarioFuncAdmitido = () => {
     let valor = e.target.value;
     let name = e.target.name;
 
-    if (e.target.name === "dataInicioFerias") {
+    if (e.target.name === "dataInicioFerias" && feriasPaga.FeriasPaga === false) {
       const dataInicio = new Date(valor);
       const dataFinalizacao = new Date(dataInicio);
 
@@ -347,7 +341,7 @@ export const MostruarioFuncAdmitido = () => {
         setDataFerias({
           idFuncionario: funcionarioSelecionado.id,
           situacaoFerias: "Ferias Vendida",
-          dataInicioFerias: null,
+          dataInicioFerias: "",
           dataFinalizacaoFerias: null,
           valorFerias: "",
         });
@@ -479,7 +473,6 @@ export const MostruarioFuncAdmitido = () => {
     AddExames: false,
     Alerta: false,
   });
-
   const handleClick = (key) => {
     setState((prevState) => ({
       ...prevState,
@@ -919,25 +912,39 @@ export const MostruarioFuncAdmitido = () => {
                           id="fromFeriasPaga"
                           className=" p-2 px-4 grid grid-cols-5 col-span-5 gap-2"
                         >
-                          <H1 className="col-span-1 flex justify-center items-center">
-                            Valor:
-                          </H1>
-                          <InputDinheiro
-                            className="rounded-[1.5em] text-center col-span-4 shadow-inner px-2"
-                            type="text"
-                            placeholder="1000.00"
-                            value={dataFerias.valorFerias || ""}
-                            onValueChange={(e) => {
-                              setDataFerias({
-                                ...dataFerias,
-                                valorFerias: e.floatValue,
-                              });
-                            }}
-                            thousandSeparator="."
-                            decimalScale={2}
-                            fixedDecimalScale
-                            decimalSeparator=","
-                          />
+                          <div className=" grid grid-cols-5 col-span-5">
+                            <H1 className="col-span-1 flex justify-center items-center">
+                              Valor:
+                            </H1>
+                            <InputDinheiro
+                              className="rounded-[1.5em] text-center col-span-4 shadow-inner px-2"
+                              type="text"
+                              placeholder="1000.00"
+                              value={dataFerias.valorFerias || ""}
+                              onValueChange={(e) => {
+                                setDataFerias({
+                                  ...dataFerias,
+                                  valorFerias: e.floatValue,
+                                });
+                              }}
+                              thousandSeparator="."
+                              decimalScale={2}
+                              fixedDecimalScale
+                              decimalSeparator=","
+                            />
+                          </div>
+                          <div className=" grid grid-cols-5 col-span-5 gap-2">
+                            <H1 className="col-span-1 flex justify-center items-center">
+                              Data:
+                            </H1>
+                            <Input
+                              className="rounded-[1.5em] text-center col-span-4 shadow-inner px-2"
+                              type="date"
+                              value={dataFerias.dataInicioFerias}
+                              name="dataInicioFerias"
+                              onChange={valorInputFerias}
+                            />
+                          </div>
                         </form>
                       </>
                     ) : (

@@ -155,9 +155,6 @@ export const MtrTransporte = () => {
     "Dezembro",
   ];
 
-  const dia = hoje.getDate();
-  const mes = hoje.getMonth() + 1;
-  const ano = hoje.getFullYear();
 
   const { transporte, ip, abastecimento, manutencao } = useGlobalContext();
   const [state, setState] = useState({
@@ -361,12 +358,8 @@ export const MtrTransporte = () => {
       <Header>Transportes</Header>
       <Article>
         {transporte.map((trans) => {
-          const Hoje = new Date();
-          const mesAtual = String(Hoje.getMonth() + 1).padStart(2, "0");
-          const anoAtual = Hoje.getFullYear();
-
-          const [mes, setMes] = useState(mesAtual);
-          const [ano, setAno] = useState(anoAtual);
+          const [mes, setMes] = useState(new Date().getMonth() + 1);
+          const [ano, setAno] = useState(new Date().getFullYear());
 
           const handleDataChange = (event) => {
             setData(event.target.value);
@@ -398,8 +391,6 @@ export const MtrTransporte = () => {
             .sort(
               (a, b) => new Date(b.dataCadastro) - new Date(a.dataCadastro)
             );
-
-            console.log(AbastecimentosCar)
 
           const DiferençaResumo = AbastecimentosCar.reduce(
             (total, abast) => total + abast.kmDiferença,
@@ -648,7 +639,7 @@ export const MtrTransporte = () => {
                         <div className="flex flex-col ">
                           <Topico>Media Abastecer:</Topico>
                           <Descricao className="flex justify-center">
-                            {MediaAbastecimento.toFixed(0)}
+                            {MediaAbastecimento.toFixed(0)} Dias
                           </Descricao>
                         </div>
 

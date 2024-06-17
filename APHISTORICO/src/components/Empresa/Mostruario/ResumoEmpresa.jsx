@@ -60,7 +60,6 @@ const Article = styled.div`
 const SectionBlock = styled.div`
   width: 100%;
   height: 100%;
-
   display: flex;
   flex-direction: column;
   gap: 12px;
@@ -200,10 +199,10 @@ export const ResumoEmpresa = () => {
 
   const dataAtual = new Date();
   const mesAtual = String(dataAtual.getMonth() + 1).padStart(2, "0");
-  const anoAtual = dataAtual.getFullYear();
 
   const [mes, setMes] = useState(mesAtual);
-  const [ano, setAno] = useState(anoAtual);
+  const [ano, setAno] = useState(new Date().getFullYear());
+  const uniqueYears = new Set();
 
   useEffect(() => {
     const intervalId = setInterval(() => {
@@ -332,11 +331,21 @@ export const ResumoEmpresa = () => {
             value={ano}
             onChange={(event) => setAno(event.target.value)}
           >
-            <option value="2022">2022</option>
-            <option value="2023">2023</option>
-            <option value="2024">2024</option>
-            <option value="2025">2025</option>
-            <option value="2026">2026</option>
+            {pedido
+              .map((abst) => {
+                const DateAbast = new Date(abst.dataPDD);
+                const Ano = DateAbast.getFullYear();
+
+                if (!uniqueYears.has(Ano)) {
+                  uniqueYears.add(Ano);
+                  return (
+                    <option key={Ano} value={Ano}>
+                      {Ano}
+                    </option>
+                  );
+                }
+              })
+              .filter((option) => option !== null)}
           </select>
         </form>
       </Header>
@@ -363,7 +372,7 @@ export const ResumoEmpresa = () => {
                 return (
                   <ArgumentosDados
                     key={nota.id}
-                    onClick={() => ButtomSelecao(nota.numeroPedidoNF)} 
+                    onClick={() => ButtomSelecao(nota.numeroPedidoNF)}
                     className={`${
                       selecaoState[nota.numeroPedidoNF]
                         ? "bg-gray-400"
@@ -413,7 +422,7 @@ export const ResumoEmpresa = () => {
                   : "N/A";
                 return (
                   <ArgumentosDados
-                  onClick={() => ButtomSelecao(nota.numeroPedidoNF)}
+                    onClick={() => ButtomSelecao(nota.numeroPedidoNF)}
                     key={nota.id}
                     className={`${
                       selecaoState[nota.numeroPedidoNF]
@@ -537,12 +546,9 @@ export const ResumoEmpresa = () => {
                   <ArgumentosDados
                     key={ctt.id}
                     className={`${
-                      selecaoState[ctt.numeroCT]
-                        ? "bg-gray-400"
-                        : "bg-gray-300"
+                      selecaoState[ctt.numeroCT] ? "bg-gray-400" : "bg-gray-300"
                     }`}
                     onClick={() => ButtomSelecao(ctt.numeroCT)}
-
                   >
                     <Texto className="relative">
                       {ctt.numeroCT}
