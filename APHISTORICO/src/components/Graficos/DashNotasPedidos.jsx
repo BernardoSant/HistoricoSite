@@ -38,7 +38,6 @@ export const DashNotasPedidos = () => {
     legend: { position: "bottom" },
     backgroundColor: "transparent",
     fontSize: "0.4vw",
-    legend: { position: "", maxLines: 2 },
     tooltip: {
         isHtml: true,
         trigger: 'selection',
