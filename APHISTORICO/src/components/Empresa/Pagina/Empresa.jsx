@@ -18,8 +18,7 @@ import { MtrPedidos } from "../Pedidos/MtrPedidos";
 import { useGlobalContext } from "../../../global/Global";
 import { Outros } from "../Outros/Outros";
 import { MdClose } from "react-icons/md";
-import { Fort } from "../../Formatação";
-import { Restaurando } from "../../Restaurando";
+import { DashGeral } from "../Dashboard/DashBoard";
 
 
 const Nav = styled.nav`
@@ -561,7 +560,7 @@ export const Empresa = () => {
         <Div className="w-full relative rounded-[1em] flex justify-center items-center">
           {state.addTransporte && <AddTransporte></AddTransporte>}
 
-          {state.Dashboard &&  <Fort  />}
+          {state.Dashboard &&  <DashGeral  />}
 
           {state.addContrato && <TabelaAddContrato />}
 
