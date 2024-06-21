@@ -10,6 +10,7 @@ import { HiOutlineDocumentDuplicate } from "react-icons/hi";
 import { dateFormat } from "../../../functions/dateFormat";
 import { NumericFormat } from "react-number-format";
 import { CarrocelDash } from "../../Carrossel/CarrocelDash";
+import { Header } from "../../Componentes/Header";
 
 const Div = styled.div`
   height: 100%;
@@ -38,20 +39,6 @@ const Article = styled.article`
   }
 `;
 
-const Header = styled.header`
-  width: 100%;
-  border-radius: 20px;
-  background: #f97316;
-  box-shadow: inset 5px -5px 10px #9f4a0e, inset -5px 5px 10px #ff9c1e;
-  font-weight: 600;
-  font-size: xx-large;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  padding: 5px;
-  padding-left: 1em;
-  padding-right: 1em;
-`;
 
 const Input = styled.input`
   width: 100%;
@@ -447,7 +434,7 @@ export const MtrTransporte = () => {
               key={trans.id}
               className="flex flex-col lg:grid lg:grid-cols-[0.3fr_1fr] gap-3 gap-y-3 shadow-inner bg-gray-200 rounded-[1em] p-3"
             >
-              <div className=" bg-orange-400 rounded-[0.6em] p-2 px-3">
+              <div className=" bg-CorPrimariaBT rounded-[0.6em] p-2 px-3">
                 <Titulo>Caracteristicas</Titulo>
                 <div className="flex flex-col">
                   <div className="flex gap-x-2 flex-wrap">
@@ -612,7 +599,7 @@ export const MtrTransporte = () => {
                     </form>
                   </div>
                 ) : (
-                  <div className="bg-orange-300 h-auto rounded-[0.6em] p-2 px-3 flex flex-col gap-2 duration-500">
+                  <div className="bg-CorSecundariaTBLA h-auto rounded-[0.6em] p-2 px-3 flex flex-col gap-2 duration-500">
                     <div className="flex gap-x-10 flex-wrap">
                       <Titulo className="flex-initial w-full xl:w-auto">
                         Resumo Mensal:
@@ -706,7 +693,7 @@ export const MtrTransporte = () => {
                   </div>
                 )}
 
-                <div className=" bg-orange-300 h-full rounded-[0.6em] p-2 px-3 flex flex-col gap-2 relative">
+                <div className=" bg-CorSecundariaTBLA h-full rounded-[0.6em] p-2 px-3 flex flex-col gap-2 relative">
                   <p
                     className={`absolute -top-2 -right-1 p-1 rounded-full ${
                       transporteState[trans.id] ? "bg-red-500" : "bg-slate-500"
@@ -887,7 +874,7 @@ export const MtrTransporte = () => {
                         </button>
                       ) : (
                         <>
-                          <h1 className="P-2 bg-orange-600 flex justify-center items-center px-4 rounded-[0.6em] font-semibold ">
+                          <h1 className="P-2 bg-CorEscurecidaBT flex justify-center items-center px-4 rounded-[0.6em] font-semibold ">
                             {valorManutencaoTotal === 0 ? (
                               "Sem Manutenções"
                             ) : (
@@ -907,7 +894,7 @@ export const MtrTransporte = () => {
                       )}
 
                       <button
-                        className={`bg-orange-500 p-2 rounded-[0.6em] font-semibold  hover:scale-95 hover:bg-orange-400 ${
+                        className={`bg-CorPrimariaBT p-2 rounded-[0.6em] font-semibold  hover:scale-95 hover:bg-CorPrimariaTBLA ${
                           state.addManutencao && "bg-red-500 hover:bg-red-400"
                         } `}
                         onClick={() => Buttom("addManutencao")}

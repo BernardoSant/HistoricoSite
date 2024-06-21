@@ -37,14 +37,12 @@ const Header = styled.header`
 `;
 
 const Tabela = styled.div`
-  background-color: #fb923c;
   border-bottom-left-radius: 20px;
   border-bottom-right-radius: 20px;
   display: flex;
   flex-direction: column;
 `;
 const TabelaSecund = styled.div`
-  background-color: #fed7aa;
   display: flex;
   flex-direction: column;
   border-bottom-right-radius: 0.5em;
@@ -100,12 +98,23 @@ const Button = ({
       {TipoButton === 1 && (
         <Botao
           onClick={onClick}
-          className={`mt-2 hover:bg-orange-500 hover:text-gray-200 ${
+          className={`mt-2 hover:bg-CorPrimariaBT hover:text-gray-200 ${
             onPrimario
-              ? "bg-orange-500 rounded-b-none underline"
+              ? "bg-CorPrimariaBT rounded-b-none underline"
               : "bg-[#fffafa]"
           } ${
-            onFinal ? "bg-orange-500 underline text-gray-200" : ""
+            onFinal && "bg-CorPrimariaBT underline text-gray-200" 
+          }  rounded-[20px]  `}
+        >
+          {Titulo}
+        </Botao>
+      )}
+
+      {TipoButton === 4 && (
+        <Botao
+          onClick={onClick}
+          className={`mt-2 hover:bg-CorPrimariaBT hover:text-gray-200  ${
+            onFinal && "bg-CorPrimariaBT underline text-gray-200" 
           }  rounded-[20px]  `}
         >
           {Titulo}
@@ -118,15 +127,15 @@ const Button = ({
           className={`
           ${
             onTerceiro
-              ? " bg-orange-300 mt-1 rounded-t-[0.5em] flex justify-between items-center"
+              ? " bg-CorSecundariaBT mt-1 rounded-t-[0.5em] flex justify-between items-center"
               : "text-[#432007]"
           } ${
             onSecundario
-              ? " bg-orange-300 mt-1 flex justify-between items-center"
+              ? " bg-CorSecundariaBT mt-1 flex justify-between items-center"
               : "text-[#432007]"
           } ${
             onFinal
-              ? "bg-orange-300 mt-1 flex justify-between items-center rounded-b-[20px]"
+              ? "bg-CorSecundariaBT mt-1 flex justify-between items-center rounded-b-[20px]"
               : ""
           } ${
             !onSecundario && !onFinal && !onTerceiro
@@ -143,11 +152,11 @@ const Button = ({
           onClick={onClick}
           className={`hover:underline ${
             onSecundario
-              ? " bg-orange-100 mt-1 flex justify-between items-center"
+              ? " bg-CorTerciariaBT mt-1 flex justify-between items-center"
               : "text-[#432007]"
           } ${
             onFinal
-              ? "bg-orange-100 mt-1 flex justify-between items-center rounded-b-[0.5em]"
+              ? "bg-CorTerciariaBT mt-1 flex justify-between items-center rounded-b-[0.5em]"
               : ""
           }`}
         >
@@ -386,7 +395,7 @@ export const Empresa = () => {
         <Nav>
           <Div2 className="overflow-auto max-w-[20em] min-w-[13em] max-h-[90vh] 2xl:max-h-[100%]">
             <nav className="flex flex-col justify-center relative">
-              <div className="w-full text-center bg-orange-600 rounded-full py-1 font-bold text-[1.1vw] sticky top-0">
+              <div className="w-full text-center bg-CorSecundariaBT  rounded-full py-1 font-bold text-[1.1vw] sticky top-0">
                 <p className="absolute  left-0 top-0 ml-4 h-full flex justify-center items-center">
                   <MdOutlineHomeWork />
                 </p>
@@ -394,7 +403,7 @@ export const Empresa = () => {
               </div>
 
               <Button
-                TipoButton={1}
+                TipoButton={4}
                 Titulo={"Dashboard"}
                 onFinal={state.Dashboard}
                 onClick={() => ButtomSecundario("Dashboard")}
@@ -408,7 +417,7 @@ export const Empresa = () => {
               ></Button>
 
               {state.Prestadores && (
-                <Tabela>
+                <Tabela className="bg-CorPrimariaTBLA">
                   {empresa.map((empresa) => (
                     <div key={empresa.id}>
                       <Button
@@ -418,7 +427,7 @@ export const Empresa = () => {
                         onClick={() => ButtomPrimarioEmpregador(empresa.id)}
                       ></Button>
                       {empregadorState[empresa.id] && (
-                        <TabelaSecund>
+                        <TabelaSecund className="bg-CorSecundariaTBLA">
                           <Button
                             TipoButton={3}
                             Titulo={"Notas Fiscais"}
@@ -500,7 +509,7 @@ export const Empresa = () => {
                 onClick={() => ButtomPrimario("funcionarios")}
               ></Button>
               {state.funcionarios && (
-                <Tabela>
+                <Tabela className="bg-CorPrimariaTBLA">
                   <Button
                     TipoButton={2}
                     Titulo={"Admitidos"}
@@ -529,7 +538,7 @@ export const Empresa = () => {
                 onClick={() => ButtomPrimario("transporte")}
               ></Button>
               {state.transporte && (
-                <Tabela>
+                <Tabela className="bg-CorPrimariaTBLA">
                   <Button
                     TipoButton={2}
                     Titulo={"Ver Todos"}
@@ -546,7 +555,7 @@ export const Empresa = () => {
               )}
 
               <Button
-                TipoButton={1}
+                TipoButton={4}
                 Titulo={"Outros"}
                 onFinal={state.outros}
                 className="rounded-1em"

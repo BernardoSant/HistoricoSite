@@ -12,36 +12,9 @@ import { RiSaveLine } from "react-icons/ri";
 import { LuArrowRightFromLine } from "react-icons/lu";
 import { NumericFormat } from "react-number-format";
 import axios from "axios";
+import {CorClara, CorEscura} from '../../../functions/Cor';
+import { Header } from "../../../components/Componentes/Header";
 
-const Header = styled.header`
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-  font-size: 1.6vw;
-  padding: 12px;
-  padding-left: 1em;
-  padding-right: 1em;
-  font-weight: 600;
-  border-radius: 0.4em;
-  background: #f97316;
-  box-shadow: inset 5px -5px 10px #9f4a0e, inset -5px 5px 10px #ff9c1e;
-
-  @media (max-width: 750px) {
-    flex-direction: column;
-  }
-`;
-
-const Footer = styled.div`
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-  font-size: 1.2vw;
-  padding: 5px;
-  font-weight: 600;
-  border-radius: 0.7em;
-  background: #f97316;
-  box-shadow: inset 5px -5px 10px #9f4a0e, inset -5px 5px 10px #ff9c1e;
-`;
 
 const Section = styled.div`
   width: 100%;
@@ -123,8 +96,9 @@ const HeaderDados = styled.div`
   border-bottom-right-radius: 0.2em;
   border-bottom-left-radius: 0.2em;
   z-index: 10;
-  background: #f97316;
-  box-shadow: inset 3px -3px 10px #9f4a0e, inset -5px 5px 10px #ff9c1e;
+  background: ${CorClara(0)};
+  box-shadow: inset 5px -5px 10px ${CorEscura(0.2)},
+    inset -5px 5px 10px ${CorClara(0.1)};
 `;
 
 const ArticleDados = styled.div`
@@ -961,10 +935,8 @@ export const Outros = () => {
                         </div>
                       ) : null}
                     </Texto>
-                    <Texto>
-                      {realFormat(cargo.salarioCargo)}
-                    </Texto>
-                    <Texto>{cargo.quantidadeCargo}</Texto> 
+                    <Texto>{realFormat(cargo.salarioCargo)}</Texto>
+                    <Texto>{cargo.quantidadeCargo}</Texto>
                   </ArgumentosDados>
                 );
               })}

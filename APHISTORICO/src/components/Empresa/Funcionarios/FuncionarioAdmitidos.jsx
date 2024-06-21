@@ -10,6 +10,7 @@ import { LoaderClin } from "../../Loaders/LoaderClin";
 import { NumericFormat } from "react-number-format";
 import { dateFormat } from "../../../functions/dateFormat";
 import { FaArrowDown } from "react-icons/fa";
+import { Header } from "../../Componentes/Header";
 
 const Div = styled.div`
   height: 100%;
@@ -93,18 +94,6 @@ const ButtonSubmit = styled.button`
     color: white;
     scale: 97%;
   }
-`;
-
-const Header = styled.header`
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  font-size: 1.6vw;
-  padding-bottom: 5px;
-  font-weight: 600;
-  border-radius: 0.4em;
-  background: #f97316;
-  box-shadow: inset 5px -5px 10px #9f4a0e, inset -5px 5px 10px #ff9c1e;
 `;
 
 const Button = styled.button`
@@ -308,7 +297,10 @@ export const MostruarioFuncAdmitido = () => {
     let valor = e.target.value;
     let name = e.target.name;
 
-    if (e.target.name === "dataInicioFerias" && feriasPaga.FeriasPaga === false) {
+    if (
+      e.target.name === "dataInicioFerias" &&
+      feriasPaga.FeriasPaga === false
+    ) {
       const dataInicio = new Date(valor);
       const dataFinalizacao = new Date(dataInicio);
 
@@ -1173,21 +1165,23 @@ export const MostruarioFuncAdmitido = () => {
             {/* O resto do seu conteúdo vai aqui */}
           </div>
 
-          <Header className="w-full bg-orange-500 drop-shadow-2xl rounded-2xl">
-            <div className="flex  items-center py-4 ">
-              <th className="text-start text-3xl pt-1 px-10">
-                Funcionarios Admitidos
-              </th>
-            </div>
+          <Header>
+            <div className="flex flex-col">
+              <div className="flex items-center w-full">
+                <th className="text-start text-3xl ">
+                  Funcionarios Admitidos
+                </th>
+              </div>
 
-            <div className="grid grid-cols-[1fr_1fr_1fr_1fr_1fr_1fr_1fr_1fr_1fr_1fr_1fr_1fr_1fr_1fr_1fr_1fr] justify-center items-center w-full rounded-b-lg drop-shadow-2xl pb-1 text-center text-[1.4vw] xl:text-[0.95vw]">
-              <th className="col-span-2">Faltas</th>
-              <th className="col-span-3">Nome</th>
-              <th className="col-span-2">Cargo</th>
-              <th className="col-span-2">Adiantamento</th>
-              <th className="col-span-2">Salario</th>
-              <th className="col-span-2">Salario.Liq</th>
-              <th className="col-span-3">Situação</th>
+              <div className="grid grid-cols-[1fr_1fr_1fr_1fr_1fr_1fr_1fr_1fr_1fr_1fr_1fr_1fr_1fr_1fr_1fr_1fr] justify-center items-center w-full rounded-b-lg drop-shadow-2xl pb-1 text-center text-[1.4vw] xl:text-[0.95vw]">
+                <th className="col-span-2">Faltas</th>
+                <th className="col-span-3">Nome</th>
+                <th className="col-span-2">Cargo</th>
+                <th className="col-span-2">Adiantamento</th>
+                <th className="col-span-2">Salario</th>
+                <th className="col-span-2">Salario.Liq</th>
+                <th className="col-span-3">Situação</th>
+              </div>
             </div>
           </Header>
           <Article ref={navRef}>
@@ -1288,7 +1282,7 @@ export const MostruarioFuncAdmitido = () => {
                     } bg-gray-200 rounded-2xl p-2 my-2`}
                   >
                     <th className="col-span-2 flex justify-center items-center gap-1 relative">
-                      <div className="absolute -left-2 -top-3 xl:left-0 xl:top-2">
+                      <div className="absolute -left-2 -top-3 2xl:left-0 2xl:top-2">
                         <spa
                           className="absolute text-[0.8vw] p-1 rounded-full bg-gray-400 flex justify-center items-center cursor-pointer drop-shadow-lg"
                           onClick={() => {
@@ -1396,7 +1390,7 @@ export const MostruarioFuncAdmitido = () => {
 
       {funcionarioSelecionado || funcionarioEditar || carregando ? null : (
         <div className="w-full ">
-          <div className="w-full bg-orange-600 drop-shadow-2xl rounded-[0.7em] mb-1 sticky">
+          <div className="w-full bg-CorSecundariaBT drop-shadow-2xl rounded-[0.7em] mb-1 sticky">
             <div className="grid grid-cols-4 justify-center items-center w-full rounded-b-lg drop-shadow-2xl text-lg py-1">
               {renderInfo("Total FGTS", fgtsSalario)}
               {renderInfo("Salario Total do Mês", valorTotalSalario)}

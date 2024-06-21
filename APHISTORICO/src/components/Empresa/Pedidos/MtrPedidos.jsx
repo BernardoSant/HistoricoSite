@@ -6,24 +6,8 @@ import { AiOutlineQuestionCircle } from "react-icons/ai";
 import { TbAlertCircle } from "react-icons/tb";
 import { NumericFormat } from "react-number-format";
 import { useState, useEffect } from "react";
-
-const Header = styled.header`
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-  font-size: 1.6vw;
-  padding: 12px;
-  padding-left: 1em;
-  padding-right: 1em;
-  font-weight: 600;
-  border-radius: 0.4em;
-  background: #f97316;
-  box-shadow: inset 5px -5px 10px #9f4a0e, inset -5px 5px 10px #ff9c1e;
-
-  @media (max-width: 750px) {
-    flex-direction: column;
-  }
-`;
+import { Header } from "../../Componentes/Header";
+import { CorClara, CorEscura } from "../../../../tailwind.config";
 
 const Footer = styled.div`
   display: flex;
@@ -33,8 +17,8 @@ const Footer = styled.div`
   padding: 5px;
   font-weight: 600;
   border-radius: 0.4em;
-  background: #f97316;
-  box-shadow: inset 5px -5px 10px #9f4a0e, inset -5px 5px 10px #ff9c1e;
+  background: ${CorClara(0)};
+  box-shadow: inset 5px -5px 10px ${CorEscura(0.2)}, inset -5px 5px 10px ${CorClara(0.1)};
 `;
 
 const Section = styled.div`
@@ -99,7 +83,7 @@ const HeaderDados = styled.div`
   border-bottom-right-radius: 0.2em;
   border-bottom-left-radius: 0.2em;
   z-index: 10;
-  background: #f97316;
+  background: ${CorClara(0)};
 `;
 
 const ArticleDados = styled.div`
@@ -264,8 +248,7 @@ export const MtrPedidos = ({ empresaId }) => {
     setSeachState(novoEstado);
   };
 
-  console.log(seachState)
-
+  console.log(seachState);
 
   return (
     <Section>
@@ -287,61 +270,62 @@ export const MtrPedidos = ({ empresaId }) => {
       ) : (
         <>
           <Header>
-            <p>Pedidos da {siglaEmpresa}</p>
+            <div className="w-full justify-between flex items-center">
+              <p>Pedidos da {siglaEmpresa}</p>
 
-            <input
-              list="Serch"
-              type="text"
-              placeholder="Pesquisar Pedido"
-              title="Informe o N° do Pedido"
-              className="w-auto border-2 text-[1vw] rounded-xl border-gray-500 flex justify-center p-1"
-              onChange={(e) => ButtoSeach(e.target.value)}
-            />
+              <input
+                list="Serch"
+                type="text"
+                placeholder="Pesquisar Pedido"
+                title="Informe o N° do Pedido"
+                className="w-auto border-2 text-[1vw] rounded-xl border-gray-500 flex justify-center p-1 h-8"
+                onChange={(e) => ButtoSeach(e.target.value)}
+              />
 
-            <datalist id="Serch" className="">
-              {PedidoEmpresa.map((pdd) => {
-                return (
-                  <option value={pdd.numeroPDD}>
-                 {pdd.nomePDD} - {pdd.situacaoPDD}
-                  </option>
-                );
-              })}
-            </datalist>
-            <form
-              className="flex justify-center items-center "
-              onSubmit={handleDataChange}
-            >
-              <select
-                className="w-auto border-2 text-[1vw] rounded-xl border-gray-500 flex justify-center p-1"
-                value={ano}
-                onChange={(event) => setAno(event.target.value)}
+              <datalist id="Serch" className="">
+                {PedidoEmpresa.map((pdd) => {
+                  return (
+                    <option value={pdd.numeroPDD}>
+                      {pdd.nomePDD} - {pdd.situacaoPDD}
+                    </option>
+                  );
+                })}
+              </datalist>
+              <form
+                className="flex justify-center items-center "
+                onSubmit={handleDataChange}
               >
-                {PedidosFiltro.map((nt) => {
-                  const Data = new Date(nt.dataPDD);
-                  const Ano = Data.getFullYear();
+                <select
+                  className="w-auto border-2 text-[1vw] rounded-xl border-gray-500 flex justify-center p-1"
+                  value={ano}
+                  onChange={(event) => setAno(event.target.value)}
+                >
+                  {PedidosFiltro.map((nt) => {
+                    const Data = new Date(nt.dataPDD);
+                    const Ano = Data.getFullYear();
 
-                  if (!uniqueYears.has(Ano)) {
-                    uniqueYears.add(Ano);
-                    return (
-                      <option key={Ano} value={Ano}>
-                        {Ano}
-                      </option>
-                    );
-                  }
-                }).filter((option) => option !== null)}
-              </select>
-            </form>
+                    if (!uniqueYears.has(Ano)) {
+                      uniqueYears.add(Ano);
+                      return (
+                        <option key={Ano} value={Ano}>
+                          {Ano}
+                        </option>
+                      );
+                    }
+                  }).filter((option) => option !== null)}
+                </select>
+              </form>
+            </div>
           </Header>
           <Article className="h-full overflow-auto">
             <Article>
-
               {PCriada.length > 0 && (
                 <SectionBlock>
                   <HeaderDados>
                     <TituloDados>
                       Pedido Criado
                       <div
-                        className={`flex justify-center items-center gap-2 bg-orange-300 px-3 rounded-[1em] ${
+                        className={`flex justify-center items-center gap-2 bg-CorTerciariaBT px-3 rounded-[1em] ${
                           PCriada.length <= 0 && "hidden"
                         }`}
                       >
@@ -367,10 +351,7 @@ export const MtrPedidos = ({ empresaId }) => {
                               pedidoState[pdd.id]
                                 ? "bg-gray-300"
                                 : "bg-gray-200"
-                            } ${
-                              seachState[pdd.numeroPDD]
-                                && "bg-gray-400/60"
-                            }`}
+                            } ${seachState[pdd.numeroPDD] && "bg-gray-400/60"}`}
                           >
                             <Texto className="relative">
                               <div
@@ -396,7 +377,7 @@ export const MtrPedidos = ({ empresaId }) => {
                       })}
                     </ArticleDados>
                   </ArticleDados>
-                  <p className="bg-[#f97316] w-full h-4 rounded-b-[0.7em] rounded-t-[0.2em]"></p>
+                  <p className="bg-CorPrimariaBT w-full h-4 rounded-b-[0.7em] rounded-t-[0.2em]"></p>
                 </SectionBlock>
               )}
               {PAndamento.length > 0 && (
@@ -405,7 +386,7 @@ export const MtrPedidos = ({ empresaId }) => {
                     <TituloDados>
                       Pedido Andamento
                       <div
-                        className={`flex justify-center items-center gap-2 bg-orange-300 px-3 rounded-[1em] ${
+                        className={`flex justify-center items-center gap-2 bg-CorTerciariaBT px-3 rounded-[1em] ${
                           PAndamento.length <= 0 && "hidden"
                         }`}
                       >
@@ -434,10 +415,7 @@ export const MtrPedidos = ({ empresaId }) => {
                               pedidoState[pdd.id]
                                 ? "bg-gray-300"
                                 : "bg-gray-200"
-                            } ${
-                              seachState[pdd.numeroPDD]
-                                && "bg-gray-400/60"
-                            }`}
+                            } ${seachState[pdd.numeroPDD] && "bg-gray-400/60"}`}
                           >
                             <Texto className="relative">
                               <div
@@ -464,7 +442,7 @@ export const MtrPedidos = ({ empresaId }) => {
                       })}
                     </ArticleDados>
                   </ArticleDados>
-                  <p className="bg-[#f97316] w-full h-4 rounded-b-[0.7em] rounded-t-[0.2em]"></p>
+                  <p className="bg-CorPrimariaBT w-full h-4 rounded-b-[0.7em] rounded-t-[0.2em]"></p>
                 </SectionBlock>
               )}
               {PFinalizada.length > 0 && (
@@ -473,7 +451,7 @@ export const MtrPedidos = ({ empresaId }) => {
                     <TituloDados>
                       Pedido Finalizado
                       <div
-                        className={`flex justify-center items-center gap-2 bg-orange-300 px-3 rounded-[1em] ${
+                        className={`flex justify-center items-center gap-2 bg-CorTerciariaBT px-3 rounded-[1em] ${
                           PFinalizada.length <= 0 && "hidden"
                         }`}
                       >
@@ -500,10 +478,7 @@ export const MtrPedidos = ({ empresaId }) => {
                               pedidoState[pdd.id]
                                 ? "bg-gray-300"
                                 : "bg-gray-200"
-                            } ${
-                              seachState[pdd.numeroPDD]
-                                && "bg-gray-400/60" 
-                            }`}
+                            } ${seachState[pdd.numeroPDD] && "bg-gray-400/60"}`}
                           >
                             <Texto className="relative">
                               <div
@@ -530,7 +505,7 @@ export const MtrPedidos = ({ empresaId }) => {
                       })}
                     </ArticleDados>
                   </ArticleDados>
-                  <p className="bg-[#f97316] w-full h-4 rounded-b-[0.7em] rounded-t-[0.2em]"></p>
+                  <p className="bg-CorPrimariaBT w-full h-4 rounded-b-[0.7em] rounded-t-[0.2em]"></p>
                 </SectionBlock>
               )}
             </Article>

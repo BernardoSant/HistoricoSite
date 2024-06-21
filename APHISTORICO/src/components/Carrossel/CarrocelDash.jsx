@@ -38,7 +38,7 @@ export const CarrocelDash = ({ children }) => {
             <span
               key={i}
               className={`block h-1 cursor-pointer rounded-2xl transition-all ${
-                activeIndex === i ? "w-8 bg-orange-500" : "w-4 bg-gray-500/50"
+                activeIndex === i ? "w-8 bg-CorPrimariaBT" : "w-4 bg-gray-500/50"
               }`}
               onClick={() => setActiveIndex(i)}
             />

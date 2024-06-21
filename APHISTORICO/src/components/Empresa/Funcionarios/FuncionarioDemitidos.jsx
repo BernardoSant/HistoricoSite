@@ -7,6 +7,8 @@ import { toast } from "react-toastify";
 import { AiOutlineRight, AiOutlineLeft } from "react-icons/ai";
 import { LoaderClin } from "../../Loaders/LoaderClin";
 import { dateFormat } from "../../../functions/dateFormat";
+import { Header } from "../../Componentes/Header";
+
 import {
   TbPencilCog,
   TbAlignLeft,
@@ -60,13 +62,6 @@ const H2 = styled(H1)`
   padding-top: 2px;
   padding-bottom: 2px;
   border-radius: 4px;
-`;
-
-const Header = styled.header`
-  width: 100%;
-  border-radius: 1em;
-  background: #f97316;
-  box-shadow: inset 5px -5px 10px #9f4a0e, inset -5px 5px 10px #ff9c1e;
 `;
 
 const Input = styled.input`
@@ -311,7 +306,9 @@ export const MostruarioFuncDemitido = () => {
               <div className="flex gap-3">
                 <div
                   onClick={() => setFuncionarioSelecionado(null)}
-                  className={`bg-orange-600 p-1 text-[1.2vw] rounded-full flex justify-center items-center mt-2 ${state.Menu && "mt-0"}`}
+                  className={`bg-orange-600 p-1 text-[1.2vw] rounded-full flex justify-center items-center mt-2 ${
+                    state.Menu && "mt-0"
+                  }`}
                   title="Voltar"
                 >
                   <TbArrowForward />
@@ -398,18 +395,20 @@ export const MostruarioFuncDemitido = () => {
       ) : (
         <>
           <Header className="drop-shadow-lg">
-            <thead className="flex justify-center items-center py-4">
-              <th className="text-start text-3xl pt-1">
-                Funcionarios Demitidos
-              </th>
-            </thead>
+            <div className="flex flex-col">
+              <thead className="flex justify-between items-center">
+                <th className="text-start text-3xl ">
+                  Funcionarios Demitidos
+                </th>
+              </thead>
 
-            <thead className="grid grid-cols-6 justify-center items-center w-full rounded-b-lg drop-shadow-2xl text-lg pb-1 ">
-              <th className="col-span-2">Nome</th>
-              <th className="col-span-2">Cargo</th>
-              <th className="col-span-1">Salario</th>
-              <th className="col-span-1">Data</th>
-            </thead>
+              <thead className="grid grid-cols-6 justify-center items-center w-full drop-shadow-2xl text-[1.2vw] ">
+                <th className="col-span-2">Nome</th>
+                <th className="col-span-2">Cargo</th>
+                <th className="col-span-1">Salario</th>
+                <th className="col-span-1">Data</th>
+              </thead>
+            </div>
           </Header>
           <Article>
             {FuncionariosDemitidos.map((func) => {

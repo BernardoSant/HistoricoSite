@@ -4,6 +4,10 @@ import axios from "axios";
 import { toast } from "react-toastify";
 import { AiOutlineEllipsis } from "react-icons/ai";
 import { useGlobalContext } from "../../../global/Global";
+import { Header } from "../../Componentes/Header";
+import { Button } from "../../Componentes/Button";
+import { NumericFormat } from "react-number-format";
+
 
 const Form = styled.form`
   height: 100%;
@@ -14,6 +18,14 @@ const Form = styled.form`
   align-content: start;
   flex-direction: column;
 `;
+
+const InputDinheiro = styled(NumericFormat)`
+  width: 100%;
+  border: 2px solid #d1d5db;
+  border-radius: 4px;
+  padding-left: 8px;
+`;
+
 const TelaGrid = styled.div`
   width: 100%;
   gap: 1em;
@@ -31,39 +43,6 @@ const Input = styled.input`
   border: 2px solid #d1d5db;
   border-radius: 4px;
   padding-left: 8px;
-`;
-
-const Header = styled.header`
-  width: 100%;
-  border-radius: 20px;
-  background: #f97316;
-  box-shadow: inset 5px -5px 10px #9f4a0e, inset -5px 5px 10px #ff9c1e;
-  font-weight: 600;
-  font-size: xx-large;
-  display: flex;
-  justify-content: center;
-  padding: 5px;
-`;
-
-const Button = styled.button`
-  width: auto;
-  border-radius: 20px;
-  background: #f97316;
-  box-shadow: inset 5px -5px 10px #9f4a0e, inset -5px 5px 10px #ff9c1e;
-  font-weight: 600;
-  font-size: x-large;
-  display: flex;
-  justify-content: center;
-  padding: 7px;
-  padding-left: 3em;
-  padding-right: 3em;
-  transition-duration: 200ms;
-
-  &:hover {
-    cursor: pointer;
-    color: white;
-    scale: 97%;
-  }
 `;
 
 export const AddTransporte = () => {
@@ -264,10 +243,10 @@ export const AddTransporte = () => {
         </TelaGrid>
 
         {deveCalcular ? (
-          <div className="h-auto bg-orange-200 my-5 rounded-[0.8em] flex drop-shadow-md ">
-            <p className="bg-orange-500 h-full w-3 rounded-tl-[0.8em] rounded-bl-[0.8em]"></p>
+          <div className="h-auto bg-CorSecundariaTBLA my-5 rounded-[0.8em] flex drop-shadow-md ">
+            <p className="bg-CorPrimariaBT h-full w-3 rounded-tl-[0.8em] rounded-bl-[0.8em]"></p>
             <h1 className="flex gap-x-5 flex-col font-bold w-full p-2 pb-3 drop-shadow-md">
-              <p className="flex justify-between text-2xl pr-3 pl-5 items-center text-orange-900">
+              <p className="flex justify-between text-2xl pr-3 pl-5 items-center text-black">
                 <h1>Calcular Kilometragem</h1>
                 <AiOutlineEllipsis />
               </p>
@@ -275,22 +254,40 @@ export const AddTransporte = () => {
               <p className="grid grid-cols-6 px-3 gap-x-3">
                 <div className="col-span-2">
                   <H1>Km Inicial:</H1>
-                  <Input
-                    type="number"
-                    onChange={valorCalculoInput}
-                    name="kmInicial"
-                    value={calculo.kmInicial}
-                  ></Input>
+                  <InputDinheiro
+                    type="text"
+                    placeholder="1000.00"
+                    value={calculo.kmInicial || ""}
+                    onValueChange={(e) => {
+                      setCalculo({
+                        ...calculo,
+                        kmInicial: e.floatValue,
+                      });
+                    }}
+                    thousandSeparator="."
+                    decimalScale={0}
+                    fixedDecimalScale
+                    decimalSeparator=","
+                  ></InputDinheiro>
                 </div>
 
                 <div className="col-span-2">
                   <H1>Km Final:</H1>
-                  <Input
-                    type="number"
-                    onChange={valorCalculoInput}
-                    name="kmFinal"
-                    value={calculo.kmFinal}
-                  ></Input>
+                  <InputDinheiro
+                  type="text"
+                  placeholder="1000.00"
+                  value={calculo.kmFinal || ""}
+                  onValueChange={(e) => {
+                    setCalculo({
+                      ...calculo,
+                      kmFinal: e.floatValue,
+                    });
+                  }}
+                  thousandSeparator="."
+                  decimalScale={0}
+                  fixedDecimalScale
+                  decimalSeparator=","
+                  ></InputDinheiro>
                 </div>
 
                 <div className="col-span-1">
@@ -322,7 +319,7 @@ export const AddTransporte = () => {
                 <div className="col-span-1 flex justify-center items-center relative">
                   <button
                     onClick={calcularKilometragem}
-                    className="py-2 px-6 rounded-[0.5em] bg-orange-500 absolute bottom-0 right-0"
+                    className="py-2 px-6 rounded-[0.5em] bg-CorPrimariaBT absolute bottom-0 right-0"
                   >
                     Calcular
                   </button>

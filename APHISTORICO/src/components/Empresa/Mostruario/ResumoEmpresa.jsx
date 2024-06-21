@@ -2,32 +2,9 @@ import styled from "styled-components";
 import { useGlobalContext } from "../../../global/Global";
 import { useState, useEffect } from "react";
 import { GanhosMensais } from "../../Graficos/ResumoGanhos";
+import { Header } from "../../Componentes/Header";
+import { CorClara } from "../../../functions/Cor";
 
-const Header = styled.header`
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-  font-size: 1.6vw;
-  padding: 12px;
-  padding-left: 1em;
-  padding-right: 1em;
-  font-weight: 600;
-  border-radius: 0.4em;
-  background: #f97316;
-  box-shadow: inset 5px -5px 10px #9f4a0e, inset -5px 5px 10px #ff9c1e;
-`;
-
-const Footer = styled.div`
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-  font-size: 1.2vw;
-  padding: 5px;
-  font-weight: 600;
-  border-radius: 0.7em;
-  background: #f97316;
-  box-shadow: inset 5px -5px 10px #9f4a0e, inset -5px 5px 10px #ff9c1e;
-`;
 
 const Section = styled.div`
   width: 100%;
@@ -46,6 +23,9 @@ const Article = styled.div`
   grid-template-columns: 50% 50%;
   gap: 10px;
   padding-right: 5px;
+  overflow-x: hidden ;
+  overflow-y: auto;
+  padding-right: 15px;
 
   &::-webkit-scrollbar {
     width: 5px;
@@ -71,6 +51,7 @@ const ArticleBlock = styled.div`
   flex-direction: column;
   border-radius: 1em;
   background-color: #dfdfdf79;
+  position: relative;
 
   @media (max-height: 700px) {
     max-height: 14.8vw;
@@ -78,7 +59,7 @@ const ArticleBlock = styled.div`
 `;
 
 const HeaderDados = styled.div`
-  position: sticky;
+  position: static;
   top: 0;
   flex: 0 1 auto;
   padding: 5px;
@@ -89,7 +70,8 @@ const HeaderDados = styled.div`
   border-bottom-right-radius: 0.2em;
   border-bottom-left-radius: 0.2em;
   z-index: 10;
-  background: #f97316;
+  background: ${CorClara(0)};
+  top: 0;
 `;
 
 const ArticleDados = styled.div`
@@ -301,53 +283,54 @@ export const ResumoEmpresa = () => {
   return (
     <Section>
       <Header>
-        {" "}
-        <>Resumo Mensal</>
-        <form
-          onSubmit={handleDataChange}
-          className="flex flex-row gap-2 w-auto md:justify-end justify-center pr-4 text-[1vw] "
-        >
-          <select
-            className="w-auto border-2 rounded-xl border-gray-500 flex justify-center p-1 font-bold"
-            value={mes}
-            onChange={(event) => setMes(event.target.value)}
+        <div className="justify-between flex">
+          <>Resumo Mensal</>
+          <form
+            onSubmit={handleDataChange}
+            className="flex flex-row gap-2 w-auto md:justify-end justify-center pr-4 text-[1vw] "
           >
-            <option value="01">Janeiro</option>
-            <option value="02">Fevereiro</option>
-            <option value="03">Março</option>
-            <option value="04">Abril</option>
-            <option value="05">Maio</option>
-            <option value="06">Junho</option>
-            <option value="07">Julho</option>
-            <option value="08">Agosto</option>
-            <option value="09">Setembro</option>
-            <option value="10">Outubro</option>
-            <option value="11">Novembro</option>
-            <option value="12">Dezembro</option>
-          </select>
+            <select
+              className="w-auto border-2 rounded-xl border-gray-500 flex justify-center p-1 font-bold"
+              value={mes}
+              onChange={(event) => setMes(event.target.value)}
+            >
+              <option value="01">Janeiro</option>
+              <option value="02">Fevereiro</option>
+              <option value="03">Março</option>
+              <option value="04">Abril</option>
+              <option value="05">Maio</option>
+              <option value="06">Junho</option>
+              <option value="07">Julho</option>
+              <option value="08">Agosto</option>
+              <option value="09">Setembro</option>
+              <option value="10">Outubro</option>
+              <option value="11">Novembro</option>
+              <option value="12">Dezembro</option>
+            </select>
 
-          <select
-            className="w-auto border-2 rounded-xl border-gray-500 flex justify-center p-1 font-bold"
-            value={ano}
-            onChange={(event) => setAno(event.target.value)}
-          >
-            {pedido
-              .map((abst) => {
-                const DateAbast = new Date(abst.dataPDD);
-                const Ano = DateAbast.getFullYear();
+            <select
+              className="w-auto border-2 rounded-xl border-gray-500 flex justify-center p-1 font-bold"
+              value={ano}
+              onChange={(event) => setAno(event.target.value)}
+            >
+              {pedido
+                .map((abst) => {
+                  const DateAbast = new Date(abst.dataPDD);
+                  const Ano = DateAbast.getFullYear();
 
-                if (!uniqueYears.has(Ano)) {
-                  uniqueYears.add(Ano);
-                  return (
-                    <option key={Ano} value={Ano}>
-                      {Ano}
-                    </option>
-                  );
-                }
-              })
-              .filter((option) => option !== null)}
-          </select>
-        </form>
+                  if (!uniqueYears.has(Ano)) {
+                    uniqueYears.add(Ano);
+                    return (
+                      <option key={Ano} value={Ano}>
+                        {Ano}
+                      </option>
+                    );
+                  }
+                })
+                .filter((option) => option !== null)}
+            </select>
+          </form>
+        </div>
       </Header>
       <Article>
         <SectionBlock>
@@ -398,7 +381,7 @@ export const ResumoEmpresa = () => {
             <HeaderDados>
               <TituloDados className="flex justify-between pr-3 flex-wrap">
                 <h1>Nota Fiscal em Análise:</h1>
-                <p className="text-[1vw] flex justify-center items-center bg-orange-300 px-4 rounded-[1em] ">
+                <p className="text-[1vw] flex justify-center items-center bg-CorTerciariaBT px-4 rounded-[1em] ">
                   {Number(valorTotalNotasAReceber).toLocaleString("pt-BR", {
                     style: "currency",
                     currency: "BRL",

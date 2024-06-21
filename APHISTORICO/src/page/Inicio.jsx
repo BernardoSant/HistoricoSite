@@ -72,7 +72,7 @@ export const Inicio = () => {
     <div className="relative">
       <Header>
         <Nav>
-          <Div className="bg-orange-400">
+          <Div className="bg-CorPrimariaBT">
             {/*
             <Div2
               className={`${

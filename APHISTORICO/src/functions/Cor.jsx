@@ -1,8 +1,7 @@
-/** @type {import('tailwindcss').Config} */
-
-export const Cor = "rgb(249,115,22)";
+import { Cor } from "../../tailwind.config";
 
 export function CorEscura(Intencidade) {
+
   // Função para misturar uma cor com preto e criar uma versão mais escura
   function darkenColor(rgb, amount) {
     rgb = rgb.replace(/[^\d,]/g, "").split(",");
@@ -19,6 +18,7 @@ export function CorEscura(Intencidade) {
 }
 
 export function CorClara(Intencidade) {
+
   function lightenColor(rgb, amount) {
     rgb = rgb.replace(/[^\d,]/g, "").split(",");
     for (let i = 0; i < rgb.length; i++) {
@@ -32,23 +32,3 @@ export function CorClara(Intencidade) {
 
   return CorClara;
 }
-
-export default {
-  content: ["./index.html", "./src/**/*.{js,ts,jsx,tsx}"],
-  theme: {
-    extend: {
-      colors: {
-        CorPrimariaBT: CorClara(0),
-        CorSecundariaBT: CorEscura(0.1),
-        CorTerciariaBT: CorClara(0.5),
-        CorEscurecidaBT: CorEscura(0.3),
-        CorPrimariaTBLA: CorClara(0.2),
-        CorSecundariaTBLA: CorClara(0.7),
-        CorTerciariaTBLA: CorClara(0.5),
-        CorEscurecidaTBLA: CorEscura(0.2),
-        CorEscura: CorClara(0.6),
-      },
-    },
-  },
-  plugins: [],
-};

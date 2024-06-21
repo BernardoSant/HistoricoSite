@@ -6,36 +6,8 @@ import { DashGastos } from "../../Graficos/DashGastos";
 import { DashGastosMensais } from "../../Graficos/DashGastosMensal";
 import { DashAbastecimentos } from "../../Graficos/DashAbastecimentos";
 import { DashNotasPedidos } from "../../Graficos/DashNotasPedidos";
-
-const Header = styled.header`
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-  font-size: 1.6vw;
-  padding: 12px;
-  padding-left: 1em;
-  padding-right: 1em;
-  font-weight: 600;
-  border-radius: 0.4em;
-  background: #f97316;
-  box-shadow: inset 5px -5px 10px #9f4a0e, inset -5px 5px 10px #ff9c1e;
-
-  @media (max-width: 750px) {
-    flex-direction: column;
-  }
-`;
-
-const Footer = styled.div`
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-  font-size: 1.2vw;
-  padding: 5px;
-  font-weight: 600;
-  border-radius: 0.7em;
-  background: #f97316;
-  box-shadow: inset 5px -5px 10px #9f4a0e, inset -5px 5px 10px #ff9c1e;
-`;
+import { Header } from "../../Componentes/Header";
+import { CorClara, CorEscura } from "../../../../tailwind.config";
 
 const Section = styled.div`
   width: 100%;
@@ -93,7 +65,7 @@ const HeaderDados = styled.div`
   border-bottom-right-radius: 0.2em;
   border-bottom-left-radius: 0.2em;
   z-index: 10;
-  background: #f97316;
+  background: ${CorClara(0)};
 `;
 
 const ArticleDados = styled.div`
@@ -181,7 +153,18 @@ const ArgumentosDados = styled.div`
 `;
 
 export const DashGeral = () => {
-  const { funcionario, nota, pedido, impostos, contrato } = useGlobalContext();
+  const {
+    funcionario,
+    nota,
+    pedido,
+    impostos,
+    contrato,
+    ferias,
+    conta,
+    abastecimento,
+    manutencao,
+    salario,
+  } = useGlobalContext();
 
   const FuncAdmitido = funcionario.filter(
     (func) => func.statuFucionario === "Admitido"
@@ -294,42 +277,107 @@ export const DashGeral = () => {
                   <DashNotasPedidos></DashNotasPedidos>
                 </ArticleDados>
               </div>
-
             </CarrocelDash>
           </ArticleBlock>
 
           <ArticleBlock className="drop-shadow-lg overflow-hidden">
-            <CarrocelDash>
-              <div className="h-[85%]">
+            {ferias.length === 0 &&
+            conta.length === 0 &&
+            abastecimento.length === 0 &&
+            manutencao.length === 0 &&
+            salario.length === 0 ? (
+              <div className="h-[70%]">
                 <HeaderDados>
                   <TituloDados>Gastos</TituloDados>{" "}
                 </HeaderDados>
 
-                <ArticleDados>
-                  <DashGastos></DashGastos>
+                <ArticleDados className="">
+                  <div className="w-full text-gray-500/70 flex justify-center items-center font-bold text-[1.1vw]">
+                    Nenhum Gasto Cadastrado!
+                  </div>
                 </ArticleDados>
               </div>
+            ) : (
+              <>
+                {abastecimento.length > 1 ? (
+                  <CarrocelDash>
+                    <div className="h-[85%]">
+                      <HeaderDados>
+                        <TituloDados>Gastos</TituloDados>{" "}
+                      </HeaderDados>
 
-              <div className="h-[85%]">
-                <HeaderDados>
-                  <TituloDados>Gastos</TituloDados>{" "}
-                </HeaderDados>
+                      <ArticleDados>
+                        <DashGastos></DashGastos>
+                      </ArticleDados>
+                    </div>
 
-                <ArticleDados>
-                  <DashGastosMensais></DashGastosMensais>
-                </ArticleDados>
-              </div>
+                    <div className="h-[85%]">
+                      <HeaderDados>
+                        <TituloDados>Gastos</TituloDados>{" "}
+                      </HeaderDados>
 
-              <div className="h-[82%]">
-                <HeaderDados>
-                  <TituloDados>Abastecimentos Gastos</TituloDados>{" "}
-                </HeaderDados>
+                      <ArticleDados>
+                        <DashGastosMensais></DashGastosMensais>
+                      </ArticleDados>
+                    </div>
 
-                <ArticleDados>
-                  <DashAbastecimentos></DashAbastecimentos>
-                </ArticleDados>
-              </div>
-            </CarrocelDash>
+                    <div className="h-[82%]">
+                      <HeaderDados>
+                        <TituloDados>Abastecimentos Gastos</TituloDados>{" "}
+                      </HeaderDados>
+
+                      <ArticleDados>
+                        {abastecimento.length === 0 ? (
+                          <div className="w-full text-gray-500/70 flex justify-center items-center font-bold text-[1.1vw]">
+                            Nenhum Abastecimento Cadastrado!
+                          </div>
+                        ) : (
+                          <DashAbastecimentos></DashAbastecimentos>
+                        )}
+                      </ArticleDados>
+                    </div>
+                  </CarrocelDash>
+                ) : (
+                  <CarrocelDash>
+                    <div className="h-[85%]">
+                      <HeaderDados>
+                        <TituloDados>Gastos</TituloDados>{" "}
+                      </HeaderDados>
+
+                      <ArticleDados>
+                        <DashGastosMensais></DashGastosMensais>
+                      </ArticleDados>
+                    </div>
+
+                    <div className="h-[85%]">
+                      <HeaderDados>
+                        <TituloDados>Gastos</TituloDados>{" "}
+                      </HeaderDados>
+
+                      <ArticleDados>
+                        <DashGastos></DashGastos>
+                      </ArticleDados>
+                    </div>
+
+                    <div className="h-[82%]">
+                      <HeaderDados>
+                        <TituloDados>Abastecimentos Gastos</TituloDados>{" "}
+                      </HeaderDados>
+
+                      <ArticleDados>
+                        {abastecimento.length === 0 ? (
+                          <div className="w-full text-gray-500/70 flex justify-center items-center font-bold text-[1.1vw]">
+                            Nenhum Abastecimento Cadastrado!
+                          </div>
+                        ) : (
+                          <DashAbastecimentos></DashAbastecimentos>
+                        )}
+                      </ArticleDados>
+                    </div>
+                  </CarrocelDash>
+                )}
+              </>
+            )}
           </ArticleBlock>
         </SectionBlock>
 
@@ -562,8 +610,6 @@ export const DashGeral = () => {
               </CarrocelDash>
             </ArticleDados>
           </ArticleBlock>
-
-       
         </SectionBlock>
       </Article>
     </Section>

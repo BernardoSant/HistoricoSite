@@ -16,24 +16,8 @@ import { NumericFormat } from "react-number-format";
 import { useState, useEffect } from "react";
 import axios from "axios";
 import { toast } from "react-toastify";
-
-const Header = styled.header`
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-  font-size: 1.6vw;
-  padding: 12px;
-  padding-left: 1em;
-  padding-right: 1em;
-  font-weight: 600;
-  border-radius: 0.4em;
-  background: #f97316;
-  box-shadow: inset 5px -5px 10px #9f4a0e, inset -5px 5px 10px #ff9c1e;
-
-  @media (max-width: 750px) {
-    flex-direction: column;
-  }
-`;
+import { Header } from "../../Componentes/Header";
+import { CorClara, CorEscura } from "../../../../tailwind.config";
 
 const Footer = styled.div`
   display: flex;
@@ -43,8 +27,9 @@ const Footer = styled.div`
   padding: 5px;
   font-weight: 600;
   border-radius: 0.4em;
-  background: #f97316;
-  box-shadow: inset 5px -5px 10px #9f4a0e, inset -5px 5px 10px #ff9c1e;
+  background: ${CorClara(0)};
+  box-shadow: inset 5px -5px 10px ${CorEscura(0.2)},
+    inset -5px 5px 10px ${CorClara(0.1)};
 `;
 
 const Section = styled.div`
@@ -109,7 +94,7 @@ const HeaderDados = styled.div`
   border-top-left-radius: 0.7em;
   border-bottom-right-radius: 0.2em;
   border-bottom-left-radius: 0.2em;
-  background: #f97316;
+  background: ${CorClara(0)};
 `;
 
 const ArticleDados = styled.div`
@@ -255,7 +240,6 @@ export const MostruarioNota = ({ empresaId }) => {
 
   const [ano, setAno] = useState(new Date().getFullYear());
 
-
   const Empresa = empresa.find((emp) => emp.id === empresaId);
   const siglaEmpresa = Empresa ? Empresa.siglaEmpresa : "N/A";
   const ContratoEmpresa = contrato.filter(
@@ -273,7 +257,6 @@ export const MostruarioNota = ({ empresaId }) => {
   const NotasFiltro = nota.filter((nt) => nt.idEmpresa === empresaId);
 
   NotasFiltro.sort((a, b) => new Date(b.dataNF) - new Date(a.dataNF));
-
 
   const NAnalisada = NotasEmpresa.filter(
     (nota) => nota.situacaoNF === "Em Análise"
@@ -402,7 +385,7 @@ export const MostruarioNota = ({ empresaId }) => {
       value: "Recebida",
       label: (
         <div className="flex justify-start items-center gap-3">
-          <p className="w-[1vw] h-[1vw] bg-red-500 rounded-full drop-shadow-md"></p>
+          <p className="w-[1vw] h-[1vw] bg-green-500 rounded-full drop-shadow-md"></p>
           <p>Recebida</p>
         </div>
       ),
@@ -449,8 +432,6 @@ export const MostruarioNota = ({ empresaId }) => {
     DataCT: "",
   });
 
-  //kdjajshdjkhsjhsdjhdjskhdsjkhdjkhdkjhdskj
-
   useEffect(() => {
     if (notaSelecionada) {
       setData((prevData) => ({ ...prevData, ...notaSelecionada }));
@@ -475,15 +456,6 @@ export const MostruarioNota = ({ empresaId }) => {
       notaSelecionada !== null && ct.numeroCT === notaSelecionada.numeroPedidoNF
     );
   });
-
-  const somaNotas = nota.reduce((acc, nota) => {
-    if (acc[nota.numeroPedidoNF]) {
-      acc[nota.numeroPedidoNF] += nota.valorRecebidoNF;
-    } else {
-      acc[nota.numeroPedidoNF] = nota.valorRecebidoNF;
-    }
-    return acc;
-  }, {});
 
   const InputContrato = (e) => {
     var Valor = e.target.value;
@@ -654,13 +626,15 @@ export const MostruarioNota = ({ empresaId }) => {
       {notaSelecionada ? (
         <>
           <Header>
-            <p>
-              Nota da {siglaEmpresa} - N°{notaSelecionada.numeroNotaNF}
-            </p>
+            <div className="w-full flex justify-between">
+              <p>
+                Nota da {siglaEmpresa} - N°{notaSelecionada.numeroNotaNF}
+              </p>
 
-            <button onClick={() => setNotaSelecionada(null)} title="Voltar">
-              <TbArrowForward />
-            </button>
+              <button onClick={() => setNotaSelecionada(null)} title="Voltar">
+                <TbArrowForward />
+              </button>
+            </div>
           </Header>
 
           <Article>
@@ -787,7 +761,7 @@ export const MostruarioNota = ({ empresaId }) => {
                 </AgruparTabelaN>
 
                 <button
-                  className="w-full bg-orange-500 p-1 font-semibold rounded-[1em] mt-1 drop-shadow-sm"
+                  className="w-full bg-CorPrimariaBT p-1 font-semibold rounded-[1em] mt-1 drop-shadow-sm"
                   onClick={updateNota}
                 >
                   Atualizar
@@ -799,16 +773,19 @@ export const MostruarioNota = ({ empresaId }) => {
       ) : notaSelecionadaCompleta ? (
         <>
           <Header>
-            <p>
-              Nota da {siglaEmpresa} - N°{notaSelecionadaCompleta.numeroNotaNF}
-            </p>
+            <div className="w-full flex justify-between">
+              <p>
+                Nota da {siglaEmpresa} - N°
+                {notaSelecionadaCompleta.numeroNotaNF}
+              </p>
 
-            <button
-              onClick={() => setNotaSelecionadaCompleta(null)}
-              title="Voltar"
-            >
-              <TbArrowForward />
-            </button>
+              <button
+                onClick={() => setNotaSelecionadaCompleta(null)}
+                title="Voltar"
+              >
+                <TbArrowForward />
+              </button>
+            </div>
           </Header>
 
           <Article>
@@ -910,50 +887,54 @@ export const MostruarioNota = ({ empresaId }) => {
       ) : (
         <>
           <Header>
-            <p>Notas da {siglaEmpresa}</p>
-            <input
-              list="Serch"
-              type="text"
-              placeholder="Pesquisar Nota"
-              title="Informe o N° da Nota ou do Pedido"
-              className="w-auto border-2 text-[1vw] rounded-xl border-gray-500 flex justify-center p-1"
-              onChange={(e) => ButtoSeach(e.target.value)}
-            />
+            <div className="flex  justify-between items-center">
+              <p className="flex justify-center items-center">
+                Notas da {siglaEmpresa}
+              </p>
+              <input
+                list="Serch"
+                type="number"
+                placeholder="Pesquisar Nota"
+                title="Informe o N° da Nota ou do Pedido"
+                className="w-auto border-2 text-[1vw] rounded-xl border-gray-500 flex justify-center p-1 h-8"
+                onChange={(e) => ButtoSeach(e.target.value)}
+              />
 
-            <datalist id="Serch" className="">
-              {NotasEmpresa.map((nt) => {
-                return (
-                  <option value={nt.numeroNotaNF}>
-                    {nt.numeroNotaNF} - {nt.situacaoNF}
-                  </option>
-                );
-              })}
-            </datalist>
+              <datalist id="Serch" className="">
+                {NotasEmpresa.map((nt) => {
+                  return (
+                    <option value={nt.numeroNotaNF}>
+                      {nt.numeroNotaNF} - {nt.situacaoNF}
+                    </option>
+                  );
+                })}
+              </datalist>
 
-            <form
-              className="flex justify-center items-center "
-              onSubmit={handleDataChange}
-            >
-              <select
-                className="w-auto border-2 text-[1vw] rounded-xl border-gray-500 flex justify-center p-1"
-                value={ano}
-                onChange={(event) => setAno(event.target.value)}
+              <form
+                className="flex justify-center items-center "
+                onSubmit={handleDataChange}
               >
-                {NotasFiltro.map((nt) => {
-                  const Data = new Date(nt.dataNF);
-                  const Ano = Data.getFullYear();
+                <select
+                  className="w-auto border-2 text-[1vw] rounded-xl border-gray-500 flex justify-center p-1"
+                  value={ano}
+                  onChange={(event) => setAno(event.target.value)}
+                >
+                  {NotasFiltro.map((nt) => {
+                    const Data = new Date(nt.dataNF);
+                    const Ano = Data.getFullYear();
 
-                  if (!uniqueYears.has(Ano)) {
-                    uniqueYears.add(Ano);
-                    return (
-                      <option key={Ano} value={Ano}>
-                        {Ano}
-                      </option>
-                    );
-                  }
-                }).filter((option) => option !== null)}
-              </select>
-            </form>
+                    if (!uniqueYears.has(Ano)) {
+                      uniqueYears.add(Ano);
+                      return (
+                        <option key={Ano} value={Ano}>
+                          {Ano}
+                        </option>
+                      );
+                    }
+                  }).filter((option) => option !== null)}
+                </select>
+              </form>
+            </div>
           </Header>
           {ContratoEmpresa.length > 0 && (
             <SectionBlock>
@@ -970,7 +951,7 @@ export const MostruarioNota = ({ empresaId }) => {
                         {stateContrato.AlertaContrato && (
                           <div className="absolute top-0 left-0 w-full h-full z-10 flex justify-center items-center">
                             <div className="absolute top-0 left-0 w-full h-full bg-slate-400 opacity-40 rounded-[1em]"></div>
-                            <div className="bg-white p-1 px-6 rounded-[1em] z-20 border-2 border-orange-400">
+                            <div className="bg-white p-1 px-6 rounded-[1em] z-20 border-2 border-CorPrimariaTBLA  ">
                               <h1>Você deseja desativar esse Contrato?</h1>
                               <h2 className="flex justify-around items-center">
                                 <button
@@ -982,7 +963,7 @@ export const MostruarioNota = ({ empresaId }) => {
                                   Não
                                 </button>
                                 <button
-                                  className="bg-orange-400 px-2 text-center rounded-[0.5em]"
+                                  className="bg-CorPrimariaTBLA px-2 text-center rounded-[0.5em]"
                                   onClick={() => deletContrato(ct.numeroCT)}
                                 >
                                   Sim
@@ -1097,7 +1078,7 @@ export const MostruarioNota = ({ empresaId }) => {
                     <TituloDados>
                       Nota Analisando
                       <div
-                        className={`flex justify-center items-center gap-2 bg-orange-300 px-3 rounded-[1em] ${
+                        className={`flex justify-center items-center gap-2 bg-CorTerciariaBT px-3 rounded-[1em] ${
                           NAnalisada.length <= 0 && "hidden"
                         }`}
                       >
@@ -1149,7 +1130,7 @@ export const MostruarioNota = ({ empresaId }) => {
                       })}
                     </ArticleDados>
                   </ArticleDados>
-                  <p className="bg-[#f97316] w-full h-4 rounded-b-[0.7em] rounded-t-[0.2em]"></p>
+                  <p className="bg-CorPrimariaBT w-full h-4 rounded-b-[0.7em] rounded-t-[0.2em]"></p>
                 </SectionBlock>
               )}
               {NAntecipada.length > 0 && (
@@ -1162,14 +1143,14 @@ export const MostruarioNota = ({ empresaId }) => {
                           NAntecipada.length <= 0 && "hidden"
                         }`}
                       >
-                        <div className="flex justify-center items-center gap-2 bg-orange-300 px-3 rounded-[1em]">
+                        <div className="flex justify-center items-center gap-2 bg-CorTerciariaBT px-3 rounded-[1em]">
                           <Texto>Imposto:</Texto> {realFormat(ValorImpostoAnt)}
                         </div>
-                        <div className="flex justify-center items-center gap-2 bg-orange-300 px-3 rounded-[1em]">
+                        <div className="flex justify-center items-center gap-2 bg-CorTerciariaBT px-3 rounded-[1em]">
                           <Texto>Total Desconto:</Texto>{" "}
                           {realFormat(DiferencaAntecipada)}
                         </div>
-                        <div className="flex justify-center items-center gap-2 bg-orange-300 px-3 rounded-[1em]">
+                        <div className="flex justify-center items-center gap-2 bg-CorTerciariaBT px-3 rounded-[1em]">
                           <Texto>Total Recebido:</Texto>{" "}
                           {realFormat(ValorRecebidoAntecipada)}
                         </div>
@@ -1219,7 +1200,7 @@ export const MostruarioNota = ({ empresaId }) => {
                       })}
                     </ArticleDados>
                   </ArticleDados>
-                  <p className="bg-[#f97316] w-full h-4 rounded-b-[0.7em] rounded-t-[0.2em]"></p>
+                  <p className="bg-CorPrimariaBT w-full h-4 rounded-b-[0.7em] rounded-t-[0.2em]"></p>
                 </SectionBlock>
               )}
               {NRecebida.length > 0 && (
@@ -1232,10 +1213,10 @@ export const MostruarioNota = ({ empresaId }) => {
                           NRecebida.length <= 0 && "hidden"
                         }`}
                       >
-                        <div className="flex justify-center items-center gap-2 bg-orange-300 px-3 rounded-[1em]">
+                        <div className="flex justify-center items-center gap-2 bg-CorTerciariaBT px-3 rounded-[1em]">
                           <Texto>Imposto:</Texto> {realFormat(ValorImpostoRec)}
                         </div>
-                        <div className="flex justify-center items-center gap-2 bg-orange-300 px-3 rounded-[1em]">
+                        <div className="flex justify-center items-center gap-2 bg-CorTerciariaBT px-3 rounded-[1em]">
                           <Texto>Total Recebido:</Texto>{" "}
                           {realFormat(ValorRecebido)}
                         </div>
@@ -1284,7 +1265,7 @@ export const MostruarioNota = ({ empresaId }) => {
                       })}
                     </ArticleDados>
                   </ArticleDados>
-                  <p className="bg-[#f97316] w-full h-4 rounded-b-[0.7em] rounded-t-[0.2em]"></p>
+                  <p className="bg-CorPrimariaBT w-full h-4 rounded-b-[0.7em] rounded-t-[0.2em]"></p>
                 </SectionBlock>
               )}
             </Article>

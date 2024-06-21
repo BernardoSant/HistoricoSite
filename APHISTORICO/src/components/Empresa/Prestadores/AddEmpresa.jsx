@@ -4,6 +4,8 @@ import axios from "axios";
 import { toast } from "react-toastify";
 import { useGlobalContext } from "../../../global/Global";
 import { FaArrowDown } from "react-icons/fa";
+import { Header } from "../../Componentes/Header";
+import { Button } from "../../Componentes/Button";
 
 const Form = styled.form`
   font-size: 1.2vw;
@@ -38,38 +40,6 @@ const Input = styled.input`
   border: 2px solid #d1d5db;
   border-radius: 4px;
   padding-left: 8px;
-`;
-const Header = styled.header`
-  width: 100%;
-  border-radius: 20px;
-  background: #f97316;
-  box-shadow: inset 5px -5px 10px #9f4a0e, inset -5px 5px 10px #ff9c1e;
-  font-weight: 600;
-  font-size: xx-large;
-  display: flex;
-  justify-content: center;
-  padding: 5px;
-`;
-
-const Button = styled.button`
-  width: auto;
-  border-radius: 20px;
-  background: #f97316;
-  box-shadow: inset 5px -5px 10px #9f4a0e, inset -5px 5px 10px #ff9c1e;
-  font-weight: 600;
-  display: flex;
-  justify-content: center;
-  font-size: 1.7vw;
-  padding: 7px;
-  padding-left: 3em;
-  padding-right: 3em;
-  transition-duration: 200ms;
-
-  &:hover {
-    cursor: pointer;
-    color: white;
-    scale: 97%;
-  }
 `;
 
 export const TabelaAdicionarEmpresa = () => {
@@ -192,7 +162,10 @@ export const TabelaAdicionarEmpresa = () => {
           )}
         </div>
 
-        <Section className="grid grid-cols-4 gap-x-2 overflow-auto" useRef={navRef}>
+        <Section
+          className="grid grid-cols-4 gap-x-2 overflow-auto"
+          useRef={navRef}
+        >
           <H1 className="col-span-3">Nome*</H1>
 
           <H1 className="col-span-1">Sigla*</H1>

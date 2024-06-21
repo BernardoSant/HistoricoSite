@@ -5,6 +5,8 @@ import { toast } from "react-toastify";
 import { useGlobalContext } from "../../../global/Global";
 import { NumericFormat } from "react-number-format";
 import { FaArrowDown } from "react-icons/fa";
+import { Header } from "../../Componentes/Header";
+import { Button } from "../../Componentes/Button";
 
 const Form = styled.form`
   height: 100%;
@@ -42,39 +44,6 @@ const InputDinheiro = styled(NumericFormat)`
   border: 2px solid #d1d5db;
   border-radius: 4px;
   padding-left: 8px;
-`;
-
-const Header = styled.header`
-  width: 100%;
-  border-radius: 20px;
-  background: #f97316;
-  box-shadow: inset 5px -5px 10px #9f4a0e, inset -5px 5px 10px #ff9c1e;
-  font-weight: 600;
-  font-size: xx-large;
-  display: flex;
-  justify-content: center;
-  padding: 5px;
-`;
-
-const Button = styled.button`
-  width: auto;
-  border-radius: 20px;
-  background: #f97316;
-  box-shadow: inset 5px -5px 10px #9f4a0e, inset -5px 5px 10px #ff9c1e;
-  font-weight: 600;
-  font-size: x-large;
-  display: flex;
-  justify-content: center;
-  padding: 7px;
-  padding-left: 3em;
-  padding-right: 3em;
-  transition-duration: 200ms;
-
-  &:hover {
-    cursor: pointer;
-    color: white;
-    scale: 97%;
-  }
 `;
 
 export const TabelaAddFuncionario = () => {
@@ -242,7 +211,6 @@ export const TabelaAddFuncionario = () => {
     }
   };
 
-
   return (
     <>
       <Form onSubmit={sendFuncionario} className="relative">
@@ -251,8 +219,12 @@ export const TabelaAddFuncionario = () => {
         <div className="absolute bottom-[19%] right-2/4 z-50">
           {isScrollable && !isScrolledToBottom && (
             <div className="flex flex-col justify-center items-center">
-
-              <h1 className="text-xl bg-gray-300 p-1 rounded-full opacity-60" onClick={handleClick}><FaArrowDown /></h1>
+              <h1
+                className="text-xl bg-gray-300 p-1 rounded-full opacity-60"
+                onClick={handleClick}
+              >
+                <FaArrowDown />
+              </h1>
             </div>
           )}
         </div>

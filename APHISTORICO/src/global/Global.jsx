@@ -2,6 +2,8 @@ import { createContext, useContext, useState, useEffect } from "react";
 import io from "socket.io-client";
 import axios from "axios";
 
+export const CorTotal = "rgb(249,1,22)";
+
 let ip = "http://localhost:2523";
 let socket;
 
@@ -10,6 +12,7 @@ const GlobalContext = createContext();
 export const useGlobalContext = () => useContext(GlobalContext);
 
 const AppContext = ({ children }) => {
+
   const [cargo, setCargo] = useState([]);
   const [empresa, setEmpresa] = useState([]);
   const [nota, setNota] = useState([]);
