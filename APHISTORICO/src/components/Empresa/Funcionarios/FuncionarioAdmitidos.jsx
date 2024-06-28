@@ -11,6 +11,7 @@ import { NumericFormat } from "react-number-format";
 import { dateFormat } from "../../../functions/dateFormat";
 import { FaArrowDown } from "react-icons/fa";
 import { Header } from "../../Componentes/Header";
+import { Button } from "../../Componentes/Button";
 
 const Div = styled.div`
   height: 100%;
@@ -75,28 +76,7 @@ const InputDinheiro = styled(NumericFormat)`
   padding-left: 8px;
 `;
 
-const ButtonSubmit = styled.button`
-  width: auto;
-  border-radius: 20px;
-  background: #f97316;
-  box-shadow: inset 5px -5px 10px #9f4a0e, inset -5px 5px 10px #ff9c1e;
-  font-weight: 600;
-  font-size: x-large;
-  display: flex;
-  justify-content: center;
-  padding: 7px;
-  padding-left: 3em;
-  padding-right: 3em;
-  transition-duration: 200ms;
-
-  &:hover {
-    cursor: pointer;
-    color: white;
-    scale: 97%;
-  }
-`;
-
-const Button = styled.button`
+const Buttonn = styled.button`
   padding: 5px;
   padding-left: 20px;
   padding-right: 20px;
@@ -621,7 +601,7 @@ export const MostruarioFuncAdmitido = () => {
     <Div>
       {state.Alerta && (
         <p className="absolute top-0 right-0 bg-[#7a7a7a67] w-full h-full z-20 flex justify-center items-center">
-          <div className="w-2/4 h-1/3 bg-slate-100 rounded-[1em] shadow-lg border-4 border-orange-400 flex flex-col justify-center items-center relative">
+          <div className="w-2/4 h-1/3 bg-slate-100 rounded-[1em] shadow-lg border-4 border-CorSecundariaBT flex flex-col justify-center items-center relative">
             <h1 className="text-[1.5vw] font-semibold">ALERTA!</h1>
             <h2 className="text-[1.1vw]">
               Você tem certeza que deseja Demitir este funcionario(a)?
@@ -634,7 +614,7 @@ export const MostruarioFuncAdmitido = () => {
                 NÃO
               </botton>
               <botton
-                className="bg-orange-500 drop-shadow-sm px-4 py-1 rounded-[0.5em] text-[0.9vw] font-semibold cursor-pointer"
+                className="bg-CorPrimariaBT drop-shadow-sm px-4 py-1 rounded-[0.5em] text-[0.9vw] font-semibold cursor-pointer"
                 onClick={demitirFuncionario}
               >
                 SIM
@@ -648,17 +628,18 @@ export const MostruarioFuncAdmitido = () => {
         <LoaderClin></LoaderClin>
       ) : funcionarioEditar ? (
         <Article className="relative">
-          <div className="flex w-full justify-end fixed top-10 right-10">
+          <div className="flex w-full justify-end fixed top-10 right-10 z-50">
             <div
               onClick={() => setFuncionarioEditar(null)}
-              className="bg-red-600 text-[1.2vw] p-1 rounded-full cursor-pointer"
+              className="bg-red-600 text-[1.2vw] p-1 rounded-full cursor-pointer
+              "
             >
               <TbArrowForward />
             </div>
           </div>
           <form
             onSubmit={updateFuncionario}
-            className=" grid grid-cols-6 gap-x-2 mt-3"
+            className=" grid grid-cols-6 gap-x-2 mt-3 relative"
           >
             <h3 className="text-3xl mb-5 font-semibold col-span-6 ml-3">
               Identificação
@@ -840,13 +821,13 @@ export const MostruarioFuncAdmitido = () => {
                 </option>
               ))}
             </select>
-            <div className="col-span-6 flex justify-end">
-              <ButtonSubmit
+            <div className="col-span-6 flex justify-end fixed bottom-10 right-12">
+              <Button
                 type="submit"
-                className=" mt-4 bg-orange-400 py-2 px-7 rounded-lg border-2 border-orange-500 font-semibold hover:text-white hover:scale-95 duration-500 mb-3"
+                className=" mt-4  font-semibold hover:text-white hover:scale-95 duration-500 mb-3"
               >
                 Salvar
-              </ButtonSubmit>
+              </Button>
             </div>
           </form>
         </Article>
@@ -863,26 +844,26 @@ export const MostruarioFuncAdmitido = () => {
                 <div className="flex gap-3">
                   {state.Menu && (
                     <div className="flex justify-between gap-2 w-auto  rounded-full ">
-                      <Button
+                      <Buttonn
                         className="bg-green-500 z-10"
                         onClick={() => handleClick("AddExames")}
                       >
                         Adicionar Exames
-                      </Button>
+                      </Buttonn>
 
-                      <Button
+                      <Buttonn
                         className="bg-yellow-500 z-10"
                         onClick={() => handleClick("AddFerias")}
                       >
                         Adicionar Ferias
-                      </Button>
+                      </Buttonn>
 
-                      <Button
+                      <Buttonn
                         onClick={() => handleClick("Alerta")}
                         className="bg-red-500 z-10"
                       >
                         Demitir
-                      </Button>
+                      </Buttonn>
                     </div>
                   )}
 
@@ -1168,9 +1149,7 @@ export const MostruarioFuncAdmitido = () => {
           <Header>
             <div className="flex flex-col">
               <div className="flex items-center w-full">
-                <th className="text-start text-3xl ">
-                  Funcionarios Admitidos
-                </th>
+                <th className="text-start text-3xl ">Funcionarios Admitidos</th>
               </div>
 
               <div className="grid grid-cols-[1fr_1fr_1fr_1fr_1fr_1fr_1fr_1fr_1fr_1fr_1fr_1fr_1fr_1fr_1fr_1fr] justify-center items-center w-full rounded-b-lg drop-shadow-2xl pb-1 text-center text-[1.4vw] xl:text-[0.95vw]">

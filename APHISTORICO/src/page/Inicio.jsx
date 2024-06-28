@@ -131,7 +131,7 @@ export const Inicio = () => {
         </>
       </Header>
       <div className="absolute bottom-1 right-4 text-slate-400 cursor-not-allowed text-[0.8vw]">
-        1.10.03
+        2.00.00
       </div>
     </div>
   );

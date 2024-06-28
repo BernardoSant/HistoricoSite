@@ -180,6 +180,16 @@ export const DashGeral = () => {
   );
 
   const CttAtivo = contrato.filter((ctt) => ctt.situacaoCT === "Ativo");
+  const notasContratosAtivos = [];
+  CttAtivo.forEach((cttAtivo) => {
+    const notasDoContrato = nota.filter(
+      (nt) =>
+        nt.numeroPedidoNF === cttAtivo.numeroCT &&
+        nt.situacaoNF === "Em Análise"
+    );
+
+    notasContratosAtivos.push(...notasDoContrato);
+  });
 
   const FuncionariosAdmitidos = funcionario.filter(
     (funcionario) => funcionario.statuFucionario === "Admitido"
@@ -237,7 +247,7 @@ export const DashGeral = () => {
       ValorTotal(NtAntecipada, "valorRecebidoNF"));
 
   const ImpostosPagosAntecipar =
-    ValorTotal(NtAntecipada, "valorNF") -
+    ValorTotal(NtAntecipada, "valorReceberNF") -
     ValorTotal(NtAntecipada, "valorRecebidoNF");
 
   const RecebidoTotalPedido =
@@ -251,33 +261,49 @@ export const DashGeral = () => {
 
   const RecebidoContrato = ValorTotal(CttAtivo, "ValorRecebidoCT");
 
+  const ReceberContrato = ValorTotal(notasContratosAtivos, "valorReceberNF");
+
   return (
     <Section>
       <Header>Dashboard</Header>
       <Article>
         <SectionBlock>
           <ArticleBlock className="drop-shadow-lg overflow-hidden">
-            <CarrocelDash>
-              <div className="h-[85%]">
+            {NtRecebida.length !== 0 || NtAntecipada.length !== 0 ? (
+              <CarrocelDash>
+                <div className="h-[85%]">
+                  <HeaderDados>
+                    <TituloDados>Ganhos</TituloDados>
+                  </HeaderDados>
+
+                  <ArticleDados>
+                    <DashGanhos></DashGanhos>
+                  </ArticleDados>
+                </div>
+
+                <div className="h-[85%]">
+                  <HeaderDados>
+                    <TituloDados>Análise de Entrada</TituloDados>{" "}
+                  </HeaderDados>
+
+                  <ArticleDados>
+                    <DashNotasPedidos></DashNotasPedidos>
+                  </ArticleDados>
+                </div>
+              </CarrocelDash>
+            ) : (
+              <div className="h-[70%]">
                 <HeaderDados>
-                  <TituloDados>Ganhos</TituloDados>
+                  <TituloDados>Gastos</TituloDados>{" "}
                 </HeaderDados>
 
-                <ArticleDados>
-                  <DashGanhos></DashGanhos>
+                <ArticleDados className="">
+                  <div className="w-full text-gray-500/70 flex justify-center items-center font-bold text-[1.1vw]">
+                    Nenhum Dados Cadastrados!
+                  </div>
                 </ArticleDados>
               </div>
-
-              <div className="h-[85%]">
-                <HeaderDados>
-                  <TituloDados>Análise de Entrada</TituloDados>{" "}
-                </HeaderDados>
-
-                <ArticleDados>
-                  <DashNotasPedidos></DashNotasPedidos>
-                </ArticleDados>
-              </div>
-            </CarrocelDash>
+            )}
           </ArticleBlock>
 
           <ArticleBlock className="drop-shadow-lg overflow-hidden">
@@ -313,7 +339,7 @@ export const DashGeral = () => {
 
                     <div className="h-[85%]">
                       <HeaderDados>
-                        <TituloDados>Gastos</TituloDados>{" "}
+                        <TituloDados>Análise de Saida</TituloDados>{" "}
                       </HeaderDados>
 
                       <ArticleDados>
@@ -411,17 +437,6 @@ export const DashGeral = () => {
                         currency: "BRL",
                       })}
                     </NumberDados>
-                    <DescricaoDados>Salario</DescricaoDados>
-                  </SeparacaoDados>
-                </Dados>
-
-                <Dados>
-                  <SeparacaoDados>
-                    <NumberDados>19</NumberDados>
-                    <DescricaoDados>Quantidade</DescricaoDados>
-                  </SeparacaoDados>
-                  <SeparacaoDados>
-                    <NumberDados>19</NumberDados>
                     <DescricaoDados>Salario</DescricaoDados>
                   </SeparacaoDados>
                 </Dados>
@@ -560,8 +575,14 @@ export const DashGeral = () => {
 
                 <Dados>
                   <SeparacaoDados>
-                    <NumberDados>{CttAtivo.length}</NumberDados>
-                    <DescricaoDados>Quantidade</DescricaoDados>
+                    <NumberDados>
+                      R$
+                      {ReceberContrato.toLocaleString({
+                        style: "currency",
+                        currency: "BRL",
+                      })}
+                    </NumberDados>
+                    <DescricaoDados>Receber</DescricaoDados>
                   </SeparacaoDados>
 
                   <SeparacaoDados>
@@ -580,33 +601,7 @@ export const DashGeral = () => {
                   </SeparacaoDados>
                 </Dados>
 
-                <Dados>
-                  <SeparacaoDados>
-                    <NumberDados>
-                      R$
-                      {ImpostosPagosAntecipar.toLocaleString({
-                        style: "currency",
-                        currency: "BRL",
-                      })}
-                    </NumberDados>
-                    <DescricaoDados>Antecipar</DescricaoDados>
-                  </SeparacaoDados>
-
-                  <SeparacaoDados>
-                    <NumberDados>Impostos</NumberDados>
-                  </SeparacaoDados>
-
-                  <SeparacaoDados>
-                    <NumberDados>
-                      R$
-                      {ImpostosPagos.toLocaleString({
-                        style: "currency",
-                        currency: "BRL",
-                      })}
-                    </NumberDados>
-                    <DescricaoDados>Imposto</DescricaoDados>
-                  </SeparacaoDados>
-                </Dados>
+               
               </CarrocelDash>
             </ArticleDados>
           </ArticleBlock>

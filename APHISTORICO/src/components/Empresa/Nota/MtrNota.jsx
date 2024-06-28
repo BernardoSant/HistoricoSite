@@ -18,6 +18,7 @@ import axios from "axios";
 import { toast } from "react-toastify";
 import { Header } from "../../Componentes/Header";
 import { CorClara, CorEscura } from "../../../../tailwind.config";
+import { Button } from "../../Componentes/Button";
 
 const Footer = styled.div`
   display: flex;

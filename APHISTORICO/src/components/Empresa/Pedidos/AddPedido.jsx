@@ -106,7 +106,7 @@ export const TabelaAddPedido = () => {
   };
 
   return (
-    <div className="h-full lflex flex-col justify-center items-start ">
+    <div className="h-full w-full flex-col justify-center items-start ">
       <Header>Adcionar Pedido</Header>
 
       <Form onSubmit={sendPedido}>

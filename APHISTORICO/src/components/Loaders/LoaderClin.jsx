@@ -18,7 +18,7 @@ export const LoaderClin = () => {
   return (
     <p className="absolute top-0 right-0  w-full h-full z-20 flex justify-center items-center">
       <div className="flex flex-col justify-center items-center relative">
-        <div class="spinner"></div>
+        <div class="spinner" ></div>
         <div data-text="Carregando" class="text"></div>
       </div>
     </p>

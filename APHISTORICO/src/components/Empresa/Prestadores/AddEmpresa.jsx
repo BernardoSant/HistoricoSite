@@ -8,7 +8,7 @@ import { Header } from "../../Componentes/Header";
 import { Button } from "../../Componentes/Button";
 
 const Form = styled.form`
-  font-size: 1.2vw;
+  font-size: 0.9vw;
   height: 100%;
   width: 100%;
   gap: 1em;
@@ -146,14 +146,14 @@ export const TabelaAdicionarEmpresa = () => {
 
   return (
     <>
-      <Form onSubmit={sendEmpresa} className="relative">
+      <Form onSubmit={sendEmpresa} className="relative ">
         <Header>Adcionar Empresa</Header>
 
         <div className="absolute bottom-[11%] right-2/4 z-50">
           {isScrollable && !isScrolledToBottom && (
             <div className="flex flex-col justify-center items-center">
               <h1
-                className="text-xl bg-gray-300 p-1 rounded-full opacity-60"
+                className="text-lg bg-gray-300 p-1 rounded-full opacity-60"
                 onClick={handleClick}
               >
                 <FaArrowDown />

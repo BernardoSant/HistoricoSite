@@ -73,7 +73,6 @@ const SectionBlock = styled.div`
   display: flex;
   flex-direction: row;
   gap: 12px;
-  max-height: 45%;
 `;
 
 const ArticleBlock = styled.div`
@@ -587,7 +586,7 @@ export const Outros = () => {
     <Section>
       <Header>Outros Cadastros </Header>
       <Article>
-        <SectionBlock>
+        <SectionBlock className="max-h-[15em]">
           <ArticleBlock>
             <HeaderDados>
               <TituloDados>
@@ -768,7 +767,7 @@ export const Outros = () => {
           </ArticleBlock>
         </SectionBlock>
 
-        <SectionBlock className="mb-3">
+        <SectionBlock className="mb-3 max-h-[15em] 2xl:max-h-full">
           <ArticleBlock>
             <HeaderDados>
               <TituloDados>

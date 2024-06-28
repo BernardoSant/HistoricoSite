@@ -213,6 +213,8 @@ export const TabelaAddNota = () => {
   const sendNF = async (e) => {
     e.preventDefault();
 
+    const navElement = navRef.current;
+
     const headers = {
       headers: {
         "Content-Type": "application/json",
@@ -222,7 +224,10 @@ export const TabelaAddNota = () => {
     if (
       data.numeroPedidoNF === "" ||
       data.nomeEmpresaNF === "" ||
-      data.valorNF === ""
+      data.valorNF === "" ||
+      data.KinayNF === "" ||
+      data.prazoPagamentoNF === "" ||
+      data.dataNF === ""
     ) {
       toast.error("Por favor, preencha todos os campos obrigatórios.");
       return;
