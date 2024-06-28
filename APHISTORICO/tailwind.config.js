@@ -1,6 +1,6 @@
 /** @type {import('tailwindcss').Config} */
 
-export const Cor = "rgb(22,200,74)";
+export const Cor = "rgb(61, 112, 226)";
 
 export function CorEscura(Intencidade) {
   // Função para misturar uma cor com preto e criar uma versão mais escura

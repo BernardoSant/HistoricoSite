@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { toast } from "react-toastify";
 import axios from "axios";
-import { MdOutlineHomeWork } from "react-icons/md";
+import { TbBuildingCommunity } from "react-icons/tb";
 import styled from "styled-components";
 import { TabelaAdicionarEmpresa } from "../Prestadores/AddEmpresa";
 import { MostruarioNota } from "../Nota/MtrNota";
@@ -52,7 +52,7 @@ const TabelaSecund = styled.div`
 const Div = styled.div`
   box-shadow: -1px 2px 13px #b5b2b2, -4px -5px 13px #ffffff;
   border-bottom-right-radius: 1em;
-  border-bottom-left-radius: 1em;
+
   border-top-right-radius: 1em;
   padding: 1em;
   font-size: medium;
@@ -397,7 +397,7 @@ export const Empresa = () => {
             <nav className="flex flex-col justify-center relative">
               <div className="w-full text-center bg-CorSecundariaBT  rounded-full py-1 font-bold text-[1.1vw] sticky top-0">
                 <p className="absolute  left-0 top-0 ml-4 h-full flex justify-center items-center">
-                  <MdOutlineHomeWork />
+                  <TbBuildingCommunity />
                 </p>
                 Empresa
               </div>

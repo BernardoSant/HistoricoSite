@@ -1,13 +1,15 @@
 import styled from "styled-components";
-import { BsBuildings, BsHouse, BsList, BsPlus } from "react-icons/bs";
+import { TbSettings, TbBuildingCommunity, TbLicense } from "react-icons/tb";
 import { Empresa } from "../components/Empresa/Pagina/Empresa";
 import { Dashboard } from "../components/Dashboard/Pagina/Dashboard";
+import { Config } from "../components/Config/Pagina/Page";
 import { useState } from "react";
 import { TabelaConta } from "../Conta/Conta";
 
 const Nav = styled.nav`
-  height: auto;
+  height: 100%;
   display: flex;
+  justify-content: space-between;
   flex-direction: column;
   position: relative;
   z-index: 20;
@@ -36,19 +38,17 @@ const Div = styled.div`
   flex-direction: column;
 `;
 
-const Div2 = styled.div`
+const Button = styled.div`
   text-align: center;
   padding: 10px;
-  transition: 200ms;
   font-size: 1.5vw;
 `;
 
 export const Inicio = () => {
   const [state, setState] = useState({
-    Inicio: false,
     Empresa: true,
-    Casa: false,
     Conta: false,
+    Config: false,
   });
 
   const handleClick2 = (key) => {
@@ -62,10 +62,49 @@ export const Inicio = () => {
     setState((prevState) => ({
       ...prevState,
       [key]: true,
-      ...(key !== "Inicio" && { Inicio: false }),
       ...(key !== "Empresa" && { Empresa: false }),
-      ...(key !== "Casa" && { Casa: false }),
+      ...(key !== "Config" && { Config: false }),
     }));
+  };
+
+  const ButtonStyled = ({
+    TipoButton,
+    Titulo,
+    onClick,
+    onSecundario,
+    onPrimario,
+  }) => {
+    return (
+      <>
+        {TipoButton === 1 && (
+          <Button
+            onClick={onClick}
+            className={`${
+              onPrimario &&
+              "bg-[#fffafa] rounded-bl-[0.6em] rounded-tl-[0.6em] my-1 ml-1"
+            } cursor-pointer duration-200 ${
+              !onPrimario && "hover:bg-[#fffafa] hover:rounded-full my-1 mx-1"
+            }`}
+          >
+            {Titulo}
+          </Button>
+        )}
+
+        {TipoButton === 2 && (
+          <Button
+            onClick={onClick}
+            className={`${
+              onSecundario &&
+              "bg-[#d6d6d6] rounded-bl-[0.6em] rounded-tl-[0.6em] my-1 ml-1"
+            } cursor-pointer duration-200 ${
+              !onSecundario && "hover:bg-[#fffafa] hover:rounded-full my-1 mx-1"
+            }`}
+          >
+            {Titulo}
+          </Button>
+        )}
+      </>
+    );
   };
 
   return (
@@ -73,65 +112,39 @@ export const Inicio = () => {
       <Header>
         <Nav>
           <Div className="bg-CorPrimariaBT">
-            {/*
-            <Div2
-              className={`${
-                state.Inicio &&
-                "bg-[#fffafa] rounded-bl-[0.8em] rounded-tl-[0.8em] my-1 ml-1"
-              } cursor-pointer ${
-                !state.Inicio &&
-                "hover:bg-[#fffafa] hover:rounded-full my-1 mx-1"
-              }`}
-              onClick={() => handleClick("Inicio")}
-            >
-              <BsList />
-            </Div2>
-*/}
-            <Div2
-              className={`${
-                state.Empresa &&
-                "bg-[#fffafa] rounded-bl-[0.8em] rounded-tl-[0.8em] my-1 ml-1"
-              } cursor-pointer ${
-                !state.Empresa &&
-                "hover:bg-[#fffafa] hover:rounded-full my-1 mx-1"
-              }`}
+            <ButtonStyled
+              TipoButton={1}
+              onPrimario={state.Empresa}
+              Titulo={<TbBuildingCommunity />}
               onClick={() => handleClick("Empresa")}
-            >
-              <BsBuildings />
-            </Div2>
-            {/*
-            <Div2
-              className={`${
-                state.Casa &&
-                "bg-[#fffafa] rounded-bl-[0.8em] rounded-tl-[0.8em] my-1 ml-1"
-              } cursor-pointer ${!state.Casa && "hover:bg-[#fffafa] hover:rounded-full my-1 mx-1"} `}
-              onClick={() => handleClick("Casa")}
-            >
-              <BsHouse />
-            </Div2>
-*/}
-            <Div2
-              className={`${
-                state.Conta &&
-                "bg-[#d6d6d6] rounded-bl-[0.8em] rounded-tl-[0.8em] my-1 ml-1"
-              } cursor-pointer ${
-                !state.Conta &&
-                "hover:bg-[#fffafa] hover:rounded-full my-1 mx-1"
-              }`}
+            ></ButtonStyled>
+
+            <ButtonStyled
+              TipoButton={2}
+              onSecundario={state.Conta}
+              Titulo={<TbLicense />}
               onClick={() => handleClick2("Conta")}
-            >
-              <BsPlus />
-            </Div2>
+            ></ButtonStyled>
           </Div>
-          {state.Conta && <TabelaConta></TabelaConta>}
+          {/*
+          <Div className="bg-CorPrimariaBT">
+            <ButtonStyled
+              TipoButton={1}
+              onPrimario={state.Config}
+              Titulo={<TbSettings />}
+              onClick={() => handleClick("Config")}
+            ></ButtonStyled>
+          </Div>*/}
         </Nav>
-        <>
+        <div className="w-full h-full">
+          {state.Conta && <TabelaConta></TabelaConta>}
           {state.Inicio && <Dashboard />}
           {state.Empresa && <Empresa />}
-        </>
+          {state.Config && <Config />}
+        </div>
       </Header>
       <div className="absolute bottom-1 right-4 text-slate-400 cursor-not-allowed text-[0.8vw]">
-        2.00.00
+        2.00.01
       </div>
     </div>
   );

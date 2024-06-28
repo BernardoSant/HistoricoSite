@@ -11,8 +11,7 @@ const BlockConta = styled.div`
   display: flex;
   flex-direction: column;
   height: auto;
-  width: 13.05em;
-  margin-left: 3.4em;
+  width: 13em;
   z-index: 30;
   border-top-right-radius: 1em;
   border-bottom-left-radius: 1em;
