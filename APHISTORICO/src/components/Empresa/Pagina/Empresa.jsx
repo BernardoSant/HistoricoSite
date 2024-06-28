@@ -52,7 +52,7 @@ const TabelaSecund = styled.div`
 const Div = styled.div`
   box-shadow: -1px 2px 13px #b5b2b2, -4px -5px 13px #ffffff;
   border-bottom-right-radius: 1em;
-
+  border-bottom-left-radius: 1em;
   border-top-right-radius: 1em;
   padding: 1em;
   font-size: medium;
