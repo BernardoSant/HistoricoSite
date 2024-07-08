@@ -12,7 +12,6 @@ const GlobalContext = createContext();
 export const useGlobalContext = () => useContext(GlobalContext);
 
 const AppContext = ({ children }) => {
-
   const [cargo, setCargo] = useState([]);
   const [empresa, setEmpresa] = useState([]);
   const [nota, setNota] = useState([]);
@@ -27,6 +26,8 @@ const AppContext = ({ children }) => {
   const [salario, setSalario] = useState([]);
   const [abastecimento, setAbastecimento] = useState([]);
   const [manutencao, setManutencao] = useState([]);
+  const [certificado, setCertificado] = useState([]);
+  const [treinamento, setTreinamento] = useState([]);
 
   useEffect(() => {
     (async () => {
@@ -47,6 +48,8 @@ const AppContext = ({ children }) => {
         { type: "salario", setData: setSalario },
         { type: "abastecimento", setData: setAbastecimento },
         { type: "manutencao", setData: setManutencao },
+        { type: "certificado", setData: setCertificado },
+        { type: "treinamento", setData: setTreinamento },
       ];
 
       dataTypes.forEach(({ type, setData }) => {
@@ -80,6 +83,8 @@ const AppContext = ({ children }) => {
         abastecimento,
         manutencao,
         salario,
+        certificado,
+        treinamento,
       }}
     >
       {children}

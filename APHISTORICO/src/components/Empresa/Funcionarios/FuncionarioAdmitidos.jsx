@@ -12,6 +12,7 @@ import { dateFormat } from "../../../functions/dateFormat";
 import { FaArrowDown } from "react-icons/fa";
 import { Header } from "../../Componentes/Header";
 import { Button } from "../../Componentes/Button";
+import { RiSaveLine } from "react-icons/ri";
 
 const Div = styled.div`
   height: 100%;
@@ -21,17 +22,34 @@ const Div = styled.div`
   overflow: auto;
 `;
 
+const Divscroll = styled.div`
+  &::-webkit-scrollbar {
+    width: 5px;
+    height: 5px;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: #575757;
+    border-radius: 1em;
+  }
+`;
+
+const DescricaoTreinamento = styled(Divscroll)`
+  max-height: 9vw;
+  overflow: auto;
+  text-overflow: ellipsis;
+`;
+
 const Article = styled.article`
   width: 100%;
   height: 100%;
   overflow: auto;
   margin-top: 4px;
-  margin-bottom: 8px;
   border-radius: 1em;
   overflow: auto;
   position: relative;
   padding-right: 4px;
-  padding-bottom: 3em;
+  padding-bottom: 1em;
 
   &::-webkit-scrollbar {
     width: 5px;
@@ -69,6 +87,7 @@ const Input = styled.input`
   max-width: 40em;
   padding-left: 8px;
 `;
+
 const InputDinheiro = styled(NumericFormat)`
   width: 100%;
   border: 2px solid #d1d5db;
@@ -94,8 +113,16 @@ const Buttonn = styled.button`
 `;
 
 export const MostruarioFuncAdmitido = () => {
-  const { ip, funcionario, empresa, ferias, cargo, impostos } =
-    useGlobalContext();
+  const {
+    ip,
+    funcionario,
+    empresa,
+    ferias,
+    cargo,
+    impostos,
+    certificado,
+    treinamento,
+  } = useGlobalContext();
   const [carregando, setCarregando] = useState(false);
 
   const FuncionariosAdmitidos = funcionario.filter(
@@ -142,6 +169,10 @@ export const MostruarioFuncAdmitido = () => {
     horasTFucionario: "",
     CadastroEmprFuncionario: "",
     diasFaltas: 0,
+    siglaCertificado: "",
+    descricaoCertificado: "",
+    dataTreinamento: "",
+    dataVencimentoTreinamentoNew: "",
   });
 
   const valorInput = (e) => {
@@ -174,8 +205,19 @@ export const MostruarioFuncAdmitido = () => {
     (carg) => carg.nomeCargo === data.funcaoFuncionario
   );
 
+  const [treinamentoSelect, setTreinamentoSelect] = useState(null);
   const [funcionarioSelecionado, setFuncionarioSelecionado] = useState(null);
   const [funcionarioEditar, setFuncionarioEditar] = useState(null);
+
+  useEffect(() => {
+    if (treinamentoSelect) {
+      setData((prevData) => ({ ...prevData, ...treinamentoSelect }));
+      setDataFerias({
+        ...dataFerias,
+        idFuncionario: treinamentoSelect.id,
+      });
+    }
+  }, [treinamentoSelect]);
 
   useEffect(() => {
     if (funcionarioSelecionado) {
@@ -194,6 +236,18 @@ export const MostruarioFuncAdmitido = () => {
   }, [funcionarioEditar]);
 
   if (funcionarioSelecionado) {
+    const treinamentosDoFuncionario = treinamento.filter(
+      (treinamento) => treinamento.idFuncionario === funcionarioSelecionado.id
+    );
+
+    const idCertificadosDoFuncionario = treinamentosDoFuncionario.map(
+      (treinamento) => treinamento.idCertificado
+    );
+
+    var certificadosNaoPossuidos = certificado.filter(
+      (certificado) => !idCertificadosDoFuncionario.includes(certificado.id)
+    );
+
     const FuncionarioFerias = ferias.filter(
       (ferias) => ferias.idFuncionario === funcionarioSelecionado.id
     );
@@ -283,10 +337,12 @@ export const MostruarioFuncAdmitido = () => {
     ) {
       const dataInicio = new Date(valor);
       const dataFinalizacao = new Date(dataInicio);
+      const SalarioFunc = data.salarioFucionario;
 
       dataFinalizacao.setMonth(dataFinalizacao.getMonth() + 1);
       setDataFerias({
         ...dataFerias,
+        valorFerias: SalarioFunc + SalarioFunc / 3,
         situacaoFerias: "Em Ferias",
         idFuncionario: funcionarioSelecionado.id,
         dataInicioFerias: dataInicio.toISOString().split("T")[0],
@@ -314,7 +370,7 @@ export const MostruarioFuncAdmitido = () => {
           idFuncionario: funcionarioSelecionado.id,
           situacaoFerias: "Ferias Vendida",
           dataInicioFerias: "",
-          dataFinalizacaoFerias: null,
+          dataFinalizacaoFerias: "",
           valorFerias: "",
         });
         toast.success(response.data.message);
@@ -328,6 +384,144 @@ export const MostruarioFuncAdmitido = () => {
       headers
     );
   };
+
+  const SubmitCertif = async (e) => {
+    e.preventDefault();
+    const headers = {
+      headers: {
+        "Content-Type": "application/json",
+      },
+    };
+    if (data.siglaCertificado === "" || data.descricaoCertificado === "") {
+      toast.error("Esta faltando alguma caracteristica!");
+      return;
+    }
+    axios
+      .post(ip + "/certificado", data, headers)
+      .then((response) => {
+        setData({
+          siglaCertificado: "",
+          descricaoCertificado: "",
+        });
+        toast.success(response.data.message);
+      })
+      .catch((err) => {
+        toast.info(err.response.data.message);
+        return;
+      });
+  };
+
+  const [treinamentoSelecionado, setTreinamentoSelecionado] = useState({});
+  const handleClickTreinamento = (id) => {
+    const novoEstado = Object.keys(treinamentoSelecionado).reduce(
+      (obj, key) => {
+        obj[key] = false;
+        setState((prevState) => ({
+          ...prevState,
+          [key]: !prevState[key],
+        }));
+        return obj;
+      },
+      {}
+    );
+
+    novoEstado[id] = true;
+    novoEstado[id] = !treinamentoSelecionado[id];
+
+    setTreinamentoSelecionado(novoEstado);
+  };
+
+  const SubmitTreinamento = async (e) => {
+    e.preventDefault();
+    const headers = {
+      headers: {
+        "Content-Type": "application/json",
+      },
+    };
+    if (treinamentoSelecionado === "" || data.dataTreinamento === "") {
+      toast.error(
+        "Selecione um treinamento ou esta faltando alguma caracteristica!"
+      );
+      return;
+    }
+
+    const dataLocal = new Date(data.dataTreinamento);
+
+    const dataUTC = new Date(
+      dataLocal.getTime() + dataLocal.getTimezoneOffset() * 60000
+    );
+
+    dataUTC.setFullYear(dataUTC.getUTCFullYear() + 1);
+
+    axios
+      .post(
+        ip + "/treinamento",
+        {
+          dataTreinamento: dataUTC.toISOString(),
+          idFuncionario: funcionarioSelecionado.id,
+          idCertificado: treinamentoSelect,
+        },
+        headers
+      )
+      .then((response) => {
+        setData({
+          dataTreinamento: "",
+        });
+        toast.success(response.data.message);
+      })
+      .catch((err) => {
+        toast.info(err.response.data.message);
+        return;
+      });
+  };
+
+  const UpdateTreinamento = async (e) => {
+    e.preventDefault();
+    const headers = {
+      headers: {
+        "Content-Type": "application/json",
+      },
+    };
+    if (data.dataVencimentoTreinamentoNew === "") {
+      toast.error("Coloque a data do Treinamento!");
+      return;
+    }
+
+    const dataLocal = new Date(data.dataVencimentoTreinamentoNew);
+
+    const dataUTC = new Date(
+      dataLocal.getTime() + dataLocal.getTimezoneOffset() * 60000
+    );
+
+    dataUTC.setFullYear(dataUTC.getUTCFullYear() + 1);
+
+    axios
+      .put(
+        ip + "/treinamento/" + treinamentoSelect,
+        {
+          dataTreinamento: dataUTC.toISOString(),
+        },
+        headers
+      )
+      .then((response) => {
+        setData({
+          dataVencimentoTreinamentoNew: "",
+        });
+        setTreinamentoSelecionado({});
+        setTreinamentoSelect(null);
+        toast.success(response.data.message);
+      })
+      .catch((err) => {
+        toast.info(err.response.data.message);
+        return;
+      });
+  };
+
+  const FilterTreinamento = treinamento.filter((item) =>
+    funcionarioSelecionado
+      ? item.idFuncionario === funcionarioSelecionado.id
+      : false
+  );
 
   const sendExames = async (e) => {
     e.preventDefault();
@@ -420,6 +614,17 @@ export const MostruarioFuncAdmitido = () => {
     FeriasPaga: false,
   });
 
+  const [stateCertificados, setCertificados] = useState({
+    Certificados: false,
+  });
+
+  const handleCertificado = (key) => {
+    setCertificados((prevState) => ({
+      ...prevState,
+      [key]: !prevState[key],
+    }));
+  };
+
   const handleFerias = (key) => {
     setFeriasPaga((prevState) => ({
       ...prevState,
@@ -444,6 +649,7 @@ export const MostruarioFuncAdmitido = () => {
     TipoFerias: false,
     AddExames: false,
     Alerta: false,
+    Treinamento: false,
   });
   const handleClick = (key) => {
     setState((prevState) => ({
@@ -539,10 +745,10 @@ export const MostruarioFuncAdmitido = () => {
   function renderInfo(title, value) {
     return (
       <div>
-        <h1 className="col-span-1 text-center text-[1.3vw] xl:text-[0.8vw] font-bold">
+        <h1 className="col-span-1 text-center text-[1.2vw] xl:text-[1vw] font-bold">
           {title}:
         </h1>
-        <h1 className="col-span-1 text-center px-3 text-[1.3vw] xl:text-[0.8vw] ">
+        <h1 className="col-span-1 text-center px-3 text-[1vw] xl:text-[0.9vw] ">
           {Number(value.toFixed(2)).toLocaleString("pt-BR", {
             style: "currency",
             currency: "BRL",
@@ -596,6 +802,100 @@ export const MostruarioFuncAdmitido = () => {
 
     setFuncState(novoEstado);
   };
+
+  const [InformatcState, setInformatState] = useState({});
+
+  const ButtoSelecaoInformat = (id) => {
+    const novoEstado = Object.keys(InformatcState).reduce((obj, key) => {
+      obj[key] = false;
+      setState((prevState) => ({
+        ...prevState,
+        [key]: !prevState[key],
+      }));
+      return obj;
+    }, {});
+
+    novoEstado[id] = true;
+    novoEstado[id] = !InformatcState[id];
+
+    setInformatState(novoEstado);
+  };
+
+  const ButonAlerta = ({ Desc, Tipo, onClick }) => {
+    //1 = Informação
+    //2 = Alerta
+    //3 = Atenção
+    //4 = Bom
+    //5 = Processo Diferente
+
+    const [mostrarVerMais, setMostrarVerMais] = useState(false);
+
+    const handleMouseEnter = () => {
+      setMostrarVerMais(true);
+    };
+
+    const handleMouseLeave = () => {
+      setMostrarVerMais(false);
+    };
+
+    return (
+      <>
+        {Tipo === 1 ? (
+          <div
+            onMouseEnter={handleMouseEnter}
+            onMouseLeave={handleMouseLeave}
+            onClick={onClick}
+            className={`p-1 px-3 rounded-[0.8em] cursor-pointer bg-blue-400
+            `}
+          >
+            {mostrarVerMais ? "Ver mais" : Desc}
+          </div>
+        ) : (
+          <div
+            onClick={onClick}
+            className={`p-1 px-3 rounded-[0.8em] cursor-pointer ${
+              Tipo === 2
+                ? "bg-red-500"
+                : Tipo === 3
+                ? "bg-yellow-500"
+                : Tipo === 4
+                ? "bg-green-500"
+                : "bg-orange-500"
+            }`}
+          >
+            {mostrarVerMais ? "Ver mais" : Desc}
+          </div>
+        )}
+      </>
+    );
+  };
+
+  function FiltrarTreinamento(idFunc, idCertificado) {
+    const FilterTreinamento = treinamento.filter(
+      (item) =>
+        item.idFuncionario === idFunc && item.idCertificado === idCertificado
+    );
+
+    const FilterCertificado = certificado.filter(
+      (item) => item.id === idCertificado
+    );
+
+    return (
+      <div>
+        {FilterTreinamento.map((Trei) => (
+          <div key={Trei.id}>
+            {FilterCertificado.map((item) => (
+              <div key={item.id}>
+                {item.siglaCertificado}
+                {item.descricaoCertificado}
+              </div>
+            ))}
+            {dateFormat(Trei.dataTreinamento)}
+          </div>
+        ))}
+      </div>
+    );
+  }
 
   return (
     <Div>
@@ -947,6 +1247,26 @@ export const MostruarioFuncAdmitido = () => {
                             name="dataFinalizacaoFerias"
                             value={dataFerias.dataFinalizacaoFerias}
                           />
+                          <H1 className="col-span-1 flex justify-center items-center">
+                            Valor:
+                          </H1>
+                          <InputDinheiro
+                            className="rounded-[1.5em] text-center col-span-4 shadow-inner px-2"
+                            type="text"
+                            placeholder="1.000,00"
+                            readOnly
+                            value={dataFerias.valorFerias || ""}
+                            onValueChange={(e) => {
+                              setDataFerias({
+                                ...dataFerias,
+                                valorFerias: e.floatValue,
+                              });
+                            }}
+                            thousandSeparator="."
+                            decimalScale={2}
+                            fixedDecimalScale
+                            decimalSeparator=","
+                          />
                         </form>
                       </>
                     )}
@@ -1032,7 +1352,7 @@ export const MostruarioFuncAdmitido = () => {
                 </div>
                 <div
                   onClick={() => setFuncionarioSelecionado(null)}
-                  className={`bg-orange-600 p-1 text-[1.2vw] rounded-full flex justify-center items-center ${
+                  className={`bg-red-600 p-1 text-[1.2vw] rounded-full flex justify-center items-center ${
                     state.Menu && "mt-0"
                   }`}
                   title="Fechar"
@@ -1128,6 +1448,235 @@ export const MostruarioFuncAdmitido = () => {
             <H2 className="col-span-1">{dataFormatadaFerias}</H2>
             <H2 className="col-span-1">{feriass}</H2>
             <H2 className="col-span-4">{data.CadastroEmprFuncionario}</H2>
+
+            <h3 className="text-3xl my-4 font-semibold col-span-5 ml-3">
+              Treinamento
+            </h3>
+            <H1 className="col-span-6 flex h-[15em] gap-3">
+              <div className="flex flex-col w-[10em]">
+                <div className="p-1 px-4 bg-CorPrimariaBT rounded-t-[0.8em]  relative">
+                  Certificados
+                  <div
+                    className={`absolute top-1 right-2 text-[1.2vw] h-[1.5vw] w-[1.5vw] flex justify-center items-center rounded-full cursor-pointer ${
+                      stateCertificados.Certificados
+                        ? "bg-red-500"
+                        : "bg-green-500"
+                    }`}
+                    onClick={() => handleCertificado("Certificados")}
+                  >
+                    {stateCertificados.Certificados ? (
+                      <TbArrowForward />
+                    ) : (
+                      <>+</>
+                    )}
+                  </div>
+                </div>
+                {stateCertificados.Certificados ? (
+                  <form
+                    onSubmit={SubmitCertif}
+                    className="bg-CorTerciariaBT h-full rounded-b-[0.8em] flex flex-col p-1 "
+                  >
+                    <div className="flex-1  ">
+                      <div>Sigla</div>
+                      <Input
+                        className="rounded-[0.5em] col-span-4 shadow-inner px-2 font-normal"
+                        type="text"
+                        value={data.siglaCertificado}
+                        name="siglaCertificado"
+                        onChange={(e) => {
+                          const { name, value } = e.target;
+                          const upperCaseValue = value.toUpperCase();
+                          valorInput({
+                            target: { name, value: upperCaseValue },
+                          });
+                        }}
+                      />
+                      <h1>Descrição</h1>
+                      <textarea
+                        className="rounded-[0.5em]  col-span-4 shadow-inner px-2 pt-1 w-full font-normal"
+                        type="date"
+                        rows="3"
+                        value={data.descricaoCertificado}
+                        name="descricaoCertificado"
+                        onChange={valorInput}
+                      />
+                    </div>
+                    <button
+                      className="w-full bg-CorPrimariaBT rounded-[0.5em] py-1"
+                      type="submit"
+                    >
+                      Adcionar
+                    </button>
+                  </form>
+                ) : (
+                  <Divscroll className="bg-CorTerciariaBT h-full rounded-b-[0.8em] flex flex-col p-1 max-h-[20em] overflow-auto">
+                    {certificado.map((Cert) => (
+                      <div className="w-full px-2 flex items-center gap-1">
+                        <p className="h-2 w-2 bg-black rounded-full"></p>
+                        {Cert.siglaCertificado}
+                      </div>
+                    ))}
+                  </Divscroll>
+                )}
+              </div>
+              {state.Treinamento ? (
+                <form
+                  onSubmit={SubmitTreinamento}
+                  className="flex-1 flex flex-col bg-slate-400/20 rounded-[0.8em]"
+                >
+                  <div
+                    className="flex-initial bg-slate-400/30 rounded-t-[0.8em] px-3 p-1 flex justify-between items-center
+                "
+                  >
+                    <>Treinamentos do Funcionario</>
+                    <button
+                      onClick={() => {
+                        setState({ Treinamento: false });
+                        setTreinamentoSelecionado({});
+                        setTreinamentoSelect(null);
+                      }}
+                      className="bg-red-500 px-3 rounded-[0.5vw]"
+                    >
+                      Voltar
+                    </button>
+                  </div>
+                  <div className="flex-1 flex p-1 px-2">
+                    <Divscroll className="flex-1 flex gap-3 overflow-auto max-w-[50vw] pb-1">
+                      {certificadosNaoPossuidos.map((Cert) => (
+                        <div
+                          onClick={() => {
+                            handleClickTreinamento(Cert.id);
+                            setTreinamentoSelect(Cert.id);
+                          }}
+                          className={`${
+                            treinamentoSelecionado[Cert.id]
+                              ? "bg-CorPrimariaTBLA"
+                              : "bg-CorTerciariaBT "
+                          } w-[15vw] flex flex-col items-center gap-1 cursor-pointer rounded-[0.8vw] min-w-[13vw]`}
+                        >
+                          <div className="bg-CorPrimariaBT w-full rounded-t-[0.8vw] px-2">
+                            {Cert.siglaCertificado}
+                          </div>
+                          <DescricaoTreinamento className="text-center px-2">
+                            {Cert.descricaoCertificado}
+                          </DescricaoTreinamento>
+                        </div>
+                      ))}
+                    </Divscroll>
+                    <div className="flex-initial flex justify-center items-center flex-col p-2">
+                      <H1 className="col-span-1 flex justify-center items-center">
+                        Data do Treinamento:
+                      </H1>
+                      <input
+                        className="rounded-[1.5em] text-center col-span-4 shadow-inner px-2"
+                        type="date"
+                        onChange={valorInput}
+                        name="dataTreinamento"
+                        value={data.dataTreinamento}
+                      />
+                    </div>
+                  </div>
+                  <div className="flex-initial bg-slate-400/30 rounded-b-[0.8em] px-3 p-1 flex justify-center items-center">
+                    <button
+                      type="submit"
+                      className=" bg-CorPrimariaBT px-4 drop-shadow-lg rounded-[0.5em] hover:scale-95"
+                    >
+                      Adcionar Treinamento
+                    </button>
+                  </div>
+                </form>
+              ) : (
+                <div className="flex-1 flex flex-col bg-slate-400/20 rounded-[0.8em]">
+                  <div
+                    className="flex-initial bg-slate-400/30 rounded-t-[0.8em] px-3 p-1 flex justify-between items-center
+                "
+                  >
+                    <>Treinamentos do Funcionario</>
+                    <button
+                      onClick={() => {
+                        setState({ Treinamento: true });
+                        setTreinamentoSelecionado({});
+                        setTreinamentoSelect(null);
+                      }}
+                      className="bg-green-500 px-3 rounded-[0.5vw]"
+                    >
+                      Adcionar
+                    </button>
+                  </div>
+                  <div className="flex-1 flex p-1 px-2">
+                    <Divscroll className="flex-1 flex gap-3 overflow-auto max-w-[62vw]  pb-1">
+                      {FilterTreinamento.map((trei) => {
+                        const FiltrarCertificado = certificado.filter(
+                          (cert) => cert.id === trei.idCertificado
+                        );
+                        return (
+                          <>
+                            {FiltrarCertificado.map((Cert) => {
+                              return (
+                                <div
+                                  className={`flex flex-col w-[15vw] items-center gap-1 cursor-pointer rounded-[0.8vw] min-w-[13vw] h-full justify-between ${
+                                    treinamentoSelecionado[trei.id]
+                                      ? "bg-CorPrimariaTBLA"
+                                      : "bg-CorTerciariaBT"
+                                  } `}
+                                >
+                                  <div
+                                    className="w-full z-20 flex flex-col h-full"
+                                    onClick={() => {
+                                      setTreinamentoSelect(trei.id);
+                                      handleClickTreinamento(trei.id);
+                                    }}
+                                  >
+                                    <h1 className="flex-initial bg-CorPrimariaBT w-full rounded-t-[0.8vw] text-center ">
+                                      {" "}
+                                      {Cert.siglaCertificado}
+                                    </h1>
+                                    <Divscroll className="flex-1 max-h-[10vw] overflow-auto text-center h-full">
+                                      {" "}
+                                      {Cert.descricaoCertificado}
+                                    </Divscroll>
+                                  </div>
+                                  <h1 className="flex-initial bg-CorEscurecidaBT w-full rounded-b-[0.8vw] text-center ">
+                                    {treinamentoSelecionado[trei.id] ? (
+                                      <from
+                                        onSubmit={UpdateTreinamento}
+                                        className="flex flex-wrap justify-center items-center gap-3"
+                                      >
+                                        <input
+                                          type="date"
+                                          name="dataVencimentoTreinamentoNew"
+                                          value={
+                                            data.dataVencimentoTreinamentoNew
+                                          }
+                                          onChange={valorInput}
+                                          className="border-2 border-[#d1d5db] rounded-[0.5vw] m-[0.1em]"
+                                        />
+                                        <button
+                                          className="bg-gray-300 p-1 rounded-full hover:bg-gray-400"
+                                          title="Salvar"
+                                          onClick={UpdateTreinamento}
+                                          type="submit"
+                                        >
+                                          <RiSaveLine></RiSaveLine>
+                                        </button>
+                                      </from>
+                                    ) : (
+                                      <>
+                                        Data: {dateFormat(trei.dataTreinamento)}
+                                      </>
+                                    )}
+                                  </h1>
+                                </div>
+                              );
+                            })}
+                          </>
+                        );
+                      })}
+                    </Divscroll>
+                  </div>
+                </div>
+              )}
+            </H1>
           </div>
         </Article>
       ) : (
@@ -1143,41 +1692,56 @@ export const MostruarioFuncAdmitido = () => {
                 </h1>
               </div>
             )}
-            {/* O resto do seu conteúdo vai aqui */}
           </div>
 
           <Header>
             <div className="flex flex-col">
               <div className="flex items-center w-full">
-                <th className="text-start text-3xl ">Funcionarios Admitidos</th>
+                <div className="text-start text-3xl ">
+                  Funcionarios Admitidos
+                </div>
               </div>
 
-              <div className="grid grid-cols-[1fr_1fr_1fr_1fr_1fr_1fr_1fr_1fr_1fr_1fr_1fr_1fr_1fr_1fr_1fr_1fr] justify-center items-center w-full rounded-b-lg drop-shadow-2xl pb-1 text-center text-[1.4vw] xl:text-[0.95vw]">
-                <th className="col-span-2">Faltas</th>
-                <th className="col-span-3">Nome</th>
-                <th className="col-span-2">Cargo</th>
-                <th className="col-span-2">Adiantamento</th>
-                <th className="col-span-2">Salario</th>
-                <th className="col-span-2">Salario.Liq</th>
-                <th className="col-span-3">Situação</th>
+              <div className="flex justify-around items-center w-full rounded-b-lg drop-shadow-2xl text-center text-[1.4vw] xl:text-[0.95vw]">
+                <div className="flex-shrink-1 w-[7vw]">Faltas</div>
+                <div className="flex-shrink-1 w-[18vw]">Nome</div>
+                <div className="flex-shrink-1 w-[9vw]">Cargo</div>
+                <div className="flex-shrink-1 w-[12vw]">Adiantamento</div>
+                <div className="flex-shrink-1 w-[10vw]">Salario</div>
+                <div className="flex-shrink-1 w-[11vw]">Salario.Liq</div>
+                <div className="flex-shrink-1 w-[13vw]">Situação</div>
               </div>
             </div>
           </Header>
           <Article ref={navRef}>
             {FuncionariosAdmitidos.map((func) => {
+              const hoje = new Date();
               const dataAdimicao = new Date(func.dataAdmicaoFucionario);
-              let opcoes = {
-                year: "numeric",
-                month: "2-digit",
-                day: "2-digit",
-              };
-              let dataFormatada = dataAdimicao.toLocaleDateString(
-                "pt-BR",
-                opcoes
-              );
               let nameWithInitials = getInitials(func.nameFucionario);
 
-              const hoje = new Date();
+              const FeriasFuncionario = ferias.filter(
+                (ferias) => ferias.idFuncionario === func.id
+              );
+
+              const AlertTreinamento = treinamento.filter(
+                (trei) => trei.idFuncionario === func.id
+              );
+
+              const QFeriasAberta =
+                FeriasFuncionario.length !== undefined
+                  ? FeriasFuncionario[FeriasFuncionario.length - 1]
+                  : null;
+
+              if (QFeriasAberta && QFeriasAberta.dataFinalizacaoFerias) {
+                const DataFerias = new Date(
+                  QFeriasAberta.dataFinalizacaoFerias
+                );
+                DataFerias.setUTCFullYear(DataFerias.getFullYear());
+                const DiferencaFinFerias = DataFerias - hoje;
+                var diasRestantesFimFerias = Math.ceil(
+                  DiferencaFinFerias / (24 * 60 * 60 * 1000)
+                );
+              }
 
               const dataFerias = new Date(dataAdimicao);
               dataFerias.setFullYear(dataFerias.getFullYear() + 1);
@@ -1247,118 +1811,236 @@ export const MostruarioFuncAdmitido = () => {
                 adiantamento = 0;
               }
 
+              var QntFeriass = Qferias - FeriasFuncionario.length;
+
               return (
                 <div
-                  className={`text-[1.1vw] xl:text-[0.9vw] `}
+                  className={`text-[1.1vw] xl:text-[0.9vw] z-0`}
                   key={func.id}
                   onClick={() => ButtoSelecao(func.id)}
                 >
-                  <div className="w-auto flex justify-end ml-2"></div>
-
                   <div
-                    className={`grid grid-cols-[1fr_1fr_1fr_1fr_1fr_1fr_1fr_1fr_1fr_1fr_1fr_1fr_1fr_1fr_1fr_1fr] gap-3 justify-center items-center shadow-inner ${
+                    className={` ${
                       funcState[func.id] && "bg-gray-300"
-                    } bg-gray-200 rounded-2xl p-2 my-2`}
+                    } bg-gray-200 rounded-2xl  `}
                   >
-                    <th className="col-span-2 flex justify-center items-center gap-1 relative">
-                      <div className="absolute -left-2 -top-3 2xl:left-0 2xl:top-2">
-                        <spa
-                          className="absolute text-[0.8vw] p-1 rounded-full bg-gray-400 flex justify-center items-center cursor-pointer drop-shadow-lg"
+                    <div
+                      className={`flex justify-around gap-3 items-center shadow-innerrounded-2xl p-2 pb-0 my-2 mb-1 text-center font-bold relative`}
+                    >
+                      <div className="col-span-2 flex justify-center items-center gap-1 flex-shrink-1 w-[9vw]">
+                        <div className="absolute left-0 -top-1 2xl:left-2 2xl:top-[25%]">
+                          <spa
+                            className="absolute text-[0.8vw] p-1 rounded-full bg-gray-400 flex justify-center items-center cursor-pointer drop-shadow-lg"
+                            onClick={() => {
+                              setFuncionarioSelecionado(func);
+                            }}
+                          >
+                            <TbAlignLeft />
+                          </spa>
+                        </div>
+                        <button
+                          className={`w-5 h-5 rounded-[50em] bg-slate-300 flex justify-center items-center cursor-pointer ${
+                            funcState[func.id] && "border-2 border-white"
+                          }`}
                           onClick={() => {
-                            setFuncionarioSelecionado(func);
+                            AddFalta(func.id, 1, func.diasFaltas);
                           }}
                         >
-                          <TbAlignLeft />
-                        </spa>
+                          <p>+</p>
+                        </button>
+                        <div
+                          className={`w-10 h-10 rounded-[50em]  bg-slate-300 flex justify-center items-center cursor-pointer ${
+                            funcState[func.id] && "border-2 border-white"
+                          }`}
+                        >
+                          {func.diasFaltas}
+                        </div>
+                        <button
+                          className={`w-5 h-5 rounded-[50em] bg-slate-300 flex justify-center items-center cursor-pointer ${
+                            funcState[func.id] && "border-2 border-white"
+                          }`}
+                          onClick={() => {
+                            AddFalta(func.id, 2, func.diasFaltas);
+                          }}
+                        >
+                          <p>-</p>
+                        </button>
                       </div>
-                      <button
-                        className={`w-5 h-5 rounded-[50em] bg-slate-300 flex justify-center items-center cursor-pointer ${
-                          funcState[func.id] && "border-2 border-white"
+
+                      <div className="flex-shrink-1  w-[17vw] ">
+                        {nameWithInitials}
+                      </div>
+                      <div className="flex-shrink-1 w-[9vw]">
+                        {func.funcaoFuncionario}
+                      </div>
+
+                      <div className="flex-shrink-1 w-[11vw]">
+                        {Number(adiantamento).toLocaleString("pt-BR", {
+                          style: "currency",
+                          currency: "BRL",
+                        })}
+                      </div>
+
+                      <div className="flex-shrink-1 w-[10vw]">
+                        {Number(salarioLiquidoFunc).toLocaleString("pt-BR", {
+                          style: "currency",
+                          currency: "BRL",
+                        })}
+                      </div>
+
+                      <div className="flex-shrink-1 w-[12vw]">
+                        {Number(salarioFunc).toLocaleString("pt-BR", {
+                          style: "currency",
+                          currency: "BRL",
+                        })}
+                      </div>
+
+                      <div className="flex-shrink-1 w-[13vw] ">
+                        {feriasEmAndamento && diasRestantesFimFerias > 7 ? (
+                          <ButonAlerta
+                            Tipo={5}
+                            onClick={() => ButtoSelecaoInformat(func.id)}
+                            Desc={"Esta de Férias"}
+                          ></ButonAlerta>
+                        ) : diasRestantesFimFerias <= 15 ? (
+                          <ButonAlerta
+                            Tipo={5}
+                            onClick={() => ButtoSelecaoInformat(func.id)}
+                            Desc={`${diasRestantesFimFerias} dias fim das Férias`}
+                          ></ButonAlerta>
+                        ) : diasRestantesFerias !== null &&
+                          diasRestantesFerias <= 30 &&
+                          diasRestantesFerias >= 0 ? (
+                          <ButonAlerta
+                            Tipo={3}
+                            onClick={() => ButtoSelecaoInformat(func.id)}
+                            Desc={`${diasRestantesFerias} dias para Férias`}
+                          ></ButonAlerta>
+                        ) : diasRestantesExames !== null &&
+                          diasRestantesExames <= 30 &&
+                          diasRestantesExames >= 0 ? (
+                          <ButonAlerta
+                            Tipo={3}
+                            onClick={() => ButtoSelecaoInformat(func.id)}
+                            Desc={`${diasRestantesExames} dias para os Exames`}
+                          ></ButonAlerta>
+                        ) : diasRestantesExames < 0 ||
+                          QntFeriass !== 0  ? (
+                          <ButonAlerta
+                            Tipo={1}
+                            onClick={() => ButtoSelecaoInformat(func.id)}
+                            Desc={`Olhar Informação`}
+                          ></ButonAlerta>
+                        ) : (
+                          <ButonAlerta
+                            Tipo={4}
+                            Desc={"Bom"}
+                            onClick={() => ButtoSelecaoInformat(func.id)}
+                          ></ButonAlerta>
+                        )}
+                      </div>
+                    </div>
+
+                    {InformatcState[func.id] && (
+                      <div className="bg-gray-100 m-2 mb-0 flex-col flex gap-2 p-2 rounded-[1em]">
+                        <h1 className="text-[1vw] font-bold pl-1">
+                          Informações
+                        </h1>
+                        <div className="flex gap-3 flex-wrap font-bold">
+                          {QntFeriass !== 0 && (
+                            <ButonAlerta
+                              Tipo={2}
+                              Desc={`${QntFeriass} Ferias Atrasadas`}
+                            ></ButonAlerta>
+                          )}
+
+                          {diasRestantesExames < 0 && (
+                            <ButonAlerta
+                              Tipo={2}
+                              Desc={`Exame Atrasado`}
+                            ></ButonAlerta>
+                          )}
+
+                          {AlertTreinamento.map((Trei) => {
+                            const Certificados = certificado.filter(
+                              (Cert) => Cert.id === Trei.idCertificado
+                            );
+
+                            const dataLocal = new Date(Trei.dataTreinamento);
+                            const dataTrein = new Date(
+                              dataLocal.getTime() +
+                                dataLocal.getTimezoneOffset() * 60000
+                            );
+                            dataTrein.setFullYear(dataTrein.getUTCFullYear());
+                            const DiferençaTreina = dataTrein - hoje;
+
+                            var DiasTreinamento = Math.ceil(
+                              DiferençaTreina / (24 * 60 * 60 * 1000)
+                            );
+
+                            return (
+                              <>
+                                {Certificados.map((Cert) => {
+                                  return (
+                                    <>
+                                      {DiasTreinamento !== null &&
+                                      DiasTreinamento <= 30 &&
+                                      DiasTreinamento >= 0 ? (
+                                        <ButonAlerta
+                                          key={Cert.id}
+                                          Tipo={3}
+                                          Desc={`${DiasTreinamento} dias para ${Cert.siglaCertificado} Vencimento`}
+                                        />
+                                      ) : (
+                                        DiasTreinamento !== null &&
+                                        DiasTreinamento !== 0 &&
+                                        DiasTreinamento < 0 && (
+                                          <ButonAlerta
+                                            key={Cert.id}
+                                            Tipo={2}
+                                            Desc={`${Cert.siglaCertificado} esta Atrasada`}
+                                          />
+                                        )
+                                      )}
+                                    </>
+                                  );
+                                })}
+                              </>
+                            );
+                          })}
+
+                          {diasRestantesExames !== null &&
+                            diasRestantesExames <= 30 &&
+                            diasRestantesExames >= 0 && (
+                              <ButonAlerta
+                                Tipo={3}
+                                Desc={`${diasRestantesExames} dias para vencimento do
+                                Exame`}
+                              ></ButonAlerta>
+                            )}
+                          {diasRestantesFerias !== null &&
+                            diasRestantesFerias <= 30 &&
+                            diasRestantesFerias >= 0 && (
+                              <ButonAlerta
+                                Tipo={3}
+                                Desc={`${diasRestantesFerias} dias para Férias`}
+                              ></ButonAlerta>
+                            )}
+                        </div>
+                      </div>
+                    )}
+                    <div
+                      className={`w-full flex justify-center items-center text-[1vw] font-bold`}
+                      onClick={() => ButtoSelecaoInformat(func.id)}
+                    >
+                      <div
+                        className={`h-1  my-1 rounded-full  duration-300 ${
+                          InformatcState[func.id]
+                            ? "w-[7em] bg-slate-500 hover:bg-slate-400"
+                            : "w-[10em] hover:bg-slate-500 bg-slate-600"
                         }`}
-                        onClick={() => {
-                          AddFalta(func.id, 1, func.diasFaltas);
-                        }}
-                      >
-                        <p>+</p>
-                      </button>
-                      <th
-                        className={`w-10 h-10 rounded-[50em]  bg-slate-300 flex justify-center items-center cursor-pointer ${
-                          funcState[func.id] && "border-2 border-white"
-                        }`}
-                      >
-                        {func.diasFaltas}
-                      </th>
-                      <button
-                        className={`w-5 h-5 rounded-[50em] bg-slate-300 flex justify-center items-center cursor-pointer ${
-                          funcState[func.id] && "border-2 border-white"
-                        }`}
-                        onClick={() => {
-                          AddFalta(func.id, 2, func.diasFaltas);
-                        }}
-                      >
-                        <p>-</p>
-                      </button>
-                    </th>
-
-                    <th className="col-span-3">{nameWithInitials}</th>
-                    <th className="col-span-2">{func.funcaoFuncionario}</th>
-
-                    <th className="col-span-2">
-                      {Number(adiantamento).toLocaleString("pt-BR", {
-                        style: "currency",
-                        currency: "BRL",
-                      })}
-                    </th>
-
-                    <th className="col-span-2">
-                      {Number(salarioLiquidoFunc).toLocaleString("pt-BR", {
-                        style: "currency",
-                        currency: "BRL",
-                      })}
-                    </th>
-
-                    <th className="col-span-2">
-                      {Number(salarioFunc).toLocaleString("pt-BR", {
-                        style: "currency",
-                        currency: "BRL",
-                      })}
-                    </th>
-
-                    <th className="col-span-3 ">
-                      {diasRestantesFerias !== null &&
-                      diasRestantesFerias <= 30 &&
-                      diasRestantesFerias >= 0 ? (
-                        <p className="bg-yellow-500 p-1 px-2 rounded-[9999px]">
-                          {diasRestantesFerias} dias para férias!
-                        </p>
-                      ) : diasRestantesExames !== null &&
-                        diasRestantesExames <= 30 &&
-                        diasRestantesExames >= 0 ? (
-                        <p className="bg-yellow-500 p-1 px-2 rounded-[9999px]">
-                          {diasRestantesExames} dias para os Exames!
-                        </p>
-                      ) : diasRestantesExames < 0 ? (
-                        <p className="bg-red-600 p-1 px-2 rounded-[9999px] ">
-                          Exame Atrasado!
-                        </p>
-                      ) : diasRestantesFerias >= 0 &&
-                        diasRestantesFerias <= 30 &&
-                        diasRestantesExames <= 30 &&
-                        diasRestantesExames >= 0 ? (
-                        <p className="bg-orange-500 p-1 px-2 rounded-[9999px]">
-                          {diasRestantesFerias} dias para férias e{" "}
-                          {diasRestantesExames} dias para Exames!
-                        </p>
-                      ) : feriasEmAndamento ? (
-                        <p className="bg-orange-600 p-1 px-2 rounded-[9999px]">
-                          Esta de ferias!
-                        </p>
-                      ) : (
-                        <p className="bg-green-500 p-1 px-2 rounded-[9999px]">
-                          Bom!
-                        </p>
-                      )}
-                    </th>
+                      ></div>
+                    </div>
                   </div>
                 </div>
               );
@@ -1368,9 +2050,9 @@ export const MostruarioFuncAdmitido = () => {
       )}
 
       {funcionarioSelecionado || funcionarioEditar || carregando ? null : (
-        <div className="w-full ">
+        <div className="w-full font-bold">
           <div className="w-full bg-CorSecundariaBT drop-shadow-2xl rounded-[0.7em] mb-1 sticky">
-            <div className="grid grid-cols-4 justify-center items-center w-full rounded-b-lg drop-shadow-2xl text-lg py-1">
+            <div className="grid grid-cols-4 justify-center items-center w-full rounded-b-lg drop-shadow-2xl text-xl py-1">
               {renderInfo("Total FGTS", fgtsSalario)}
               {renderInfo("Salario Total do Mês", valorTotalSalario)}
               {renderInfo("Adiantamento Total", adiantamentoSalario)}

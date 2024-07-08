@@ -5,12 +5,15 @@ const Section = styled.div`
   box-shadow: -1px 2px 13px #b5b2b2, -4px -5px 13px #ffffff;
   border-bottom-right-radius: 1em;
   border-top-right-radius: 1em;
+  padding-top: 1em;
   padding-bottom: 1em;
   padding-left: 1em;
   padding-right: 1em;
   font-size: medium;
   display: flex;
   flex-direction: column;
+  justify-content: center;
+  align-items: center;
   gap: 0.5em;
   overflow-x: auto;
   z-index: 10;
@@ -29,6 +32,6 @@ const Section = styled.div`
 
 export const Config = () => {
   return (
-    <Section className="w-full flex flex-col justify-center items-center">sxas</Section>
+    <Section ><div className="bg-blue-400 w-full h-full">sjkxs</div></Section>
   );
 };

@@ -43,6 +43,8 @@ const dataTypes = [
   "salario",
   "abastecimento",
   "manutencao",
+  "certificado",
+  "treinamento",
 ];
 
 io.on("connection", (socket) => {
@@ -144,6 +146,20 @@ io.on("connection", (socket) => {
     const data = response.data.data;
 
     socket.emit(`manutencao data`, data);
+  });
+
+  socket.on(`fetch certificado`, async () => {
+    const response = await axios.get(`${ipServer}/certificado`);
+    const data = response.data.data;
+
+    socket.emit(`certificado data`, data);
+  });
+
+  socket.on(`fetch treinamento`, async () => {
+    const response = await axios.get(`${ipServer}/treinamento`);
+    const data = response.data.data;
+
+    socket.emit(`treinamento data`, data);
   });
 });
 

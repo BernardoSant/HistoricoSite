@@ -39,7 +39,6 @@ const Article = styled.article`
   }
 `;
 
-
 const Input = styled.input`
   width: 100%;
   border: 2px solid #d1d5db;
@@ -141,7 +140,6 @@ export const MtrTransporte = () => {
     "Novembro",
     "Dezembro",
   ];
-
 
   const { transporte, ip, abastecimento, manutencao } = useGlobalContext();
   const [state, setState] = useState({
@@ -368,12 +366,12 @@ export const MtrTransporte = () => {
           const AbastecimentosCar = abastecimento
             .filter((abast) => {
               const DataAbaste = new Date(abast.dataCadastro);
-              const TransAbastecimento = abast.idTransporte === trans.id;
-              const DataAbasteMes =
-                DataAbaste.getMonth() + 1 === parseInt(mes) &&
-                DataAbaste.getFullYear() === parseInt(ano);
 
-              return TransAbastecimento && DataAbasteMes;
+              const DataAbasteMes =
+                DataAbaste.getUTCMonth() + 1 === parseInt(mes) &&
+                DataAbaste.getUTCFullYear() === parseInt(ano);
+
+              return abast.idTransporte === trans.id && DataAbasteMes;
             })
             .sort(
               (a, b) => new Date(b.dataCadastro) - new Date(a.dataCadastro)
@@ -426,6 +424,7 @@ export const MtrTransporte = () => {
           const DataCar = abastecimento.filter(
             (abast) => abast.idTransporte === trans.id
           );
+
           const uniqueMonths = new Set();
           const uniqueYears = new Set();
 
@@ -710,20 +709,21 @@ export const MtrTransporte = () => {
                     <Titulo className="flex-initial w-auto">
                       Abastecimentos:
                     </Titulo>
-                    {DataCar.length > 0 && (
+                    {DataCar.length !== 0 && (
                       <form
                         onSubmit={handleDataChange}
                         className="flex flex-row gap-2 w-auto md:justify-end justify-center pr-4 "
                       >
                         <select
-                          className=" bg-slate-100 text-center flex justify-center items-center rounded-[0.6em] border-2 border-orange-500 font-semibold"
+                          className=" bg-slate-100 text-center flex justify-center items-center rounded-[0.6em] border-2 border-CorPrimariaBT font-semibold"
                           value={mes}
                           onChange={(event) => setMes(event.target.value)}
                         >
                           {DataCar.map((abst) => {
                             const DateAbast = new Date(abst.dataCadastro);
-                            const Mes = DateAbast.getMonth() + 1;
-                            const MesAparencia = DateAbast.getMonth();
+                            const Mes = DateAbast.getUTCMonth() + 1;
+                            const MesAparencia = DateAbast.getUTCMonth();
+
                             if (!uniqueMonths.has(Mes)) {
                               uniqueMonths.add(Mes);
                               return (
@@ -736,7 +736,7 @@ export const MtrTransporte = () => {
                         </select>
 
                         <select
-                          className=" bg-slate-100 text-center flex justify-center items-center rounded-[0.6em] border-2 border-orange-500 font-semibold"
+                          className=" bg-slate-100 text-center flex justify-center items-center rounded-[0.6em] border-2 border-CorPrimariaBT font-semibold"
                           value={ano}
                           onChange={(event) => setAno(event.target.value)}
                         >
@@ -759,7 +759,7 @@ export const MtrTransporte = () => {
                   </div>
 
                   <div className="relative overflow-hidden h-[8em] rounded-[0.6em]  shadow-inner  gap-3 duration-500 bg-slate-100">
-                    {DataCar.length > 0 ? (
+                    {DataCar.length !== 0 ? (
                       <CarrocelDash>
                         {AbastecimentosCar.map((abst) => {
                           const KmPorLitro =
@@ -842,9 +842,7 @@ export const MtrTransporte = () => {
 
                                 <div className="flex items-center gap-2">
                                   <Topico>Data:</Topico>
-                                  <Descricao>
-                                    {dateFormat(abst.dataCadastro)}
-                                  </Descricao>
+                                  <Descricao>{dateFormat(abst.dataCadastro)}</Descricao>
                                 </div>
                               </div>
                             </div>

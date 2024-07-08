@@ -1,7 +1,15 @@
 import { useState, useEffect } from "react";
 import { toast } from "react-toastify";
 import axios from "axios";
-import { TbBuildingCommunity } from "react-icons/tb";
+import {
+  TbBuildingCommunity,
+  TbChartPie,
+  TbBriefcaseFilled,
+  TbUser,
+  TbCar,
+  TbDots,
+  TbTool,
+} from "react-icons/tb";
 import styled from "styled-components";
 import { TabelaAdicionarEmpresa } from "../Prestadores/AddEmpresa";
 import { MostruarioNota } from "../Nota/MtrNota";
@@ -19,7 +27,6 @@ import { useGlobalContext } from "../../../global/Global";
 import { Outros } from "../Outros/Outros";
 import { MdClose } from "react-icons/md";
 import { DashGeral } from "../Dashboard/DashBoard";
-
 
 const Nav = styled.nav`
   height: 100%;
@@ -72,6 +79,7 @@ const Div = styled.div`
 `;
 const Div2 = styled(Div)`
   overflow: auto;
+  padding-top: 0px;
 `;
 
 const Botao = styled.button`
@@ -92,6 +100,7 @@ const Button = ({
   onSecundario,
   onPrimario,
   onFinal,
+  Icon,
 }) => {
   return (
     <>
@@ -103,10 +112,10 @@ const Button = ({
               ? "bg-CorPrimariaBT rounded-b-none underline"
               : "bg-[#fffafa]"
           } ${
-            onFinal && "bg-CorPrimariaBT underline text-gray-200" 
-          }  rounded-[20px]  `}
+            onFinal && "bg-CorPrimariaBT underline text-gray-200"
+          }  rounded-[20px] flex items-center gap-1 `}
         >
-          {Titulo}
+          <div className="text-lg"> {Icon}</div> {Titulo}
         </Botao>
       )}
 
@@ -114,10 +123,10 @@ const Button = ({
         <Botao
           onClick={onClick}
           className={`mt-2 hover:bg-CorPrimariaBT hover:text-gray-200  ${
-            onFinal && "bg-CorPrimariaBT underline text-gray-200" 
-          }  rounded-[20px]  `}
+            onFinal && "bg-CorPrimariaBT underline text-gray-200"
+          }  rounded-[20px]  flex items-center gap-1`}
         >
-          {Titulo}
+          <div className="text-lg"> {Icon}</div> {Titulo}
         </Botao>
       )}
 
@@ -168,12 +177,13 @@ const Button = ({
 };
 
 export const Empresa = () => {
-  const {ip, empresa, impostos, funcionario} = useGlobalContext();
+  const { ip, empresa, impostos, funcionario } = useGlobalContext();
   const [state, setState] = useState({
     Prestadores: false,
     funcionarios: false,
     gasto: false,
     transporte: false,
+    ferramentas: false,
     outros: false,
     empregador: false,
     Dashboard: true,
@@ -226,6 +236,7 @@ export const Empresa = () => {
       ...(key !== "funcionarios" && { funcionarios: false }),
       ...(key !== "gasto" && { gasto: false }),
       ...(key !== "transporte" && { transporte: false }),
+      ...(key !== "ferramentas" && { ferramentas: false }),
       ...(key !== "empregador" && { empregador: false }),
       ...(!key && { Dashboard: true }),
     }));
@@ -358,7 +369,6 @@ export const Empresa = () => {
         "Content-Type": "application/json",
       },
     };
-    
 
     const ultimoMesExecutado = localStorage.getItem("ultimoMesExecutado");
     const mesExecutado = Number(ultimoMesExecutado);
@@ -388,29 +398,31 @@ export const Empresa = () => {
     }
   }, [diaAtual, mesAtual, anoAtual]);
 
-
   return (
     <>
       <Header>
         <Nav>
           <Div2 className="overflow-auto max-w-[20em] min-w-[13em] max-h-[90vh] 2xl:max-h-[100%]">
-            <nav className="flex flex-col justify-center relative">
-              <div className="w-full text-center bg-CorSecundariaBT  rounded-full py-1 font-bold text-[1.1vw] sticky top-0">
+            <div className="sticky top-0 bg-white z-10 pt-[1em] pb-1">
+              <div className="w-full text-center bg-CorSecundariaBT  rounded-full py-1 font-bold text-[1.1vw] sticky top-0 ">
                 <p className="absolute  left-0 top-0 ml-4 h-full flex justify-center items-center">
                   <TbBuildingCommunity />
                 </p>
                 Empresa
               </div>
-
+            </div>
+            <nav className="flex flex-col justify-center relative z-0">
               <Button
                 TipoButton={4}
                 Titulo={"Dashboard"}
+                Icon={<TbChartPie />}
                 onFinal={state.Dashboard}
                 onClick={() => ButtomSecundario("Dashboard")}
               ></Button>
 
               <Button
                 TipoButton={1}
+                Icon={<TbBriefcaseFilled />}
                 Titulo={"Prestadores"}
                 onPrimario={state.Prestadores}
                 onClick={() => ButtomPrimario("Prestadores")}
@@ -485,25 +497,10 @@ export const Empresa = () => {
                   ></Button>
                 </Tabela>
               )}
-              {/*
+
               <Button
                 TipoButton={1}
-                Titulo={"Gastos & Ganhos"}
-                onPrimario={state.gasto}
-                onClick={() => ButtomPrimario("gasto")}
-              ></Button>
-              {state.gasto && (
-                <Tabela>
-                  <Button
-                    TipoButton={2}
-                    Titulo={"Ver Gastos e Lucros"}
-                  ></Button>
-                  <Button TipoButton={2} Titulo={"Adcionar Gastos"}></Button>
-                </Tabela>
-              )}
-*/}
-              <Button
-                TipoButton={1}
+                Icon={<TbUser />}
                 Titulo={"Funcionarios"}
                 onPrimario={state.funcionarios}
                 onClick={() => ButtomPrimario("funcionarios")}
@@ -533,6 +530,7 @@ export const Empresa = () => {
 
               <Button
                 TipoButton={1}
+                Icon={<TbCar />}
                 Titulo={"Transportes"}
                 onPrimario={state.transporte}
                 onClick={() => ButtomPrimario("transporte")}
@@ -553,9 +551,34 @@ export const Empresa = () => {
                   ></Button>
                 </Tabela>
               )}
-
+              {/* 
+              <Button
+                TipoButton={1}
+                Icon={<TbTool />}
+                Titulo={"Ferramentas"}
+                onPrimario={state.ferramentas}
+                onClick={() => ButtomPrimario("ferramentas")}
+              ></Button>
+              {state.ferramentas && (
+                <Tabela className="bg-CorPrimariaTBLA">
+                  <Button
+                    TipoButton={2}
+                    Titulo={"Ver Ferramentas"}
+                    onSecundario={state.verTransporte}
+                    onClick={() => ButtomSecundario("verTransporte")}
+                  ></Button>
+                  <Button
+                    TipoButton={2}
+                    Titulo={"Adcionar Ferramentas"}
+                    onFinal={state.addTransporte}
+                    onClick={() => ButtomSecundario("addTransporte")}
+                  ></Button>
+                </Tabela>
+              )}
+*/}
               <Button
                 TipoButton={4}
+                Icon={<TbDots />}
                 Titulo={"Outros"}
                 onFinal={state.outros}
                 className="rounded-1em"
@@ -569,7 +592,7 @@ export const Empresa = () => {
         <Div className="w-full relative rounded-[1em] flex justify-center items-center">
           {state.addTransporte && <AddTransporte></AddTransporte>}
 
-          {state.Dashboard &&  <DashGeral  />}
+          {state.Dashboard && <DashGeral />}
 
           {state.addContrato && <TabelaAddContrato />}
 

@@ -46,7 +46,7 @@ const Button = styled.div`
 
 export const Inicio = () => {
   const [state, setState] = useState({
-    Empresa: true,
+    Empresa: true ,
     Conta: false,
     Config: false,
   });
@@ -144,7 +144,7 @@ export const Inicio = () => {
         </div>
       </Header>
       <div className="absolute bottom-1 right-4 text-slate-400 cursor-not-allowed text-[0.8vw]">
-        2.00.01
+        2.00.10
       </div>
     </div>
   );
