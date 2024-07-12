@@ -487,7 +487,7 @@ export const TabelaAddFuncionario = () => {
               className="col-span-2 border-2 border-gray-300 rounded-md px-3 py-[0.2em]"
             >
               <option></option>
-              <option value='Todas'>Cadastrado em Todas</option>
+              <option value="Todas">Cadastrado em Todas</option>
               {empresa.map((empresa) => (
                 <option key={empresa.id} value={empresa.nameEmpresa}>
                   {empresa.nameEmpresa}

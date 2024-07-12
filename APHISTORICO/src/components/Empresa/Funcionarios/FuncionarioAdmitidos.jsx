@@ -23,6 +23,7 @@ const Div = styled.div`
 `;
 
 const Divscroll = styled.div`
+
   &::-webkit-scrollbar {
     width: 5px;
     height: 5px;
@@ -1541,7 +1542,7 @@ export const MostruarioFuncAdmitido = () => {
                     </button>
                   </div>
                   <div className="flex-1 flex p-1 px-2">
-                    <Divscroll className="flex-1 flex gap-3 overflow-auto max-w-[50vw] pb-1">
+                    <Divscroll className="flex-1 flex gap-3 overflow-auto max-w-[50vw] pb-1 ">
                       {certificadosNaoPossuidos.map((Cert) => (
                         <div
                           onClick={() => {
@@ -1552,7 +1553,7 @@ export const MostruarioFuncAdmitido = () => {
                             treinamentoSelecionado[Cert.id]
                               ? "bg-CorPrimariaTBLA"
                               : "bg-CorTerciariaBT "
-                          } w-[15vw] flex flex-col items-center gap-1 cursor-pointer rounded-[0.8vw] min-w-[13vw]`}
+                          } w-[15vw] flex flex-col items-center gap-1 cursor-pointer rounded-[0.8vw] min-w-[13vw] `}
                         >
                           <div className="bg-CorPrimariaBT w-full rounded-t-[0.8vw] px-2">
                             {Cert.siglaCertificado}

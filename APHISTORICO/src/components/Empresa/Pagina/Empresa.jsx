@@ -363,6 +363,10 @@ export const Empresa = () => {
   const diaAtual = hoje.getDate();
   const mesAtual = hoje.getMonth() + 1;
   const anoAtual = hoje.getFullYear();
+
+  const MesAnterior = new Date();
+  MesAnterior.setMonth(MesAnterior.getMonth() - 1);
+
   useEffect(() => {
     const headers = {
       headers: {
@@ -372,7 +376,7 @@ export const Empresa = () => {
 
     const ultimoMesExecutado = localStorage.getItem("ultimoMesExecutado");
     const mesExecutado = Number(ultimoMesExecutado);
-    if (diaAtual === 1 && mesAtual !== mesExecutado) {
+    if (diaAtual >= 1 && mesAtual !== mesExecutado) {
       axios.post(
         ip + "/salario",
         {
@@ -380,7 +384,7 @@ export const Empresa = () => {
           totalSalarioMes: valorTotalSalario,
           adiantamentoSalario: adiantamentoSalario,
           salarioFinal: valorSalario,
-          dataSalario: hoje,
+          dataSalario: MesAnterior,
         },
         headers
       );
