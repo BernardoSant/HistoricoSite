@@ -23,7 +23,6 @@ const Div = styled.div`
 `;
 
 const Divscroll = styled.div`
-
   &::-webkit-scrollbar {
     width: 5px;
     height: 5px;
@@ -85,7 +84,7 @@ const H2 = styled(H1)`
 const Input = styled.input`
   width: 100%;
   border: 2px solid #d1d5db;
-  max-width: 40em;
+
   padding-left: 8px;
 `;
 
@@ -161,8 +160,6 @@ export const MostruarioFuncAdmitido = () => {
     complFucionario: "",
     ctpsFucionario: "",
     dataAdmicaoFucionario: "",
-    dataExames: "",
-    dataExamesNew: "",
     dataFeriasFucionario: "",
     pisFucionario: "",
     salarioFucionario: null,
@@ -170,8 +167,19 @@ export const MostruarioFuncAdmitido = () => {
     horasTFucionario: "",
     CadastroEmprFuncionario: "",
     diasFaltas: 0,
+  });
+
+  const [dataExame, setDataExame] = useState({
+    dataExames: "",
+    dataExamesNew: "",
+  });
+
+  const [dataCertificado, setDataCertificado] = useState({
     siglaCertificado: "",
     descricaoCertificado: "",
+  });
+
+  const [dataTreinamento, setDataTreinamento] = useState({
     dataTreinamento: "",
     dataVencimentoTreinamentoNew: "",
   });
@@ -374,6 +382,7 @@ export const MostruarioFuncAdmitido = () => {
           dataFinalizacaoFerias: "",
           valorFerias: "",
         });
+        setState({ Menu: false });
         toast.success(response.data.message);
       })
       .catch((err) => {
@@ -393,14 +402,17 @@ export const MostruarioFuncAdmitido = () => {
         "Content-Type": "application/json",
       },
     };
-    if (data.siglaCertificado === "" || data.descricaoCertificado === "") {
+    if (
+      dataCertificado.siglaCertificado === "" ||
+      dataCertificado.descricaoCertificado === ""
+    ) {
       toast.error("Esta faltando alguma caracteristica!");
       return;
     }
     axios
-      .post(ip + "/certificado", data, headers)
+      .post(ip + "/certificado", dataCertificado, headers)
       .then((response) => {
-        setData({
+        setDataCertificado({
           siglaCertificado: "",
           descricaoCertificado: "",
         });
@@ -439,14 +451,17 @@ export const MostruarioFuncAdmitido = () => {
         "Content-Type": "application/json",
       },
     };
-    if (treinamentoSelecionado === "" || data.dataTreinamento === "") {
+    if (
+      treinamentoSelecionado === "" ||
+      dataTreinamento.dataTreinamento === ""
+    ) {
       toast.error(
         "Selecione um treinamento ou esta faltando alguma caracteristica!"
       );
       return;
     }
 
-    const dataLocal = new Date(data.dataTreinamento);
+    const dataLocal = new Date(dataTreinamento.dataTreinamento);
 
     const dataUTC = new Date(
       dataLocal.getTime() + dataLocal.getTimezoneOffset() * 60000
@@ -465,7 +480,7 @@ export const MostruarioFuncAdmitido = () => {
         headers
       )
       .then((response) => {
-        setData({
+        setDataTreinamento({
           dataTreinamento: "",
         });
         toast.success(response.data.message);
@@ -483,12 +498,12 @@ export const MostruarioFuncAdmitido = () => {
         "Content-Type": "application/json",
       },
     };
-    if (data.dataVencimentoTreinamentoNew === "") {
+    if (dataTreinamento.dataVencimentoTreinamentoNew === "") {
       toast.error("Coloque a data do Treinamento!");
       return;
     }
 
-    const dataLocal = new Date(data.dataVencimentoTreinamentoNew);
+    const dataLocal = new Date(dataTreinamento.dataVencimentoTreinamentoNew);
 
     const dataUTC = new Date(
       dataLocal.getTime() + dataLocal.getTimezoneOffset() * 60000
@@ -505,7 +520,7 @@ export const MostruarioFuncAdmitido = () => {
         headers
       )
       .then((response) => {
-        setData({
+        setDataTreinamento({
           dataVencimentoTreinamentoNew: "",
         });
         setTreinamentoSelecionado({});
@@ -533,16 +548,23 @@ export const MostruarioFuncAdmitido = () => {
       },
     };
 
+    if (dataExame.dataExamesNew === "") {
+      toast.error("Por favor, preencha todos os campos obrigatórios!");
+      return;
+    }
+
     axios
       .put(
         ip + "/funcionario/" + funcionarioSelecionado.id,
-        { dataExames: data.dataExamesNew },
+        { dataExames: dataExame.dataExamesNew },
         headers
       )
       .then((response) => {
-        setDataFerias({
+        "";
+        setDataExame({
           dataExamesNew: "",
         });
+        setState({ Menu: false });
         toast.success("Data de exames enviada com sucesso!");
       })
       .catch((err) => {
@@ -870,33 +892,6 @@ export const MostruarioFuncAdmitido = () => {
       </>
     );
   };
-
-  function FiltrarTreinamento(idFunc, idCertificado) {
-    const FilterTreinamento = treinamento.filter(
-      (item) =>
-        item.idFuncionario === idFunc && item.idCertificado === idCertificado
-    );
-
-    const FilterCertificado = certificado.filter(
-      (item) => item.id === idCertificado
-    );
-
-    return (
-      <div>
-        {FilterTreinamento.map((Trei) => (
-          <div key={Trei.id}>
-            {FilterCertificado.map((item) => (
-              <div key={item.id}>
-                {item.siglaCertificado}
-                {item.descricaoCertificado}
-              </div>
-            ))}
-            {dateFormat(Trei.dataTreinamento)}
-          </div>
-        ))}
-      </div>
-    );
-  }
 
   return (
     <Div>
@@ -1315,9 +1310,14 @@ export const MostruarioFuncAdmitido = () => {
                       <input
                         className="rounded-[1.5em] text-center col-span-4 shadow-inner px-2"
                         type="date"
-                        onChange={valorInput}
+                        onChange={(e) => {
+                          setDataExame({
+                            ...dataExame,
+                            dataExamesNew: e.target.value,
+                          });
+                        }}
                         name="dataExamesNew"
-                        value={data.dataExamesNew}
+                        value={dataExame.dataExamesNew}
                       />
                     </form>
                     <p className="flex justify-center items-center ">
@@ -1343,7 +1343,14 @@ export const MostruarioFuncAdmitido = () => {
             <article className="mt-2">
               <div className="flex gap-2">
                 <div
-                  onClick={() => setFuncionarioEditar(funcionarioSelecionado)}
+                  onClick={() => {
+                    setFuncionarioEditar(funcionarioSelecionado);
+                    setState({ ...state, Menu: !state.Menu });
+                    setCertificados({
+                      ...stateCertificados,
+                      Certificados: false,
+                    });
+                  }}
                   className={`bg-green-600 p-1 text-[1.2vw] rounded-full flex justify-center items-center${
                     state.Menu && "mt-0"
                   }`}
@@ -1352,7 +1359,18 @@ export const MostruarioFuncAdmitido = () => {
                   <TbPencilCog />
                 </div>
                 <div
-                  onClick={() => setFuncionarioSelecionado(null)}
+                  onClick={() => {
+                    setFuncionarioSelecionado(null);
+                    setState({
+                      ...state,
+                      Menu: !state.Menu,
+                      Treinamento: false,
+                    });
+                    setCertificados({
+                      ...stateCertificados,
+                      Certificados: false,
+                    });
+                  }}
                   className={`bg-red-600 p-1 text-[1.2vw] rounded-full flex justify-center items-center ${
                     state.Menu && "mt-0"
                   }`}
@@ -1458,7 +1476,7 @@ export const MostruarioFuncAdmitido = () => {
                 <div className="p-1 px-4 bg-CorPrimariaBT rounded-t-[0.8em]  relative">
                   Certificados
                   <div
-                    className={`absolute top-1 right-2 text-[1.2vw] h-[1.5vw] w-[1.5vw] flex justify-center items-center rounded-full cursor-pointer ${
+                    className={`absolute top-1 right-2 text-[1.2vw] h-[1.5vw] w-[1.5vw] lg:h-[1.1vw] lg:w-[1.1vw] flex justify-center items-center rounded-full cursor-pointer ${
                       stateCertificados.Certificados
                         ? "bg-red-500"
                         : "bg-green-500"
@@ -1482,13 +1500,14 @@ export const MostruarioFuncAdmitido = () => {
                       <Input
                         className="rounded-[0.5em] col-span-4 shadow-inner px-2 font-normal"
                         type="text"
-                        value={data.siglaCertificado}
+                        value={dataCertificado.siglaCertificado}
                         name="siglaCertificado"
                         onChange={(e) => {
-                          const { name, value } = e.target;
+                          const { value } = e.target;
                           const upperCaseValue = value.toUpperCase();
-                          valorInput({
-                            target: { name, value: upperCaseValue },
+                          setDataCertificado({
+                            ...dataCertificado,
+                            [e.target.name]: upperCaseValue,
                           });
                         }}
                       />
@@ -1497,9 +1516,14 @@ export const MostruarioFuncAdmitido = () => {
                         className="rounded-[0.5em]  col-span-4 shadow-inner px-2 pt-1 w-full font-normal"
                         type="date"
                         rows="3"
-                        value={data.descricaoCertificado}
+                        value={dataCertificado.descricaoCertificado}
                         name="descricaoCertificado"
-                        onChange={valorInput}
+                        onChange={(e) => {
+                          setDataCertificado({
+                            ...dataCertificado,
+                            [e.target.name]: e.target.value,
+                          });
+                        }}
                       />
                     </div>
                     <button
@@ -1541,8 +1565,8 @@ export const MostruarioFuncAdmitido = () => {
                       Voltar
                     </button>
                   </div>
-                  <div className="flex-1 flex p-1 px-2">
-                    <Divscroll className="flex-1 flex gap-3 overflow-auto max-w-[50vw] pb-1 ">
+                  <div className="flex-1 flex p-1 px-2 justify-between">
+                    <Divscroll className="flex-1 flex gap-3 overflow-auto max-w-[50vw] xl:max-w-[63vw] pb-1 ">
                       {certificadosNaoPossuidos.map((Cert) => (
                         <div
                           onClick={() => {
@@ -1564,16 +1588,22 @@ export const MostruarioFuncAdmitido = () => {
                         </div>
                       ))}
                     </Divscroll>
-                    <div className="flex-initial flex justify-center items-center flex-col p-2">
+                    <div className="flex-initial flex justify-center items-center flex-col p-2 ">
                       <H1 className="col-span-1 flex justify-center items-center">
                         Data do Treinamento:
                       </H1>
                       <input
                         className="rounded-[1.5em] text-center col-span-4 shadow-inner px-2"
                         type="date"
-                        onChange={valorInput}
                         name="dataTreinamento"
-                        value={data.dataTreinamento}
+                        value={dataTreinamento.dataTreinamento}
+                        onChange={(e) => {
+                          setDataTreinamento({
+                            ...dataTreinamento,
+                            [e.target.name]: e.target.value,
+                          });
+                          console.log(dataTreinamento);
+                        }}
                       />
                     </div>
                   </div>
@@ -1647,9 +1677,14 @@ export const MostruarioFuncAdmitido = () => {
                                           type="date"
                                           name="dataVencimentoTreinamentoNew"
                                           value={
-                                            data.dataVencimentoTreinamentoNew
+                                            dataTreinamento.dataVencimentoTreinamentoNew
                                           }
-                                          onChange={valorInput}
+                                          onChange={(e) => {
+                                            setDataTreinamento({
+                                              ...dataTreinamento,
+                                              [e.target.name]: e.target.value,
+                                            });
+                                          }}
                                           className="border-2 border-[#d1d5db] rounded-[0.5vw] m-[0.1em]"
                                         />
                                         <button
@@ -1829,11 +1864,12 @@ export const MostruarioFuncAdmitido = () => {
                       className={`flex justify-around gap-3 items-center shadow-innerrounded-2xl p-2 pb-0 my-2 mb-1 text-center font-bold relative`}
                     >
                       <div className="col-span-2 flex justify-center items-center gap-1 flex-shrink-1 w-[9vw]">
-                        <div className="absolute left-0 -top-1 2xl:left-2 2xl:top-[25%]">
+                        <div className="absolute left-0 -top-1 2xl:left-2 2xl:top-4">
                           <spa
                             className="absolute text-[0.8vw] p-1 rounded-full bg-gray-400 flex justify-center items-center cursor-pointer drop-shadow-lg"
                             onClick={() => {
                               setFuncionarioSelecionado(func);
+                              setInformatState({});
                             }}
                           >
                             <TbAlignLeft />
@@ -1925,8 +1961,7 @@ export const MostruarioFuncAdmitido = () => {
                             onClick={() => ButtoSelecaoInformat(func.id)}
                             Desc={`${diasRestantesExames} dias para os Exames`}
                           ></ButonAlerta>
-                        ) : diasRestantesExames < 0 ||
-                          QntFeriass !== 0  ? (
+                        ) : diasRestantesExames < 0 || QntFeriass !== 0 ? (
                           <ButonAlerta
                             Tipo={1}
                             onClick={() => ButtoSelecaoInformat(func.id)}

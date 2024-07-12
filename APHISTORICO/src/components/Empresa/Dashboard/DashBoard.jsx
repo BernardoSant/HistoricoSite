@@ -6,6 +6,8 @@ import { DashGastos } from "../../Graficos/DashGastos";
 import { DashGastosMensais } from "../../Graficos/DashGastosMensal";
 import { DashAbastecimentos } from "../../Graficos/DashAbastecimentos";
 import { DashNotasPedidos } from "../../Graficos/DashNotasPedidos";
+import { DashAbastecimentosUni } from "../../Graficos/DashAbastecimentoUni";
+import { realFormat } from "../../../functions/realFormat";
 import { Header } from "../../Componentes/Header";
 import { CorClara, CorEscura } from "../../../../tailwind.config";
 
@@ -55,6 +57,8 @@ const ArticleBlock = styled.div`
 
 const HeaderDados = styled.div`
   position: sticky;
+  display: flex;
+  justify-content: space-between;
   top: 0;
   flex: 0 1 auto;
   padding: 5px;
@@ -164,6 +168,7 @@ export const DashGeral = () => {
     abastecimento,
     manutencao,
     salario,
+    transporte,
   } = useGlobalContext();
 
   const FuncAdmitido = funcionario.filter(
@@ -236,6 +241,27 @@ export const DashGeral = () => {
     return valorTotal;
   }
 
+  function ValorTotalMensal(parametro1, parametro2, parametro3) {
+    const Hoje = new Date();
+    const Mes = Hoje.getMonth() + 1;
+    const Ano = Hoje.getFullYear();
+
+    const Filtro = parametro1.filter((a) => {
+      const DataFilt = new Date(a[parametro2]);
+      const MesFilt = DataFilt.getMonth() + 1;
+      const AnoFilt = DataFilt.getFullYear();
+
+      return MesFilt === Mes && AnoFilt === Ano;
+    });
+
+    const valorTotal = Filtro.reduce(
+      (total, func) => total + func[parametro3],
+      0
+    );
+
+    return valorTotal;
+  }
+
   const RecebidoTotalNota =
     ValorTotal(NtRecebida, "valorRecebidoNF") +
     ValorTotal(NtAntecipada, "valorRecebidoNF");
@@ -262,6 +288,45 @@ export const DashGeral = () => {
   const RecebidoContrato = ValorTotal(CttAtivo, "ValorRecebidoCT");
 
   const ReceberContrato = ValorTotal(notasContratosAtivos, "valorReceberNF");
+
+  const GastoTotalAbastecimento = abastecimento.reduce(
+    (total, a) => total + a.totalAbastecido * a.vlrGasolina,
+    0
+  );
+
+  const Hoje = new Date();
+  const Mes = Hoje.getMonth() ;
+  const Ano = Hoje.getFullYear();
+
+  const abastecimentoMensal = abastecimento.filter((a) => {
+    const DataFilt = new Date(a.dataCadastro);
+    const MesFilt = DataFilt.getMonth() + 1;
+    const AnoFilt = DataFilt.getFullYear();
+  
+    return MesFilt === Mes && AnoFilt === Ano;
+  });
+  
+
+  const GastoTotalAbastecimentoMensal = abastecimentoMensal.reduce(
+    (total, a) => total + a.totalAbastecido * a.vlrGasolina,
+    0
+  );
+
+  const GastoTotal =
+    ValorTotal(conta, "valorConta") +
+    ValorTotal(ferias, "valorFerias") +
+    ValorTotal(manutencao, "valorManutencao") +
+    ValorTotal(salario, "salarioFinal") +
+    ValorTotal(salario, "totalFgtsSalario") +
+    GastoTotalAbastecimento;
+
+  const GastoTotalMensal =
+    ValorTotalMensal(conta, "dataInConta", "valorConta") +
+    ValorTotalMensal(ferias, "dataInicioFerias", "valorFerias") +
+    ValorTotalMensal(manutencao, "dataManutencao", "valorManutencao") +
+    ValorTotalMensal(salario, "dataSalario", "salarioFinal") +
+    ValorTotalMensal(salario, "dataSalario", "totalFgtsSalario") +
+    GastoTotalAbastecimentoMensal;
 
   return (
     <Section>
@@ -294,7 +359,7 @@ export const DashGeral = () => {
             ) : (
               <div className="h-[70%]">
                 <HeaderDados>
-                  <TituloDados>Gastos</TituloDados>{" "}
+                  <TituloDados>Ganhos</TituloDados>{" "}
                 </HeaderDados>
 
                 <ArticleDados className="">
@@ -330,6 +395,7 @@ export const DashGeral = () => {
                     <div className="h-[85%]">
                       <HeaderDados>
                         <TituloDados>Gastos</TituloDados>{" "}
+                        <TituloDados>{realFormat(GastoTotal)}</TituloDados>{" "}
                       </HeaderDados>
 
                       <ArticleDados>
@@ -340,6 +406,9 @@ export const DashGeral = () => {
                     <div className="h-[85%]">
                       <HeaderDados>
                         <TituloDados>Análise de Saida</TituloDados>{" "}
+                        <TituloDados>
+                          {realFormat(GastoTotalMensal)}
+                        </TituloDados>{" "}
                       </HeaderDados>
 
                       <ArticleDados>
@@ -347,27 +416,39 @@ export const DashGeral = () => {
                       </ArticleDados>
                     </div>
 
-                    <div className="h-[82%]">
-                      <HeaderDados>
-                        <TituloDados>Abastecimentos Gastos</TituloDados>{" "}
-                      </HeaderDados>
+                    {transporte.map((Trans) => {
+                      const abastecimentoUni = abastecimento.filter(
+                        (a) => a.idTransporte === Trans.id
+                      );
+                      return (
+                        <div className="h-[85%]" key={Trans.id}>
+                          <HeaderDados>
+                            <TituloDados>
+                              Abastecimentos da {Trans.nomeTransporte}
+                            </TituloDados>{" "}
+                          </HeaderDados>
 
-                      <ArticleDados>
-                        {abastecimento.length === 0 ? (
-                          <div className="w-full text-gray-500/70 flex justify-center items-center font-bold text-[1.1vw]">
-                            Nenhum Abastecimento Cadastrado!
-                          </div>
-                        ) : (
-                          <DashAbastecimentos></DashAbastecimentos>
-                        )}
-                      </ArticleDados>
-                    </div>
+                          <ArticleDados>
+                            {abastecimentoUni.length === 0 ? (
+                              <div className="w-full text-gray-500/70 flex justify-center items-center font-bold text-[1.1vw]">
+                                Nenhum Abastecimento Cadastrado!
+                              </div>
+                            ) : (
+                              <DashAbastecimentosUni IdTransporte={Trans.id} />
+                            )}
+                          </ArticleDados>
+                        </div>
+                      );
+                    })}
                   </CarrocelDash>
                 ) : (
                   <CarrocelDash>
                     <div className="h-[85%]">
                       <HeaderDados>
-                        <TituloDados>Gastos</TituloDados>{" "}
+                        <TituloDados>Gastos Mensal</TituloDados>{" "}
+                        <TituloDados>
+                          {realFormat(GastoTotalMensal)}
+                        </TituloDados>{" "}
                       </HeaderDados>
 
                       <ArticleDados>
@@ -378,6 +459,7 @@ export const DashGeral = () => {
                     <div className="h-[85%]">
                       <HeaderDados>
                         <TituloDados>Gastos</TituloDados>{" "}
+                        <TituloDados>{realFormat(GastoTotal)}</TituloDados>{" "}
                       </HeaderDados>
 
                       <ArticleDados>
@@ -385,21 +467,30 @@ export const DashGeral = () => {
                       </ArticleDados>
                     </div>
 
-                    <div className="h-[82%]">
-                      <HeaderDados>
-                        <TituloDados>Abastecimentos Gastos</TituloDados>{" "}
-                      </HeaderDados>
+                    {transporte.map((Trans) => {
+                      const abastecimentoUni = abastecimento.filter(
+                        (a) => a.idTransporte === Trans.id
+                      );
+                      return (
+                        <div className="h-[85%]" key={Trans.id}>
+                          <HeaderDados>
+                            <TituloDados>
+                              Abastecimentos da {Trans.nomeTransporte}
+                            </TituloDados>{" "}
+                          </HeaderDados>
 
-                      <ArticleDados>
-                        {abastecimento.length === 0 ? (
-                          <div className="w-full text-gray-500/70 flex justify-center items-center font-bold text-[1.1vw]">
-                            Nenhum Abastecimento Cadastrado!
-                          </div>
-                        ) : (
-                          <DashAbastecimentos></DashAbastecimentos>
-                        )}
-                      </ArticleDados>
-                    </div>
+                          <ArticleDados>
+                            {abastecimentoUni.length === 0 ? (
+                              <div className="w-full text-gray-500/70 flex justify-center items-center font-bold text-[1.1vw]">
+                                Nenhum Abastecimento Cadastrado!
+                              </div>
+                            ) : (
+                              <DashAbastecimentosUni IdTransporte={Trans.id} />
+                            )}
+                          </ArticleDados>
+                        </div>
+                      );
+                    })}
                   </CarrocelDash>
                 )}
               </>
@@ -600,8 +691,6 @@ export const DashGeral = () => {
                     <DescricaoDados>Recebido</DescricaoDados>
                   </SeparacaoDados>
                 </Dados>
-
-               
               </CarrocelDash>
             </ArticleDados>
           </ArticleBlock>
