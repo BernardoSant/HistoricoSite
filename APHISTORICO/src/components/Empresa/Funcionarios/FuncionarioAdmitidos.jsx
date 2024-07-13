@@ -1345,7 +1345,7 @@ export const MostruarioFuncAdmitido = () => {
                 <div
                   onClick={() => {
                     setFuncionarioEditar(funcionarioSelecionado);
-                    setState({ ...state, Menu: !state.Menu });
+                    setState({ ...state, Menu: false });
                     setCertificados({
                       ...stateCertificados,
                       Certificados: false,
@@ -1363,7 +1363,7 @@ export const MostruarioFuncAdmitido = () => {
                     setFuncionarioSelecionado(null);
                     setState({
                       ...state,
-                      Menu: !state.Menu,
+                      Menu: false,
                       Treinamento: false,
                     });
                     setCertificados({
