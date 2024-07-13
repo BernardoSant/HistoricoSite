@@ -295,7 +295,7 @@ export const DashGeral = () => {
   );
 
   const Hoje = new Date();
-  const Mes = Hoje.getMonth() ;
+  const Mes = Hoje.getMonth() + 1;
   const Ano = Hoje.getFullYear();
 
   const abastecimentoMensal = abastecimento.filter((a) => {
@@ -308,7 +308,7 @@ export const DashGeral = () => {
   
 
   const GastoTotalAbastecimentoMensal = abastecimentoMensal.reduce(
-    (total, a) => total + a.totalAbastecido * a.vlrGasolina,
+    (total, a) => total + (a.totalAbastecido * a.vlrGasolina),
     0
   );
 
@@ -327,6 +327,7 @@ export const DashGeral = () => {
     ValorTotalMensal(salario, "dataSalario", "salarioFinal") +
     ValorTotalMensal(salario, "dataSalario", "totalFgtsSalario") +
     GastoTotalAbastecimentoMensal;
+
 
   return (
     <Section>
