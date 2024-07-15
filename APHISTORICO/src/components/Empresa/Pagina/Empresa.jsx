@@ -454,7 +454,7 @@ export const Empresa = () => {
                           {empresa.situacaoEmpresa === "Contrato" ? (
                             <Button
                               TipoButton={3}
-                              Titulo={"Adcionar Contrato"}
+                              Titulo={"Adicionar Contrato"}
                               onSecundario={state.addContrato}
                               onClick={() => ButtomSecundario("addContrato")}
                             ></Button>
@@ -469,7 +469,7 @@ export const Empresa = () => {
 
                               <Button
                                 TipoButton={3}
-                                Titulo={"Adcionar Pedido"}
+                                Titulo={"Adicionar Pedido"}
                                 onSecundario={state.addPedido}
                                 onClick={() => ButtomSecundario("addPedido")}
                               ></Button>
@@ -495,7 +495,7 @@ export const Empresa = () => {
 
                   <Button
                     TipoButton={2}
-                    Titulo={"Adcionar Empresa"}
+                    Titulo={"Adicionar Empresa"}
                     onFinal={state.addEmpresa}
                     onClick={() => ButtomSecundario("addEmpresa")}
                   ></Button>
@@ -525,7 +525,7 @@ export const Empresa = () => {
                   ></Button>
                   <Button
                     TipoButton={2}
-                    Titulo={"Adcionar Funcionario"}
+                    Titulo={"Adicionar Funcionario"}
                     onFinal={state.addFuncionarios}
                     onClick={() => ButtomSecundario("addFuncionarios")}
                   ></Button>
@@ -549,7 +549,7 @@ export const Empresa = () => {
                   ></Button>
                   <Button
                     TipoButton={2}
-                    Titulo={"Adcionar Transporte"}
+                    Titulo={"Adicionar Transporte"}
                     onFinal={state.addTransporte}
                     onClick={() => ButtomSecundario("addTransporte")}
                   ></Button>
@@ -573,7 +573,7 @@ export const Empresa = () => {
                   ></Button>
                   <Button
                     TipoButton={2}
-                    Titulo={"Adcionar Ferramentas"}
+                    Titulo={"Adicionar Ferramentas"}
                     onFinal={state.addTransporte}
                     onClick={() => ButtomSecundario("addTransporte")}
                   ></Button>
