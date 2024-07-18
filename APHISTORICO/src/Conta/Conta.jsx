@@ -5,6 +5,7 @@ import axios from "axios";
 import { toast } from "react-toastify";
 import { useGlobalContext } from "../global/Global";
 import { BsCaretDownFill, BsCaretUpFill } from "react-icons/bs";
+import { NumericFormat } from "react-number-format";
 
 const BlockConta = styled.div`
   position: absolute;
@@ -57,6 +58,16 @@ const InputConta = styled.input`
   }
 `;
 
+const InputDinheiro = styled(NumericFormat)`
+  border-radius: 1em;
+  padding-left: 12px;
+  padding-right: 12px;
+  font-size: 1vw;
+  @media (min-width: 1640px) {
+    font-size: 0.8vw;
+  }
+`;
+
 export const TabelaConta = () => {
   const { ip } = useGlobalContext();
 
@@ -71,17 +82,11 @@ export const TabelaConta = () => {
     dataFnConta: undefined,
     valorParcelaConta: undefined,
     valorConta: "",
-    valorContaInput: "",
   });
 
   const valorInput = (e) => {
     let valor = e.target.value;
     setData({ ...data, [e.target.name]: valor });
-  };
-
-  const valorInputConta = (e) => {
-    let valor = e.target.value;
-    setData({ ...data, [e.target.name]: valor, valorConta: valor });
   };
 
   const valorInputContaParcelada = (e) => {
@@ -133,15 +138,14 @@ export const TabelaConta = () => {
         setData({
           descricaoConta: "",
           tipoConta: "",
-          Conta: "Parcelada",
+          Conta: "Recorrente",
           frequenciaConta: 0,
-          parcelasConta: "",
-          parcelasPagasConta: "",
+          parcelasConta: undefined,
+          parcelasPagasConta: undefined,
           dataInConta: "",
-          dataFnConta: "",
-          valorParcelaConta: "",
-          valorConta: "",
-          valorContaInput: "",
+          dataFnConta: undefined,
+          valorParcelaConta: undefined,
+          valorConta: "", 
         });
         toast.success(response.data.message);
       })
@@ -193,11 +197,47 @@ export const TabelaConta = () => {
 
   const options = [
     {
-      value: "Empresa",
+      value: "Material",
       label: (
         <div className="flex justify-start items-center gap-3">
-          <PConta className="w-[1vw] h-[1vw] bg-red-500 rounded-full drop-shadow-md"></PConta>
-          <PConta>Empresa</PConta>
+          <PConta className="w-[1vw] h-[1vw] bg-gray-500 rounded-full drop-shadow-md"></PConta>
+          <PConta>Material</PConta>
+        </div>
+      ),
+    },
+    {
+      value: "Energia",
+      label: (
+        <div className="flex justify-start items-center gap-3">
+          <PConta className="w-[1vw] h-[1vw] bg-yellow-400 rounded-full drop-shadow-md"></PConta>
+          <PConta>Energia</PConta>
+        </div>
+      ),
+    },
+    {
+      value: "Água",
+      label: (
+        <div className="flex justify-start items-center gap-3">
+          <PConta className="w-[1vw] h-[1vw] bg-orange-400 rounded-full drop-shadow-md"></PConta>
+          <PConta>Água</PConta>
+        </div>
+      ),
+    },
+    {
+      value: "Alimentação",
+      label: (
+        <div className="flex justify-start items-center gap-3">
+          <PConta className="w-[1vw] h-[1vw] bg-green-400 rounded-full drop-shadow-md"></PConta>
+          <PConta>Alimentação</PConta>
+        </div>
+      ),
+    },
+    {
+      value: "Internet",
+      label: (
+        <div className="flex justify-start items-center gap-3">
+          <PConta className="w-[1vw] h-[1vw] bg-blue-400 rounded-full drop-shadow-md"></PConta>
+          <PConta>Internet</PConta>
         </div>
       ),
     },
@@ -205,11 +245,21 @@ export const TabelaConta = () => {
       value: "Casa",
       label: (
         <div className="flex justify-start items-center gap-3">
-          <PConta className="w-[1vw] h-[1vw] bg-yellow-400 rounded-full drop-shadow-md"></PConta>
+          <PConta className="w-[1vw] h-[1vw] bg-purple-400 rounded-full drop-shadow-md"></PConta>
           <PConta>Casa</PConta>
         </div>
       ),
     },
+    {
+      value: "Empresa",
+      label: (
+        <div className="flex justify-start items-center gap-3">
+          <PConta className="w-[1vw] h-[1vw] bg-red-400 rounded-full drop-shadow-md"></PConta>
+          <PConta>Empresa</PConta>
+        </div>
+      ),
+    },
+   
   ];
 
   const customStyles = {
@@ -264,7 +314,7 @@ export const TabelaConta = () => {
           </PConta>
         </form>
 
-        <div className="flex justify-around">
+        <div className="flex justify-around hidden">
           <div className="flex flex-col justify-center items-center">
             <H1Conta className="text-[0.8vw] xl:[1.2vw] font-semibold flex justify-around w-full">
               <p>Parcelada:</p>
@@ -323,11 +373,21 @@ export const TabelaConta = () => {
               <H1Conta className="text-[0.8vw] xl:[1.2vw] font-semibold">
                 Valor:
               </H1Conta>
-              <InputConta
+              <InputDinheiro
                 type="text"
-                value={data.valorContaInput}
-                onChange={valorInputConta}
-                name="valorContaInput"
+                placeholder="1.000,00"
+                name="valorContvalorContaaInput"
+                value={data.valorConta || ""}
+                onValueChange={(e) => {
+                  setData({
+                    ...data,
+                    valorConta: e.floatValue,
+                  });
+                }}
+                thousandSeparator="."
+                decimalScale={2}
+                fixedDecimalScale
+                decimalSeparator=","
                 className="rounded-[1em] p-1 px-3"
               />
             </PConta>
